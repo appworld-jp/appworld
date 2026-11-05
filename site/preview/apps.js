@@ -72,5 +72,10 @@
   $("finder").addEventListener("submit", e => e.preventDefault());
   $("sort").addEventListener("change", e => { state.sort = e.target.value; render(); });
   $("clear").onclick = clearAll; $("clear2").onclick = clearAll;
+  // deep links from the home page: ?q=keyword, ?g=genre
+  const params = new URLSearchParams(location.search);
+  if (params.get("q")) { state.q = params.get("q"); $("q").value = state.q; }
+  const g = params.get("g");
+  if (g && groups.g.includes(g)) { state.g.add(g); document.querySelectorAll("#f-g .chip").forEach(c => { if (c.firstChild.textContent === g) c.setAttribute("aria-pressed", "true"); }); }
   render();
 })();

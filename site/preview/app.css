@@ -106,3 +106,19 @@ footer .in{border-top:1px solid var(--hair);padding-block:22px 34px;display:flex
 footer nav{display:flex;gap:4px 22px;flex-wrap:wrap}
 footer a{text-decoration:none}
 @media (prefers-reduced-motion:reduce){.icon{animation:none}.panel{transition:none}}
+
+/* world overlay: genre labels, app labels, tooltip */
+.w-layer{position:absolute;inset:0;z-index:2;pointer-events:none}
+.w-genre,.w-app{position:absolute;left:0;top:0;white-space:nowrap;transition:opacity .6s}
+.w-genre{font-size:11px;letter-spacing:.12em;color:var(--graphite);display:inline-flex;gap:6px;align-items:baseline}
+.w-genre small{font-size:9.5px;opacity:.7}
+.w-genre.on{color:var(--char);font-weight:700}
+.w-app{font-size:11.5px;font-weight:500;color:var(--char);display:flex;align-items:center;gap:6px}
+.w-app::before{content:"";width:16px;height:1px;background:var(--char);opacity:.5}
+.w-app.on{font-weight:700}
+.w-tip{position:absolute;left:0;top:0;z-index:5;display:grid;gap:4px;width:250px;padding:14px 16px;border-radius:16px;text-decoration:none;color:var(--char)}
+.w-tip[hidden]{display:none}
+.w-tip b{font-size:15px}
+.w-tip span{font-size:12.5px;color:var(--graphite);line-height:1.6}
+.w-tip small{font-size:11px;letter-spacing:.04em}
+.is-narrow .w-genre{font-size:9.5px}
