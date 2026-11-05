@@ -90,6 +90,7 @@ def tags(app: dict) -> str:
 def row(app: dict, *, pr: bool = False) -> str:
     badge = '<span class="pr">PR</span>' if pr else ""
     sample = '<span class="sample">サンプル</span>' if app.get("sample") else ""
+    sample += '<span class="beta">試作中</span>' if app.get("beta") else ""
     return (
         f'<li><a class="row" href="app-{e(app["id"])}.html">{tile(app)}'
         f'<span class="txt"><span class="name">{e(app["name"])}{badge}{sample}</span>'
@@ -212,7 +213,7 @@ def build(today: date, artifact: bool, site_url: str | None = None, *, productio
         else:
             go = (
                 f'<a class="go" href="{e(a["url"])}" rel="noopener noreferrer nofollow ugc" target="_blank">'
-                f'{e(PLATFORMS[a["platform"]])}で開く（外部サイト）</a>'
+                f'{"TestFlightで開く" if "testflight.apple.com" in a["url"] else e(PLATFORMS[a["platform"]]) + "で開く"}（外部サイト）</a>'
                 '<p class="go-note">Shipyard の外のサイトに移動します。掲載は公式ストアか公式サイトのリンクだけです。'
                 "ファイルを直接ダウンロードさせるリンクは載せていません。</p>"
             )
@@ -220,7 +221,7 @@ def build(today: date, artifact: bool, site_url: str | None = None, *, productio
             '<main class="in main detail">'
             f'<p class="crumb"><a href="index.html">新着</a> / <a href="week-{e(week_id(d))}.html">{e(week_label(week_id(d)))}</a></p>'
             f'<div class="d-head">{tile(a)}<div><h1>{e(a["name"])}'
-            f'{"<span class=pr>PR</span>" if is_pr else ""}{"<span class=sample>サンプル</span>" if a.get("sample") else ""}</h1>'
+            f'{"<span class=pr>PR</span>" if is_pr else ""}{"<span class=sample>サンプル</span>" if a.get("sample") else ""}{"<span class=beta>試作中</span>" if a.get("beta") else ""}</h1>'
             f'<p class="line">{e(a["tagline"])}</p></div></div>'
             f'<p class="desc">{e(a["description"])}</p>'
             '<section class="pass" aria-label="作品の情報">'
@@ -282,7 +283,7 @@ def build(today: date, artifact: bool, site_url: str | None = None, *, productio
     )
     submit = f"""<main class="in main prose">
 <h1>作品を掲載する</h1>
-<p>AIを使ってつくったアプリやWebサービスを、無料で掲載できます。公開日の朝に「今日のデビュー」に並び、その後も週ごとのページに残ります。</p>
+<p>AIを使ってつくったアプリやWebサービスを、無料で掲載できます。試作中のアプリも歓迎です（リンク先で実際に触れることが条件です）。公開日の朝に「今日のデビュー」に並び、その後も週ごとのページに残ります。</p>
 <h2>掲載の流れ</h2>
 <ol class="steps">
 <li><b>申請フォームに記入</b><span>名前、一言説明（40文字まで）、説明（600文字まで）、リンク、つくるのに使ったAI（{e(tools)}）</span></li>

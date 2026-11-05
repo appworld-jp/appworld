@@ -25,6 +25,7 @@ CATEGORY_BY_LABEL = {v: k for k, v in CATEGORIES.items()}
 FIELDS = {
     "作品名": "name", "一言説明": "tagline", "説明": "description", "使える場所": "platform",
     "リンク": "url", "分類": "category", "つくるのに使ったAI（1つ以上）": "ai_tools", "作り手の表示名": "maker_name",
+    "開発の段階": "stage",
 }
 
 
@@ -65,6 +66,7 @@ def to_listing(issue: int, body: str, today: date, apps_dir: pathlib.Path) -> di
         "ai_tools": [t.strip() for t in tools],
         "maker_name": s.get("maker_name", "").strip(),
         "url": s.get("url", "").strip(),
+        "beta": s.get("stage", "").strip().startswith("試作中"),
         "launch_date": next_free_day(today + timedelta(days=1), apps_dir).isoformat(),
     }
 

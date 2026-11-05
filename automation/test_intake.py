@@ -83,5 +83,10 @@ class IntakeTest(unittest.TestCase):
         self.assertNotIn("EvilTool", listing["ai_tools"])
 
 
+    def test_prototype_stage_sets_beta(self):
+        body = BODY.replace("### リンク", "### 開発の段階\n\n試作中（ベータ）\n\n### リンク")
+        self.assertTrue(to_listing(43, body, date(2026, 10, 26), self.apps)["beta"])
+        self.assertFalse(to_listing(44, BODY, date(2026, 10, 26), self.apps)["beta"])
+
 if __name__ == "__main__":
     unittest.main()
