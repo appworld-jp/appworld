@@ -17,9 +17,9 @@ window.APPS = [
 
 /* Name candidates (review only). The choice is remembered per browser so both pages agree. */
 (function () {
-  const NAMES = ["App World", "AppSphere", "Appland", "Daily Apps", "Newborn", "Hello App", "Appear"];
+  const NAMES = ["NOA", "ORBIS", "MIRA", "ARC", "LUMEN", "AO", "EIRA"];
   let current = NAMES[0];
-  try { current = localStorage.getItem("preview-name") || current; } catch (e) {}
+  try { const saved = localStorage.getItem("preview-name"); if (NAMES.includes(saved)) current = saved; } catch (e) {}
   const apply = n => {
     document.querySelectorAll(".js-name").forEach(e => { e.textContent = n; });
     document.title = n + " | " + (document.documentElement.dataset.page || "見本");

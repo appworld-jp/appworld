@@ -24,8 +24,8 @@ rail.addEventListener("wheel",e=>{if(Math.abs(e.deltaY)>Math.abs(e.deltaX)&&rail
 
 /* ---- hero: the world of apps.
    The ring is split into one arc per genre (arc length = number of listed apps).
-   On load, today's apps fly in from outside and settle into their genre's arc.
-   Hover/tap a glowing point to see the app; hover/tap an arc to open that genre's list. ---- */
+   On load, all listed apps fly in from outside and settle into their genre's arc.
+   Every listed app is a glowing point (today's are brighter). Hover/tap a point to see the app; hover/tap an arc to open that genre's list. ---- */
 (function(){
   if(!window.THREE)return;
   const hero=document.querySelector(".hero"),cv=document.getElementById("net");
@@ -90,17 +90,20 @@ rail.addEventListener("wheel",e=>{if(Math.abs(e.deltaY)>Math.abs(e.deltaX)&&rail
   world.add(new THREE.Points(new THREE.BufferGeometry().setFromPoints(core),coreMat));
 
   // today's apps: each gets a home point on the ring inside its genre's arc
-  const homes=TODAYS.map((app,k)=>{
-    const arc=arcs.find(a=>a.g===app.g),sameGenre=TODAYS.filter(x=>x.g===app.g),idx=sameGenre.indexOf(app);
+  const SHOWN=[...ALL].sort((a,b)=>b.d.localeCompare(a.d));         // every listed app, newest first
+  const homes=SHOWN.map((app,k)=>{
+    const arc=arcs.find(a=>a.g===app.g),sameGenre=SHOWN.filter(x=>x.g===app.g),idx=sameGenre.indexOf(app);
     const u=arc.start+(arc.end-arc.start)*(idx+1)/(sameGenre.length+1);
     const home=new THREE.Vector3((R+0.15)*Math.cos(u),(R+0.15)*Math.sin(u),0.35);
     const th=Math.random()*TAU,far=9+Math.random()*3;
     const from=new THREE.Vector3(Math.cos(th)*far,Math.sin(th)*far,(Math.random()-.5)*6);
-    return{app,home,from,pos:from.clone(),delay:0.25+k*0.22};
+    return{app,home,from,pos:from.clone(),delay:0.25+k*Math.min(0.22,2.2/SHOWN.length),isNew:app.d===window.TODAY};
   });
   const litGeo=new THREE.BufferGeometry();litGeo.setAttribute("position",new THREE.BufferAttribute(new Float32Array(homes.length*3),3));
   const litMat=new THREE.PointsMaterial({size:0.5,map:amberTex,transparent:true,depthWrite:false});
   world.add(new THREE.Points(litGeo,litMat));
+  const oldGeo=new THREE.BufferGeometry();oldGeo.setAttribute("position",new THREE.BufferAttribute(new Float32Array(homes.length*3),3));
+  world.add(new THREE.Points(oldGeo,new THREE.PointsMaterial({size:0.3,map:amberTex,transparent:true,depthWrite:false,opacity:0.75})));
   const trailGeo=new THREE.BufferGeometry();trailGeo.setAttribute("position",new THREE.BufferAttribute(new Float32Array(homes.length*6),3));
   const trail=new THREE.LineSegments(trailGeo,new THREE.LineBasicMaterial({color:0xE9A23B,transparent:true,opacity:0.6}));world.add(trail);
 
@@ -159,15 +162,15 @@ rail.addEventListener("wheel",e=>{if(Math.abs(e.deltaY)>Math.abs(e.deltaX)&&rail
     const t=(now-t0)/1000,mv=reduceM?0:1;
     world.rotation.z=0.25+t*0.035*mv;world.rotation.x=0.42+my*0.18;world.rotation.y=-0.32+mx*0.25;
     // gather
-    const lp=litGeo.attributes.position.array,tp=trailGeo.attributes.position.array;
+    const lp=litGeo.attributes.position.array,op=oldGeo.attributes.position.array,tp=trailGeo.attributes.position.array;
     homes.forEach((h,i)=>{
       const k=reduceM?1:Math.min(1,Math.max(0,(t-h.delay)/1.8)),e=ease(k);
       h.pos.copy(h.from).lerp(h.home,e);
-      lp.set([h.pos.x,h.pos.y,h.pos.z],i*3);
+      (h.isNew?lp:op).set([h.pos.x,h.pos.y,h.pos.z],i*3);(h.isNew?op:lp).set([9e3,9e3,9e3],i*3);
       const back=h.from.clone().lerp(h.home,Math.max(0,e-0.12));
       tp.set(k<1&&k>0?[back.x,back.y,back.z,h.pos.x,h.pos.y,h.pos.z]:[0,0,0,0,0,0],i*6);
     });
-    litGeo.attributes.position.needsUpdate=true;trailGeo.attributes.position.needsUpdate=true;
+    litGeo.attributes.position.needsUpdate=true;oldGeo.attributes.position.needsUpdate=true;trailGeo.attributes.position.needsUpdate=true;
     const settled=reduceM||t>homes[homes.length-1].delay+1.8;
     litMat.size=0.46+0.08*Math.sin(t*2)*mv;
     coreMat.opacity=0.8+0.15*Math.sin(t*1.6)*mv;
@@ -179,7 +182,7 @@ rail.addEventListener("wheel",e=>{if(Math.abs(e.deltaY)>Math.abs(e.deltaX)&&rail
     // labels
     arcs.forEach(a=>{const u=(a.start+a.end)/2;const[sx,sy]=screenOf(new THREE.Vector3((R+r+0.55)*Math.cos(u),(R+r+0.55)*Math.sin(u),0));
       a.el.style.transform=`translate(${sx}px,${sy}px) translate(-50%,-50%)`;a.el.classList.toggle("on",a===hoverArc);a.el.style.opacity=settled?1:0;});
-    homes.forEach(h=>{const[sx,sy]=screenOf(h.pos);h.el.style.transform=`translate(${sx+10}px,${sy-8}px)`;h.el.style.opacity=settled&&!narrow?1:0;h.el.classList.toggle("on",h===hoverApp);});
+    homes.forEach(h=>{const[sx,sy]=screenOf(h.pos);h.el.style.transform=`translate(${sx+10}px,${sy-8}px)`;h.el.style.opacity=settled&&!narrow&&(h===hoverApp||(!hoverApp&&h.isNew&&homes.indexOf(h)<5))?1:0;h.el.classList.toggle("on",h===hoverApp);});
     requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame);
