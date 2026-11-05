@@ -25,8 +25,8 @@
 .rule{border-radius:20px;padding:20px 22px;display:grid;gap:6px;align-content:start}
 .rule h2{font-size:17px;font-weight:700}
 .rule ul{margin:4px 0 0;padding-left:1.1em;display:grid;gap:4px;font-size:13.5px;color:var(--graphite);line-height:1.7}
-.rule .cap{color:#2F6B45}
-.rule.ng .cap{color:#9A3B2C}
+.rule h2::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:#2F6B45;margin-right:10px;vertical-align:.18em}
+.rule.ng h2::before{background:#9A3B2C}
 .faq{display:grid;gap:10px}
 .faq details{border-radius:16px;padding:14px 18px}
 .faq summary{cursor:pointer;font-weight:500;font-size:14.5px;list-style:none;display:flex;justify-content:space-between;gap:12px}
@@ -36,3 +36,4 @@
 .faq p{margin:8px 0 0;font-size:13.5px;color:var(--graphite);line-height:1.8}
 .final{border-radius:26px;padding:clamp(24px,4vw,40px);display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
 .final h2{font-size:clamp(20px,2.4vw,26px);font-weight:500}
+.sub-copy .lead span{display:inline-block}
