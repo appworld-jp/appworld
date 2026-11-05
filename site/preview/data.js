@@ -29,7 +29,7 @@ window.APPS = [
 
 /* Name candidates (review only). The choice is remembered per browser so both pages agree. */
 (function () {
-  const NAMES = ["Appwa", "Appolis", "Apperia", "Appdom", "Appora", "Appverse", "App World"];
+  const NAMES = ["App World"];   // decided 2026-11-05 (D-016)
   let current = NAMES[0];
   try { const saved = localStorage.getItem("preview-name"); if (NAMES.includes(saved)) current = saved; } catch (e) {}
   const apply = n => {
