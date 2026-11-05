@@ -8,8 +8,8 @@
   X-Frame-Options: DENY
   ! Access-Control-Allow-Origin
 
-# Design preview only: its own first-party script (no third-party scripts) and Google Fonts.
+# Design preview only: its own first-party script and self-hosted fonts. Nothing from other origins.
 /preview/*
   ! Content-Security-Policy
-  Content-Security-Policy: default-src 'none'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
+  Content-Security-Policy: default-src 'none'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data:; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
   X-Robots-Tag: noindex
