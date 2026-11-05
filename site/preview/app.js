@@ -67,10 +67,15 @@ rail.addEventListener("wheel",e=>{if(Math.abs(e.deltaY)>Math.abs(e.deltaX)&&rail
       if(arc2===arc){if(keep(a,b))L.push(a,b);if(keep(a,d))L.push(a,d);}
     }
   }
-  const BASE=0.6;
+  const BASE=0.16;                                    // the mesh is atmosphere now; the bands carry the meaning
+  class Arc3 extends THREE.Curve{constructor(a,b,rad){super();this.a=a;this.b=b;this.rad=rad;}
+    getPoint(t,o=new THREE.Vector3()){const u=this.a+(this.b-this.a)*t;return o.set(this.rad*Math.cos(u),this.rad*Math.sin(u),0);}}
   arcs.forEach(a=>{
     a.mat=new THREE.LineBasicMaterial({color:0x1A1B1C,transparent:true,opacity:BASE,fog:true});
     world.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(segBy.get(a.g)),a.mat));
+    const steps=Math.max(8,Math.round((a.end-a.start)*40));
+    a.band=new THREE.MeshBasicMaterial({color:0x262728});
+    world.add(new THREE.Mesh(new THREE.TubeGeometry(new Arc3(a.start,a.end,R),steps,0.028,6,false),a.band));
   });
 
   function sprite(core,mid){
@@ -94,16 +99,16 @@ rail.addEventListener("wheel",e=>{if(Math.abs(e.deltaY)>Math.abs(e.deltaX)&&rail
   const homes=SHOWN.map((app,k)=>{
     const arc=arcs.find(a=>a.g===app.g),sameGenre=SHOWN.filter(x=>x.g===app.g),idx=sameGenre.indexOf(app);
     const u=arc.start+(arc.end-arc.start)*(idx+1)/(sameGenre.length+1);
-    const home=new THREE.Vector3((R+0.15)*Math.cos(u),(R+0.15)*Math.sin(u),0.35);
+    const home=new THREE.Vector3(R*Math.cos(u),R*Math.sin(u),0);
     const th=Math.random()*TAU,far=9+Math.random()*3;
     const from=new THREE.Vector3(Math.cos(th)*far,Math.sin(th)*far,(Math.random()-.5)*6);
     return{app,home,from,pos:from.clone(),delay:0.25+k*Math.min(0.22,2.2/SHOWN.length),isNew:app.d===window.TODAY};
   });
   const litGeo=new THREE.BufferGeometry();litGeo.setAttribute("position",new THREE.BufferAttribute(new Float32Array(homes.length*3),3));
-  const litMat=new THREE.PointsMaterial({size:0.5,map:amberTex,transparent:true,depthWrite:false});
-  world.add(new THREE.Points(litGeo,litMat));
+  const litMat=new THREE.PointsMaterial({size:0.62,map:amberTex,transparent:true,depthWrite:false,depthTest:false});
+  const litPts=new THREE.Points(litGeo,litMat);litPts.renderOrder=3;world.add(litPts);
   const oldGeo=new THREE.BufferGeometry();oldGeo.setAttribute("position",new THREE.BufferAttribute(new Float32Array(homes.length*3),3));
-  world.add(new THREE.Points(oldGeo,new THREE.PointsMaterial({size:0.3,map:amberTex,transparent:true,depthWrite:false,opacity:0.75})));
+  const oldPts=new THREE.Points(oldGeo,new THREE.PointsMaterial({size:0.3,map:sprite("rgba(38,39,40,1)","rgba(38,39,40,.9)"),transparent:true,depthWrite:false,depthTest:false}));oldPts.renderOrder=3;world.add(oldPts);
   const trailGeo=new THREE.BufferGeometry();trailGeo.setAttribute("position",new THREE.BufferAttribute(new Float32Array(homes.length*6),3));
   const trail=new THREE.LineSegments(trailGeo,new THREE.LineBasicMaterial({color:0xE9A23B,transparent:true,opacity:0.6}));world.add(trail);
 
@@ -144,7 +149,7 @@ rail.addEventListener("wheel",e=>{if(Math.abs(e.deltaY)>Math.abs(e.deltaX)&&rail
     const n=new THREE.Vector3(0,0,1).transformDirection(world.matrixWorld);plane.setFromNormalAndCoplanarPoint(n,world.position);
     ray.setFromCamera({x:px/W()*2-1,y:-(py/H())*2+1},cam);
     if(ray.ray.intersectPlane(plane,hit)){const l=world.worldToLocal(hit.clone());const rr=Math.hypot(l.x,l.y);
-      if(rr>R-r-0.25&&rr<R+r+0.35){const u=(Math.atan2(l.y,l.x)+TAU)%TAU;hoverArc=arcOf(u)||null;}}
+      if(rr>R-0.55&&rr<R+0.55){const u=(Math.atan2(l.y,l.x)+TAU)%TAU;hoverArc=arcOf(u)||null;}}
   }
   hero.addEventListener("pointermove",e=>{const b=cv.getBoundingClientRect();px=e.clientX-b.left;py=e.clientY-b.top;mx=e.clientX/innerWidth-.5;my=e.clientY/innerHeight-.5;});
   hero.addEventListener("pointerleave",()=>{px=-1;tip.hidden=true;});
@@ -160,7 +165,7 @@ rail.addEventListener("wheel",e=>{if(Math.abs(e.deltaY)>Math.abs(e.deltaX)&&rail
   const ease=t=>1-Math.pow(1-t,3);
   function frame(now){
     const t=(now-t0)/1000,mv=reduceM?0:1;
-    world.rotation.z=0.25+t*0.035*mv;world.rotation.x=0.42+my*0.18;world.rotation.y=-0.32+mx*0.25;
+    world.rotation.z=0.3+Math.sin(t*0.12)*0.05*mv;world.rotation.x=0.26+my*0.12;world.rotation.y=-0.16+mx*0.16;
     // gather
     const lp=litGeo.attributes.position.array,op=oldGeo.attributes.position.array,tp=trailGeo.attributes.position.array;
     homes.forEach((h,i)=>{
@@ -172,16 +177,16 @@ rail.addEventListener("wheel",e=>{if(Math.abs(e.deltaY)>Math.abs(e.deltaX)&&rail
     });
     litGeo.attributes.position.needsUpdate=true;oldGeo.attributes.position.needsUpdate=true;trailGeo.attributes.position.needsUpdate=true;
     const settled=reduceM||t>homes[homes.length-1].delay+1.8;
-    litMat.size=0.46+0.08*Math.sin(t*2)*mv;
+    litMat.size=0.58+0.08*Math.sin(t*2)*mv;
     coreMat.opacity=0.8+0.15*Math.sin(t*1.6)*mv;
     world.updateMatrixWorld();
     pick();
-    arcs.forEach(a=>{a.mat.opacity=hoverArc?(a===hoverArc?0.95:0.22):BASE;});
+    arcs.forEach(a=>{a.mat.opacity=a===hoverArc?0.32:BASE;a.band.color.setHex(a===hoverArc?0xE9A23B:(hoverArc?0x8A8B8D:0x262728));});
     hero.style.cursor=(hoverApp||hoverArc)?"pointer":"";
     renderer.render(scene,cam);
     // labels
-    arcs.forEach(a=>{const u=(a.start+a.end)/2;const[sx,sy]=screenOf(new THREE.Vector3((R+r+0.55)*Math.cos(u),(R+r+0.55)*Math.sin(u),0));
-      a.el.style.transform=`translate(${sx}px,${sy}px) translate(-50%,-50%)`;a.el.classList.toggle("on",a===hoverArc);a.el.style.opacity=settled&&sy>84?1:0;          // keep clear of the header});
+    arcs.forEach(a=>{const u=(a.start+a.end)/2;const[sx,sy]=screenOf(new THREE.Vector3((R+0.95)*Math.cos(u),(R+0.95)*Math.sin(u),0));
+      a.el.style.transform=`translate(${sx}px,${sy}px) translate(-50%,-50%)`;a.el.classList.toggle("on",a===hoverArc);a.el.style.opacity=settled&&sy>84?1:0;});   // labels near the header stay hidden
     homes.forEach(h=>{const[sx,sy]=screenOf(h.pos);h.el.style.transform=`translate(${sx+10}px,${sy-8}px)`;h.el.style.opacity=settled&&!narrow&&(h===hoverApp||(!hoverApp&&h.isNew&&homes.indexOf(h)<5))?1:0;h.el.classList.toggle("on",h===hoverApp);});
     requestAnimationFrame(frame);
   }
