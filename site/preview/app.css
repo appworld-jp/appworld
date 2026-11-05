@@ -134,3 +134,6 @@ footer a{text-decoration:none}
 .namebox #names{display:flex;gap:6px;flex-wrap:wrap}
 .namebox button{font:inherit;font-size:12px;border:1px solid var(--hair);background:rgba(255,255,255,.3);border-radius:999px;padding:2px 11px;color:var(--char);cursor:pointer}
 .namebox button[aria-pressed="true"]{background:var(--char);color:#F1F1F0;border-color:var(--char)}
+
+.beta{display:inline-block;font-size:10px;font-weight:500;color:#1F5E57;border:1px solid rgba(31,94,87,.55);border-radius:999px;padding:0 8px;margin-left:6px;vertical-align:middle;line-height:1.7;letter-spacing:.04em}
+.d-main h1 .beta{font-size:12px;margin-left:10px}

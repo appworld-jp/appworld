@@ -14,12 +14,13 @@
   $("d-initial").textContent = app.n[0];
   $("d-date").textContent = date + " に公開";
   $("d-name").textContent = app.n;
+  if (app.b) { const bt = document.createElement("span"); bt.className = "beta"; bt.textContent = "試作中"; $("d-name").append(" ", bt); }
   $("d-tag").textContent = app.t;
   $("d-desc").textContent = app.x;
 
   // all listings in the preview are samples, so the store button is shown but disabled
   const open = $("d-open");
-  open.textContent = (app.p === "iPhone" ? "App Storeで開く" : app.p === "Android" ? "Google Playで開く" : "Webサイトを開く") + " ↗";
+  open.textContent = (app.p === "iPhone" ? (app.b ? "TestFlightで開く" : "App Storeで開く") : app.p === "Android" ? "Google Playで開く" : "Webサイトを開く") + " ↗";
   open.setAttribute("aria-disabled", "true"); open.removeAttribute("href");
   $("d-note").textContent = "サンプルのため、リンク先はありません";
 
@@ -28,6 +29,7 @@
   $("s-m").textContent = app.m;
   $("s-a").textContent = app.a; $("s-a").href = "apps.html?q=" + encodeURIComponent(app.a);
   $("s-d").textContent = date;
+  $("s-s").textContent = app.b ? "試作中（ベータ）" : "公開中";
   const pageUrl = location.origin + location.pathname + "?id=" + encodeURIComponent(app.id);
   $("d-share").href = "https://x.com/intent/post?" + new URLSearchParams({ text: app.n + " — " + app.t, url: pageUrl }).toString();
 

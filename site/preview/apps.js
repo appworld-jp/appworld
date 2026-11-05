@@ -2,19 +2,20 @@
 (function () {
   const APPS = window.APPS;
   const $ = id => document.getElementById(id);
-  const state = { q: "", p: new Set(), g: new Set(), a: new Set(), sort: "new" };
-  const groups = { p: ["iPhone", "Android", "Web"], g: [], a: [] };
+  const state = { q: "", p: new Set(), g: new Set(), a: new Set(), s: new Set(), sort: "new" };
+  const val = (x, key) => key === "s" ? (x.b ? "試作中" : "公開中") : x[key];
+  const groups = { p: ["iPhone", "Android", "Web"], g: [], a: [], s: ["公開中", "試作中"] };
   groups.g = [...new Set(APPS.map(x => x.g))];
   groups.a = [...new Set(APPS.map(x => x.a))].sort();
 
   // chips with counts
-  for (const key of ["p", "g", "a"]) {
+  for (const key of ["p", "g", "a", "s"]) {
     const box = $("f-" + key);
     groups[key].forEach(v => {
       const b = document.createElement("button");
       b.type = "button"; b.className = "chip"; b.setAttribute("aria-pressed", "false");
       b.append(v);
-      const s = document.createElement("small"); s.textContent = APPS.filter(x => x[key] === v).length; b.append(s);
+      const s = document.createElement("small"); s.textContent = APPS.filter(x => val(x, key) === v).length; b.append(s);
       b.onclick = () => { state[key].has(v) ? state[key].delete(v) : state[key].add(v); b.setAttribute("aria-pressed", state[key].has(v)); render(); };
       box.append(b);
     });
@@ -25,6 +26,7 @@
     if (state.p.size && !state.p.has(x.p)) return false;
     if (state.g.size && !state.g.has(x.g)) return false;
     if (state.a.size && !state.a.has(x.a)) return false;
+    if (state.s.size && !state.s.has(val(x, "s"))) return false;
     const words = norm(state.q).split(/\s+/).filter(Boolean);
     const hay = norm([x.n, x.t, x.m, x.g, x.a, x.p].join(" "));
     return words.every(w => hay.includes(w));
@@ -52,11 +54,12 @@
       a.querySelector(".mini b").textContent = x.n[0];
       a.querySelector(".date").textContent = x.d.replaceAll("-", ".");
       highlight(a.querySelector(".nm"), x.n);
+      if (x.b) { const bt = document.createElement("span"); bt.className = "beta"; bt.textContent = "試作中"; a.querySelector("h2").append(bt); }
       highlight(a.querySelector("p"), x.t);
       const m = a.querySelectorAll(".meta span"); m[0].textContent = x.p; m[1].textContent = x.g; m[2].textContent = x.a;
       li.append(a); grid.append(li);
     });
-    const filtered = state.q || state.p.size || state.g.size || state.a.size;
+    const filtered = state.q || state.p.size || state.g.size || state.a.size || state.s.size;
     $("count").replaceChildren();
     const b = document.createElement("b"); b.textContent = list.length;
     $("count").append(filtered ? `${APPS.length}件中 ` : "全 ", b, "件");
@@ -64,7 +67,7 @@
     $("clear").hidden = !filtered;
   }
   function clearAll() {
-    state.q = ""; $("q").value = ""; ["p", "g", "a"].forEach(k => state[k].clear());
+    state.q = ""; $("q").value = ""; ["p", "g", "a", "s"].forEach(k => state[k].clear());
     document.querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed", "false"));
     render();
   }

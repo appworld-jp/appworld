@@ -8,7 +8,8 @@ APPS.forEach((a,i)=>{
   el.innerHTML=`<div class="p-top"><span class="cap">${String(i+1).padStart(2,"0")}</span><span class="p-price">¥0<i>FREE</i></span><h3 class="p-name"></h3><span class="sample">サンプル</span></div>
     <div class="p-vis"><div class="icon"><b></b></div></div>
     <div><p class="p-line"></p><div class="p-spec"><span></span><span></span></div></div>`;
-  el.querySelector(".p-name").textContent=a.n;el.querySelector(".icon b").textContent=a.n[0];el.querySelector(".p-line").textContent=a.t;
+  el.querySelector(".p-name").textContent=a.n;
+  if(a.b){const bt=document.createElement("span");bt.className="beta";bt.textContent="試作中";el.querySelector(".sample").after(bt);}el.querySelector(".icon b").textContent=a.n[0];el.querySelector(".p-line").textContent=a.t;
   const sp=el.querySelectorAll(".p-spec span");sp[0].textContent=a.p;sp[1].textContent=a.a;
   rail.appendChild(el);
 });
@@ -121,7 +122,7 @@ rail.addEventListener("wheel",e=>{if(Math.abs(e.deltaY)>Math.abs(e.deltaX)&&rail
     tip.replaceChildren();
     const b=document.createElement("b");b.textContent=h.app.n;
     const p=document.createElement("span");p.textContent=h.app.t;
-    const m=document.createElement("small");m.textContent=`${h.app.p} ・ ${h.app.g} ・ 詳しく見る →`;
+    const m=document.createElement("small");m.textContent=`${h.app.p} ・ ${h.app.g}${h.app.b?" ・ 試作中":""} ・ 詳しく見る →`;
     tip.append(b,p,m);tip.href="app.html?id="+encodeURIComponent(h.app.id);
     tip.style.transform=`translate(${Math.min(x+16,hero.clientWidth-260)}px,${y-20}px)`;tip.hidden=false;
   }
