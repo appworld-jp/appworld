@@ -47,7 +47,7 @@
     const grid = $("grid"); grid.replaceChildren();
     list.forEach(x => {
       const li = document.createElement("li");
-      const a = document.createElement("a"); a.className = "item glass"; a.href = "#"; a.style.setProperty("--c", x.c);
+      const a = document.createElement("a"); a.className = "item glass"; a.href = "app.html?id=" + encodeURIComponent(x.id); a.style.setProperty("--c", x.c);
       a.innerHTML = '<span class="mini"><b></b></span><span class="it"><span class="date"></span><h2><span class="nm"></span><span class="sample">サンプル</span></h2><p></p><span class="meta"><span></span><span></span><span></span></span></span>';
       a.querySelector(".mini b").textContent = x.n[0];
       a.querySelector(".date").textContent = x.d.replaceAll("-", ".");

@@ -4,7 +4,7 @@ const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
 /* ---- rail ---- */
 const rail=document.getElementById("rail");
 APPS.forEach((a,i)=>{
-  const el=document.createElement("a");el.className="panel glass";el.href="#shelf";el.style.setProperty("--c",a.c);
+  const el=document.createElement("a");el.className="panel glass";el.href="app.html?id="+encodeURIComponent(a.id);el.style.setProperty("--c",a.c);
   el.innerHTML=`<div class="p-top"><span class="cap">${String(i+1).padStart(2,"0")}</span><span class="p-price">¥0<i>FREE</i></span><h3 class="p-name"></h3><span class="sample">サンプル</span></div>
     <div class="p-vis"><div class="icon"><b></b></div></div>
     <div><p class="p-line"></p><div class="p-spec"><span></span><span></span></div></div>`;
@@ -117,7 +117,7 @@ rail.addEventListener("wheel",e=>{if(Math.abs(e.deltaY)>Math.abs(e.deltaX)&&rail
     const b=document.createElement("b");b.textContent=h.app.n;
     const p=document.createElement("span");p.textContent=h.app.t;
     const m=document.createElement("small");m.textContent=`${h.app.p} ・ ${h.app.g} ・ 詳しく見る →`;
-    tip.append(b,p,m);tip.href="apps.html?q="+encodeURIComponent(h.app.n);
+    tip.append(b,p,m);tip.href="app.html?id="+encodeURIComponent(h.app.id);
     tip.style.transform=`translate(${Math.min(x+16,hero.clientWidth-260)}px,${y-20}px)`;tip.hidden=false;
   }
 
