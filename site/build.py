@@ -21,7 +21,7 @@ from check_listing import CATEGORIES, PLATFORMS, load_all
 
 HERE = pathlib.Path(__file__).resolve().parent
 SITE_NAME = "Shipyard"
-TAGLINE = "AIでつくったアプリの、デビューの場所"
+TAGLINE = "AIで作った個人開発アプリの新作紹介サイト"
 DAILY_FREE_SLOTS = 10
 SHOW_PROTO_BANNER = True  # turned off by --production
 SITE_URL = None           # set by build(); enables canonical/og:url
@@ -75,17 +75,17 @@ def page(title: str, body: str, *, artifact_index: bool = False, desc: str = TAG
     nav = (
         '<header class="top"><div class="in">'
         f'<a class="brand" href="index.html"><span class="mark" aria-hidden="true"></span>{SITE_NAME}</a>'
-        '<nav aria-label="メイン"><a href="index.html">新着</a><a href="weeks.html">週ごと</a>'
-        '<a class="cta" href="submit.html">作品を載せる</a></nav></div></header>'
+        '<nav aria-label="メイン"><a href="index.html">新着</a><a href="weeks.html">過去の掲載</a>'
+        '<a class="cta" href="submit.html">掲載する</a></nav></div></header>'
         + ('<div class="proto"><div class="in">試作版 · 掲載されている作品はすべて架空のサンプルです</div></div>'
            if SHOW_PROTO_BANNER else "")
     )
     foot = (
         '<footer class="foot"><div class="in">'
         f'<p class="f-brand"><b>{SITE_NAME}</b>{e(TAGLINE)}</p>'
-        '<nav class="f-links" aria-label="サイトの情報"><a href="submit.html">作品を載せる</a>'
-        '<a href="about.html">この場所について</a><a href="about.html#terms">掲載規約</a>'
-        '<a href="about.html#privacy">プライバシー</a><a href="feed.xml">RSS</a></nav>'
+        '<nav class="f-links" aria-label="サイトの情報"><a href="submit.html">掲載する</a>'
+        '<a href="about.html">Shipyardとは</a><a href="about.html#terms">掲載規約</a>'
+        '<a href="about.html#privacy">プライバシーポリシー</a><a href="feed.xml">RSS</a></nav>'
         "</div></footer>"
     )
     if artifact_index:
@@ -141,18 +141,18 @@ def board(apps: list[dict], today: date, total: int) -> str:
         for i, a in enumerate(apps, 1)
     )
     empty = (
-        '<div class="b-empty"><p>最初のデビューを待っています</p>'
-        '<a href="submit.html">あなたの作品を載せる →</a></div>'
+        '<div class="b-empty"><p>まだ掲載作品はありません</p>'
+        '<a href="submit.html">最初の1件を掲載する →</a></div>'
     )
     return (
         f'<aside class="board" aria-label="{e(title)}">'
         f'<div class="b-head"><span>{e(title)}</span><span class="b-date">{today.month:02d}/{today.day:02d}</span></div>'
         + (
-            '<div class="b-cols" aria-hidden="true"><span>No.</span><span>作品</span><span>対応</span><span>公開</span></div>'
+            '<div class="b-cols" aria-hidden="true"><span>No.</span><span>作品名</span><span>対応</span><span>公開日</span></div>'
             f'<ol class="b-rows">{rows}</ol>' if rows else empty
         )
         # The count only reads as momentum once there is some; a small number reads as an empty room.
-        + (f'<div class="b-foot">これまでに {total} 作品がデビュー</div>' if total >= 10 else "")
+        + (f'<div class="b-foot">掲載作品 {total} 件</div>' if total >= 10 else "")
         + "</aside>"
     )
 
@@ -162,11 +162,11 @@ def maker_band(title: str, lead: str) -> str:
     return (
         '<section class="maker" aria-labelledby="maker-h">'
         f'<div class="maker-copy"><h2 id="maker-h">{e(title)}</h2><p>{e(lead)}</p>'
-        '<a class="btn primary" href="submit.html">作品を載せる</a></div>'
+        '<a class="btn primary" href="submit.html">掲載を申請する</a></div>'
         '<ul class="perks">'
-        "<li><b>無料で載せられる</b><span>申請から公開まで、費用はかかりません</span></li>"
-        "<li><b>デビューの日はトップに</b><span>公開日の朝、トップの「今日のデビュー」に並びます</span></li>"
-        "<li><b>ページはずっと残る</b><span>週ごとの一覧に残り、Xでシェアできる専用のページができます</span></li>"
+        "<li><b>掲載は無料</b><span>申請から公開まで、費用は一切かかりません</span></li>"
+        "<li><b>公開日はトップで紹介</b><span>公開日の朝、トップページの「今日のデビュー」に表示されます</span></li>"
+        "<li><b>紹介ページがずっと残る</b><span>作品ごとの紹介ページができ、Xでのシェアにも使えます</span></li>"
         "</ul>"
         "</section>"
     )
@@ -174,7 +174,7 @@ def maker_band(title: str, lead: str) -> str:
 
 def share_link(app: dict, site_url: str) -> str:
     """A plain link to X's post composer, pre-filled for the maker. No script, no API, no cost."""
-    text = f"{app['name']}を Shipyard でデビューさせました！\n{app['tagline']}"
+    text = f"{app['name']}をShipyardに掲載しました！\n{app['tagline']}"
     url = f"{site_url.rstrip('/')}/app-{app['id']}.html"
     return "https://x.com/intent/post?" + urlencode({"text": text, "url": url, "hashtags": "AI個人開発"})
 
@@ -220,22 +220,22 @@ def build(today: date, artifact: bool, site_url: str | None = None, *, productio
     if featured:
         pr_block = (
             '<section class="sec feat"><div class="sec-h"><h2><span class="eyebrow">PR</span>今週の注目</h2>'
-            "<p>作り手が購入した掲載枠です</p></div>"
+            "<p>有料の掲載枠です</p></div>"
             f'<ol class="rows">{"".join(row(a, pr=True) for a in featured)}</ol></section>'
         )
     if live:
-        cta = ('<a class="btn primary" href="#new">新作を見る</a>'
-               '<a class="btn" href="submit.html">作品を載せる（無料）</a>')
+        cta = ('<a class="btn primary" href="#new">新着を見る</a>'
+               '<a class="btn" href="submit.html">無料で掲載する</a>')
     else:
-        cta = ('<a class="btn primary" href="submit.html">作品を載せる（無料）</a>'
-               '<a class="btn" href="about.html">この場所について</a>')
+        cta = ('<a class="btn primary" href="submit.html">無料で掲載する</a>'
+               '<a class="btn" href="about.html">Shipyardとは</a>')
     hero = (
         '<section class="hero"><div class="in hero-grid">'
         '<div class="hero-copy">'
-        '<p class="kicker">AI個人開発のデビュー掲示板</p>'
-        "<h1><span>AIでつくった</span><span>アプリの、</span><br><span>デビューの場所。</span></h1>"
-        "<p>AIを使って個人がつくったアプリやWebサービスを、デビューの日にここで紹介します。"
-        "リンク先は、公式ストアか公式サイトだけです。</p>"
+        '<p class="kicker">AI個人開発の新作紹介サイト</p>'
+        "<h1><span>AIで作ったアプリが、</span><br><span>毎日ここでデビュー。</span></h1>"
+        "<p>個人がAIを使って作ったアプリやWebサービスを、毎日紹介しています。"
+        "リンク先は公式ストアか公式サイトに限っています。</p>"
         f'<div class="hero-cta">{cta}</div>'
         "</div>"
         + board(todays[:6] or live[:6], today, len(live))
@@ -244,21 +244,21 @@ def build(today: date, artifact: bool, site_url: str | None = None, *, productio
     if live:
         older = [a for a in live if a["launch_date"] != today.isoformat()]
         later = (
-            section("この1週間", recent, empty="", eyebrow="過去7日", note=f"{len(recent)} 件") if recent
-            else section("最近の作品", older[:10], empty="", note=f"{len(older[:10])} 件")
+            section("この1週間の新着", recent, empty="", note=f"{len(recent)} 件") if recent
+            else section("これまでの作品", older[:10], empty="", note=f"{len(older[:10])} 件")
             if older else ""
         )
         listings_html = (
             pr_block
-            + section("今日のデビュー", todays, empty="今日のデビューはまだありません。",
+            + section("今日のデビュー", todays, empty="今日公開の作品はまだありません。",
                       eyebrow=jdate(today), note=f"{len(todays)} 件")
             + later
-            + maker_band("作品をつくった方へ", "AIでつくったアプリやWebサービスを、無料で紹介しています。")
+            + maker_band("アプリを作った方へ", "AIで作ったアプリやWebサービスを、無料で掲載できます。")
         )
     else:
         listings_html = maker_band(
-            "最初の作品を募集しています",
-            "AIでつくったアプリやWebサービスがあれば、ぜひ載せてください。最初の作品が、この場所の顔になります。",
+            "第1号の作品を募集しています",
+            "AIで作ったアプリやWebサービスがあれば、ぜひ掲載してください。掲載は無料で、申請は5分ほどで終わります。",
         )
     body = hero + f'<main class="in main" id="new">{listings_html}</main>'
     (out / "index.html").write_text(page(f"{SITE_NAME} — {TAGLINE}", body, artifact_index=artifact), encoding="utf-8")
@@ -267,13 +267,13 @@ def build(today: date, artifact: bool, site_url: str | None = None, *, productio
         d = date.fromisoformat(a["launch_date"])
         is_pr = a.get("featured_week") == this_week
         if a.get("sample"):
-            go = '<p class="go-note">これは架空のサンプルなので、リンク先はありません。</p>'
+            go = '<p class="go-note">架空のサンプルのため、リンクはありません。</p>'
         else:
             go = (
                 f'<a class="go" href="{e(a["url"])}" rel="noopener noreferrer nofollow ugc" target="_blank">'
                 f'{e(PLATFORMS[a["platform"]])}で開く<span class="ext" aria-label="（外部サイト）">↗</span></a>'
-                f'<p class="go-note">{SITE_NAME} の外のサイトに移動します。'
-                "載せているのは公式ストアと公式サイトへのリンクだけで、ファイルを直接ダウンロードさせるリンクはありません。</p>"
+                f'<p class="go-note">外部サイトに移動します。{SITE_NAME}に掲載しているのは公式ストアと公式サイトへのリンクのみで、'
+                "ファイルを直接ダウンロードさせるリンクはありません。</p>"
             )
         detail = (
             '<main class="in main detail">'
@@ -283,21 +283,21 @@ def build(today: date, artifact: bool, site_url: str | None = None, *, productio
             f'<p class="line">{e(a["tagline"])}</p></div></div>'
             f'<p class="desc">{e(a["description"])}</p>'
             '<section class="pass" aria-label="作品の情報">'
-            f'<div class="pass-top"><span>デビュー記録</span><span class="pass-id">{e(a["id"].upper())}</span></div>'
+            f'<div class="pass-top"><span>作品情報</span><span class="pass-id">{e(a["id"].upper())}</span></div>'
             '<dl class="facts">'
-            f"<div><dt>デビュー</dt><dd>{d.year}年{jdate(d)}</dd></div>"
-            f"<div><dt>使える場所</dt><dd>{e(PLATFORMS[a['platform']])}</dd></div>"
-            f"<div><dt>作り手</dt><dd>{e(a['maker_name'])}</dd></div>"
+            f"<div><dt>公開日</dt><dd>{d.year}年{jdate(d)}</dd></div>"
+            f"<div><dt>対応</dt><dd>{e(PLATFORMS[a['platform']])}</dd></div>"
+            f"<div><dt>開発者</dt><dd>{e(a['maker_name'])}</dd></div>"
             f"<div><dt>ジャンル</dt><dd>{e(CATEGORIES[a['category']])}</dd></div>"
-            f"<div class=\"wide\"><dt>つくるのに使ったAI</dt><dd>{e('、'.join(a['ai_tools']))}</dd></div>"
+            f"<div class=\"wide\"><dt>使用したAI</dt><dd>{e('、'.join(a['ai_tools']))}</dd></div>"
             "</dl></section>"
             f'<div class="go-box">{go}</div>'
             + (
-                '<div class="share"><p><b>この作品の作り手の方へ</b>このページをシェアして、最初の利用者を集めましょう。</p>'
-                f'<a class="btn" href="{e(share_link(a, site_url))}" target="_blank" rel="noopener noreferrer">Xでシェアする</a></div>'
+                '<div class="share"><p><b>開発者の方へ</b>このページをXでシェアして、作品を広めましょう。</p>'
+                f'<a class="btn" href="{e(share_link(a, site_url))}" target="_blank" rel="noopener noreferrer">Xでシェア</a></div>'
                 if site_url and not a.get("sample") else ""
             )
-            + '<p class="report">問題のある掲載を見つけたら、<a href="about.html#report">通報の方法</a>をご覧ください。</p>'
+            + '<p class="report">問題のある掲載を見つけた場合は、<a href="about.html#report">こちら</a>からお知らせください。</p>'
             "</main>"
         )
         (out / f"app-{a['id']}.html").write_text(
@@ -307,14 +307,14 @@ def build(today: date, artifact: bool, site_url: str | None = None, *, productio
     for a in live:
         weeks.setdefault(week_id(date.fromisoformat(a["launch_date"])), []).append(a)
     for wid, apps in weeks.items():
-        body = '<main class="in main">' + section(f"{week_label(wid)}のデビュー", apps, empty="", note=f"{len(apps)} 件") + "</main>"
+        body = '<main class="in main">' + section(f"{week_label(wid)}に公開された作品", apps, empty="", note=f"{len(apps)} 件") + "</main>"
         (out / f"week-{wid}.html").write_text(page(f"{week_label(wid)} — {SITE_NAME}", body), encoding="utf-8")
     week_list = "".join(
         f'<li><a class="wk" href="week-{e(w)}.html"><span>{e(week_label(w))}</span><span class="n">{len(weeks[w])} 件</span></a></li>'
         for w in sorted(weeks, reverse=True)
     )
     (out / "weeks.html").write_text(
-        page(f"週ごと — {SITE_NAME}", f'<main class="in main"><section class="sec"><div class="sec-h"><h2>週ごとの新作</h2></div><ol class="weeks">{week_list}</ol></section></main>'),
+        page(f"過去の掲載 — {SITE_NAME}", f'<main class="in main"><section class="sec"><div class="sec-h"><h2>過去の掲載作品</h2></div><ol class="weeks">{week_list}</ol></section></main>'),
         encoding="utf-8",
     )
 
@@ -322,84 +322,84 @@ def build(today: date, artifact: bool, site_url: str | None = None, *, productio
         price = (
             '<div class="tbl"><table>'
             "<thead><tr><th>掲載の種類</th><th>料金</th><th>内容</th></tr></thead><tbody>"
-            '<tr><td>通常</td><td class="n">無料</td><td>順番に公開されます</td></tr>'
-            '<tr><td>優先掲載</td><td class="n">¥3,000</td><td>希望の日に公開されます</td></tr>'
-            '<tr><td>注目枠</td><td class="n">¥8,000／週</td><td>1週間、トップの「今週の注目」に「PR」つきで表示されます</td></tr>'
+            '<tr><td>通常掲載</td><td class="n">無料</td><td>申請順に公開します</td></tr>'
+            '<tr><td>優先掲載</td><td class="n">¥3,000</td><td>希望の日に公開します</td></tr>'
+            '<tr><td>注目枠</td><td class="n">¥8,000／週</td><td>1週間、トップページの「今週の注目」に「PR」付きで表示します</td></tr>'
             "</tbody></table></div>"
-            f'<p class="small">お支払いは決済会社の画面で行い、カード情報は {SITE_NAME} に届きません。</p>'
+            f'<p class="small">お支払いは決済会社の画面で行います。カード情報が{SITE_NAME}に届くことはありません。</p>'
         )
     else:
-        price = "<p>掲載は無料です。費用は一切かかりません。</p>"
+        price = "<p>掲載は無料です。</p>"
     if submit_url:
         form_box = (
             '<div class="go-box">'
-            f'<a class="go" href="{e(submit_url)}" target="_blank" rel="noopener noreferrer">申請フォームを開く'
+            f'<a class="go" href="{e(submit_url)}" target="_blank" rel="noopener noreferrer">申請フォームへ'
             '<span class="ext" aria-label="（GitHub）">↗</span></a>'
-            '<p class="go-note">申請には GitHub のアカウント（無料）が必要です。申請の内容は GitHub 上で公開されるので、'
-            "メールアドレスなどの個人情報は書かないでください。</p></div>"
+            '<p class="go-note">申請にはGitHubアカウント（無料）が必要です。申請内容はGitHub上で公開されるため、'
+            "メールアドレスなどの個人情報は記入しないでください。</p></div>"
         )
     else:
         form_box = '<div class="go-box"><p class="go-note">申請フォームは準備中です（試作版）。</p></div>'
     contact = (
-        f'<a href="{e(contact_url)}" target="_blank" rel="noopener noreferrer">運営の窓口</a>' if contact_url else "運営の窓口（準備中）"
+        f'<a href="{e(contact_url)}" target="_blank" rel="noopener noreferrer">お問い合わせ窓口</a>' if contact_url else "お問い合わせ窓口（準備中）"
     )
     submit = f"""<main class="in main prose">
-<h1>作品を載せる</h1>
-<p class="lead">AIを使ってつくったアプリやWebサービスを、無料で紹介しています。デビューの日の朝にトップに並び、その後も週ごとの一覧に残ります。</p>
+<h1>作品を掲載する</h1>
+<p class="lead">AIを使って作ったアプリやWebサービスを、無料で掲載できます。公開日にはトップページで紹介され、その後も過去の掲載作品として残ります。</p>
 {form_box}
-<h2>載るまでの流れ</h2>
+<h2>掲載までの流れ</h2>
 <ol class="steps">
-<li><b>申請フォームに記入する</b><span>作品名、一言説明（40文字まで）、説明（600文字まで）、リンク、つくるのに使ったAI（Claude Code、Cursor など）</span></li>
-<li><b>自動チェック</b><span>送信するとすぐに、リンクが公式ストアか https の公式サイトか、短縮URLやファイルの直接ダウンロードでないかを確かめ、結果をお知らせします</span></li>
-<li><b>運営が確認する</b><span>内容を確認して承認します。通常1〜2日です</span></li>
-<li><b>デビュー</b><span>申請の順に、1日{DAILY_FREE_SLOTS}件まで公開します。公開日の朝、トップに並びます</span></li>
+<li><b>申請フォームに記入</b><span>作品名、一言説明（40文字以内）、説明文（600文字以内）、リンク、使用したAI（Claude Code、Cursorなど）を入力します</span></li>
+<li><b>自動チェック</b><span>送信後すぐに、リンク先が公式ストアやhttpsの公式サイトか、短縮URLやファイルの直接ダウンロードでないかを確認し、結果をお知らせします</span></li>
+<li><b>運営による確認</b><span>内容を確認のうえ承認します。通常1〜2日かかります</span></li>
+<li><b>公開</b><span>申請順に、1日{DAILY_FREE_SLOTS}件まで公開します。公開日の朝、トップページに表示されます</span></li>
 </ol>
 <h2>料金</h2>
 {price}
-<h2>載せられないもの</h2>
+<h2>掲載できないもの</h2>
 <ul>
-<li>ほかの人がつくった作品</li>
-<li>ファイルを直接ダウンロードさせるもの（APK、ZIP など）。公式ストアか公式サイトのリンクに限ります</li>
-<li>「稼げる」「副業で月○万円」などをうたうもの、成人向け、ギャンブル</li>
-<li>個人情報を不正に集めるもの、法律に反するもの</li>
+<li>他の人が作った作品</li>
+<li>ファイルを直接ダウンロードさせるもの（APK、ZIPなど）。リンクは公式ストアか公式サイトに限ります</li>
+<li>「稼げる」「副業で月○万円」などをうたうもの、アダルト、ギャンブル関連</li>
+<li>個人情報を不正に収集するもの、法令に違反するもの</li>
 </ul>
 </main>"""
-    (out / "submit.html").write_text(page(f"作品を載せる — {SITE_NAME}", submit, path="submit.html",
-                                          desc="AIでつくったアプリやWebサービスを、無料で掲載できます。"), encoding="utf-8")
+    (out / "submit.html").write_text(page(f"作品を掲載する — {SITE_NAME}", submit, path="submit.html",
+                                          desc="AIで作ったアプリやWebサービスを、無料で掲載できます。"), encoding="utf-8")
 
     about = f"""<main class="in main prose">
-<h1>この場所について</h1>
-<p>{SITE_NAME} は、AIを使って個人がつくったアプリやWebサービスを紹介する掲示板です。作品をつくるのは作り手で、運営は紹介する場所を用意しているだけです。</p>
-<h2>安全のために決めていること</h2>
+<h1>Shipyardとは</h1>
+<p>{SITE_NAME}は、個人がAIを使って作ったアプリやWebサービスを紹介するサイトです。運営は紹介の場を提供しており、各作品の開発・運営はそれぞれの開発者が行っています。</p>
+<h2>安全への取り組み</h2>
 <ul>
-<li>掲載するのは、公式ストア（App Store、Google Play）か https の公式サイトへのリンクだけです。ファイルの配布はしません</li>
-<li>このサイトは会員登録やログインがなく、あなたの個人情報を預かりません</li>
-<li>広告や解析のための外部のプログラムを読み込みません</li>
+<li>掲載するのは、公式ストア（App Store、Google Play）かhttpsの公式サイトへのリンクのみです。ファイルの配布は行いません</li>
+<li>会員登録やログインはなく、利用者の個人情報をお預かりしません</li>
+<li>広告やアクセス解析などの外部プログラムは読み込んでいません</li>
 <li>有料の掲載には「PR」と表示します</li>
 </ul>
 <h2 id="report">通報・お問い合わせ</h2>
-<p>問題のある掲載を見つけたら、{contact}までお知らせください。確認のうえ、すぐに掲載を取り下げます。</p>
+<p>問題のある掲載を見つけた場合は、{contact}からお知らせください。確認のうえ、速やかに対応します。</p>
 <h2 id="terms">掲載規約</h2>
 <ol>
-<li>掲載できるのは、申請者（または申請者のチーム）がつくった作品だけです。</li>
-<li>次のものは掲載できません。ほかの人の作品、ファイルを直接ダウンロードさせるもの、「稼げる」などをうたうもの、成人向け、ギャンブル、個人情報を不正に集めるもの、法律や各ストアの規約に反するもの。</li>
-<li>掲載の可否は運営が判断します。理由を詳しくお伝えできない場合があります。</li>
-<li>掲載後でも、問題が見つかった場合や申請者から依頼があった場合は、運営の判断で取り下げます。</li>
-<li>掲載された作品の内容や安全性は、作り手が責任を持ちます。運営はリンク先を自動と目視で確認していますが、作品の安全や品質を保証するものではありません。作品を使うときは、ご自身でも確かめてください。</li>
-<li>申請された文章は、このサイトと運営の X アカウントでの紹介に使います。</li>
-<li>この規約は変更することがあります。変更したときはこのページでお知らせします。</li>
+<li>掲載できるのは、申請者本人（または申請者が所属するチーム）が開発した作品に限ります。</li>
+<li>次のものは掲載できません：他の人の作品、ファイルを直接ダウンロードさせるもの、「稼げる」などをうたうもの、アダルト、ギャンブル関連、個人情報を不正に収集するもの、法令や各ストアの規約に違反するもの。</li>
+<li>掲載の可否は運営が判断します。判断の理由はお答えできない場合があります。</li>
+<li>掲載後に問題が見つかった場合や、申請者から依頼があった場合は、運営の判断で掲載を取り下げます。</li>
+<li>掲載作品の内容や安全性については、各開発者が責任を負います。運営はリンク先を自動チェックと目視で確認していますが、作品の安全性や品質を保証するものではありません。ご利用の際は、ご自身でもご確認ください。</li>
+<li>申請された内容は、本サイトおよび運営のXアカウントでの紹介に使用します。</li>
+<li>本規約は変更することがあります。変更した場合は、このページでお知らせします。</li>
 </ol>
 <h2 id="privacy">プライバシーポリシー</h2>
 <ul>
-<li>このサイトには会員登録やログインがなく、利用者の個人情報を集めていません。Cookie や広告・解析のためのプログラムも使っていません。</li>
-<li>サイトの配信を担うサービスが、安全のためにアクセスの記録（IPアドレスなど）を一時的に残すことがあります。</li>
-<li>掲載の申請は GitHub で受け付けています。申請に書かれた内容と GitHub の公開プロフィールは、GitHub 上で公開されます。GitHub での情報の扱いは GitHub のプライバシーポリシーに従います。</li>
-<li>お問い合わせへの対応に必要な範囲を超えて、情報を使ったり第三者に渡したりしません。</li>
+<li>本サイトには会員登録やログインの機能がなく、利用者の個人情報を収集していません。Cookieや、広告・アクセス解析のためのプログラムも使用していません。</li>
+<li>サイトの配信サービス（Cloudflare）が、セキュリティのためにアクセスログ（IPアドレスなど）を一時的に記録する場合があります。</li>
+<li>掲載の申請はGitHubで受け付けています。申請内容とGitHubの公開プロフィールはGitHub上で公開され、その取り扱いはGitHubのプライバシーポリシーに従います。</li>
+<li>お問い合わせへの対応に必要な範囲を超えて、情報を利用したり第三者に提供したりすることはありません。</li>
 </ul>
 <h2>特定商取引法に基づく表記</h2>
-<p>現在、有料のサービスは提供していません。有料の掲載を始める前に、このページに掲載します。</p>
+<p>現在、有料サービスは提供していません。有料の掲載を開始する際に、このページに記載します。</p>
 </main>"""
-    (out / "about.html").write_text(page(f"この場所について — {SITE_NAME}", about, path="about.html"), encoding="utf-8")
+    (out / "about.html").write_text(page(f"Shipyardとは — {SITE_NAME}", about, path="about.html"), encoding="utf-8")
 
     items = "".join(
         f"<item><title>{e(a['name'])} — {e(a['tagline'])}</title>"

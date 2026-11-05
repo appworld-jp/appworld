@@ -15,6 +15,9 @@ from datetime import date
 from urllib.parse import urlsplit
 
 PLATFORMS = {"ios": "iPhone", "android": "Android", "web": "Web"}
+LABELS = {  # field names as the request form shows them
+    "name": "作品名", "tagline": "一言説明", "description": "説明文", "url": "リンク", "maker_name": "開発者の表示名",
+}
 STORE_HOSTS = {"ios": {"apps.apple.com"}, "android": {"play.google.com"}}
 CATEGORIES = {
     "productivity": "仕事・効率化",
@@ -54,32 +57,32 @@ def check(listing: dict, filename: str = "") -> tuple[list[str], list[str]]:
 
     lid = listing.get("id", "")
     if not ID_RE.match(lid):
-        errors.append("id は小文字の英数字とハイフンで3〜40文字")
+        errors.append("id は小文字の英数字とハイフンで3〜40文字にしてください")
     if filename and pathlib.Path(filename).stem != lid:
-        errors.append(f"ファイル名と id が違う（{pathlib.Path(filename).name} / {lid}）")
+        errors.append(f"ファイル名と id が一致しません（{pathlib.Path(filename).name} / {lid}）")
 
     for key, limit in LIMITS.items():
         value = listing.get(key)
         if not isinstance(value, str) or not value.strip():
-            errors.append(f"{key} がない")
+            errors.append(f"「{LABELS.get(key, key)}」が入力されていません")
         elif len(value) > limit:
-            errors.append(f"{key} は {limit} 文字まで（今は {len(value)} 文字）")
+            errors.append(f"「{LABELS.get(key, key)}」は{limit}文字以内にしてください（現在{len(value)}文字）")
         elif "<" in value or ">" in value:
-            errors.append(f"{key} に < や > は使えない")
+            errors.append(f"「{LABELS.get(key, key)}」に < や > は使えません")
 
     platform = listing.get("platform")
     if platform not in PLATFORMS:
-        errors.append("platform は ios / android / web のどれか")
+        errors.append("「対応」は iPhone・Android・Web から選んでください")
     if listing.get("category") not in CATEGORIES:
-        errors.append("category が一覧にない")
+        errors.append("「ジャンル」は一覧から選んでください")
     tools = listing.get("ai_tools")
     if not isinstance(tools, list) or not tools or not set(tools) <= AI_TOOLS:
-        errors.append("ai_tools は一覧の中から1つ以上")
+        errors.append("「使用したAI」を1つ以上選んでください")
 
     try:
         date.fromisoformat(listing.get("launch_date", ""))
     except ValueError:
-        errors.append("launch_date は YYYY-MM-DD")
+        errors.append("launch_date は YYYY-MM-DD の形にしてください")
 
     url = listing.get("url", "")
     parts = urlsplit(url)
@@ -91,28 +94,28 @@ def check(listing: dict, filename: str = "") -> tuple[list[str], list[str]]:
     else:
         try:
             ipaddress.ip_address(host)
-            errors.append("IP アドレスのリンクは使えない")
+            errors.append("IPアドレスのリンクは使えません")
         except ValueError:
             pass
         if host in SHORTENERS:
-            errors.append("短縮 URL は使えない（行き先が見えないため）")
+            errors.append("短縮URLは使えません（リンク先が分からないため）")
         if BLOCKED_EXT.search(parts.path):
-            errors.append("ファイルを直接ダウンロードさせるリンクは使えない")
+            errors.append("ファイルを直接ダウンロードさせるリンクは使えません")
         if parts.username or parts.password:
             errors.append("リンクに認証情報を含めない")
         stores = STORE_HOSTS.get(platform)
         if stores and host not in stores:
-            errors.append(f"{PLATFORMS.get(platform)} のアプリは公式ストア（{', '.join(sorted(stores))}）のリンクのみ")
+            errors.append(f"{PLATFORMS.get(platform)}のアプリは、公式ストア（{', '.join(sorted(stores))}）のリンクにしてください")
 
     text = " ".join(str(listing.get(k, "")) for k in ("name", "tagline", "description"))
     if REVIEW_WORDS.search(text):
-        warnings.append("対象外の可能性がある言葉を含む（運営が確認する）")
+        warnings.append("掲載できない内容に当たる可能性がある言葉が含まれています（運営が確認します）")
     if not listing.get("sample"):
         warnings.append("リンク先の安全性の判定（Safe Browsing）は公開前に運営が実行する")
 
     featured = listing.get("featured_week")
     if featured is not None and not re.match(r"^\d{4}-W\d{2}$", str(featured)):
-        errors.append("featured_week は 2026-W43 の形")
+        errors.append("featured_week は 2026-W43 の形にしてください")
     return errors, warnings
 
 
@@ -123,7 +126,7 @@ def load_all(folder: pathlib.Path) -> tuple[list[dict], dict]:
         errors, warnings = check(data, str(path))
         other = seen_urls.get(data.get("url"))
         if other:
-            errors.append(f"同じリンクがすでに掲載されている（{other}）")  # FR-C5
+            errors.append(f"同じリンクの作品がすでに掲載されています（{other}）")  # FR-C5
         seen_urls[data.get("url")] = data.get("id")
         if errors or warnings:
             problems[path.name] = (errors, warnings)

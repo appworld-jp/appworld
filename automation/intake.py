@@ -23,8 +23,8 @@ DAILY_FREE_SLOTS = 10
 PLATFORM_BY_LABEL = {v: k for k, v in PLATFORMS.items()}
 CATEGORY_BY_LABEL = {v: k for k, v in CATEGORIES.items()}
 FIELDS = {
-    "作品名": "name", "一言説明": "tagline", "説明": "description", "使える場所": "platform",
-    "リンク": "url", "分類": "category", "つくるのに使ったAI（1つ以上）": "ai_tools", "作り手の表示名": "maker_name",
+    "作品名": "name", "一言説明": "tagline", "説明文": "description", "対応": "platform",
+    "リンク": "url", "ジャンル": "category", "使用したAI（1つ以上）": "ai_tools", "開発者の表示名": "maker_name",
 }
 
 
@@ -78,15 +78,15 @@ if __name__ == "__main__":
     args = ap.parse_args()
     body = pathlib.Path(args.body_file).read_text(encoding="utf-8") if args.body_file else sys.stdin.read()
     if len(body) > 20_000:
-        print("申請の本文が長すぎます"); sys.exit(1)
+        print("申請の本文が長すぎます。短くしてから、もう一度送信してください。"); sys.exit(1)
     listing = to_listing(args.issue, body, args.today, SITE / "apps")
     path = SITE / "apps" / f"{listing['id']}.json"
     errors, warnings = check(listing, str(path))
     if errors:
-        print("自動チェックで直してほしい点があります:\n" + "\n".join(f"- {e}" for e in errors))
+        print("自動チェックの結果、修正が必要な点があります。申請を編集すると、もう一度チェックします。\n" + "\n".join(f"- {e}" for e in errors))
         sys.exit(1)
-    print(f"自動チェックを通りました。公開予定日: {listing['launch_date']}（運営の承認後）")
+    print(f"自動チェックを通過しました。運営が確認のうえ、{listing['launch_date']} 以降に公開します。")
     for w in warnings:
-        print(f"- 運営が確認: {w}")
+        print(f"- 確認事項: {w}")
     if args.write:
         path.write_text(json.dumps(listing, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
