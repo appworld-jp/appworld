@@ -17,7 +17,7 @@ body:
     validations: {required: true}
   - type: input
     id: tagline
-    attributes: {label: 一言説明, description: 40文字まで（例: 冷蔵庫の写真から、今夜の献立を3つ提案）}
+    attributes: {label: 一言説明, description: 40文字まで（例：冷蔵庫の写真から、今夜の献立を3つ提案）}
     validations: {required: true}
   - type: textarea
     id: description
