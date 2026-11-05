@@ -29,7 +29,7 @@ window.APPS = [
 
 /* Name candidates (review only). The choice is remembered per browser so both pages agree. */
 (function () {
-  const NAMES = ["App World", "AI App World", "Appverse", "App Planet", "Apptown", "App Garden", "NOA"];
+  const NAMES = ["Appwa", "Appolis", "Apperia", "Appdom", "Appora", "Appverse", "App World"];
   let current = NAMES[0];
   try { const saved = localStorage.getItem("preview-name"); if (NAMES.includes(saved)) current = saved; } catch (e) {}
   const apply = n => {
