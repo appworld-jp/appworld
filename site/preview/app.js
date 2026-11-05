@@ -95,28 +95,32 @@ rail.addEventListener("wheel",e=>{if(Math.abs(e.deltaY)>Math.abs(e.deltaX)&&rail
   }
   addEventListener("resize",size);size();
 
-  // pointer: drag to turn, hover to name, click to open
-  const ray=new THREE.Raycaster();let px=-1,py=-1,hover=null,drag=false,lx=0,spin=0,vel=0,moved=0;
-  const sprites=items.map(it=>it.sp);
+  // pointer: drag in any direction to turn (with inertia), hover to see the name, click/tap for details.
+  // A grab area over the sphere only, so on phones the rest of the hero still scrolls the page.
+  const grab=document.createElement("div");grab.className="w-grab";grab.setAttribute("aria-hidden","true");hero.appendChild(grab);
+  const label=document.createElement("span");label.className="w-name";label.hidden=true;hero.appendChild(label);
+  const ray=new THREE.Raycaster(),sprites=items.map(it=>it.sp);
+  let px=-1,py=-1,hover=null,drag=false,lx=0,ly=0,vx=0,vy=0,moved=0;
+  const qx=new THREE.Quaternion(),qy=new THREE.Quaternion(),AX=new THREE.Vector3(1,0,0),AY=new THREE.Vector3(0,1,0);
+  world.quaternion.setFromEuler(new THREE.Euler(0.18,0,0));
+  function turn(dx,dy){qy.setFromAxisAngle(AY,dx);qx.setFromAxisAngle(AX,dy);world.quaternion.premultiply(qy).premultiply(qx);}
   function pick(){hover=null;if(px<0)return;ray.setFromCamera({x:px/W()*2-1,y:-(py/H())*2+1},cam);
     const hit=ray.intersectObjects(sprites,false).find(h=>h.object.material.opacity>0.5);if(hit)hover=items[sprites.indexOf(hit.object)];}
-  hero.addEventListener("pointermove",e=>{const b=cv.getBoundingClientRect();px=e.clientX-b.left;py=e.clientY-b.top;
-    if(drag){const dx=e.clientX-lx;moved+=Math.abs(dx);vel=dx*0.004;spin+=vel;lx=e.clientX;}});
-  hero.addEventListener("pointerleave",()=>{px=-1;drag=false;});
-  cv.parentElement.addEventListener("pointerdown",e=>{if(e.target.closest("a"))return;drag=true;moved=0;lx=e.clientX;});
-  addEventListener("pointerup",()=>{drag=false;});
-  hero.addEventListener("click",e=>{
-    if(e.target.closest("a")||moved>6)return;
-    const b=cv.getBoundingClientRect();px=e.clientX-b.left;py=e.clientY-b.top;pick();
-    if(hover){v.copy(hover.sp.position).applyMatrix4(world.matrixWorld).project(cam);showTip(hover,(v.x*.5+.5)*W(),(-v.y*.5+.5)*H());}
-    else tip.hidden=true;
-  });
+  const local=e=>{const b=cv.getBoundingClientRect();px=e.clientX-b.left;py=e.clientY-b.top;};
+  grab.addEventListener("pointerdown",e=>{drag=true;moved=0;lx=e.clientX;ly=e.clientY;vx=vy=0;grab.setPointerCapture(e.pointerId);local(e);});
+  grab.addEventListener("pointermove",e=>{local(e);
+    if(drag){const dx=e.clientX-lx,dy=e.clientY-ly;moved+=Math.abs(dx)+Math.abs(dy);vx=dx*0.006;vy=dy*0.006;turn(vx,vy);lx=e.clientX;ly=e.clientY;}});
+  grab.addEventListener("pointerup",e=>{drag=false;
+    if(moved<6){local(e);pick();
+      if(hover){v.copy(hover.sp.position).applyMatrix4(world.matrixWorld).project(cam);showTip(hover,(v.x*.5+.5)*W(),(-v.y*.5+.5)*H());}
+      else tip.hidden=true;}});
+  grab.addEventListener("pointercancel",()=>{drag=false;});
+  grab.addEventListener("pointerleave",()=>{if(!drag)px=-1;});
 
   const v=new THREE.Vector3(),t0=performance.now(),ease=k=>1-Math.pow(1-k,3);
   function frame(now){
     const t=(now-t0)/1000,mv=reduce?0:1;
-    if(!drag){spin+=vel;vel*=0.94;}
-    world.rotation.y=t*0.09*mv+spin;world.rotation.x=0.18;
+    if(!drag){turn(vx+0.0016*mv,vy);vx*=0.94;vy*=0.94;}   // inertia, plus a slow idle turn
     items.forEach(it=>{
       const k=reduce?1:Math.min(1,Math.max(0,(t-it.delay)/1.6)),e=ease(k);
       it.sp.position.copy(it.from).lerp(it.home,e);
@@ -127,7 +131,10 @@ rail.addEventListener("wheel",e=>{if(Math.abs(e.deltaY)>Math.abs(e.deltaX)&&rail
     });
     world.updateMatrixWorld();
     if(!drag)pick();
-    hero.style.cursor=hover?"pointer":(drag?"grabbing":"");
+    grab.style.cursor=hover?"pointer":(drag?"grabbing":"grab");
+    if(hover&&!drag){v.copy(hover.sp.position).applyMatrix4(world.matrixWorld).project(cam);
+      label.textContent=hover.app.n;label.style.transform=`translate(${(v.x*.5+.5)*W()}px,${(-v.y*.5+.5)*H()+TILE*34}px) translateX(-50%)`;label.hidden=false;}
+    else label.hidden=true;
     renderer.render(scene,cam);
     requestAnimationFrame(frame);
   }

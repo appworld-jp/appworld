@@ -138,6 +138,10 @@ footer a{text-decoration:none}
 .beta{display:inline-block;font-size:10px;font-weight:500;color:#1F5E57;border:1px solid rgba(31,94,87,.55);border-radius:999px;padding:0 8px;margin-left:6px;vertical-align:middle;line-height:1.7;letter-spacing:.04em}
 .d-main h1 .beta{font-size:12px;margin-left:10px}
 
-.foot .hint{margin-left:auto;text-transform:none;letter-spacing:.06em}
-@media (max-width:860px){.foot .hint{display:none}}
 .halo{display:none}
+
+/* sphere: grab area and hover name */
+.w-grab{position:absolute;z-index:4;left:40%;right:0;top:64px;bottom:40px;touch-action:none;cursor:grab}
+@media (max-width:860px){.w-grab{left:0;right:0;top:64px;bottom:auto;height:min(92vw,520px)}}
+.w-name{position:absolute;left:0;top:0;z-index:5;pointer-events:none;font-size:12.5px;font-weight:700;color:var(--char);background:rgba(255,255,255,.72);border:1px solid rgba(255,255,255,.8);box-shadow:0 6px 16px -10px rgba(30,30,30,.5);border-radius:999px;padding:2px 12px;white-space:nowrap;backdrop-filter:blur(6px)}
+.w-name[hidden]{display:none}
