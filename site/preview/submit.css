@@ -1,0 +1,38 @@
+/* Submit page: a short pitch with the key numbers, then steps, what to prepare, rules and FAQ. */
+.sub{display:grid;gap:64px;padding-block:44px 0}
+.sub-hero{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);gap:28px 48px;align-items:end}
+@media (max-width:860px){.sub-hero{grid-template-columns:minmax(0,1fr)}}
+.sub-copy{display:grid;gap:18px}
+.sub-copy h1{font-size:clamp(28px,3.6vw,44px);font-weight:500;line-height:1.45;letter-spacing:.01em}
+.sub-copy .lead{margin:0;color:var(--graphite);font-size:14.5px;line-height:1.95;max-width:34em}
+.acts{display:flex;gap:22px;align-items:center;flex-wrap:wrap}
+.facts{margin:0;border-radius:22px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+.facts div{padding:18px 20px;display:grid;gap:4px;border-top:1px solid var(--hair)}
+.facts div:nth-child(-n+2){border-top:0}
+.facts div:nth-child(2n){border-left:1px solid var(--hair)}
+.facts dd{margin:0;font-size:clamp(18px,2vw,22px);font-weight:500}
+.block{display:grid;gap:4px}
+.ready{border-radius:22px;padding:8px 22px 18px}
+.ready dl{margin:0;display:grid}
+.ready dl div{display:grid;grid-template-columns:9em minmax(0,1fr);gap:12px;padding:13px 0;border-top:1px solid var(--hair)}
+.ready dl div:first-child{border-top:0}
+@media (max-width:560px){.ready dl div{grid-template-columns:minmax(0,1fr);gap:2px}}
+.ready dt{font-weight:500;font-size:14px}
+.ready dd{margin:0;color:var(--graphite);font-size:13.5px;line-height:1.7}
+.warn{margin:8px 0 0;font-size:12.5px;line-height:1.8;color:#6E4510;background:rgba(233,162,59,.14);border:1px solid rgba(233,162,59,.4);border-radius:12px;padding:10px 14px}
+.two{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+@media (max-width:760px){.two{grid-template-columns:minmax(0,1fr)}}
+.rule{border-radius:20px;padding:20px 22px;display:grid;gap:6px;align-content:start}
+.rule h2{font-size:17px;font-weight:700}
+.rule ul{margin:4px 0 0;padding-left:1.1em;display:grid;gap:4px;font-size:13.5px;color:var(--graphite);line-height:1.7}
+.rule .cap{color:#2F6B45}
+.rule.ng .cap{color:#9A3B2C}
+.faq{display:grid;gap:10px}
+.faq details{border-radius:16px;padding:14px 18px}
+.faq summary{cursor:pointer;font-weight:500;font-size:14.5px;list-style:none;display:flex;justify-content:space-between;gap:12px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"＋";color:var(--graphite)}
+.faq details[open] summary::after{content:"－"}
+.faq p{margin:8px 0 0;font-size:13.5px;color:var(--graphite);line-height:1.8}
+.final{border-radius:26px;padding:clamp(24px,4vw,40px);display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.final h2{font-size:clamp(20px,2.4vw,26px);font-weight:500}

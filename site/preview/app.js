@@ -127,8 +127,8 @@ rail.addEventListener("wheel",e=>{if(Math.abs(e.deltaY)>Math.abs(e.deltaX)&&rail
     renderer.setSize(W(),H(),false);cam.aspect=W()/H();cam.updateProjectionMatrix();
     narrow=W()<860;
     const vH=2*Math.tan(THREE.MathUtils.degToRad(cam.fov/2))*cam.position.z,vW=vH*cam.aspect;
-    world.position.set(narrow?0:vW*0.13,narrow?vH*0.23:0,0);
-    world.scale.setScalar(narrow?Math.min(0.62,vW/7.6):0.9);
+    world.position.set(narrow?0:vW*0.13,narrow?vH*0.17:-vH*0.045,0);
+    world.scale.setScalar(narrow?Math.min(0.56,vW/8.4):0.84);
     hero.classList.toggle("is-narrow",narrow);
   }
   addEventListener("resize",size);size();
@@ -181,7 +181,7 @@ rail.addEventListener("wheel",e=>{if(Math.abs(e.deltaY)>Math.abs(e.deltaX)&&rail
     renderer.render(scene,cam);
     // labels
     arcs.forEach(a=>{const u=(a.start+a.end)/2;const[sx,sy]=screenOf(new THREE.Vector3((R+r+0.55)*Math.cos(u),(R+r+0.55)*Math.sin(u),0));
-      a.el.style.transform=`translate(${sx}px,${sy}px) translate(-50%,-50%)`;a.el.classList.toggle("on",a===hoverArc);a.el.style.opacity=settled?1:0;});
+      a.el.style.transform=`translate(${sx}px,${sy}px) translate(-50%,-50%)`;a.el.classList.toggle("on",a===hoverArc);a.el.style.opacity=settled&&sy>84?1:0;          // keep clear of the header});
     homes.forEach(h=>{const[sx,sy]=screenOf(h.pos);h.el.style.transform=`translate(${sx+10}px,${sy-8}px)`;h.el.style.opacity=settled&&!narrow&&(h===hoverApp||(!hoverApp&&h.isNew&&homes.indexOf(h)<5))?1:0;h.el.classList.toggle("on",h===hoverApp);});
     requestAnimationFrame(frame);
   }

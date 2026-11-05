@@ -24,25 +24,26 @@ h1,h2,h3{margin:0;text-wrap:balance}
 
 /* nav */
 .nav{position:relative;z-index:4}
-.nav .in{display:flex;justify-content:space-between;align-items:center;gap:16px;padding-block:22px 13px;border-bottom:1px solid var(--hair)}
+.nav .in{display:flex;justify-content:space-between;align-items:center;gap:16px;padding-block:26px 10px}
+.nav.over{position:absolute;left:0;right:0;top:0}
 .logo{font-size:14px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;text-decoration:none}
 .nav nav{display:flex;gap:4px 40px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
 .nav nav a{font-size:12px;letter-spacing:.1em;text-decoration:none;color:var(--graphite);position:relative;padding-block:4px}
 .nav nav a:hover,.nav nav a.on{color:var(--char)}
-.nav nav a.on::after{content:"";position:absolute;left:-8px;right:-8px;bottom:-14px;height:2px;border-radius:2px;background:var(--amber);box-shadow:0 0 12px 2px rgba(233,162,59,.6)}
+.nav nav a.on::after{content:"";position:absolute;left:0;right:0;bottom:-4px;height:2px;border-radius:2px;background:var(--amber);box-shadow:0 0 12px 2px rgba(233,162,59,.6)}
 @media (max-width:620px){.nav nav a:not(.keep){display:none}}
 
 /* hero */
 .hero{position:relative;overflow:hidden}
 .hero canvas{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:1}
-.halo{position:absolute;left:63%;top:50%;width:min(64vw,700px);aspect-ratio:1;max-width:none;transform:translate(-50%,-50%);border-radius:50%;z-index:0;
+.halo{position:absolute;left:63%;top:54.5%;width:min(60vw,660px);aspect-ratio:1;max-width:none;transform:translate(-50%,-50%);border-radius:50%;z-index:0;
   box-shadow:inset 0 0 0 1px rgba(255,255,255,.5);background:radial-gradient(closest-side,rgba(255,255,255,.28),rgba(255,255,255,.06) 70%,transparent)}
-@media (max-width:860px){.halo{left:50%;top:27%;width:116vw}}
-.hero-in{position:relative;z-index:3;min-height:clamp(560px,80vh,740px);display:grid;grid-template-rows:auto 1fr auto;padding-block:18px 28px;pointer-events:none}
+@media (max-width:860px){.halo{left:50%;top:33%;width:108vw}}
+.hero-in{position:relative;z-index:3;min-height:clamp(620px,88vh,800px);display:grid;grid-template-rows:auto 1fr auto;padding-block:92px 30px;pointer-events:none}
 .hero-in>.in{width:100%}
 .hero-in a{pointer-events:auto}
 .copy{align-self:center;display:grid;gap:22px;max-width:31rem}
-@media (max-width:860px){.copy{align-self:end;padding-top:90vw}.hero-in>.in:first-child{visibility:hidden}}
+@media (max-width:860px){.copy{align-self:end;padding-top:100vw}.hero-in>.in:first-child{visibility:hidden}}
 .copy h1{font-size:clamp(28px,3.2vw,40px);font-weight:500;line-height:1.42;letter-spacing:.01em}
 .copy h1 span{display:inline-block}
 .copy p{margin:0;color:var(--graphite);font-size:13.5px;line-height:1.95;max-width:22.5rem}
@@ -52,7 +53,7 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .btn i{font-style:normal;opacity:.7}
 .link{font-size:13px;font-weight:500;letter-spacing:.04em;text-decoration:none;border-bottom:1px solid rgba(38,39,40,.35);padding-bottom:2px}
 .link:hover{border-color:var(--char)}
-.foot{display:flex;justify-content:space-between;align-items:end;gap:16px}
+.foot{display:flex;justify-content:flex-start;align-items:end;gap:10px 28px;flex-wrap:wrap}
 .foot span b{font-weight:500;color:var(--char)}
 .foot .glow{color:#A8681A;text-shadow:0 0 12px rgba(233,162,59,.6)}
 
@@ -122,3 +123,14 @@ footer a{text-decoration:none}
 .w-tip span{font-size:12.5px;color:var(--graphite);line-height:1.6}
 .w-tip small{font-size:11px;letter-spacing:.04em}
 .is-narrow .w-genre{font-size:9.5px}
+
+/* review-only name picker, tucked into a corner */
+.namebox{position:fixed;left:max(16px,env(safe-area-inset-left,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:20;border-radius:16px;padding:10px 14px;max-width:min(420px,calc(100vw - 32px));font-size:12.5px;color:var(--graphite)}
+.namebox summary{cursor:pointer;font-weight:500;color:var(--char);list-style:none}
+.namebox summary::-webkit-details-marker{display:none}
+.namebox summary::before{content:"＋ ";color:var(--amber)}
+.namebox[open] summary::before{content:"－ "}
+.namebox p{margin:6px 0 8px;line-height:1.6}
+.namebox #names{display:flex;gap:6px;flex-wrap:wrap}
+.namebox button{font:inherit;font-size:12px;border:1px solid var(--hair);background:rgba(255,255,255,.3);border-radius:999px;padding:2px 11px;color:var(--char);cursor:pointer}
+.namebox button[aria-pressed="true"]{background:var(--char);color:#F1F1F0;border-color:var(--char)}
