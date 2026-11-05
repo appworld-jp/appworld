@@ -16,6 +16,8 @@ from urllib.parse import urlsplit
 
 PLATFORMS = {"ios": "iPhone", "android": "Android", "web": "Web"}
 STORE_HOSTS = {"ios": {"apps.apple.com"}, "android": {"play.google.com"}}
+# Official beta channels, allowed only for listings marked as a prototype ("beta": true).
+BETA_HOSTS = {"ios": {"testflight.apple.com"}}
 CATEGORIES = {
     "productivity": "仕事・効率化",
     "lifestyle": "暮らし",
@@ -76,6 +78,11 @@ def check(listing: dict, filename: str = "") -> tuple[list[str], list[str]]:
     if not isinstance(tools, list) or not tools or not set(tools) <= AI_TOOLS:
         errors.append("ai_tools は一覧の中から1つ以上")
 
+    beta = listing.get("beta", False)
+    if not isinstance(beta, bool):
+        errors.append("beta は true か false")
+        beta = False
+
     try:
         date.fromisoformat(listing.get("launch_date", ""))
     except ValueError:
@@ -101,12 +108,20 @@ def check(listing: dict, filename: str = "") -> tuple[list[str], list[str]]:
         if parts.username or parts.password:
             errors.append("リンクに認証情報を含めない")
         stores = STORE_HOSTS.get(platform)
-        if stores and host not in stores:
-            errors.append(f"{PLATFORMS.get(platform)} のアプリは公式ストア（{', '.join(sorted(stores))}）のリンクのみ")
+        betas = BETA_HOSTS.get(platform, set())
+        if stores and host not in stores and not (beta and host in betas):
+            if host in betas:
+                errors.append("TestFlight のリンクは「試作中」の掲載でだけ使える")
+            else:
+                errors.append(f"{PLATFORMS.get(platform)} のアプリは公式ストア（{', '.join(sorted(stores | (betas if beta else set())))}）のリンクのみ")
+        if host == "testflight.apple.com" and not parts.path.startswith("/join/"):
+            errors.append("TestFlight は公開リンク（https://testflight.apple.com/join/...）のみ")
 
     text = " ".join(str(listing.get(k, "")) for k in ("name", "tagline", "description"))
     if REVIEW_WORDS.search(text):
         warnings.append("対象外の可能性がある言葉を含む（運営が確認する）")
+    if beta:
+        warnings.append("試作中: リンク先で実際に触れる状態か（紹介ページやリポジトリだけでないか）を運営が確認する")
     if not listing.get("sample"):
         warnings.append("リンク先の安全性の判定（Safe Browsing）は公開前に運営が実行する")
 

@@ -27,11 +27,18 @@ body:
     id: platform
     attributes: {label: 使える場所, options: [iPhone, Android, Web]}
     validations: {required: true}
+  - type: dropdown
+    id: stage
+    attributes:
+      label: 開発の段階
+      description: 試作中でも掲載できます。一覧と紹介ページに「試作中」と表示されます
+      options: [公開中, 試作中（ベータ）]
+    validations: {required: true}
   - type: input
     id: url
     attributes:
       label: リンク
-      description: iPhone は App Store、Android は Google Play のページ。Web は https の公式サイト。短縮URLやファイルの直接ダウンロードは使えません
+      description: iPhone は App Store（試作中なら TestFlight の公開リンク https://testflight.apple.com/join/...）、Android は Google Play のページ、Web は https のサイト。リンク先で実際に触れることが条件です。紹介ページやリポジトリだけ、短縮URL、ファイルの直接ダウンロードは使えません
     validations: {required: true}
   - type: dropdown
     id: category
@@ -65,6 +72,8 @@ body:
         - label: 自分（または自分のチーム）がつくった作品です
           required: true
         - label: 掲載できないもの（他人の作品、ファイルの直接配布、「稼げる」系、成人向け、ギャンブル、法律に反するもの）に当たりません
+          required: true
+        - label: リンク先で、誰でも実際にアプリを触れる状態です
           required: true
         - label: 入力した内容が公開されることに同意します
           required: true

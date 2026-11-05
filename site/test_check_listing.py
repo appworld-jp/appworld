@@ -35,6 +35,15 @@ class CheckListingTest(unittest.TestCase):
         self.assertEqual(errors(platform="ios", url="https://apps.apple.com/jp/app/id1"), [])
         self.assertTrue(errors(platform="android", url="https://example.com/app"))
 
+    def test_testflight_only_for_prototypes(self):
+        tf = "https://testflight.apple.com/join/AbCd1234"
+        self.assertTrue(errors(platform="ios", url=tf))                     # not marked as a prototype
+        self.assertEqual(errors(platform="ios", url=tf, beta=True), [])
+        self.assertTrue(errors(platform="ios", url="https://testflight.apple.com/v1/app", beta=True))  # not a public link
+        self.assertTrue(errors(platform="ios", url="https://example.com/beta", beta=True))  # beta does not open other hosts
+        _, warns = check({**BASE, "platform": "ios", "url": tf, "beta": True})
+        self.assertTrue(any("試作中" in w for w in warns))                 # owner checks it is actually usable
+
     def test_rejects_markup_and_unknown_values(self):
         self.assertTrue(errors(name="<script>"))
         self.assertTrue(errors(ai_tools=["ChatGPT"]))
