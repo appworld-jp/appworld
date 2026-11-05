@@ -23,172 +23,112 @@ addEventListener("pointerup",()=>{if(!down)return;down=false;rail.classList.remo
 rail.addEventListener("click",e=>{if(moved){e.preventDefault();moved=false;}},true);
 rail.addEventListener("wheel",e=>{if(Math.abs(e.deltaY)>Math.abs(e.deltaX)&&rail.scrollWidth>rail.clientWidth){const b=rail.scrollLeft;rail.scrollLeft+=e.deltaY;if(rail.scrollLeft!==b)e.preventDefault();}},{passive:false});
 
-/* ---- hero: the world of apps.
-   The ring is split into one arc per genre (arc length = number of listed apps).
-   On load, all listed apps fly in from outside and settle into their genre's arc.
-   Every listed app is a glowing point (today's are brighter). Hover/tap a point to see the app; hover/tap an arc to open that genre's list. ---- */
+/* ---- hero: the apps themselves.
+   Every listed app is its own icon. On load the icons fly in and settle into a slowly turning sphere
+   (Fibonacci layout); today's apps carry a thin amber ring. Hover shows the name, click opens the app. ---- */
 (function(){
   if(!window.THREE)return;
   const hero=document.querySelector(".hero"),cv=document.getElementById("net");
   const renderer=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:true});
   renderer.setPixelRatio(Math.min(devicePixelRatio,2));
-  const scene=new THREE.Scene();scene.fog=new THREE.Fog(0xC6C6C5,8.2,12.8);
-  const cam=new THREE.PerspectiveCamera(34,1,0.1,100);cam.position.set(0,0,10.5);
+  const scene=new THREE.Scene();scene.fog=new THREE.Fog(0xC9C9C8,9.0,13.6);   // icons at the back fade into the silver
+  const cam=new THREE.PerspectiveCamera(32,1,0.1,100);cam.position.set(0,0,11);
   const world=new THREE.Group();scene.add(world);
-  const n3=(x,y,z)=>Math.sin(x*1.7+y*0.6)*0.5+Math.sin(y*2.3+z*1.1+1.7)*0.3+Math.sin(z*2.9+x*1.3+0.4)*0.2;
-  const TAU=Math.PI*2;
+  // spread apps over the sphere in a stable but mixed order, so today's are not all bunched at the top
+  const hash=s=>[...s].reduce((h,c)=>(h*31+c.charCodeAt(0))>>>0,7);
+  const ALL=[...window.APPS].sort((a,b)=>hash(a.id)-hash(b.id));
 
-  // genres -> arcs (sorted by count), with a small gap between arcs
-  const ALL=window.APPS,TODAYS=ALL.filter(a=>a.d===window.TODAY);
-  const counts={};ALL.forEach(a=>counts[a.g]=(counts[a.g]||0)+1);
-  const genres=Object.keys(counts).sort((a,b)=>counts[b]-counts[a]);
-  const GAP=0.06,usable=TAU-GAP*genres.length;let acc=0;
-  const arcs=genres.map(g=>{const len=usable*counts[g]/ALL.length;const a={g,n:counts[g],start:acc,end:acc+len};acc+=len+GAP;return a;});
-  const arcOf=u=>arcs.find(a=>u>=a.start&&u<a.end);
+  // icon textures drawn on a canvas: rounded tile, colour gradient, highlight, initial
+  function iconTex(app){
+    const S=256,c=document.createElement("canvas");c.width=c.height=S;const g=c.getContext("2d");
+    const r=74,p=10;
+    const path=()=>{g.beginPath();g.moveTo(p+r,p);g.arcTo(S-p,p,S-p,S-p,r);g.arcTo(S-p,S-p,p,S-p,r);g.arcTo(p,S-p,p,p,r);g.arcTo(p,p,S-p,p,r);g.closePath();};
+    path();const lg=g.createLinearGradient(0,0,S,S);lg.addColorStop(0,"#ffffff");lg.addColorStop(0.08,app.c);lg.addColorStop(1,"#1e1e1e");
+    g.fillStyle=app.c;g.fill();g.save();g.globalAlpha=0.45;g.fillStyle=lg;g.fill();g.restore();
+    const hl=g.createRadialGradient(S*0.3,S*0.2,0,S*0.3,S*0.2,S*0.6);hl.addColorStop(0,"rgba(255,255,255,.75)");hl.addColorStop(1,"rgba(255,255,255,0)");
+    g.save();path();g.clip();g.fillStyle=hl;g.fillRect(0,0,S,S);g.restore();
+    g.lineWidth=3;g.strokeStyle="rgba(255,255,255,.55)";path();g.stroke();
+    g.fillStyle="#ffffff";g.font=`700 ${S*0.42}px "Zen Kaku Gothic New","Hiragino Sans","Noto Sans JP",sans-serif`;
+    g.textAlign="center";g.textBaseline="middle";g.shadowColor="rgba(0,0,0,.25)";g.shadowBlur=10;g.shadowOffsetY=3;
+    g.fillText(app.n[0],S/2,S/2+S*0.03);
+    const t=new THREE.CanvasTexture(c);t.anisotropy=4;return t;
+  }
+  function ringTex(){
+    const S=256,c=document.createElement("canvas");c.width=c.height=S;const g=c.getContext("2d");
+    const r=86,p=4,path=()=>{g.beginPath();g.moveTo(p+r,p);g.arcTo(S-p,p,S-p,S-p,r);g.arcTo(S-p,S-p,p,S-p,r);g.arcTo(p,S-p,p,p,r);g.arcTo(p,p,S-p,p,r);g.closePath();};
+    g.shadowColor="rgba(233,162,59,.9)";g.shadowBlur=16;g.lineWidth=5;g.strokeStyle="rgba(233,162,59,1)";path();g.stroke();
+    return new THREE.CanvasTexture(c);
+  }
 
-  // displaced torus grid
-  const U=160,V=22,R=2.55,r=0.78,P=[],UA=[];
-  for(let i=0;i<U;i++)for(let j=0;j<V;j++){
-    const u=i/U*TAU,v=j/V*TAU;
-    let x=(R+r*Math.cos(v))*Math.cos(u),y=(R+r*Math.cos(v))*Math.sin(u),z=r*Math.sin(v);
-    const d=0.42*n3(x*0.9,y*0.9,z*0.9)+0.12*n3(x*3.1,y*3.1,z*3.1);
-    x*=1+d*0.12;y*=1+d*0.12;z+=d*0.55;
-    x+=(Math.random()-.5)*0.06;y+=(Math.random()-.5)*0.06;z+=(Math.random()-.5)*0.06;
-    P.push(new THREE.Vector3(x,y,z));UA.push(u);
-  }
-  const id=(i,j)=>((i+U)%U)*V+((j+V)%V);
-  const keep=(a,b)=>{const m=a.clone().add(b).multiplyScalar(.5);return n3(m.x*1.4+3,m.y*1.4,m.z*1.4)>-0.12&&Math.random()>0.14;};
-  const segBy=new Map(arcs.map(a=>[a.g,[]]));
-  for(let i=0;i<U;i++){
-    const arc=arcOf(i/U*TAU),arc2=arcOf(((i+1)%U)/U*TAU);
-    if(!arc)continue;                                   // inside a gap: leave it open
-    for(let j=0;j<V;j++){
-      const a=P[id(i,j)],b=P[id(i+1,j)],c=P[id(i,j+1)],d=P[id(i+1,j+1)],L=segBy.get(arc.g);
-      if(keep(a,c))L.push(a,c);
-      if(arc2===arc){if(keep(a,b))L.push(a,b);if(keep(a,d))L.push(a,d);}
-    }
-  }
-  const BASE=0.16;                                    // the mesh is atmosphere now; the bands carry the meaning
-  class Arc3 extends THREE.Curve{constructor(a,b,rad){super();this.a=a;this.b=b;this.rad=rad;}
-    getPoint(t,o=new THREE.Vector3()){const u=this.a+(this.b-this.a)*t;return o.set(this.rad*Math.cos(u),this.rad*Math.sin(u),0);}}
-  arcs.forEach(a=>{
-    a.mat=new THREE.LineBasicMaterial({color:0x1A1B1C,transparent:true,opacity:BASE,fog:true});
-    world.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(segBy.get(a.g)),a.mat));
-    const steps=Math.max(8,Math.round((a.end-a.start)*40));
-    a.band=new THREE.MeshBasicMaterial({color:0x262728});
-    world.add(new THREE.Mesh(new THREE.TubeGeometry(new Arc3(a.start,a.end,R),steps,0.028,6,false),a.band));
+  const R=2.35,N=ALL.length,TILE=0.62,ring=ringTex();
+  const items=ALL.map((app,i)=>{
+    const y=1-2*(i+0.5)/N,rad=Math.sqrt(1-y*y),th=i*Math.PI*(3-Math.sqrt(5));     // Fibonacci sphere
+    const home=new THREE.Vector3(Math.cos(th)*rad*R,y*R,Math.sin(th)*rad*R);
+    const dir=home.clone().normalize(),from=dir.multiplyScalar(9+Math.random()*4).add(new THREE.Vector3((Math.random()-.5)*4,(Math.random()-.5)*4,(Math.random()-.5)*4));
+    const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:null,transparent:true,fog:true,depthWrite:false}));
+    sp.scale.set(TILE,TILE,1);sp.userData.app=app;world.add(sp);
+    let halo=null;
+    if(app.d===window.TODAY){halo=new THREE.Sprite(new THREE.SpriteMaterial({map:ring,transparent:true,fog:true,depthWrite:false}));halo.scale.set(TILE*1.22,TILE*1.22,1);world.add(halo);}
+    return{app,home,from,sp,halo,delay:0.15+Math.random()*1.4};
   });
+  // draw textures once the web font is ready so the initials use it
+  (document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).then(()=>items.forEach(it=>{it.sp.material.map=iconTex(it.app);it.sp.material.needsUpdate=true;}));
 
-  function sprite(core,mid){
-    const c=document.createElement("canvas");c.width=c.height=64;const g=c.getContext("2d");
-    const rg=g.createRadialGradient(32,32,0,32,32,32);rg.addColorStop(0,core);rg.addColorStop(0.28,mid);rg.addColorStop(1,mid.replace(/[\d.]+\)$/,"0)"));
-    g.fillStyle=rg;g.fillRect(0,0,64,64);return new THREE.CanvasTexture(c);
-  }
-  world.add(new THREE.Points(new THREE.BufferGeometry().setFromPoints(P.filter((p,i)=>i%2===0)),
-    new THREE.PointsMaterial({size:0.045,map:sprite("rgba(26,27,28,1)","rgba(26,27,28,.5)"),transparent:true,depthWrite:false,fog:true})));
-
-  // core
-  const amberTex=sprite("rgba(255,214,140,1)","rgba(226,140,36,.85)");
-  const smoke=new THREE.Sprite(new THREE.SpriteMaterial({map:sprite("rgba(40,40,40,.5)","rgba(40,40,40,.2)"),transparent:true,depthWrite:false}));
-  smoke.scale.set(3.4,3.4,1);world.add(smoke);
-  const core=[];for(let i=0;i<360;i++){const th=Math.random()*TAU,rr=Math.pow(Math.random(),1.7)*1.2;core.push(new THREE.Vector3(Math.cos(th)*rr,Math.sin(th)*rr,(Math.random()-.5)*1.0));}
-  const coreMat=new THREE.PointsMaterial({size:0.055,map:amberTex,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,opacity:0.9});
-  world.add(new THREE.Points(new THREE.BufferGeometry().setFromPoints(core),coreMat));
-
-  // today's apps: each gets a home point on the ring inside its genre's arc
-  const SHOWN=[...ALL].sort((a,b)=>b.d.localeCompare(a.d));         // every listed app, newest first
-  const homes=SHOWN.map((app,k)=>{
-    const arc=arcs.find(a=>a.g===app.g),sameGenre=SHOWN.filter(x=>x.g===app.g),idx=sameGenre.indexOf(app);
-    const u=arc.start+(arc.end-arc.start)*(idx+1)/(sameGenre.length+1);
-    const home=new THREE.Vector3(R*Math.cos(u),R*Math.sin(u),0);
-    const th=Math.random()*TAU,far=9+Math.random()*3;
-    const from=new THREE.Vector3(Math.cos(th)*far,Math.sin(th)*far,(Math.random()-.5)*6);
-    return{app,home,from,pos:from.clone(),delay:0.25+k*Math.min(0.22,2.2/SHOWN.length),isNew:app.d===window.TODAY};
-  });
-  const litGeo=new THREE.BufferGeometry();litGeo.setAttribute("position",new THREE.BufferAttribute(new Float32Array(homes.length*3),3));
-  const litMat=new THREE.PointsMaterial({size:0.62,map:amberTex,transparent:true,depthWrite:false,depthTest:false});
-  const litPts=new THREE.Points(litGeo,litMat);litPts.renderOrder=3;world.add(litPts);
-  const oldGeo=new THREE.BufferGeometry();oldGeo.setAttribute("position",new THREE.BufferAttribute(new Float32Array(homes.length*3),3));
-  const oldPts=new THREE.Points(oldGeo,new THREE.PointsMaterial({size:0.3,map:sprite("rgba(38,39,40,1)","rgba(38,39,40,.9)"),transparent:true,depthWrite:false,depthTest:false}));oldPts.renderOrder=3;world.add(oldPts);
-  const trailGeo=new THREE.BufferGeometry();trailGeo.setAttribute("position",new THREE.BufferAttribute(new Float32Array(homes.length*6),3));
-  const trail=new THREE.LineSegments(trailGeo,new THREE.LineBasicMaterial({color:0xE9A23B,transparent:true,opacity:0.6}));world.add(trail);
-
-  // HTML overlay: genre labels, app labels, tooltip
-  const layer=document.createElement("div");layer.className="w-layer";layer.setAttribute("aria-hidden","true");hero.appendChild(layer);
-  arcs.forEach(a=>{const el=document.createElement("span");el.className="w-genre";el.textContent=a.g;const n=document.createElement("small");n.textContent=a.n;el.append(n);layer.append(el);a.el=el;});
-  homes.forEach(h=>{const el=document.createElement("span");el.className="w-app";el.textContent=h.app.n;layer.append(el);h.el=el;});
+  // tooltip
   const tip=document.createElement("a");tip.className="w-tip glass";tip.hidden=true;hero.appendChild(tip);
-  function showTip(h,x,y){
+  function showTip(it,x,y){
     tip.replaceChildren();
-    const b=document.createElement("b");b.textContent=h.app.n;
-    const p=document.createElement("span");p.textContent=h.app.t;
-    const m=document.createElement("small");m.textContent=`${h.app.p} ・ ${h.app.g}${h.app.b?" ・ 試作中":""} ・ 詳しく見る →`;
-    tip.append(b,p,m);tip.href="app.html?id="+encodeURIComponent(h.app.id);
-    tip.style.transform=`translate(${Math.min(x+16,hero.clientWidth-260)}px,${y-20}px)`;tip.hidden=false;
+    const b=document.createElement("b");b.textContent=it.app.n;
+    const p=document.createElement("span");p.textContent=it.app.t;
+    const m=document.createElement("small");m.textContent=`${it.app.p} ・ ${it.app.g}${it.app.b?" ・ 試作中":""} ・ 詳しく見る →`;
+    tip.append(b,p,m);tip.href="app.html?id="+encodeURIComponent(it.app.id);
+    tip.style.transform=`translate(${Math.max(8,Math.min(x+18,hero.clientWidth-262))}px,${Math.max(70,y-24)}px)`;tip.hidden=false;
   }
 
-  // layout
   let narrow=false;const W=()=>cv.clientWidth,H=()=>cv.clientHeight;
   function size(){
     renderer.setSize(W(),H(),false);cam.aspect=W()/H();cam.updateProjectionMatrix();
     narrow=W()<860;
     const vH=2*Math.tan(THREE.MathUtils.degToRad(cam.fov/2))*cam.position.z,vW=vH*cam.aspect;
-    world.position.set(narrow?0:vW*0.13,narrow?vH*0.17:-vH*0.045,0);
-    world.scale.setScalar(narrow?Math.min(0.56,vW/8.4):0.84);
-    hero.classList.toggle("is-narrow",narrow);
+    world.position.set(narrow?0:vW*0.15,narrow?vH*0.17:-vH*0.06,0);
+    world.scale.setScalar(narrow?Math.min(0.78,vW/6.6):1);
   }
   addEventListener("resize",size);size();
 
-  // pointer: which app point / which genre arc is under the pointer
-  let mx=0,my=0,hoverApp=null,hoverArc=null,px=-1,py=-1;
-  const ray=new THREE.Raycaster(),plane=new THREE.Plane(),v=new THREE.Vector3(),hit=new THREE.Vector3();
-  function screenOf(p){v.copy(p).applyMatrix4(world.matrixWorld).project(cam);return[(v.x*.5+.5)*W(),(-v.y*.5+.5)*H(),v.z];}
-  function pick(){
-    hoverApp=null;hoverArc=null;if(px<0)return;
-    let best=24;homes.forEach(h=>{const[sx,sy]=screenOf(h.pos);const d=Math.hypot(sx-px,sy-py);if(d<best){best=d;hoverApp=h;}});
-    if(hoverApp)return;
-    const n=new THREE.Vector3(0,0,1).transformDirection(world.matrixWorld);plane.setFromNormalAndCoplanarPoint(n,world.position);
-    ray.setFromCamera({x:px/W()*2-1,y:-(py/H())*2+1},cam);
-    if(ray.ray.intersectPlane(plane,hit)){const l=world.worldToLocal(hit.clone());const rr=Math.hypot(l.x,l.y);
-      if(rr>R-0.55&&rr<R+0.55){const u=(Math.atan2(l.y,l.x)+TAU)%TAU;hoverArc=arcOf(u)||null;}}
-  }
-  hero.addEventListener("pointermove",e=>{const b=cv.getBoundingClientRect();px=e.clientX-b.left;py=e.clientY-b.top;mx=e.clientX/innerWidth-.5;my=e.clientY/innerHeight-.5;});
-  hero.addEventListener("pointerleave",()=>{px=-1;tip.hidden=true;});
+  // pointer: drag to turn, hover to name, click to open
+  const ray=new THREE.Raycaster();let px=-1,py=-1,hover=null,drag=false,lx=0,spin=0,vel=0,moved=0;
+  const sprites=items.map(it=>it.sp);
+  function pick(){hover=null;if(px<0)return;ray.setFromCamera({x:px/W()*2-1,y:-(py/H())*2+1},cam);
+    const hit=ray.intersectObjects(sprites,false).find(h=>h.object.material.opacity>0.5);if(hit)hover=items[sprites.indexOf(hit.object)];}
+  hero.addEventListener("pointermove",e=>{const b=cv.getBoundingClientRect();px=e.clientX-b.left;py=e.clientY-b.top;
+    if(drag){const dx=e.clientX-lx;moved+=Math.abs(dx);vel=dx*0.004;spin+=vel;lx=e.clientX;}});
+  hero.addEventListener("pointerleave",()=>{px=-1;drag=false;});
+  cv.parentElement.addEventListener("pointerdown",e=>{if(e.target.closest("a"))return;drag=true;moved=0;lx=e.clientX;});
+  addEventListener("pointerup",()=>{drag=false;});
   hero.addEventListener("click",e=>{
-    if(e.target.closest("a"))return;
+    if(e.target.closest("a")||moved>6)return;
     const b=cv.getBoundingClientRect();px=e.clientX-b.left;py=e.clientY-b.top;pick();
-    if(hoverApp){const[sx,sy]=screenOf(hoverApp.pos);showTip(hoverApp,sx,sy);}
-    else if(hoverArc){location.href="apps.html?g="+encodeURIComponent(hoverArc.g);}
+    if(hover){v.copy(hover.sp.position).applyMatrix4(world.matrixWorld).project(cam);showTip(hover,(v.x*.5+.5)*W(),(-v.y*.5+.5)*H());}
     else tip.hidden=true;
   });
 
-  const t0=performance.now(),reduceM=reduce;
-  const ease=t=>1-Math.pow(1-t,3);
+  const v=new THREE.Vector3(),t0=performance.now(),ease=k=>1-Math.pow(1-k,3);
   function frame(now){
-    const t=(now-t0)/1000,mv=reduceM?0:1;
-    world.rotation.z=0.3+Math.sin(t*0.12)*0.05*mv;world.rotation.x=0.26+my*0.12;world.rotation.y=-0.16+mx*0.16;
-    // gather
-    const lp=litGeo.attributes.position.array,op=oldGeo.attributes.position.array,tp=trailGeo.attributes.position.array;
-    homes.forEach((h,i)=>{
-      const k=reduceM?1:Math.min(1,Math.max(0,(t-h.delay)/1.8)),e=ease(k);
-      h.pos.copy(h.from).lerp(h.home,e);
-      (h.isNew?lp:op).set([h.pos.x,h.pos.y,h.pos.z],i*3);(h.isNew?op:lp).set([9e3,9e3,9e3],i*3);
-      const back=h.from.clone().lerp(h.home,Math.max(0,e-0.12));
-      tp.set(k<1&&k>0?[back.x,back.y,back.z,h.pos.x,h.pos.y,h.pos.z]:[0,0,0,0,0,0],i*6);
+    const t=(now-t0)/1000,mv=reduce?0:1;
+    if(!drag){spin+=vel;vel*=0.94;}
+    world.rotation.y=t*0.09*mv+spin;world.rotation.x=0.18;
+    items.forEach(it=>{
+      const k=reduce?1:Math.min(1,Math.max(0,(t-it.delay)/1.6)),e=ease(k);
+      it.sp.position.copy(it.from).lerp(it.home,e);
+      const big=it===hover?1.18:1;
+      it.sp.scale.set(TILE*big,TILE*big,1);
+      it.sp.material.opacity=Math.min(1,k*1.4);
+      if(it.halo){it.halo.position.copy(it.sp.position);it.halo.scale.set(TILE*1.22*big,TILE*1.22*big,1);it.halo.material.opacity=k>=1?0.7+0.3*Math.sin(t*2.2)*mv:0;}
     });
-    litGeo.attributes.position.needsUpdate=true;oldGeo.attributes.position.needsUpdate=true;trailGeo.attributes.position.needsUpdate=true;
-    const settled=reduceM||t>homes[homes.length-1].delay+1.8;
-    litMat.size=0.58+0.08*Math.sin(t*2)*mv;
-    coreMat.opacity=0.8+0.15*Math.sin(t*1.6)*mv;
     world.updateMatrixWorld();
-    pick();
-    arcs.forEach(a=>{a.mat.opacity=a===hoverArc?0.32:BASE;a.band.color.setHex(a===hoverArc?0xE9A23B:(hoverArc?0x8A8B8D:0x262728));});
-    hero.style.cursor=(hoverApp||hoverArc)?"pointer":"";
+    if(!drag)pick();
+    hero.style.cursor=hover?"pointer":(drag?"grabbing":"");
     renderer.render(scene,cam);
-    // labels
-    arcs.forEach(a=>{const u=(a.start+a.end)/2;const[sx,sy]=screenOf(new THREE.Vector3((R+0.95)*Math.cos(u),(R+0.95)*Math.sin(u),0));
-      a.el.style.transform=`translate(${sx}px,${sy}px) translate(-50%,-50%)`;a.el.classList.toggle("on",a===hoverArc);a.el.style.opacity=settled&&sy>84?1:0;});   // labels near the header stay hidden
-    homes.forEach(h=>{const[sx,sy]=screenOf(h.pos);h.el.style.transform=`translate(${sx+10}px,${sy-8}px)`;h.el.style.opacity=settled&&!narrow&&(h===hoverApp||(!hoverApp&&h.isNew&&homes.indexOf(h)<5))?1:0;h.el.classList.toggle("on",h===hoverApp);});
     requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame);
