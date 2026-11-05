@@ -1,18 +1,4 @@
-const NAMES=["App World","AppSphere","Appland","Daily Apps","Newborn","Hello App","Appear"];
-const namesEl=document.getElementById("names");
-NAMES.forEach((n,i)=>{const b=document.createElement("button");b.type="button";b.textContent=n;b.setAttribute("aria-pressed",i===0?"true":"false");
-  b.onclick=()=>{document.querySelectorAll(".js-name").forEach(e=>e.textContent=n);namesEl.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b?"true":"false"));document.title=n+" 見本";};
-  namesEl.appendChild(b);namesEl.append(" ");});
-
-const APPS=[
-  {n:"こんだてAI",t:"冷蔵庫の写真から、今夜の献立を3つ提案",p:"Web",a:"Claude Code",c:"#D9775A"},
-  {n:"積読ゼロ",t:"買ったまま読んでいない本を、1日10分ずつ消化",p:"iPhone",a:"Cursor",c:"#3E8C84"},
-  {n:"ジムメモ",t:"セット間の休憩中に、片手で記録できる筋トレメモ",p:"Android",a:"Codex",c:"#4C6FD1"},
-  {n:"レビュー下書き",t:"プルリクの差分から、レビューの観点を自動で下書き",p:"Web",a:"Claude Code",c:"#6A6F7A"},
-  {n:"えほんメーカー",t:"子どもの好きなものから、寝る前のお話を作る",p:"Web",a:"v0",c:"#B9567E"},
-  {n:"シフト交換板",t:"バイト仲間どうしで、シフトの交換相手をすぐ探せる",p:"Web",a:"Lovable",c:"#8A64C8"},
-  {n:"ひとこと漢字",t:"通勤の1駅で1問、大人の読めそうで読めない漢字",p:"iPhone",a:"Replit",c:"#C9A13A"}
-];
+const APPS=window.APPS.filter(a=>a.d===window.TODAY);
 const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 /* ---- rail ---- */
