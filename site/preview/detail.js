@@ -18,11 +18,15 @@
   $("d-tag").textContent = app.t;
   $("d-desc").textContent = app.x;
 
-  // all listings in the preview are samples, so the store button is shown but disabled
   const open = $("d-open");
-  open.textContent = (app.p === "iPhone" ? (app.b ? "TestFlightで開く" : "App Storeで開く") : app.p === "Android" ? "Google Playで開く" : "Webサイトを開く") + " ↗";
-  open.setAttribute("aria-disabled", "true"); open.removeAttribute("href");
-  $("d-note").textContent = "サンプルのため、リンク先はありません";
+  open.textContent = (app.p === "iPhone" ? (app.b ? "TestFlightで開く" : "App Storeで開く") : app.p === "Android" ? "Google Playで開く" : "アプリを開く") + " ↗";
+  if (app.u && /^https:\/\/appworld-lab\.pages\.dev\//.test(app.u)) {
+    open.href = app.u;
+    $("d-note").textContent = "App Worldの運営が作った試作アプリです。ブラウザですぐに使えます。";
+  } else {
+    open.setAttribute("aria-disabled", "true"); open.removeAttribute("href");
+    $("d-note").textContent = "サンプルのため、リンク先はありません";
+  }
 
   $("s-p").textContent = app.p;
   $("s-g").textContent = app.g; $("s-g").href = "apps.html?g=" + encodeURIComponent(app.g);

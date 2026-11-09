@@ -5,7 +5,7 @@ const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
 const rail=document.getElementById("rail");
 APPS.forEach((a,i)=>{
   const el=document.createElement("a");el.className="panel glass";el.href="app.html?id="+encodeURIComponent(a.id);el.style.setProperty("--c",a.c);
-  el.innerHTML=`<div class="p-top"><span class="cap">${String(i+1).padStart(2,"0")}</span><span class="p-price">¥0<i>FREE</i></span><h3 class="p-name"></h3><span class="sample">サンプル</span></div>
+  el.innerHTML=`<div class="p-top"><span class="cap">${String(i+1).padStart(2,"0")}</span><span class="p-price">¥0<i>FREE</i></span><h3 class="p-name"></h3><span class="sample">運営</span></div>
     <div class="p-vis"><div class="icon"><b></b></div></div>
     <div><p class="p-line"></p><div class="p-spec"><span></span><span></span></div></div>`;
   el.querySelector(".p-name").textContent=a.n;
