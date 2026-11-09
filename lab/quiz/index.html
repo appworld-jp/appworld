@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>クイズ横丁</title>
+<meta name="description" content="1日1問の4択クイズ。同じ日なら誰でも同じ問題です。答えるまでの秒数を計り、結果を文字でコピーして友だちと比べられます。">
+<meta name="theme-color" content="#1A1446">
+<link rel="stylesheet" href="style.css">
+</head><body>
+<div class="stage">
+  <header class="marquee">
+    <a class="back" href="../">App World Lab</a>
+    <div class="sign" aria-hidden="false">
+      <p class="sign-sub">毎日1問の早押し4択</p>
+      <h1>クイズ横丁</h1>
+      <p class="sign-no" id="no"></p>
+    </div>
+  </header>
+
+  <main class="booth">
+    <section class="intro" id="intro">
+      <p class="intro-t">今日の1問</p>
+      <p>同じ日なら、誰でも同じ問題です。スタートを押すと問題が出て、時間を計りはじめます。制限時間は30秒。</p>
+      <button class="go" type="button" id="start">スタート</button>
+    </section>
+
+    <section class="play" id="play" hidden>
+      <div class="clock" aria-hidden="true">
+        <svg viewBox="0 0 100 100" width="76" height="76"><circle cx="50" cy="50" r="44" class="ring-bg"/><circle cx="50" cy="50" r="44" class="ring" id="ring"/></svg>
+        <span id="sec">0.0</span>
+      </div>
+      <p class="kind" id="kind">今日の1問</p>
+      <h2 class="q" id="q" tabindex="-1"></h2>
+      <div class="choices" id="choices"></div>
+    </section>
+
+    <section class="result" id="result" hidden aria-live="polite">
+      <p class="verdict" id="verdict"></p>
+      <p class="answer" id="answer"></p>
+      <p class="explain" id="explain"></p>
+      <div class="share" id="shareBox">
+        <pre class="share-t" id="shareT"></pre>
+        <button class="go small" type="button" id="copy">結果をコピー</button>
+        <p class="copied" id="copied" aria-live="polite"></p>
+      </div>
+      <button class="ghost" type="button" id="practice">練習問題に挑戦</button>
+    </section>
+
+    <section class="board" aria-labelledby="bH">
+      <h2 id="bH">成績</h2>
+      <dl>
+        <div><dt>挑戦</dt><dd id="bPlay">0</dd></div>
+        <div><dt>正解率</dt><dd id="bRate">-</dd></div>
+        <div><dt>連続正解</dt><dd id="bStreak">0</dd></div>
+        <div><dt>最速</dt><dd id="bBest">-</dd></div>
+      </dl>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <p>全<span id="qn"></span>問。結果のコピーは文字だけで、どこにも送信しません。</p>
+    <p>作った人：App World Lab（App Worldの運営）</p>
+    <p>成績はこの端末の中だけに保存され、どこにも送られません。</p>
+    <p><a href="../">App World Lab</a></p>
+  </footer>
+</div>
+<script src="questions.js"></script>
+<script src="app.js"></script>
+</body></html>

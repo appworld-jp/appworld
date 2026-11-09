@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>シフト交換板</title>
+<meta name="description" content="シフトを代わってほしいときに、日時・お店・お礼を入れるだけで、LINEやSlackに貼れる依頼文とリンクを作ります。リンクを開いた人は「引き受けます」の返事をすぐ作れます。サーバーは使いません。">
+<meta name="theme-color" content="#1E9C8A">
+<link rel="stylesheet" href="style.css">
+</head><body>
+<div class="app">
+  <header class="top">
+    <a class="back" href="../">‹ App World Lab</a>
+    <div class="logo"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="3" y="8" width="34" height="26" rx="6" class="l1"/><path d="M3 16h34" class="l2"/><path d="M12 4v8M28 4v8" class="l2"/><path d="M13 25h10m-3-3 3 3-3 3M27 25H17" class="l3"/></svg><h1>シフト交換板</h1></div>
+  </header>
+
+  <!-- received request -->
+  <main id="recv" hidden>
+    <section class="hello">
+      <p class="kicker">シフトの依頼が届いています</p>
+      <h2 id="recv-h">代わりに入れますか？</h2>
+    </section>
+    <div class="card-slot panel" id="recv-card"></div>
+    <section class="panel" aria-labelledby="rep-h">
+      <h2 id="rep-h">引き受けるときは</h2>
+      <label class="fld"><span>あなたの名前</span><input id="rep-name" type="text" maxlength="20" placeholder="例：山田" autocomplete="nickname"></label>
+      <label class="fld"><span>ひとこと（なくても大丈夫です）</span><input id="rep-msg" type="text" maxlength="80" placeholder="例：お礼は気にしなくて大丈夫です" autocomplete="off"></label>
+      <label class="sr" for="rep-text">返信の文</label>
+      <textarea id="rep-text" class="sharebox" rows="6" readonly></textarea>
+      <div class="btns">
+        <button type="button" class="btn main" id="rep-copy">返信をコピー</button>
+        <button type="button" class="btn" id="rep-share" hidden>共有する</button>
+      </div>
+      <p class="toast" id="rep-toast" aria-live="polite"></p>
+      <p class="hint">コピーした文を、依頼が届いたLINEやSlackに貼って返してください。シフトの変更は、お店のルールに合わせて責任者にも伝えましょう。</p>
+    </section>
+    <p class="center"><a class="btn link" href="./" id="to-new">自分も依頼をつくる</a></p>
+  </main>
+
+  <!-- create request -->
+  <main id="make">
+    <section class="hello">
+      <p class="kicker">サーバーなし・登録なし</p>
+      <h2>シフトの「代わって」を、<br>一発できれいに。</h2>
+      <p class="lead">日時とお店を入れると、グループに貼れる依頼文と、返事がしやすいリンクを作ります。</p>
+    </section>
+
+    <form class="panel" id="form" novalidate aria-labelledby="f-h">
+      <h2 id="f-h">依頼をつくる</h2>
+      <div class="kind" role="radiogroup" aria-label="依頼の種類">
+        <label><input type="radio" name="kind" value="cover" checked><span>代わってほしい</span></label>
+        <label><input type="radio" name="kind" value="swap"><span>交換したい</span></label>
+      </div>
+      <div class="grid2">
+        <label class="fld"><span>日付</span><input id="f-date" type="date" required></label>
+        <label class="fld"><span>お店・チーム</span><input id="f-place" type="text" maxlength="30" placeholder="例：駅前店 ホール" autocomplete="off"></label>
+        <label class="fld"><span>開始</span><input id="f-start" type="time" value="17:00" required></label>
+        <label class="fld"><span>終了</span><input id="f-end" type="time" value="22:00" required></label>
+      </div>
+      <label class="fld"><span>あなたの名前</span><input id="f-name" type="text" maxlength="20" placeholder="例：佐藤" autocomplete="nickname"></label>
+      <label class="fld"><span id="offer-label">お礼・こちらから出せるもの</span><input id="f-offer" type="text" maxlength="60" placeholder="例：今度どこか1回代わります" autocomplete="off"></label>
+      <label class="fld"><span>ひとこと</span><textarea id="f-note" rows="2" maxlength="120" placeholder="例：家の用事が入ってしまいました。"></textarea></label>
+      <p class="err" id="f-err" role="alert"></p>
+      <button type="submit" class="btn main wide">依頼文をつくる</button>
+    </form>
+
+    <section class="panel out" id="out" hidden aria-labelledby="o-h">
+      <h2 id="o-h" tabindex="-1">できました</h2>
+      <div class="card-slot" id="out-card"></div>
+      <label class="lbl" for="share-text">グループに貼る文</label>
+      <textarea id="share-text" class="sharebox" rows="9" readonly></textarea>
+      <div class="btns">
+        <button type="button" class="btn main" id="copy-text">文とリンクをコピー</button>
+        <button type="button" class="btn" id="copy-url">リンクだけコピー</button>
+        <button type="button" class="btn" id="share" hidden>共有する</button>
+      </div>
+      <p class="toast" id="toast" aria-live="polite"></p>
+      <p class="hint">リンクには依頼の内容がそのまま入っています。開いた人は「引き受けます」の返事をすぐ作れます。内容はどこにも保存されません。</p>
+    </section>
+
+    <section class="panel" aria-labelledby="l-h">
+      <div class="row-between"><h2 id="l-h">自分の依頼</h2><span class="count" id="l-count"></span></div>
+      <ul class="mine" id="mine"></ul>
+      <p class="empty" id="mine-empty">まだ依頼はありません。つくった依頼はこの端末に残り、決まったら印をつけられます。</p>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <p>作った人：App World Lab（App Worldの運営）</p>
+    <p>「自分の依頼」はこの端末の中だけに保存されます。依頼の内容は、あなたが貼ったリンクの中にだけ入ります。</p>
+    <a href="../">App World Lab</a>
+  </footer>
+</div>
+<script src="app.js"></script>
+</body></html>

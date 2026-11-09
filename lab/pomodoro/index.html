@@ -2,44 +2,90 @@
 <html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>ポモドーロ箱</title>
-<meta name="description" content="25分ごとに、今やったことを一言だけ記録する集中タイマー。">
-<link rel="stylesheet" href="../lab.css">
+<meta name="description" content="キッチンタイマーのような集中タイマー。15・25・50分で集中し、終わるたびにやったことを一言だけ記録します。今日の記録と今週の合計も見られます。">
+<meta name="theme-color" content="#C8402A">
 <link rel="stylesheet" href="style.css">
 </head><body>
-<div class="wrap">
-  <div class="top"><a href="../"><b>App World Lab</b></a><span>試作中</span></div>
-  <div>
+<div class="shell">
+  <header class="bar">
+    <a class="home" href="../">App World Lab</a>
     <h1>ポモドーロ箱</h1>
-    <p class="lead">25分集中したら、やったことを一言だけ残す。1日の終わりに、その一言が並びます。</p>
-  </div>
+  </header>
 
-  <section class="card timer" aria-label="タイマー">
-    <p class="mode" id="mode">集中</p>
-    <p class="clock" id="clock" aria-live="off">25:00</p>
-    <div class="bar" aria-hidden="true"><i id="bar"></i></div>
-    <div class="row center">
-      <button class="btn" id="start" type="button">はじめる</button>
-      <button class="btn ghost" id="reset" type="button">リセット</button>
-    </div>
-    <div class="row center lens" role="group" aria-label="集中する長さ">
-      <button type="button" data-min="15">15分</button><button type="button" data-min="25" aria-pressed="true">25分</button><button type="button" data-min="50">50分</button>
-    </div>
-  </section>
+  <main>
+    <section class="box" aria-label="タイマー">
+      <div class="screws" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+      <div class="plate">
+        <svg class="dial" id="dial" viewBox="0 0 220 220" aria-hidden="true">
+          <circle class="dial-bg" cx="110" cy="110" r="104"/>
+          <g id="ticks"></g>
+          <path id="wedge" class="wedge" d=""/>
+          <circle class="hub" cx="110" cy="110" r="30"/>
+          <g id="knob" class="knob"><rect x="104" y="84" width="12" height="52" rx="6"/></g>
+        </svg>
+        <div class="lcd" role="timer" aria-label="残り時間">
+          <span class="lcd-mode" id="mode">集中</span>
+          <span class="lcd-time" id="clock">25:00</span>
+          <span class="lcd-cycle" id="cycle" aria-label="長い休憩までの回数"></span>
+        </div>
+      </div>
 
-  <form class="card ask" id="ask" hidden>
-    <label for="what"><b>おつかれさまでした。何をしましたか？</b></label>
-    <input type="text" id="what" maxlength="60" placeholder="例：企画書の見出しを決めた" autocomplete="off">
-    <div class="row"><button class="btn" type="submit">記録して休憩へ</button><button class="btn ghost" type="button" id="skip">記録しない</button></div>
-  </form>
+      <div class="lens" role="group" aria-label="集中する長さ">
+        <button type="button" class="key len" data-min="15" aria-pressed="false">15<small>分</small></button>
+        <button type="button" class="key len" data-min="25" aria-pressed="true">25<small>分</small></button>
+        <button type="button" class="key len" data-min="50" aria-pressed="false">50<small>分</small></button>
+      </div>
+      <div class="controls">
+        <button type="button" class="key big go" id="start">スタート</button>
+        <button type="button" class="key small" id="reset">リセット</button>
+      </div>
+      <p class="status" id="status" aria-live="polite">長さを選んで、スタートを押してください。</p>
+    </section>
 
-  <section class="card" aria-labelledby="log-h">
-    <div class="row between"><h2 id="log-h">今日の記録</h2><span class="note" id="sum"></span></div>
-    <ol class="log" id="log"></ol>
-    <p class="note" id="empty">まだ記録はありません。最初の25分をはじめましょう。</p>
-    <div class="row"><button class="btn ghost" type="button" id="copy">一覧をコピー</button><span class="note" id="copied" aria-live="polite"></span></div>
-  </section>
+    <form class="ticket" id="ask" hidden>
+      <h2 id="ask-h">おつかれさまでした</h2>
+      <label for="what">いまの集中で、何をしましたか？（一言で）</label>
+      <input type="text" id="what" maxlength="60" placeholder="例：企画書の見出しを決めた" autocomplete="off" enterkeyhint="done">
+      <button class="key wide" type="submit" id="save-note">記録する</button>
+    </form>
 
-  <p class="made">作った人：App World Lab（App Worldの運営）。記録はこの端末の中だけに保存され、どこにも送られません。</p>
+    <section class="ticket" id="rest" hidden aria-labelledby="rest-h">
+      <h2 id="rest-h">休憩をとりましょう</h2>
+      <p class="hint" id="rest-hint"></p>
+      <div class="rest-keys">
+        <button type="button" class="key" id="short">小休憩<small>5分</small></button>
+        <button type="button" class="key" id="long">長休憩<small>15分</small></button>
+      </div>
+      <button type="button" class="link-btn" id="norest">休憩しないで次へ</button>
+    </section>
+
+    <section class="paper" aria-labelledby="log-h">
+      <div class="paper-head">
+        <h2 id="log-h">今日の記録</h2>
+        <span class="sum" id="sum"></span>
+      </div>
+      <ol class="log" id="log"></ol>
+      <p class="empty" id="empty">まだ記録はありません。<br>集中が終わるたびに、ここに一言ずつ並びます。</p>
+      <div class="paper-foot">
+        <button type="button" class="key small" id="copy">記録をコピー</button>
+        <span class="copied" id="copied" aria-live="polite"></span>
+      </div>
+    </section>
+
+    <section class="paper" aria-labelledby="week-h">
+      <div class="paper-head">
+        <h2 id="week-h">今週の集中</h2>
+        <span class="sum" id="wsum"></span>
+      </div>
+      <div class="week" id="week" role="img" aria-label="今週の曜日ごとの集中時間"></div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <p>作った人：App World Lab（App Worldの運営）</p>
+    <p>記録はこの端末の中だけに保存され、どこにも送られません。</p>
+    <a href="../">App World Lab</a>
+  </footer>
 </div>
 <script src="app.js"></script>
 </body></html>

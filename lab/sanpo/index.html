@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>さんぽログ</title>
+<meta name="description" content="散歩の時間を計って、見たものと気分をひとことと一緒に残す日記。カレンダーで歩いた日が色づき、連続日数と月の合計がわかります。">
+<meta name="theme-color" content="#2F5D3A">
+<link rel="stylesheet" href="style.css">
+</head><body>
+<div class="app">
+  <header class="head">
+    <h1><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M6 26c4-12 10-18 20-20-1 10-7 17-20 20z"/><path class="vein" d="M7 25L22 10"/></svg>さんぽログ</h1>
+    <p class="streak" id="streakBadge" aria-live="polite"></p>
+  </header>
+
+  <section class="theme" aria-labelledby="themeLbl">
+    <p class="theme-lbl" id="themeLbl">今日のおさんぽテーマ</p>
+    <p class="theme-txt" id="themeTxt"></p>
+    <button type="button" class="ghost" id="themeNext">べつのテーマにする</button>
+  </section>
+
+  <section class="walk" id="walk" aria-label="さんぽタイマー">
+    <p class="clock" id="clock" aria-live="off">0:00</p>
+    <p class="clock-sub" id="clockSub">歩きはじめるときにタップしてください。</p>
+    <button type="button" class="primary" id="startBtn">さんぽに出かける</button>
+    <button type="button" class="primary home" id="stopBtn" hidden>ただいま（おわる）</button>
+    <button type="button" class="ghost" id="cancelBtn" hidden>取り消す</button>
+    <button type="button" class="textbtn" id="manualBtn">タイマーを使わずに記録する</button>
+  </section>
+
+  <form class="sheet" id="sheet" hidden aria-labelledby="sheetTitle">
+    <h2 id="sheetTitle">おかえりなさい</h2>
+    <div class="two">
+      <label>日付<input type="date" id="fDate" required></label>
+      <label>歩いた時間（分）<input type="number" id="fMin" min="1" max="600" inputmode="numeric" required></label>
+    </div>
+    <fieldset><legend>見たもの（いくつでも）</legend><div class="tags" id="fTags"></div></fieldset>
+    <fieldset><legend>気分</legend><div class="moods" id="fMood"></div></fieldset>
+    <label class="check"><input type="checkbox" id="fTheme"> <span>今日のテーマをやってみた：<span id="fThemeTxt"></span></span></label>
+    <label>ひとこと（140字まで）<textarea id="fNote" maxlength="140" rows="3" placeholder="例：川沿いのイチョウが黄色くなりはじめていた。"></textarea></label>
+    <p class="err" id="fErr" role="alert"></p>
+    <div class="row"><button type="submit" class="primary small">記録する</button><button type="button" class="ghost" id="fCancel">やめる</button></div>
+  </form>
+
+  <section class="card" aria-labelledby="calTitle">
+    <div class="calhead">
+      <button type="button" class="nav" id="calPrev" aria-label="前の月">‹</button>
+      <h2 id="calTitle"></h2>
+      <button type="button" class="nav" id="calNext" aria-label="次の月">›</button>
+    </div>
+    <div class="cal" id="cal" role="group" aria-labelledby="calTitle"></div>
+    <p class="legend" aria-hidden="true">少ない<i class="l1"></i><i class="l2"></i><i class="l3"></i><i class="l4"></i>多い</p>
+    <dl class="totals" id="totals"></dl>
+    <p class="favs" id="favs"></p>
+  </section>
+
+  <section class="card" aria-labelledby="jTitle">
+    <h2 id="jTitle">さんぽ日記</h2>
+    <ol class="journal" id="journal"></ol>
+    <p class="empty" id="jEmpty">まだ記録がありません。今日のテーマを胸に、少しだけ外を歩いてみませんか。帰ってきたら「ただいま」を押して、見たものを残しましょう。</p>
+  </section>
+
+  <footer class="foot">
+    <p>作った人：App World Lab（App Worldの運営）</p>
+    <p>位置情報は使いません。記録はこの端末の中だけに保存され、どこにも送られません。</p>
+    <p><a href="../">App World Lab</a></p>
+  </footer>
+</div>
+<script src="themes.js"></script>
+<script src="app.js"></script>
+</body></html>

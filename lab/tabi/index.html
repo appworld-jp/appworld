@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>旅のしおり</title>
+<meta name="description" content="行き先と日程、旅のスタイルを選ぶと、書きかえられる日ごとの予定表と持ち物リストができます。そのまま印刷もできます。">
+<meta name="theme-color" content="#f3eee2">
+<link rel="stylesheet" href="style.css">
+</head><body>
+<div class="book">
+  <header class="cover">
+    <p class="stamp" aria-hidden="true">旅</p>
+    <p class="series">旅のしおり</p>
+    <h1 id="cover-title">どこへ行きますか？</h1>
+    <p class="cover-sub" id="cover-sub">行き先と日程を入れると、予定表と持ち物リストができあがります。</p>
+  </header>
+
+  <form class="setup no-print" id="setup" novalidate aria-labelledby="h-setup">
+    <h2 id="h-setup" class="tab">旅の基本</h2>
+    <div class="field">
+      <label for="dest">行き先</label>
+      <input id="dest" type="text" maxlength="30" placeholder="例：箱根" required autocomplete="off">
+    </div>
+    <div class="two">
+      <div class="field">
+        <label for="start">出発日</label>
+        <input id="start" type="date" required>
+      </div>
+      <div class="field">
+        <label for="days">日数</label>
+        <select id="days">
+          <option value="1">日帰り</option><option value="2" selected>1泊2日</option><option value="3">2泊3日</option>
+          <option value="4">3泊4日</option><option value="5">4泊5日</option><option value="6">5泊6日</option><option value="7">6泊7日</option>
+        </select>
+      </div>
+    </div>
+    <fieldset class="field">
+      <legend>旅のスタイル</legend>
+      <div class="seg" id="style">
+        <label><input type="radio" name="style" value="relax" checked><span>のんびり</span></label>
+        <label><input type="radio" name="style" value="sight"><span>観光めぐり</span></label>
+        <label><input type="radio" name="style" value="food"><span>食べ歩き</span></label>
+        <label><input type="radio" name="style" value="nature"><span>自然・山歩き</span></label>
+      </div>
+    </fieldset>
+    <fieldset class="field">
+      <legend>あてはまるもの</legend>
+      <div class="opts">
+        <label><input type="checkbox" id="o-onsen"><span>温泉に入る</span></label>
+        <label><input type="checkbox" id="o-sea"><span>海・プール</span></label>
+        <label><input type="checkbox" id="o-kids"><span>子どもと一緒</span></label>
+        <label><input type="checkbox" id="o-plane"><span>飛行機に乗る</span></label>
+        <label><input type="checkbox" id="o-car"><span>車で行く</span></label>
+      </div>
+    </fieldset>
+    <button type="submit" class="primary" id="make">しおりをつくる</button>
+    <p class="err" id="err" role="alert"></p>
+  </form>
+
+  <div id="plan" hidden>
+    <div class="toolbar no-print">
+      <button type="button" class="pill" id="print">印刷する</button>
+      <button type="button" class="pill" id="edit">条件を変える</button>
+      <button type="button" class="pill quiet" id="reset">新しくつくる</button>
+    </div>
+
+    <section aria-labelledby="h-days">
+      <h2 id="h-days" class="tab">日程</h2>
+      <p class="hint no-print">時刻と内容はそのまま書きかえられます。↑↓で順番を入れかえます。</p>
+      <div id="days-out"></div>
+    </section>
+
+    <section aria-labelledby="h-pack" class="pack-sec">
+      <h2 id="h-pack" class="tab">持ち物</h2>
+      <p class="hint" id="pack-count" aria-live="polite"></p>
+      <div id="pack-out" class="pack"></div>
+      <form class="add-pack no-print" id="add-pack">
+        <label for="pack-new" class="sr">持ち物を追加</label>
+        <input id="pack-new" type="text" maxlength="30" placeholder="ほかに持っていくもの">
+        <button type="submit" class="pill">追加</button>
+      </form>
+    </section>
+
+    <section aria-labelledby="h-memo">
+      <h2 id="h-memo" class="tab">メモ</h2>
+      <label for="memo" class="sr">メモ</label>
+      <textarea id="memo" rows="4" maxlength="600" placeholder="宿の電話番号、集合場所など"></textarea>
+    </section>
+  </div>
+
+  <footer class="foot">
+    <p>作った人：App World Lab（App Worldの運営）</p>
+    <p>しおりの内容はこの端末の中だけに保存され、どこにも送られません。</p>
+    <p class="no-print"><a href="../">App World Lab</a></p>
+  </footer>
+</div>
+<script src="app.js"></script>
+</body></html>

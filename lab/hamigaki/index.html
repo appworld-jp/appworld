@@ -2,35 +2,69 @@
 <html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>おはなしタイマー</title>
-<meta name="description" content="子どもの歯みがきを、お話を聞きながら3分続ける。">
-<link rel="stylesheet" href="../lab.css">
+<meta name="description" content="3分の歯みがきタイマー。30秒ごとにみがく場所が変わり、お話もひと場面ずつ進みます。読み上げもできます。">
+<meta name="theme-color" content="#bfe6ff">
 <link rel="stylesheet" href="style.css">
 </head><body>
-<div class="wrap">
-  <div class="top"><a href="../"><b>App World Lab</b></a><span>試作中</span></div>
-  <div>
-    <h1>おはなしタイマー</h1>
-    <p class="lead">歯みがきの3分間、お話が少しずつ進みます。30秒ごとに、みがく場所も教えてくれます。</p>
-  </div>
+<div class="sky" aria-hidden="true"><i class="cloud c1"></i><i class="cloud c2"></i><i class="bubble b1"></i><i class="bubble b2"></i><i class="bubble b3"></i></div>
+<main class="app">
+  <header class="head">
+    <h1>おはなし<br class="br">タイマー</h1>
+    <p class="lead">はみがきの3ぷんで、おはなしがすすむよ。</p>
+  </header>
 
-  <section class="card stage" aria-live="polite">
-    <div class="ring" aria-hidden="true"><svg viewBox="0 0 120 120"><circle class="bg" cx="60" cy="60" r="52"/><circle class="fg" id="arc" cx="60" cy="60" r="52"/></svg><span id="time">3:00</span></div>
-    <p class="area" id="area">お話をえらんで、はじめよう</p>
-    <h2 id="title"></h2>
-    <p class="text" id="text"></p>
-    <div class="row center">
-      <button class="btn" type="button" id="start">はじめる</button>
-      <button class="btn ghost" type="button" id="stop" hidden>やめる</button>
+  <section class="stage" aria-label="タイマー">
+    <div class="hero">
+      <svg class="ring" viewBox="0 0 220 220" aria-hidden="true">
+        <circle class="ring-bg" cx="110" cy="110" r="100"/>
+        <circle class="ring-fg" id="arc" cx="110" cy="110" r="100"/>
+      </svg>
+      <svg class="pal" id="pal" viewBox="0 0 120 120" aria-hidden="true">
+        <g class="pal-body">
+          <path class="tooth" d="M28 30c0-16 18-22 32-14 14-8 32-2 32 14 0 20-5 36-9 54-2 10-11 10-13 0l-4-16c-2-6-10-6-12 0l-4 16c-2 10-11 10-13 0-4-18-9-34-9-54z"/>
+          <ellipse class="cheek" cx="40" cy="50" rx="6" ry="4"/><ellipse class="cheek" cx="80" cy="50" rx="6" ry="4"/>
+          <g class="eyes"><circle cx="47" cy="40" r="4.5"/><circle cx="73" cy="40" r="4.5"/><circle class="shine" cx="48.5" cy="38.5" r="1.4"/><circle class="shine" cx="74.5" cy="38.5" r="1.4"/></g>
+          <path class="mouth" d="M51 52q9 9 18 0"/>
+          <path class="spark" d="M96 14l2 6 6 2-6 2-2 6-2-6-6-2 6-2z"/>
+        </g>
+        <g class="brush"><rect x="84" y="62" width="34" height="7" rx="3.5" transform="rotate(-35 84 66)"/><rect class="bristle" x="104" y="44" width="11" height="9" rx="2" transform="rotate(-35 104 48)"/></g>
+      </svg>
     </div>
-    <div class="row center">
-      <label class="note" for="story">お話</label>
-      <select id="story"></select>
-      <label class="note voice"><input type="checkbox" id="speak"> 読み上げる</label>
+    <p class="time" id="time" aria-hidden="true">3:00</p>
+    <ol class="stars" id="stars" aria-hidden="true"></ol>
+
+    <div class="where" id="where-box">
+      <svg class="mouth-map" id="map" viewBox="0 0 200 174" role="img" aria-labelledby="where"></svg>
+      <p class="where-text" id="where" aria-live="polite"></p>
+    </div>
+
+    <div class="controls">
+      <button type="button" class="big go" id="start"><span>はじめる</span></button>
+      <button type="button" class="big pause" id="pause" hidden><span>ちょっとまって</span></button>
+      <button type="button" class="small" id="stop" hidden>おわりにする</button>
     </div>
   </section>
 
-  <p class="made">作った人：App World Lab（App Worldの運営）。読み上げは端末の音声機能を使います。何もどこにも送られません。</p>
-</div>
+  <section class="story" aria-labelledby="title">
+    <p class="story-label" id="part-label">きょうのおはなし</p>
+    <h2 id="title"></h2>
+    <p class="story-text" id="text" aria-live="polite"></p>
+  </section>
+
+  <section class="pick" id="pick" aria-labelledby="h-pick">
+    <h2 id="h-pick">おはなしをえらぶ</h2>
+    <div class="books" id="books" role="radiogroup" aria-labelledby="h-pick"></div>
+    <label class="switch" id="speak-wrap"><input type="checkbox" id="speak"><span class="knob" aria-hidden="true"></span><span>こえで よみあげる</span></label>
+    <p class="count" id="count"></p>
+  </section>
+
+  <footer class="foot">
+    <p>おうちの方へ：30秒ごとに、上の歯のおもて→うら→かむところ、下の歯のおもて→うら→かむところ、の順に案内します。読み上げは端末の音声機能を使います。</p>
+    <p>作った人：App World Lab（App Worldの運営）</p>
+    <p>記録（がんばった回数など）はこの端末の中だけに保存され、どこにも送られません。</p>
+    <p><a href="../">App World Lab</a></p>
+  </footer>
+</main>
 <script src="stories.js"></script>
 <script src="app.js"></script>
 </body></html>

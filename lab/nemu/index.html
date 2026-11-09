@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ねむログ</title>
+<meta name="description" content="「寝る」「起きた」をタップするだけの睡眠記録。1週間の睡眠時間と寝る時刻のそろい具合をグラフにして、記録に合わせたヒントを表示します。">
+<meta name="theme-color" content="#0D1230">
+<link rel="stylesheet" href="style.css">
+</head><body>
+<div class="sky" aria-hidden="true"></div>
+<div class="app">
+  <header class="head">
+    <svg class="moon" viewBox="0 0 40 40" aria-hidden="true"><path d="M26 4a16 16 0 1 0 10 26A14 14 0 0 1 26 4z"/></svg>
+    <h1>ねむログ</h1>
+  </header>
+
+  <section class="now" id="now" aria-live="polite">
+    <div id="idle">
+      <p class="greet" id="greet">今夜も、おつかれさまでした。</p>
+      <button type="button" class="big sleep" id="goSleep"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M26 4a16 16 0 1 0 10 26A14 14 0 0 1 26 4z"/></svg>寝る</button>
+      <p class="small">布団に入るときにタップしてください。朝は「起きた」を押すだけです。</p>
+    </div>
+    <div id="sleeping" hidden>
+      <p class="greet">おやすみなさい。</p>
+      <p class="since"><span id="since">23:00</span>から<span class="el" id="elapsed"></span></p>
+      <button type="button" class="big wake" id="goWake"><svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="8"/><path d="M20 2v6M20 32v6M2 20h6M32 20h6M7 7l4 4M29 29l4 4M33 7l-4 4M11 29l-4 4"/></svg>起きた</button>
+      <button type="button" class="link" id="cancelSleep">「寝る」を取り消す</button>
+    </div>
+    <div id="rate" hidden>
+      <p class="greet">おはようございます。<span id="slept"></span></p>
+      <p class="q" id="rateQ">目覚めはどうですか？</p>
+      <div class="feels" role="group" aria-labelledby="rateQ">
+        <button type="button" class="feel f2" data-feel="2">ぐっすり</button>
+        <button type="button" class="feel f1" data-feel="1">ふつう</button>
+        <button type="button" class="feel f0" data-feel="0">ねむい</button>
+      </div>
+      <button type="button" class="link" id="rateLater">あとで</button>
+    </div>
+  </section>
+
+  <section class="card" aria-labelledby="weekTitle">
+    <div class="weekhead">
+      <button type="button" class="nav" id="prevWeek" aria-label="前の週">‹</button>
+      <h2 id="weekTitle">この1週間</h2>
+      <button type="button" class="nav" id="nextWeek" aria-label="次の週">›</button>
+    </div>
+    <div class="chartwrap"><svg id="chart" class="chart" role="img" aria-labelledby="weekTitle chartDesc"></svg></div>
+    <p class="sr" id="chartDesc"></p>
+    <ul class="legend" aria-hidden="true"><li><i class="f2"></i>ぐっすり</li><li><i class="f1"></i>ふつう</li><li><i class="f0"></i>ねむい</li><li><i class="fn"></i>未評価</li></ul>
+    <dl class="stats" id="stats"></dl>
+  </section>
+
+  <section class="card" aria-labelledby="tipTitle">
+    <h2 id="tipTitle">ヒント</h2>
+    <ul class="tips" id="tips" aria-live="polite"></ul>
+    <p class="small">ヒントは記録から決まった基準で選んでいます。体調に不安があるときは、医師に相談してください。</p>
+  </section>
+
+  <section class="card" aria-labelledby="logTitle">
+    <div class="loghead"><h2 id="logTitle">記録</h2><button type="button" class="pill" id="addBtn">＋ 手で追加</button></div>
+    <form class="edit" id="edit" hidden>
+      <p class="edittitle" id="editTitle">記録を追加</p>
+      <label>寝た時刻<input type="datetime-local" id="inBed" required></label>
+      <label>起きた時刻<input type="datetime-local" id="inWake" required></label>
+      <fieldset><legend>目覚め</legend>
+        <label class="r"><input type="radio" name="feel" value="2">ぐっすり</label>
+        <label class="r"><input type="radio" name="feel" value="1">ふつう</label>
+        <label class="r"><input type="radio" name="feel" value="0">ねむい</label>
+        <label class="r"><input type="radio" name="feel" value="">未評価</label>
+      </fieldset>
+      <p class="err" id="err" role="alert"></p>
+      <div class="row"><button type="submit" class="pill solid">保存</button><button type="button" class="pill" id="editCancel">やめる</button></div>
+    </form>
+    <ol class="log" id="log"></ol>
+    <p class="small" id="logEmpty">まだ記録がありません。今夜「寝る」を押すと、ここに並びはじめます。昨夜の分は「手で追加」から入れられます。</p>
+  </section>
+
+  <footer class="foot">
+    <p>作った人：App World Lab（App Worldの運営）</p>
+    <p>記録はこの端末の中だけに保存され、どこにも送られません。</p>
+    <p><a href="../">App World Lab</a></p>
+  </footer>
+</div>
+<script src="app.js"></script>
+</body></html>

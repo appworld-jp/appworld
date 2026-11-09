@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>みずのむ</title>
+<meta name="description" content="飲んだ水をタップで記録。1日の目標までボトルが満ちていき、きょうの記録と7日分の推移もひと目でわかります。">
+<meta name="theme-color" content="#f2fbff">
+<link rel="stylesheet" href="style.css">
+</head><body>
+<main class="app">
+  <header class="top">
+    <h1><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5c3.5 4.6 6.5 8.4 6.5 12a6.5 6.5 0 0 1-13 0c0-3.6 3-7.4 6.5-12z"/></svg>みずのむ</h1>
+    <p class="date" id="today"></p>
+  </header>
+
+  <section class="hero" aria-labelledby="amount">
+    <div class="bottle-wrap">
+      <svg class="bottle" viewBox="0 0 120 220" aria-hidden="true">
+        <defs>
+          <clipPath id="inside"><path d="M44 8h32v20c0 6 18 14 18 34v134a16 16 0 0 1-16 16H42a16 16 0 0 1-16-16V62c0-20 18-28 18-34z"/></clipPath>
+        </defs>
+        <g clip-path="url(#inside)">
+          <rect class="glass" x="0" y="0" width="120" height="220"/>
+          <g id="water" class="water">
+            <path class="wave back" d="M-120 6q15-6 30 0t30 0 30 0 30 0 30 0 30 0 30 0 30 0 30 0 30 0 30 0 30 0V230H-120z"/>
+            <path class="wave front" d="M-120 8q15-7 30 0t30 0 30 0 30 0 30 0 30 0 30 0 30 0 30 0 30 0 30 0 30 0V230H-120z"/>
+          </g>
+          <g class="ticks"><path d="M30 62h8M30 98h12M30 134h8M30 170h12"/></g>
+        </g>
+        <path class="outline" d="M44 8h32v20c0 6 18 14 18 34v134a16 16 0 0 1-16 16H42a16 16 0 0 1-16-16V62c0-20 18-28 18-34z"/>
+        <rect class="cap" x="42" y="2" width="36" height="12" rx="4"/>
+      </svg>
+    </div>
+    <div class="readout">
+      <p class="pct" id="pct" aria-hidden="true">0%</p>
+      <h2 class="amount" id="amount" aria-live="polite">0<small>ml</small></h2>
+      <p class="goal-line">目標 <b id="goal-v">1,500ml</b> <button type="button" class="link" id="goal-edit">変更</button></p>
+      <p class="left" id="left"></p>
+    </div>
+    <form class="goal-form" id="goal-form" hidden>
+      <label for="goal-in">1日の目標（ml）</label>
+      <div class="row"><input id="goal-in" type="number" inputmode="numeric" min="300" max="5000" step="50"><button type="submit" class="btn-s">保存</button></div>
+      <p class="note">飲み物からとる水分の目安は、体格や季節、運動量で変わります。持病がある方は医師の指示に従ってください。</p>
+    </form>
+  </section>
+
+  <section aria-labelledby="h-add">
+    <h2 id="h-add" class="sec">のんだ量をタップ</h2>
+    <div class="cups" id="cups"></div>
+    <form class="custom" id="custom">
+      <label for="custom-in">ほかの量</label>
+      <input id="custom-in" type="number" inputmode="numeric" min="10" max="2000" step="10" placeholder="例：330">
+      <span>ml</span>
+      <button type="submit" class="btn-s">記録</button>
+    </form>
+    <p class="toast" id="toast" role="status"></p>
+  </section>
+
+  <section aria-labelledby="h-log">
+    <h2 id="h-log" class="sec">きょうの記録</h2>
+    <ul class="log" id="log"></ul>
+  </section>
+
+  <section aria-labelledby="h-week">
+    <h2 id="h-week" class="sec">7日間</h2>
+    <div class="week" id="week" role="img"></div>
+  </section>
+
+  <footer class="foot">
+    <p>作った人：App World Lab（App Worldの運営）</p>
+    <p>記録はこの端末の中だけに保存され、どこにも送られません。</p>
+    <p><a href="../">App World Lab</a></p>
+  </footer>
+</main>
+<script src="app.js"></script>
+</body></html>

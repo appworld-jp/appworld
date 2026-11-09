@@ -2,35 +2,63 @@
 <html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>ドット絵メーカー</title>
-<meta name="description" content="写真を、ゲーム風のドット絵に変換して保存できる。">
-<link rel="stylesheet" href="../lab.css">
-<link rel="stylesheet" href="../palette/style.css">
+<meta name="description" content="写真を昔のゲームのようなドット絵に変換します。ドットの細かさ、色の数、レトロなパレット、ディザと輪郭線を選んで、PNG画像で保存できます。">
+<meta name="theme-color" content="#0B0A14">
 <link rel="stylesheet" href="style.css">
 </head><body>
-<div class="wrap">
-  <div class="top"><a href="../"><b>App World Lab</b></a><span>試作中</span></div>
-  <div>
+<div class="app">
+  <header class="title">
+    <p class="press">PIXEL ART MAKER</p>
     <h1>ドット絵メーカー</h1>
-    <p class="lead">写真を、昔のゲームのようなドット絵に変えます。細かさと色の数を選んで、画像として保存できます。</p>
+    <p class="lead">写真を、昔のゲームのようなドット絵に変えます。</p>
+  </header>
+
+  <div class="win start" id="startWin">
+    <svg class="sprite" viewBox="0 0 14 9" aria-hidden="true" shape-rendering="crispEdges"><rect x="4" y="0" width="1" height="1" fill="#E43B44"/><rect x="5" y="0" width="1" height="1" fill="#E43B44"/><rect x="8" y="0" width="1" height="1" fill="#E43B44"/><rect x="9" y="0" width="1" height="1" fill="#E43B44"/><rect x="3" y="1" width="1" height="1" fill="#E43B44"/><rect x="4" y="1" width="1" height="1" fill="#E43B44"/><rect x="5" y="1" width="1" height="1" fill="#E43B44"/><rect x="6" y="1" width="1" height="1" fill="#E43B44"/><rect x="7" y="1" width="1" height="1" fill="#E43B44"/><rect x="8" y="1" width="1" height="1" fill="#E43B44"/><rect x="9" y="1" width="1" height="1" fill="#E43B44"/><rect x="10" y="1" width="1" height="1" fill="#E43B44"/><rect x="2" y="2" width="1" height="1" fill="#E43B44"/><rect x="3" y="2" width="1" height="1" fill="#E43B44"/><rect x="4" y="2" width="1" height="1" fill="#FFFFFF"/><rect x="5" y="2" width="1" height="1" fill="#E43B44"/><rect x="6" y="2" width="1" height="1" fill="#E43B44"/><rect x="7" y="2" width="1" height="1" fill="#E43B44"/><rect x="8" y="2" width="1" height="1" fill="#E43B44"/><rect x="9" y="2" width="1" height="1" fill="#E43B44"/><rect x="10" y="2" width="1" height="1" fill="#E43B44"/><rect x="11" y="2" width="1" height="1" fill="#E43B44"/><rect x="2" y="3" width="1" height="1" fill="#E43B44"/><rect x="3" y="3" width="1" height="1" fill="#FFFFFF"/><rect x="4" y="3" width="1" height="1" fill="#FFFFFF"/><rect x="5" y="3" width="1" height="1" fill="#E43B44"/><rect x="6" y="3" width="1" height="1" fill="#E43B44"/><rect x="7" y="3" width="1" height="1" fill="#E43B44"/><rect x="8" y="3" width="1" height="1" fill="#E43B44"/><rect x="9" y="3" width="1" height="1" fill="#E43B44"/><rect x="10" y="3" width="1" height="1" fill="#E43B44"/><rect x="11" y="3" width="1" height="1" fill="#E43B44"/><rect x="2" y="4" width="1" height="1" fill="#E43B44"/><rect x="3" y="4" width="1" height="1" fill="#E43B44"/><rect x="4" y="4" width="1" height="1" fill="#E43B44"/><rect x="5" y="4" width="1" height="1" fill="#E43B44"/><rect x="6" y="4" width="1" height="1" fill="#E43B44"/><rect x="7" y="4" width="1" height="1" fill="#E43B44"/><rect x="8" y="4" width="1" height="1" fill="#E43B44"/><rect x="9" y="4" width="1" height="1" fill="#E43B44"/><rect x="10" y="4" width="1" height="1" fill="#E43B44"/><rect x="11" y="4" width="1" height="1" fill="#E43B44"/><rect x="3" y="5" width="1" height="1" fill="#E43B44"/><rect x="4" y="5" width="1" height="1" fill="#E43B44"/><rect x="5" y="5" width="1" height="1" fill="#E43B44"/><rect x="6" y="5" width="1" height="1" fill="#E43B44"/><rect x="7" y="5" width="1" height="1" fill="#E43B44"/><rect x="8" y="5" width="1" height="1" fill="#E43B44"/><rect x="9" y="5" width="1" height="1" fill="#E43B44"/><rect x="10" y="5" width="1" height="1" fill="#E43B44"/><rect x="4" y="6" width="1" height="1" fill="#E43B44"/><rect x="5" y="6" width="1" height="1" fill="#E43B44"/><rect x="6" y="6" width="1" height="1" fill="#E43B44"/><rect x="7" y="6" width="1" height="1" fill="#E43B44"/><rect x="8" y="6" width="1" height="1" fill="#E43B44"/><rect x="9" y="6" width="1" height="1" fill="#E43B44"/><rect x="5" y="7" width="1" height="1" fill="#E43B44"/><rect x="6" y="7" width="1" height="1" fill="#E43B44"/><rect x="7" y="7" width="1" height="1" fill="#E43B44"/><rect x="8" y="7" width="1" height="1" fill="#E43B44"/><rect x="6" y="8" width="1" height="1" fill="#E43B44"/><rect x="7" y="8" width="1" height="1" fill="#E43B44"/></svg>
+    <p class="howto">写真を読み込むと、すぐにドット絵になります。ドットの数や色を変えて、PNG画像で保存できます。</p>
+    <label class="drop" id="drop">
+      <input type="file" id="file" accept="image/*">
+      <span class="cursor" aria-hidden="true">▶</span><span class="drop-t">写真をえらぶ</span>
+      <span class="drop-s">ドロップしても読み込めます</span>
+    </label>
+    <button type="button" class="btn sub" id="sample">見本の絵で試す</button>
+    <p class="err" id="err" role="alert"></p>
   </div>
 
-  <label class="card drop" id="drop">
-    <input type="file" id="file" accept="image/*">
-    <span class="drop-in"><b>写真を選ぶ</b><span class="note">ここに写真をドロップしても選べます</span></span>
-  </label>
-
-  <section class="card out" id="out" hidden>
-    <canvas id="view" aria-label="ドット絵にした画像"></canvas>
-    <div class="ctl">
-      <label>細かさ <output id="sizeV">48</output>ドット
-        <input type="range" id="size" min="16" max="96" step="4" value="48"></label>
-      <label>色の数 <output id="colV">12</output>色
-        <input type="range" id="col" min="2" max="24" value="12"></label>
+  <section class="work" id="work" hidden>
+    <div class="win screen">
+      <canvas id="view" role="img" aria-label="ドット絵にした画像"></canvas>
+      <p class="info" id="info" aria-live="polite"></p>
+      <div class="swatches" id="swatches" aria-hidden="true"></div>
     </div>
-    <div class="row"><button class="btn" type="button" id="save">画像を保存</button><span class="note" id="msg" aria-live="polite"></span></div>
+
+    <div class="win menu">
+      <h2 class="mh">SETTINGS</h2>
+      <div class="opt"><span class="ol" id="szL">ドットの数（長い辺）</span><div class="seg" id="sizeSeg" role="group" aria-labelledby="szL"></div></div>
+      <div class="opt"><span class="ol" id="palL">パレット</span><div class="seg col" id="palSeg" role="group" aria-labelledby="palL"></div></div>
+      <div class="opt" id="cntOpt"><label class="ol" for="cnt">色の数 <output id="cntV" for="cnt">8</output>色</label><input type="range" id="cnt" min="2" max="16" value="8"></div>
+      <div class="opt toggles">
+        <label class="tg"><input type="checkbox" id="dither"><span>ディザ（網点でグラデーション）</span></label>
+        <label class="tg"><input type="checkbox" id="outline"><span>輪郭線（背景との境目をふちどる）</span></label>
+      </div>
+    </div>
+
+    <div class="win menu">
+      <h2 class="mh">SAVE</h2>
+      <div class="saves">
+        <button type="button" class="btn" id="saveBig">PNGで保存（大きく）</button>
+        <button type="button" class="btn sub" id="saveRaw">原寸で保存</button>
+        <label class="btn sub file2">べつの写真<input type="file" id="file2" accept="image/*"></label>
+      </div>
+      <p class="info" id="saveMsg" role="status"></p>
+    </div>
   </section>
 
-  <p class="made">作った人：App World Lab（App Worldの運営）。写真はこの端末の中だけで処理され、どこにも送られません。</p>
+  <footer class="foot">
+    <p>作った人：App World Lab（App Worldの運営）</p>
+    <p>写真はこの端末の中だけで処理され、どこにも送られません。</p>
+    <p><a href="../">App World Lab</a></p>
+  </footer>
 </div>
 <script src="../img.js"></script>
 <script src="app.js"></script>

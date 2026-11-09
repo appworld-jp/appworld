@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ジムメモ</title>
+<meta name="description" content="片手で使える筋トレ記録。前回の重さと回数が最初から入っていて、記録するとセット間の休憩タイマーが動きます。">
+<meta name="theme-color" content="#0B0B0C">
+<link rel="stylesheet" href="style.css">
+</head><body>
+<div class="app">
+  <header class="bar">
+    <h1 class="logo">ジム<span>メモ</span></h1>
+    <nav class="tabs" aria-label="画面の切り替え">
+      <button type="button" class="tab" id="tabLog" aria-pressed="true">記録</button>
+      <button type="button" class="tab" id="tabHist" aria-pressed="false">履歴</button>
+    </nav>
+  </header>
+
+  <main>
+    <section id="viewLog" aria-labelledby="exLbl">
+      <div class="block">
+        <h2 class="lbl" id="exLbl">種目</h2>
+        <div class="chips" id="chips" role="group" aria-labelledby="exLbl"></div>
+        <form class="addform" id="addForm" hidden>
+          <label class="sr" for="addName">新しい種目の名前</label>
+          <input id="addName" maxlength="20" autocomplete="off" placeholder="例：ケーブルフライ">
+          <button type="submit" class="mini">追加</button>
+        </form>
+      </div>
+
+      <div class="exname" id="exName" aria-live="polite"></div>
+      <div class="prev" id="prev"></div>
+
+      <div class="steppers">
+        <div class="step">
+          <label class="lbl" for="wIn">重さ（kg）</label>
+          <div class="ctrl">
+            <button type="button" class="pm" id="wMinus" aria-label="重さを減らす">−</button>
+            <input id="wIn" type="number" inputmode="decimal" min="0" max="999" step="any">
+            <button type="button" class="pm" id="wPlus" aria-label="重さを増やす">＋</button>
+          </div>
+          <button type="button" class="stepsize" id="stepBtn">刻み 2.5kg</button>
+          <span class="hint" id="wHint"></span>
+        </div>
+        <div class="step">
+          <label class="lbl" for="rIn">回数</label>
+          <div class="ctrl">
+            <button type="button" class="pm" id="rMinus" aria-label="回数を減らす">−</button>
+            <input id="rIn" type="number" inputmode="numeric" min="1" max="999" step="1">
+            <button type="button" class="pm" id="rPlus" aria-label="回数を増やす">＋</button>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="block">
+        <h2 class="lbl">今日のセット</h2>
+        <ol class="today" id="today"></ol>
+        <p class="empty" id="todayEmpty">まだありません。下の大きなボタンで1セット目を記録しましょう。</p>
+      </div>
+
+      <div class="block settings">
+        <h2 class="lbl" id="restSetLbl">休憩の長さ</h2>
+        <div class="seg" id="restSeg" role="group" aria-labelledby="restSetLbl"></div>
+        <label class="switch"><input type="checkbox" id="sound"> 休憩の終わりに音と振動で知らせる</label>
+      </div>
+    </section>
+
+    <section id="viewHist" hidden aria-labelledby="histTitle">
+      <h2 class="h2" id="histTitle">種目ごとの履歴</h2>
+      <p class="sub">ベストは最も重いセットです（同じ重さなら回数の多いほう）。自重の種目は回数で比べます。</p>
+      <div id="hist"></div>
+      <p class="empty" id="histEmpty">まだ記録がありません。「記録」でセットを残すと、種目ごとの履歴とベストがここに並びます。</p>
+      <button type="button" class="danger" id="wipe">すべての記録を消す</button>
+    </section>
+  </main>
+
+  <div class="dock">
+    <section class="rest" id="rest" hidden aria-label="休憩タイマー">
+        <svg class="ring" viewBox="0 0 120 120" aria-hidden="true"><circle class="trk" cx="60" cy="60" r="52"/><circle class="arc" id="arc" cx="60" cy="60" r="52"/></svg>
+        <div class="restmid"><span class="restlbl" id="restLbl">休憩中</span><span class="resttime" id="restTime">1:30</span></div>
+        <div class="restbtns">
+          <button type="button" class="mini" id="restAdd">＋30秒</button>
+          <button type="button" class="mini" id="restSkip">終わる</button>
+        </div>
+      </section>
+    <p class="toast" id="toast" role="status" aria-live="polite"></p>
+    <button type="button" class="go" id="record"><span class="go-l">セットを記録</span><span class="go-s" id="goSub">60kg × 10回</span></button>
+  </div>
+
+  <footer class="foot">
+    <p>作った人：App World Lab（App Worldの運営）</p>
+    <p>記録はこの端末の中だけに保存され、どこにも送られません。</p>
+    <p><a href="../">App World Lab</a></p>
+  </footer>
+</div>
+<script src="app.js"></script>
+</body></html>

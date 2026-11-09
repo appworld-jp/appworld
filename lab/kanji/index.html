@@ -2,30 +2,69 @@
 <html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>ひとこと漢字</title>
-<meta name="description" content="通勤の1駅で1問。大人が読めそうで読めない漢字のクイズ。">
-<link rel="stylesheet" href="../lab.css">
+<meta name="description" content="大人が読めそうで読めない漢字を、1日1問。4つの読みから選び、意味も確かめられます。間違えた言葉はあとで復習できます。">
+<meta name="theme-color" content="#F3EEE3">
 <link rel="stylesheet" href="style.css">
 </head><body>
-<div class="wrap">
-  <div class="top"><a href="../"><b>App World Lab</b></a><span>試作中</span></div>
-  <div>
-    <h1>ひとこと漢字</h1>
-    <p class="lead">通勤の1駅で1問。大人が読めそうで読めない漢字を、毎日ひとつずつ。</p>
-  </div>
-
-  <section class="card q" aria-live="polite">
-    <div class="row between"><span class="tag" id="kind">今日の1問</span><span class="note" id="streak"></span></div>
-    <p class="word" id="word"></p>
-    <p class="note">この言葉の読み方は？</p>
-    <div class="choices" id="choices"></div>
-    <div class="answer" id="answer" hidden>
-      <p class="result" id="result"></p>
-      <p class="mean" id="mean"></p>
-      <div class="row"><button class="btn" type="button" id="next">もう1問</button></div>
+<div class="paper">
+  <header class="head">
+    <a class="back" href="../">App World Lab</a>
+    <div class="title">
+      <span class="seal" aria-hidden="true">読</span>
+      <div><h1>ひとこと漢字</h1><p class="sub">読めそうで読めない漢字を、一日一問。</p></div>
     </div>
+    <div class="streak" aria-label="続けた日数">
+      <span class="streak-n" id="streakN">0</span><span class="streak-u">日連続</span>
+      <ol class="week" id="week" aria-hidden="true"></ol>
+    </div>
+  </header>
+
+  <nav class="tabs" role="tablist" aria-label="モード">
+    <button type="button" role="tab" id="tab-daily" aria-selected="true" aria-controls="panel">今日の一問</button>
+    <button type="button" role="tab" id="tab-practice" aria-selected="false" aria-controls="panel">練習</button>
+    <button type="button" role="tab" id="tab-review" aria-selected="false" aria-controls="panel">復習<span class="badge" id="missN" hidden></span></button>
+  </nav>
+
+  <main id="panel" class="sheet" role="tabpanel" aria-labelledby="tab-daily">
+    <div class="meta"><span id="kind">今日の一問</span><span id="date"></span></div>
+    <div class="genko" id="word" aria-label=""></div>
+    <p class="ask" id="askText">この言葉の読み方は？</p>
+    <div class="choices" id="choices"></div>
+
+    <section class="answer" id="answer" hidden aria-live="polite">
+      <div class="stamp" id="stamp" aria-hidden="true"></div>
+      <p class="result" id="result"></p>
+      <p class="reading" id="reading"></p>
+      <p class="mean"><span class="label">意味</span><span id="mean"></span></p>
+      <p class="trap" id="trap"></p>
+      <div class="acts">
+        <button class="btn" type="button" id="next">次の問題へ</button>
+      </div>
+    </section>
+
+    <section class="empty" id="empty" hidden>
+      <p class="empty-big">復習する言葉はありません。</p>
+      <p>間違えた言葉は、ここに残ります。正解すると、この一覧から外れます。</p>
+      <button class="btn ghost" type="button" id="goPractice">練習する</button>
+    </section>
+  </main>
+
+  <section class="ledger" aria-labelledby="ledgerH">
+    <h2 id="ledgerH">これまでの記録</h2>
+    <dl class="nums">
+      <div><dt>答えた数</dt><dd id="sTotal">0</dd></div>
+      <div><dt>正解</dt><dd id="sOk">0</dd></div>
+      <div><dt>復習待ち</dt><dd id="sMiss">0</dd></div>
+    </dl>
+    <ul class="misslist" id="missList"></ul>
   </section>
 
-  <p class="made">作った人：App World Lab（App Worldの運営）。続けた日数はこの端末の中だけに保存され、どこにも送られません。</p>
+  <footer class="foot">
+    <p>収録：<span id="count"></span>語。読みが一般にひとつに定まる言葉だけを選んでいます。</p>
+    <p>作った人：App World Lab（App Worldの運営）</p>
+    <p>記録はこの端末の中だけに保存され、どこにも送られません。</p>
+    <p><a href="../">App World Lab</a></p>
+  </footer>
 </div>
 <script src="words.js"></script>
 <script src="app.js"></script>
