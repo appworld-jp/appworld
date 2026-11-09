@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>おえかき色見本</title>
+<meta name="description" content="写真から、絵やデザインに使える5色の配色を取り出す。">
+<link rel="stylesheet" href="../lab.css">
+<link rel="stylesheet" href="style.css">
+</head><body>
+<div class="wrap">
+  <div class="top"><a href="../"><b>App World Lab</b></a><span>試作中</span></div>
+  <div>
+    <h1>おえかき色見本</h1>
+    <p class="lead">好きな写真から、絵やデザインに使いやすい5色を取り出します。</p>
+  </div>
+
+  <label class="card drop" id="drop">
+    <input type="file" id="file" accept="image/*">
+    <span class="drop-in"><b>写真を選ぶ</b><span class="note">ここに写真をドロップしても選べます</span></span>
+  </label>
+
+  <section class="card out" id="out" hidden aria-live="polite">
+    <img id="preview" alt="選んだ写真">
+    <ol class="sw" id="sw"></ol>
+    <div class="row"><label class="note" for="count">色の数</label>
+      <select id="count"><option>3</option><option>4</option><option selected>5</option><option>6</option><option>8</option></select>
+      <button class="btn ghost" type="button" id="copy">色コードをまとめてコピー</button><span class="note" id="msg"></span></div>
+  </section>
+
+  <p class="made">作った人：App World Lab（App Worldの運営）。写真はこの端末の中だけで処理され、どこにも送られません。</p>
+</div>
+<script src="../img.js"></script>
+<script src="app.js"></script>
+</body></html>

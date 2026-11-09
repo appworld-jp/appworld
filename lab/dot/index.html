@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ドット絵メーカー</title>
+<meta name="description" content="写真を、ゲーム風のドット絵に変換して保存できる。">
+<link rel="stylesheet" href="../lab.css">
+<link rel="stylesheet" href="../palette/style.css">
+<link rel="stylesheet" href="style.css">
+</head><body>
+<div class="wrap">
+  <div class="top"><a href="../"><b>App World Lab</b></a><span>試作中</span></div>
+  <div>
+    <h1>ドット絵メーカー</h1>
+    <p class="lead">写真を、昔のゲームのようなドット絵に変えます。細かさと色の数を選んで、画像として保存できます。</p>
+  </div>
+
+  <label class="card drop" id="drop">
+    <input type="file" id="file" accept="image/*">
+    <span class="drop-in"><b>写真を選ぶ</b><span class="note">ここに写真をドロップしても選べます</span></span>
+  </label>
+
+  <section class="card out" id="out" hidden>
+    <canvas id="view" aria-label="ドット絵にした画像"></canvas>
+    <div class="ctl">
+      <label>細かさ <output id="sizeV">48</output>ドット
+        <input type="range" id="size" min="16" max="96" step="4" value="48"></label>
+      <label>色の数 <output id="colV">12</output>色
+        <input type="range" id="col" min="2" max="24" value="12"></label>
+    </div>
+    <div class="row"><button class="btn" type="button" id="save">画像を保存</button><span class="note" id="msg" aria-live="polite"></span></div>
+  </section>
+
+  <p class="made">作った人：App World Lab（App Worldの運営）。写真はこの端末の中だけで処理され、どこにも送られません。</p>
+</div>
+<script src="../img.js"></script>
+<script src="app.js"></script>
+</body></html>

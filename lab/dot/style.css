@@ -1,0 +1,6 @@
+#view{width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges;border-radius:12px;background:var(--bg)}
+.ctl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 20px}
+@media (max-width:520px){.ctl{grid-template-columns:minmax(0,1fr)}}
+.ctl label{display:grid;gap:4px;font-size:14px}
+.ctl output{font-family:var(--mono);font-weight:700}
+input[type=range]{width:100%;accent-color:var(--accent)}

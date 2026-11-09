@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ひとこと漢字</title>
+<meta name="description" content="通勤の1駅で1問。大人が読めそうで読めない漢字のクイズ。">
+<link rel="stylesheet" href="../lab.css">
+<link rel="stylesheet" href="style.css">
+</head><body>
+<div class="wrap">
+  <div class="top"><a href="../"><b>App World Lab</b></a><span>試作中</span></div>
+  <div>
+    <h1>ひとこと漢字</h1>
+    <p class="lead">通勤の1駅で1問。大人が読めそうで読めない漢字を、毎日ひとつずつ。</p>
+  </div>
+
+  <section class="card q" aria-live="polite">
+    <div class="row between"><span class="tag" id="kind">今日の1問</span><span class="note" id="streak"></span></div>
+    <p class="word" id="word"></p>
+    <p class="note">この言葉の読み方は？</p>
+    <div class="choices" id="choices"></div>
+    <div class="answer" id="answer" hidden>
+      <p class="result" id="result"></p>
+      <p class="mean" id="mean"></p>
+      <div class="row"><button class="btn" type="button" id="next">もう1問</button></div>
+    </div>
+  </section>
+
+  <p class="made">作った人：App World Lab（App Worldの運営）。続けた日数はこの端末の中だけに保存され、どこにも送られません。</p>
+</div>
+<script src="words.js"></script>
+<script src="app.js"></script>
+</body></html>

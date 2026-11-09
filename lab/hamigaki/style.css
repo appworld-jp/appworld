@@ -1,0 +1,14 @@
+.stage{display:grid;gap:12px;justify-items:center;text-align:center;padding:26px 20px}
+.ring{position:relative;width:min(220px,60vw);aspect-ratio:1;max-width:100%}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:8}
+.ring .bg{stroke:var(--line)}
+.ring .fg{stroke:var(--accent);stroke-linecap:round;stroke-dasharray:326.7;stroke-dashoffset:326.7;transition:stroke-dashoffset 1s linear}
+.ring span{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--mono);font-size:clamp(34px,10vw,46px);font-variant-numeric:tabular-nums}
+.area{margin:0;font-weight:700;color:var(--accent);font-size:17px}
+h2{margin:0;font-size:15px;color:var(--sub);font-weight:500}
+h2:empty,.text:empty{display:none}
+.text{margin:0;font-size:clamp(18px,4.6vw,22px);line-height:1.9;max-width:28em;min-height:3.8em}
+.center{justify-content:center}
+select{width:auto}
+.voice{display:inline-flex;gap:6px;align-items:center}
