@@ -1,9 +1,10 @@
-# CLAUDE.md — Shipyard（公開リポジトリ）
+# CLAUDE.md — App World（公開リポジトリ、旧称 Shipyard）
 
 このリポジトリは公開されています。秘密の鍵、個人情報、事業の内部資料（収入の目標、設計書など）を置かないこと。設計書と意思決定ログは、オーナーの非公開リポジトリ（atron の `shipyard/`）にある。
 
 ## サイト
-- 外部のスクリプト、フォント、解析タグを読み込まない。JavaScript を使わない（CSP は `script-src 'none'`）
+- 外部のスクリプト、フォント、解析タグを読み込まない。JavaScript はサイト内から配信する自前のものだけ使う（CSP は `script-src 'self'`。2026-11-05 の決定。今の本番ページはまだ JavaScript なし）
+- フォントはサイト内から配信する（Google Fonts などの外部から読み込まない）
 - 掲載は `site/apps/*.json`。`check_listing.py` を通らないものは公開しない（作品はすべて外部リンク。ファイルは配布しない）
 - 表示する文字はすべてエスケープする
 - 本番は `python3 site/build.py --production --site-url ... --submit-url ... --contact-url ...`。サンプルの掲載があると止まる
