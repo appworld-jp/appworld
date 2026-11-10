@@ -34,7 +34,7 @@
     <p class="err" id="deckErr" role="alert"></p>
     <details class="how">
       <summary>次に出る日は、どう決まる？</summary>
-      <p>「わかった」なら翌日、3日後と、だんだん間隔が空いていきます。「あやしい」は短めの間隔でまた出ます。「わからない」は、この回の最後にもう一度出ます。</p>
+      <p>4択で正解したカードや「わかった」を押したカードは、明日、3日後と、だんだん間をあけて出ます。「自信がない」「あやしい」は早めにまた出ます。まちがえたカードや「わからない」は、その回の最後にもう一度出ます。</p>
     </details>
   </main>
 
@@ -63,6 +63,11 @@
   <!-- 復習 -->
   <main class="view" id="vStudy" hidden>
     <div class="prog"><div class="prog-bar"><i id="progBar"></i></div><span id="progT"></span></div>
+    <div class="mode" role="group" aria-label="答え方">
+      <button type="button" class="mode-b" data-mode="mc" aria-pressed="true">4択</button>
+      <button type="button" class="mode-b" data-mode="flip" aria-pressed="false">めくる</button>
+    </div>
+    <p class="mode-note" id="modeNote"></p>
     <div class="stage" id="stage">
       <button class="flip" type="button" id="flip" aria-describedby="flipHint">
         <span class="face f-front"><span class="lbl">表</span><span class="txt" id="fFront"></span><span class="tap" id="flipHint">タップで答えを見る</span></span>
@@ -75,8 +80,23 @@
       <button type="button" class="g g-mid" data-q="3"><b>あやしい</b><small id="nMid"></small></button>
       <button type="button" class="g g-ok" data-q="5"><b>わかった</b><small id="nOk"></small></button>
     </div>
-    <p class="keys">スペースキーで裏返す・1〜3キーで答える</p>
-    <p class="grade-hint" id="gradeHint" hidden>思い出せたかどうかを選ぶと、次のカードに進みます。</p>
+    <section class="mc" id="mc" hidden aria-label="4択">
+      <div class="q-card"><span class="lbl">表</span><p class="q-txt" id="qFront"></p></div>
+      <p class="q-ask" id="qAsk">答えはどれ？</p>
+      <div class="choices" id="choices" role="group" aria-labelledby="qAsk"></div>
+      <div class="unsure-row" id="unsureRow">
+        <button type="button" class="unsure" id="unsure" aria-pressed="false" aria-describedby="unsureNote"><i aria-hidden="true"></i>自信がない</button>
+        <span class="unsure-note" id="unsureNote">押してから選ぶと、正解でも早めにまた出ます。</span>
+      </div>
+      <div class="fb" id="fb" hidden>
+        <p class="fb-t" id="fbT"></p>
+        <p class="fb-s" id="fbS"></p>
+        <p class="fb-ex" id="fbEx"></p>
+        <button class="btn" type="button" id="nextBtn">次へ</button>
+      </div>
+    </section>
+    <p class="grade-hint" id="gradeHint" hidden></p>
+    <p class="keys" id="keys"></p>
     <section class="done" id="done" hidden aria-live="polite">
       <p class="done-mark" aria-hidden="true">✿</p>
       <h1>今日の復習、完了！</h1>
