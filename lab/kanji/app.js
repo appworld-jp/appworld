@@ -46,7 +46,7 @@
     const box = $("choices"); box.replaceChildren();
     choicesFor(w, r).forEach((reading, i) => {
       const b = document.createElement("button"); b.type = "button";
-      const n = document.createElement("span"); n.className = "num"; n.textContent = "壱弐参四"[i];
+      const n = document.createElement("span"); n.className = "num"; n.textContent = "イロハニ"[i];
       const t = document.createElement("span"); t.className = "rd"; t.textContent = reading;
       b.append(n, t); b.dataset.reading = reading;
       b.addEventListener("click", () => answer(b, reading));
@@ -64,12 +64,13 @@
     });
     if (!ok) btn.classList.add("ng");
     const stamp = $("stamp"); stamp.textContent = ok ? "正" : "誤"; stamp.className = "stamp " + (ok ? "is-ok" : "is-ng");
-    $("result").textContent = ok ? "正解です。" : "残念、不正解です。";
+    $("result").textContent = ok ? "正解！" : "不正解";
     $("reading").textContent = `${w[0]}（${w[1]}）`;
     $("mean").textContent = w[3];
-    $("trap").textContent = ok ? `「${w[2]}」と読み間違えやすい言葉です。` : (reading === w[2] ? `「${w[2]}」は、よくある読み間違いです。` : `「${w[2]}」と読み間違える人も多い言葉です。`);
+    $("trap").textContent = ok ? `「${w[2]}」と読み間違えやすい言葉です。` : (reading === w[2] ? `「${w[2]}」は、よくある読み間違いです。` : `よくある読み間違いは「${w[2]}」です。`);
     $("answer").hidden = false;
-    $("next").textContent = mode === "daily" ? "練習を続ける" : "次の問題へ";
+    $("tmr").textContent = mode === "daily" ? "明日も新しい一問が出ます。" : "";
+    $("next").textContent = mode === "daily" ? "練習問題へ" : "次へ";
 
     if (!replay) {
       st.total++; if (ok) st.ok++;
@@ -101,7 +102,7 @@
       if (k === 0) li.classList.add("today");
       week.append(li);
     }
-    $("sTotal").textContent = st.total; $("sOk").textContent = st.ok; $("sMiss").textContent = st.missed.length;
+    $("sTotal").textContent = st.total; $("missH").hidden = !st.missed.length; $("sOk").textContent = st.ok; $("sMiss").textContent = st.missed.length;
     const b = $("missN"); b.hidden = !st.missed.length; b.textContent = st.missed.length;
     const ul = $("missList"); ul.replaceChildren();
     st.missed.slice(-12).reverse().forEach(t => {
@@ -119,8 +120,8 @@
       const t = $("tab-" + k); t.setAttribute("aria-selected", String(k === m)); t.tabIndex = k === m ? 0 : -1;
     });
     $("panel").setAttribute("aria-labelledby", "tab-" + m);
-    $("kind").textContent = { daily: "今日の一問", practice: "練習", review: "復習" }[m];
-    $("date").textContent = m === "daily" ? today.replace(/-/g, ".") : m === "review" ? `残り${st.missed.length}語` : "";
+    $("kind").textContent = { daily: "今日の一問", practice: "練習問題", review: "復習" }[m];
+    $("date").textContent = m === "daily" ? `${+today.slice(5, 7)}月${+today.slice(8)}日` : m === "review" ? `残り${st.missed.length}語` : "";
     if (m === "daily") ask(W[dailyIndex], rng(hash("choices:" + today)), st.daily && st.daily.date === today ? st.daily.pick : null);
     else if (m === "practice") nextPractice();
     else nextReview();

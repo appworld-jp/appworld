@@ -44,7 +44,7 @@
     if (inBookView) { const t = byId(themeId); if (t) txt.append(el("p", "ph-th", t.ja)); }
     const acts = el("div", "ph-a");
     if (!inBookView) {
-      const use = el("button", "mini", "使う"); use.type = "button"; use.setAttribute("aria-label", `「${ph[0]}」を一文に入れる`);
+      const use = el("button", "mini", "使う"); use.type = "button"; use.setAttribute("aria-label", `「${ph[0]}」を入力欄に入れる`);
       use.addEventListener("click", () => insert(ph[0]));
       acts.append(use);
     }
@@ -76,7 +76,7 @@
     if (i >= 0) ta.setSelectionRange(i, i + 1);
     count();
   }
-  const count = () => { $("cnt").textContent = `${$("line").value.length} / 200`; };
+  const count = () => { $("cnt").textContent = `${$("line").value.length}/200`; };
 
   function renderToday() {
     $("dEn").textContent = fmtEn(now); $("dJa").textContent = fmtJa(today);
@@ -85,9 +85,9 @@
     const ul = $("phrases"); ul.replaceChildren();
     theme.p.forEach(ph => ul.append(phraseItem(ph, theme.id, false)));
     const e = st.entries[today];
-    $("saveBtn").textContent = e ? "書き直す" : "日記に書く";
+    $("saveBtn").textContent = e ? "上書き保存" : "保存";
     $("other").hidden = !!e;
-    $("saved").textContent = e ? "今日の日記は保存されています。書き直すこともできます。" : "";
+    $("saved").textContent = e ? "今日の日記は保存済みです。書き直して上書きもできます。" : "";
   }
 
   function renderDiary() {
@@ -95,6 +95,7 @@
     const keys = Object.keys(st.entries).sort().reverse();
     $("diaryEmpty").hidden = keys.length > 0;
     $("diaryN").textContent = keys.length ? `${keys.length}日分` : "";
+    const tb = document.querySelector(".tabbar [data-view=diary] .tn"); if (tb) tb.textContent = keys.length ? String(keys.length) : "";
     keys.forEach(k => {
       const e = st.entries[k], t = byId(e.theme);
       const li = el("li", "entry");
@@ -103,7 +104,7 @@
       const p = el("p", "e-x", e.text); p.lang = "en";
       const del = el("button", "e-del", "削除"); del.type = "button"; del.setAttribute("aria-label", `${fmtJa(k)}の日記を削除`);
       del.addEventListener("click", () => {
-        if (!confirm(`${fmtJa(k)}の日記を削除します。よろしいですか。`)) return;
+        if (!confirm(`${fmtJa(k)}の日記を削除しますか？`)) return;
         delete st.entries[k]; save(); renderDiary(); if (k === today) renderToday(); say("日記を削除しました。");
       });
       head.append(del);
@@ -116,7 +117,7 @@
   function renderBook() {
     const ul = $("book"); ul.replaceChildren();
     $("bookEmpty").hidden = st.book.length > 0;
-    $("bookN").textContent = st.book.length ? `${st.book.length}個` : "";
+    $("bookN").textContent = st.book.length ? `${st.book.length}件` : "";
     st.book.slice().reverse().forEach(b => ul.append(phraseItem([b.en, b.ja], b.theme, true)));
   }
 
@@ -124,11 +125,12 @@
   $("writeForm").addEventListener("submit", e => {
     e.preventDefault();
     const text = $("line").value.trim().replace(/\s+/g, " ");
-    if (!text) { $("saved").textContent = "一文を書いてから保存してください。"; $("line").focus(); return; }
-    if (text.includes("…")) { $("saved").textContent = "「…」の部分を自分の言葉に書きかえてください。"; $("line").focus(); return; }
+    if (!text) { $("saved").textContent = "英語で一文書いてから保存しましょう。"; $("line").focus(); return; }
+    if (text.includes("…")) { $("saved").textContent = "「…」を自分の言葉に置き換えてから保存しましょう。"; $("line").focus(); const i = $("line").value.indexOf("…"); $("line").setSelectionRange(i, i + 1); return; }
     st.entries[today] = { theme: theme.id, text };
     save(); renderToday(); renderDiary();
-    $("saved").textContent = "日記に書きました。「日記」から読み返せます。";
+    $("saved").textContent = `保存しました。これで${Object.keys(st.entries).length}日分です。`;
+    const pg = $("writeForm"); pg.classList.remove("inked"); void pg.offsetWidth; pg.classList.add("inked");
   });
   $("other").addEventListener("click", () => {
     const i = T.indexOf(theme); theme = T[(i + 1) % T.length];
@@ -144,6 +146,7 @@
     window.scrollTo(0, 0);
   }
   document.querySelectorAll(".tabbar button").forEach(b => b.addEventListener("click", () => show(b.dataset.view)));
+  document.querySelectorAll("[data-go]").forEach(b => b.addEventListener("click", () => { show(b.dataset.go); $("line").focus(); }));
 
   if (st.entries[today]) $("line").value = st.entries[today].text;
   count(); renderToday(); renderDiary(); renderBook();

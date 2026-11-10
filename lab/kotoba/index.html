@@ -2,8 +2,10 @@
 <html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>ことばカード</title>
-<meta name="description" content="自分で作る単語カード。「わかった」「あやしい」「わからない」で答えると、次に出す日を自動で決めます。ビジネス敬語30枚のデッキ付き。">
-<meta name="theme-color" content="#6C5CE7">
+<meta name="description" content="覚えたい言葉をカードにすると、忘れかけたころにもう一度出てきます。ビジネス敬語30枚入り。">
+<meta name="theme-color" content="#F4F1FF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#171428" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="style.css">
 </head><body>
 <div class="shell">
@@ -18,21 +20,21 @@
   <main class="view" id="vHome">
     <section class="hero">
       <h1>ことばカード</h1>
-      <p>覚えたい言葉をカードにして、忘れかけたころにもう一度。答えの手ごたえで、次に出す日が変わります。</p>
-      <button class="btn big" type="button" id="studyAll">今日の復習をはじめる</button>
+      <p>忘れかけたころにもう一度出てくるから、無理なく覚えられます。</p>
+      <button class="btn big" type="button" id="studyAll">復習をはじめる</button>
       <p class="hero-note" id="heroNote"></p>
     </section>
     <h2 class="sec">デッキ</h2>
     <ul class="decks" id="decks"></ul>
     <form class="newdeck" id="newDeck">
       <label for="deckName" class="sr">新しいデッキの名前</label>
-      <input id="deckName" type="text" maxlength="40" placeholder="新しいデッキの名前" autocomplete="off">
-      <button class="btn" type="submit">作る</button>
+      <input id="deckName" type="text" maxlength="40" placeholder="例：TOEIC英単語" autocomplete="off">
+      <button class="btn" type="submit">デッキを作成</button>
     </form>
     <p class="err" id="deckErr" role="alert"></p>
     <details class="how">
-      <summary>次に出す日の決まり方</summary>
-      <p>「わかった」は間隔を広げ、1日後、3日後、その後は前回の約2.5倍ずつ空けます。「あやしい」は間隔を少しだけ広げ、「わからない」は最初からやり直して、この回の最後にもう一度出します。</p>
+      <summary>次に出る日は、どう決まる？</summary>
+      <p>「わかった」なら翌日、3日後と、だんだん間隔が空いていきます。「あやしい」は短めの間隔でまた出ます。「わからない」は、この回の最後にもう一度出ます。</p>
     </details>
   </main>
 
@@ -42,16 +44,16 @@
       <h1 id="deckT"></h1>
       <p id="deckInfo"></p>
       <div class="row">
-        <button class="btn" type="button" id="studyDeck">このデッキを復習</button>
+        <button class="btn" type="button" id="studyDeck">復習する</button>
         <button class="btn ghost danger" type="button" id="delDeck">デッキを削除</button>
       </div>
     </div>
     <form class="addcard" id="addCard">
-      <h2 class="sec">カードを足す</h2>
-      <label><span>表（問い）</span><input id="cFront" type="text" maxlength="80" autocomplete="off" placeholder="例：見る（謙譲語）"></label>
-      <label><span>裏（答え）</span><input id="cBack" type="text" maxlength="120" autocomplete="off" placeholder="例：拝見する"></label>
-      <label><span>メモ（なくても可）</span><input id="cEx" type="text" maxlength="120" autocomplete="off" placeholder="例：資料を拝見しました。"></label>
-      <button class="btn" type="submit">カードを足す</button>
+      <h2 class="sec">カードを追加</h2>
+      <label><span>表</span><input id="cFront" type="text" maxlength="80" autocomplete="off" placeholder="見る（謙譲語）"></label>
+      <label><span>裏</span><input id="cBack" type="text" maxlength="120" autocomplete="off" placeholder="拝見する"></label>
+      <label><span>例文・メモ（任意）</span><input id="cEx" type="text" maxlength="120" autocomplete="off" placeholder="資料を拝見しました。"></label>
+      <button class="btn" type="submit">追加</button>
       <p class="err" id="cardErr" role="alert"></p>
     </form>
     <h2 class="sec">カード<span id="cardN"></span></h2>
@@ -63,7 +65,7 @@
     <div class="prog"><div class="prog-bar"><i id="progBar"></i></div><span id="progT"></span></div>
     <div class="stage" id="stage">
       <button class="flip" type="button" id="flip" aria-describedby="flipHint">
-        <span class="face f-front"><span class="lbl">表</span><span class="txt" id="fFront"></span><span class="tap" id="flipHint">タップして裏を見る</span></span>
+        <span class="face f-front"><span class="lbl">表</span><span class="txt" id="fFront"></span><span class="tap" id="flipHint">タップで答えを見る</span></span>
         <span class="face f-back" aria-hidden="true"><span class="lbl">裏</span><span class="txt" id="fBack"></span><span class="ex" id="fEx"></span></span>
       </button>
     </div>
@@ -73,21 +75,23 @@
       <button type="button" class="g g-mid" data-q="3"><b>あやしい</b><small id="nMid"></small></button>
       <button type="button" class="g g-ok" data-q="5"><b>わかった</b><small id="nOk"></small></button>
     </div>
-    <p class="keys">キーボード：スペースで裏返す、1・2・3で答える</p>
+    <p class="keys">スペースキーで裏返す・1〜3キーで答える</p>
+    <p class="grade-hint" id="gradeHint" hidden>思い出せたかどうかを選ぶと、次のカードに進みます。</p>
     <section class="done" id="done" hidden aria-live="polite">
       <p class="done-mark" aria-hidden="true">✿</p>
-      <h1>今日の復習はおしまいです。</h1>
+      <h1>今日の復習、完了！</h1>
       <p id="doneT"></p>
-      <button class="btn" type="button" id="doneBack">デッキ一覧へ</button>
+      <button class="btn" type="button" id="doneBack">ホームに戻る</button>
     </section>
   </main>
 
   <footer class="foot">
-    <p>作った人：App World Lab（App Worldの運営）</p>
-    <p>カードと記録はこの端末の中だけに保存され、どこにも送られません。</p>
+    <p>カードと復習の記録は、この端末にだけ保存されます。</p>
+    <p>開発：App World Lab（App World 運営）</p>
     <p><a href="../">App World Lab</a></p>
   </footer>
 </div>
+<p class="sr" id="sr" aria-live="polite"></p>
 <script src="starter.js"></script>
 <script src="app.js"></script>
 </body></html>

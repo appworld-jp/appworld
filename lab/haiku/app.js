@@ -59,7 +59,7 @@
         const b = el("button", "ins", `${["上五", "中七", "下五"][i]}に入れる`); b.type = "button";
         b.addEventListener("click", () => insertKigo(i)); now.append(b);
       });
-    } else now.textContent = "季語をひとつ選びましょう。";
+    } else now.textContent = "季語をひとつ選ぶと、句に入れられます。";
   }
   function insertKigo(i) {
     const L = st.lines[i], [w, r] = st.kigo;
@@ -77,9 +77,9 @@
       const lt = el("label", "lt"); lt.htmlFor = "t" + i;
       lt.append(el("span", "ln", ["上五", "中七", "下五"][i]));
       const t = el("input"); t.type = "text"; t.id = "t" + i; t.maxLength = 20; t.value = L.t; t.autocomplete = "off";
-      t.placeholder = ["ふるいけや", "かわずとびこむ", "みずのおと"][i];
+      t.placeholder = ["古池や", "蛙飛びこむ", "水の音"][i];
       const rl = el("label", "lr"); rl.htmlFor = "r" + i; rl.append(el("span", "ln", "よみ"));
-      const r = el("input"); r.type = "text"; r.id = "r" + i; r.maxLength = 30; r.value = L.r; r.autocomplete = "off"; r.placeholder = "ひらがなで";
+      const r = el("input"); r.type = "text"; r.id = "r" + i; r.maxLength = 30; r.value = L.r; r.autocomplete = "off"; r.placeholder = ["ふるいけや", "かわずとびこむ", "みずのおと"][i];
       const c = el("output", "cnt"); c.id = "c" + i; c.setAttribute("aria-live", "polite");
       t.addEventListener("input", () => { L.t = t.value; save(); update(); });
       r.addEventListener("input", () => { L.r = r.value; save(); update(); });
@@ -95,16 +95,17 @@
       const c = $("c" + i); if (!c) return;
       c.className = "cnt";
       if (!L.t.trim()) { c.textContent = `0 / ${TARGET[i]}`; c.classList.add("idle"); }
-      else if (unknown) { c.textContent = "よみを入力"; c.classList.add("need"); }
+      else if (unknown) { c.textContent = "よみが必要"; c.classList.add("need"); }
       else { c.textContent = `${n} / ${TARGET[i]}`; c.classList.add(n === TARGET[i] ? "ok" : n > TARGET[i] ? "over" : "under"); }
       $("r" + i).closest(".line").classList.toggle("needs-r", unknown && !L.r.trim());
     });
+    $("sample").hidden = st.lines.some(L => L.t.trim());
     const text = st.lines.map(L => L.t).join("");
     const reading = st.lines.map(L => L.r || L.t).join("");
     const kc = $("kcheck");
     if (!text.trim()) kc.textContent = "";
-    else if (!st.kigo) kc.textContent = "季語を選ぶと、句に入っているか確かめられます。";
-    else kc.textContent = text.includes(st.kigo[0]) || reading.includes(st.kigo[1]) ? `季語「${st.kigo[0]}」が入っています。` : `季語「${st.kigo[0]}」はまだ句に入っていません（季語を使わない句も自由です）。`;
+    else if (!st.kigo) kc.textContent = "季語を選ぶと、句に入っているか確認できます。";
+    else kc.textContent = text.includes(st.kigo[0]) || reading.includes(st.kigo[1]) ? `季語「${st.kigo[0]}」が入っています。` : `季語「${st.kigo[0]}」は、まだ句に入っていません。`;
     // DOM preview with writing-mode: vertical-rl
     const hp = $("cardHaiku"); hp.replaceChildren();
     const lines = st.lines.map(L => L.t.trim());
@@ -126,7 +127,7 @@
       const box = $("cardPhoto"); box.replaceChildren();
       const im = el("img"); im.src = p.url; im.alt = "選んだ写真"; box.append(im);
       $("pickT").textContent = "写真を選び直す"; $("pickLabel").classList.add("has");
-    } catch (e) { $("fileErr").textContent = e.message || "画像を読み込めませんでした。"; }
+    } catch (e) { const m = e.message || "画像を読み込めませんでした"; $("fileErr").textContent = /選んで/.test(m) ? m + "。" : m + "。別の写真を選んでください。"; }
   });
 
   // ---- PNG 書き出し（canvas に一字ずつ縦に描く）
@@ -180,17 +181,24 @@
   let outUrl = null;
   $("export").addEventListener("click", () => {
     $("expErr").textContent = "";
-    if (!st.lines.some(L => L.t.trim())) { $("expErr").textContent = "先に句を詠んでください。"; $("t0").focus(); return; }
+    if (!st.lines.some(L => L.t.trim())) { $("expErr").textContent = "上の「五・七・五を詠む」に句を入れてください。"; $("t0").focus(); return; }
     const c = draw();
     c.toBlob(blob => {
-      if (!blob) { $("expErr").textContent = "画像を作れませんでした。"; return; }
+      if (!blob) { $("expErr").textContent = "画像を作れませんでした。もう一度お試しください。"; return; }
       if (outUrl) URL.revokeObjectURL(outUrl);
       outUrl = URL.createObjectURL(blob);
       $("outImg").src = outUrl; $("out").hidden = false;
+      const cd = $("card"); cd.classList.remove("sealed"); void cd.offsetWidth; cd.classList.add("sealed");
       const a = document.createElement("a"); a.href = outUrl; a.download = "haiku-card.png"; document.body.append(a); a.click(); a.remove();
     }, "image/png");
   });
 
+  $("sample").addEventListener("click", () => {
+    st.season = "春"; st.kigo = ["蛙", "かわず"];
+    st.lines = [{ t: "古池や", r: "ふるいけや" }, { t: "蛙飛びこむ", r: "かわずとびこむ" }, { t: "水の音", r: "みずのおと" }];
+    save(); renderSeasons(); renderKigo(); renderLines(); update();
+    $("t0").focus();
+  });
   $("author").value = st.author || "";
   $("author").addEventListener("input", () => { update(); save(); });
   renderSeasons(); renderKigo(); renderLines(); update();

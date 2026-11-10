@@ -6,7 +6,7 @@ window.THEMES = [
     ["I skipped breakfast today.", "今日は朝ごはんを抜いた。"],
     ["I grabbed something at a convenience store.", "コンビニでさっと買って済ませた。"],
     ["I didn't have time to eat.", "食べる時間がなかった。"],
-    ["It really hit the spot.", "まさに食べたかった味だった。"]
+    ["It really hit the spot.", "ちょうど食べたかった味だった。"]
   ]},
   { id: "weather", ja: "天気", q: "What was the weather like today?", qja: "今日はどんな天気でしたか？", p: [
     ["It was sunny and warm.", "晴れて暖かかった。"],
@@ -23,7 +23,7 @@ window.THEMES = [
     ["I almost missed my train.", "電車に乗り遅れそうになった。"]
   ]},
   { id: "work", ja: "仕事", q: "What did you work on today?", qja: "今日はどんな仕事をしましたか？", p: [
-    ["I spent most of the day on ~.", "一日の大半を〜に費やした。"],
+    ["I spent most of the day on ~.", "一日の大半を〜に使った。"],
     ["I had back-to-back meetings.", "会議が立て続けにあった。"],
     ["I finally finished ~.", "ようやく〜を終えた。"],
     ["Things didn't go as planned.", "予定どおりにいかなかった。"],
@@ -58,7 +58,7 @@ window.THEMES = [
     ["I ended up buying ~.", "結局〜を買ってしまった。"],
     ["I'm trying not to spend too much.", "使いすぎないようにしている。"]
   ]},
-  { id: "hobby", ja: "趣味", q: "What do you like to do in your free time?", qja: "自由な時間には何をするのが好きですか？", p: [
+  { id: "hobby", ja: "趣味", q: "What do you like to do in your free time?", qja: "空いた時間は、何をして過ごすのが好きですか？", p: [
     ["In my free time, I like to ~.", "時間があるときは〜するのが好きだ。"],
     ["I got into ~ last year.", "去年〜にはまった。"],
     ["It helps me relax.", "それをするとリラックスできる。"],
@@ -75,23 +75,23 @@ window.THEMES = [
   { id: "family", ja: "家族", q: "What did you do with your family recently?", qja: "最近家族と何をしましたか？", p: [
     ["I called my parents.", "両親に電話した。"],
     ["We had dinner together.", "一緒に夕食を食べた。"],
-    ["My ~ is always there for me.", "〜はいつも私を支えてくれる。"],
+    ["My ~ is always there for me.", "〜はいつもそばで支えてくれる。"],
     ["We don't see each other very often.", "あまり会う機会がない。"],
-    ["I should visit them more often.", "もっと会いに行くべきだ。"]
+    ["I should visit them more often.", "もっと会いに行かなきゃ。"]
   ]},
-  { id: "tired", ja: "疲れた日", q: "Was today a tiring day?", qja: "今日は疲れる一日でしたか？", p: [
+  { id: "tired", ja: "疲れた日", q: "Was today a tiring day?", qja: "今日は疲れましたか？", p: [
     ["I'm exhausted.", "くたくただ。"],
     ["It's been a long day.", "長い一日だった。"],
     ["I didn't get much done today.", "今日はあまりはかどらなかった。"],
-    ["I need a break.", "ひと休みが必要だ。"],
+    ["I need a break.", "少し休みたい。"],
     ["I'm going to bed early tonight.", "今夜は早く寝るつもりだ。"]
   ]},
   { id: "happy", ja: "うれしかったこと", q: "What made you happy today?", qja: "今日うれしかったことは何ですか？", p: [
     ["It made my day.", "おかげで最高の一日になった。"],
     ["I was happy to hear that ~.", "〜と聞いてうれしかった。"],
     ["Something nice happened today.", "今日はいいことがあった。"],
-    ["I couldn't stop smiling.", "にやにやが止まらなかった。"],
-    ["It's the little things.", "こういう小さなことが大事だ。"]
+    ["I couldn't stop smiling.", "顔がにやけっぱなしだった。"],
+    ["It's the little things.", "小さなことが、いちばんうれしい。"]
   ]},
   { id: "mistake", ja: "失敗したこと", q: "Did anything go wrong today?", qja: "今日うまくいかなかったことはありますか？", p: [
     ["I made a silly mistake.", "うっかりミスをした。"],
@@ -103,11 +103,11 @@ window.THEMES = [
   { id: "season", ja: "季節", q: "What do you like about this season?", qja: "今の季節の好きなところは何ですか？", p: [
     ["~ is my favorite season.", "〜がいちばん好きな季節だ。"],
     ["The leaves are starting to change color.", "葉が色づき始めている。"],
-    ["I can't stand the heat.", "暑さには耐えられない。"],
+    ["I can't stand the heat.", "暑さが本当に苦手だ。"],
     ["It's the perfect weather for ~.", "〜にぴったりの天気だ。"],
     ["Time flies. It's already ~.", "時がたつのは早い。もう〜だ。"]
   ]},
-  { id: "trip", ja: "旅の思い出", q: "What's a trip you remember well?", qja: "よく覚えている旅行はどれですか？", p: [
+  { id: "trip", ja: "旅の思い出", q: "What's a trip you remember well?", qja: "心に残っている旅行はありますか？", p: [
     ["I went to ~ a few years ago.", "数年前に〜へ行った。"],
     ["It was my first time ~.", "〜するのは初めてだった。"],
     ["The view was breathtaking.", "息をのむほどの景色だった。"],
@@ -116,7 +116,7 @@ window.THEMES = [
   ]},
   { id: "dream-place", ja: "行ってみたい場所", q: "Where would you like to go someday?", qja: "いつか行ってみたい場所はどこですか？", p: [
     ["I've always wanted to visit ~.", "ずっと〜を訪れてみたかった。"],
-    ["It's on my bucket list.", "死ぬまでにやりたいことのひとつだ。"],
+    ["It's on my bucket list.", "いつかやりたいことリストに入っている。"],
     ["I'd like to see ~ with my own eyes.", "〜を自分の目で見てみたい。"],
     ["I've heard it's ~.", "〜だと聞いている。"],
     ["Maybe next year.", "来年こそは。"]
@@ -167,8 +167,8 @@ window.THEMES = [
     ["I spent too much time on my phone.", "スマホを使いすぎた。"],
     ["I kept checking my messages.", "何度もメッセージを確認してしまった。"],
     ["I found a useful app for ~.", "〜に便利なアプリを見つけた。"],
-    ["My battery died.", "電池が切れた。"],
-    ["I'm trying to cut down on screen time.", "画面を見る時間を減らそうとしている。"]
+    ["My battery died.", "スマホの充電が切れた。"],
+    ["I'm trying to cut down on screen time.", "スマホを見る時間を減らそうとしている。"]
   ]},
   { id: "money", ja: "お金", q: "Did you spend or save money today?", qja: "今日はお金を使いましたか、それとも節約しましたか？", p: [
     ["I'm saving up for ~.", "〜のためにお金を貯めている。"],
@@ -181,13 +181,13 @@ window.THEMES = [
     ["This week, I want to ~.", "今週は〜したい。"],
     ["I'm going to try to ~ every day.", "毎日〜するようにしてみる。"],
     ["I'll start with ~.", "まずは〜から始める。"],
-    ["Wish me luck.", "うまくいくといいな。"],
+    ["Wish me luck.", "うまくいくように祈ってて。"],
     ["I'll let you know how it goes.", "どうなったか、また報告する。"]
   ]},
-  { id: "thanks", ja: "感謝", q: "Who or what are you grateful for today?", qja: "今日は誰に、何に感謝していますか？", p: [
+  { id: "thanks", ja: "感謝", q: "Who or what are you grateful for today?", qja: "今日、ありがとうと言いたい人やことは？", p: [
     ["I'm grateful for ~.", "〜に感謝している。"],
-    ["~ helped me out a lot.", "〜がとても助けてくれた。"],
-    ["I couldn't have done it without ~.", "〜がいなければできなかった。"],
+    ["~ helped me out a lot.", "〜にとても助けられた。"],
+    ["I couldn't have done it without ~.", "〜がいなければ、できなかった。"],
     ["I really appreciate it.", "本当にありがたい。"],
     ["I want to thank ~ for ~.", "〜に、〜のお礼を言いたい。"]
   ]},

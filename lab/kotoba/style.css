@@ -20,12 +20,13 @@ a{color:inherit}
 .nav-back{font:inherit;font-size:15px;font-weight:700;color:var(--violet);background:none;border:0;min-height:44px;padding:0 6px;cursor:pointer}
 .bar-t{margin:0 auto 0 0;font-weight:700;font-size:15px}
 #labLink:not([hidden])+.bar-t{display:none}
-.due-pill{margin-left:auto;font-size:13px;font-weight:700;background:var(--surface);border:2px solid var(--line);border-radius:999px;padding:2px 12px;color:var(--violet)}
+.due-pill{margin-left:auto;white-space:nowrap;font-size:13px;font-weight:700;background:var(--surface);border:2px solid var(--line);border-radius:999px;padding:2px 12px;color:var(--violet)}
 .hero{background:var(--violet);color:var(--violet-ink);border-radius:28px;padding:24px 22px 22px;margin:8px 0 26px;position:relative;overflow:hidden}
 .hero::after{content:"";position:absolute;right:-30px;top:-30px;width:130px;height:96px;border-radius:18px;background:var(--sun);transform:rotate(14deg);opacity:.9;box-shadow:-24px 30px 0 -6px var(--mint)}
-.hero h1{margin:0;font-size:30px;line-height:1.3;position:relative;z-index:1}
-.hero p{margin:8px 0 18px;font-size:14.5px;opacity:.92;max-width:22em;position:relative;z-index:1}
+.hero h1{margin:0;font-size:30px;word-break:keep-all;line-height:1.3;position:relative;z-index:1}
+.hero p{margin:8px 0 18px;font-size:14.5px;opacity:.92;max-width:20em;position:relative;z-index:1;word-break:keep-all;overflow-wrap:anywhere}
 .hero .hero-note{margin:10px 0 0;font-size:13px;opacity:.9}
+.hero .hero-note:empty{display:none}
 .btn{font:inherit;font-weight:700;font-size:15.5px;min-height:50px;padding:10px 22px;border-radius:999px;border:0;background:var(--violet);color:var(--violet-ink);cursor:pointer;
   box-shadow:0 4px 0 color-mix(in srgb,var(--violet) 60%,#000);transition:transform .1s,box-shadow .1s}
 .btn:active{transform:translateY(3px);box-shadow:0 1px 0 color-mix(in srgb,var(--violet) 60%,#000)}
@@ -96,11 +97,20 @@ input[type=text]:focus{border-color:var(--violet);outline:none}
 .g-mid{background:var(--sun);color:#3A2A00;box-shadow:0 5px 0 #C9951C}
 .g-ok{background:var(--mint);box-shadow:0 5px 0 #1B8F78}
 .keys{font-size:12px;color:var(--sub);text-align:center;margin:16px 0 0}
+.grade-hint{font-size:13px;color:var(--sub);text-align:center;margin:12px 0 0}
 .done{text-align:center;background:var(--surface);border-radius:28px;padding:30px 20px;border:3px solid var(--line)}
 .done h1{font-size:22px;margin:0 0 6px}
 .done p{color:var(--sub);margin:0 0 18px}
 .done-mark{font-size:46px;color:var(--peach);margin:0!important;line-height:1.2}
 .foot{margin-top:34px;font-size:12px;color:var(--sub);line-height:1.7;border-top:2px dotted var(--line);padding-top:12px}
 .foot p{margin:0}
+@media (prefers-reduced-motion:no-preference){
+  .done:not([hidden]) .done-mark{animation:bloom .9s cubic-bezier(.2,1.5,.4,1) both}
+  .done:not([hidden]) h1{animation:rise .5s .15s ease-out both}
+}
+@keyframes bloom{from{transform:scale(0) rotate(-180deg);opacity:0}}
+@keyframes rise{from{transform:translateY(10px);opacity:0}}
 @media (hover:none){.keys{display:none}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}.flip.is-flipped .f-front{visibility:hidden}}
+
+p,figcaption,dd,li{text-wrap:pretty}

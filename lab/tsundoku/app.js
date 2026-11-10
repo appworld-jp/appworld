@@ -17,6 +17,7 @@
   const left = b => b.pages - b.at;
   const daysLeft = b => Math.ceil(left(b) / st.ppt);
   const readToday = b => (b.log && b.log[today]) || 0;
+  const fmtDate = s => { const [, m, d] = s.split("-").map(Number); return `${m}月${d}日`; };
 
   function finishDate(b) {
     const d = new Date(); d.setDate(d.getDate() + daysLeft(b) - (readToday(b) ? 0 : 1));
@@ -28,9 +29,8 @@
     b.at = Math.min(b.pages, b.at + st.ppt);
     b.log = b.log || {}; b.log[today] = (b.log[today] || 0) + (b.at - before);
     if (b.at >= b.pages) b.done = today;
-    save(); render();
-    const msg = b.done ? `『${b.title}』を読み終えました。本棚に並べました。` : `${before + 1}〜${b.at}ページを読みました。`;
-    $("portions").setAttribute("data-msg", msg); announce(msg);
+    justRead = b.id; save(); render();
+    announce(b.done ? `『${b.title}』を読み終えました。本棚に並べました。` : `${before + 1}〜${b.at}ページを読みました。`);
   }
   function announce(msg) { let a = $("sr"); if (!a) { a = el("p", "sr"); a.id = "sr"; a.setAttribute("aria-live", "polite"); document.body.append(a); } a.textContent = msg; }
 
@@ -58,17 +58,18 @@
       btn.type = "button";
       btn.setAttribute("aria-label", `『${b.title}』の${from}〜${to}ページを読んだ`);
       btn.addEventListener("click", () => tick(b));
-      const meta = el("p", "p-meta", `このペースなら、あと${daysLeft(b)}日（${finishDate(b)}ごろ）で読み終わります。`);
+      const meta = el("p", "p-meta", `このペースなら${finishDate(b)}に読み終わります（あと${daysLeft(b)}日）`);
       card.append(head, range, btn, meta);
+      if (justRead === b.id) { card.classList.add("bump"); }
       box.append(card);
     });
     doneToday.forEach(b => {
-      const card = el("article", "portion fin"); card.style.setProperty("--c", b.color);
-      card.append(el("p", "fin-t", `『${b.title}』を読み終えました。`), el("p", "p-meta", "本棚に並べました。おつかれさまでした。"));
+      const card = el("article", justRead === b.id ? "portion fin bump" : "portion fin"); card.style.setProperty("--c", b.color);
+      card.append(el("p", "fin-t", `『${b.title}』読了！`), el("p", "p-meta", `${b.pages}ページ、おつかれさまでした。`));
       box.append(card);
     });
-    if (st.books.length && !active.length && !doneToday.length) {
-      box.append(el("p", "none", "読みかけの本はありません。次の本を積みましょう。"));
+    if (st.books.length && !active.length) {
+      box.append(el("p", "none", doneToday.length ? "次の1冊を積みましょう。" : "今日読む本はありません。次の1冊を積みましょう。"));
     }
   }
 
@@ -76,7 +77,7 @@
     // one cell per 10-minute portion
     const n = Math.ceil(b.pages / st.ppt);
     const g = el("div", "grid"); g.setAttribute("role", "img");
-    g.setAttribute("aria-label", `全${n}回のうち${Math.min(n, Math.ceil(b.at / st.ppt))}回分を読みました`);
+    g.setAttribute("aria-label", `10分×${n}回のうち、${Math.min(n, Math.floor(b.at / st.ppt))}回分を読みました`);
     const show = Math.min(n, 120);
     for (let i = 0; i < show; i++) {
       const c = el("i"); if ((i + 1) * st.ppt <= b.at || b.at >= b.pages) c.className = "on"; else if (i * st.ppt < b.at) c.className = "part";
@@ -97,8 +98,8 @@
       const body = el("div", "b-body");
       const pct = Math.round(b.at / b.pages * 100);
       const top = el("div", "b-top");
-      top.append(el("span", "b-pct", `${pct}%`), el("span", "b-of", `${b.at} / ${b.pages}ページ・全${Math.ceil(b.pages / st.ppt)}回`));
-      const edit = el("button", "b-edit", "直す"); edit.type = "button"; edit.setAttribute("aria-label", `『${b.title}』の記録を直す`);
+      top.append(el("span", "b-pct", `${pct}%`), el("span", "b-of", `${b.at}/${b.pages}ページ・10分×${Math.ceil(b.pages / st.ppt)}回`));
+      const edit = el("button", "b-edit", "編集"); edit.type = "button"; edit.setAttribute("aria-label", `『${b.title}』を編集`);
       edit.addEventListener("click", () => openEdit(b));
       top.append(edit);
       body.append(top, grid(b));
@@ -113,13 +114,13 @@
     $("shelf").parentElement.hidden = !done.length;
     $("shelfN").textContent = done.length ? `${done.length}冊・${done.reduce((s, b) => s + b.pages, 0)}ページ` : "";
     done.forEach(b => {
-      const li = el("li", "sp"); li.style.setProperty("--c", b.color);
+      const li = el("li", justRead === b.id ? "sp new" : "sp"); li.style.setProperty("--c", b.color);
       li.style.height = (130 + Math.min(30, b.pages / 15)) + "px";
       li.style.width = (30 + Math.min(22, b.pages / 40)) + "px";
       li.append(el("span", "sp-t", b.title), el("span", "sp-d", b.done.slice(5).replace("-", "/")));
-      li.title = `${b.title}（${b.done}読了）`;
-      li.tabIndex = 0; li.setAttribute("aria-label", `${b.title}、${b.pages}ページ、${b.done}に読了`);
-      li.addEventListener("click", () => openEdit(b)); li.addEventListener("keydown", e => { if (e.key === "Enter") openEdit(b); });
+      li.title = `${b.title}（${fmtDate(b.done)}読了）`;
+      li.tabIndex = 0; li.setAttribute("role", "button"); li.setAttribute("aria-label", `${b.title}、${b.pages}ページ、${fmtDate(b.done)}に読了。編集する`);
+      li.addEventListener("click", () => openEdit(b)); li.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openEdit(b); } });
       ul.append(li);
     });
   }
@@ -127,11 +128,12 @@
   function render() {
     $("ppt").value = st.ppt; $("pptOut").textContent = `${st.ppt}ページ`;
     renderToday(); renderPile(); renderShelf();
+    justRead = null;
   }
 
-  let editing = null;
+  let editing = null, justRead = null;
   function openEdit(b) {
-    editing = b; $("editT").textContent = b.title; $("editAt").max = b.pages; $("editAt").value = b.at;
+    editing = b; $("editT").textContent = b.title; $("editSub").textContent = `全${b.pages}ページ`; $("editAt").max = b.pages; $("editAt").value = b.at;
     if ($("edit").showModal) $("edit").showModal();
   }
   $("edit").addEventListener("close", () => {
@@ -144,7 +146,7 @@
   });
   $("editDel").addEventListener("click", () => {
     if (!editing) return;
-    if (!confirm(`『${editing.title}』を削除します。よろしいですか。`)) return;
+    if (!confirm(`『${editing.title}』を削除しますか？読んだ記録も消えます。`)) return;
     st.books = st.books.filter(b => b !== editing); editing = null; save(); $("edit").close("cancel"); render();
   });
 
@@ -156,8 +158,9 @@
     $("addErr").textContent = "";
     st.books.push({ id: Date.now().toString(36), title: t, pages: p, at: 0, added: today, log: {}, done: null, color: COLORS[st.books.length % COLORS.length] });
     save(); $("title").value = ""; $("pages").value = ""; render();
-    announce(`『${t}』を積みました。1日10分で${Math.ceil(p / st.ppt)}回分です。`);
+    announce(`『${t}』を積みました。1日10分で${Math.ceil(p / st.ppt)}日分です。`);
   });
+  $("sample").addEventListener("click", () => { $("title").value = "坊っちゃん"; $("pages").value = "230"; $("addErr").textContent = ""; $("addForm").querySelector("button[type=submit]").focus(); });
   $("ppt").addEventListener("input", () => { st.ppt = parseInt($("ppt").value, 10) || 8; save(); render(); });
 
   const d = new Date(); $("today").textContent = `${d.getMonth() + 1}月${d.getDate()}日（${"日月火水木金土"[d.getDay()]}）`;

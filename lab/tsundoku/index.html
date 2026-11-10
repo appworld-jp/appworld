@@ -2,7 +2,8 @@
 <html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>積読ゼロ</title>
-<meta name="description" content="積んだままの本を、1日10分ずつの分量に切り分けます。今日読む範囲がわかり、読み終えた本は本棚に並びます。">
+<meta name="description" content="積んだままの本を、1日10分ずつ読み切る。今日読むページがひと目でわかります。">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
 <meta name="theme-color" content="#3B2A1E">
 <link rel="stylesheet" href="style.css">
 </head><body>
@@ -10,7 +11,7 @@
   <div class="band-in">
     <a class="back" href="../">App World Lab</a>
     <h1><span class="h-a">積読</span><span class="h-b">ゼロ</span></h1>
-    <p class="tag">積んだ本を、1日10分ずつ。</p>
+    <p class="tag">積んだ本も、1日10分ずつなら読み切れます。</p>
   </div>
 </header>
 
@@ -24,15 +25,16 @@
         <rect x="10" y="34" width="86" height="14" rx="2" fill="#C99A3B"/><rect x="24" y="20" width="74" height="14" rx="2" fill="#3E4E77"/>
         <rect x="30" y="6" width="60" height="14" rx="2" fill="#8C5A3C"/><path d="M8 78h104" stroke="#3B2A1E" stroke-width="3"/>
       </svg>
-      <p class="first-h">積んだままの本はありますか。</p>
-      <p>本のタイトルとページ数を入れると、1日10分で読める分量に切り分けます。毎日、今日読む範囲だけを表示します。</p>
+      <p class="first-h">まずは1冊、積んでみましょう。</p>
+      <p>タイトルとページ数を入れると、今日読むページがここに出ます。</p>
+      <button class="btn ghost sample" type="button" id="sample">例を入れる：坊っちゃん・230ページ</button>
     </div>
   </section>
 
   <section class="add" aria-labelledby="addH">
     <h2 id="addH">本を積む</h2>
     <form id="addForm" class="add-form" novalidate>
-      <label class="f-title"><span>タイトル</span><input id="title" type="text" maxlength="60" autocomplete="off" required placeholder="例：坊っちゃん"></label>
+      <label class="f-title"><span>タイトル</span><input id="title" type="text" maxlength="60" autocomplete="off" required placeholder="坊っちゃん"></label>
       <label class="f-pages"><span>ページ数</span><input id="pages" type="number" inputmode="numeric" min="1" max="3000" required placeholder="230"></label>
       <button class="btn" type="submit">積む</button>
       <p class="err" id="addErr" role="alert"></p>
@@ -40,27 +42,27 @@
   </section>
 
   <section class="pile" aria-labelledby="pileH">
-    <div class="sec-h"><h2 id="pileH">読みかけの山</h2><span class="count" id="pileN"></span></div>
+    <div class="sec-h"><h2 id="pileH">積んでいる本</h2><span class="count" id="pileN"></span></div>
     <ul class="books" id="pile"></ul>
-    <p class="none" id="pileNone">まだ本はありません。</p>
+    <p class="none" id="pileNone">積んだ本が、ここに並びます。</p>
   </section>
 
   <section class="shelf-sec" aria-labelledby="shelfH">
-    <div class="sec-h"><h2 id="shelfH">読み終えた本棚</h2><span class="count" id="shelfN"></span></div>
+    <div class="sec-h"><h2 id="shelfH">読み終えた本</h2><span class="count" id="shelfN"></span></div>
     <div class="shelf"><ul class="spines" id="shelf"></ul></div>
-    <p class="none" id="shelfNone">読み終えた本が、ここに並びます。</p>
+    <p class="none" id="shelfNone">読み終えた本は、ここの本棚に並びます。</p>
   </section>
 
   <section class="speed" aria-labelledby="speedH">
     <h2 id="speedH">読む速さ</h2>
     <label class="speed-row" for="ppt"><span>10分で読めるページ数</span><output id="pptOut" for="ppt">8ページ</output></label>
     <input id="ppt" type="range" min="3" max="25" step="1" value="8">
-    <p class="hint">文庫本なら、10分で8ページ前後が目安です。実際に10分読んでみて、合わせてください。</p>
+    <p class="hint">文庫本なら、10分で8ページ前後が目安です。一度10分読んでみて合わせると、予定がぴったりになります。</p>
   </section>
 
   <footer class="foot">
-    <p>作った人：App World Lab（App Worldの運営）</p>
-    <p>本の記録はこの端末の中だけに保存され、どこにも送られません。</p>
+    <p>本の記録は、この端末にだけ保存されます。</p>
+    <p>開発：App World Lab（App World 運営）</p>
     <p><a href="../">App World Lab</a></p>
   </footer>
 </main>
@@ -68,10 +70,11 @@
 <dialog id="edit" class="edit">
   <form method="dialog" id="editForm">
     <h3 id="editT"></h3>
-    <label><span>いま読み終えたページ</span><input id="editAt" type="number" inputmode="numeric" min="0"></label>
+    <p class="edit-sub" id="editSub"></p>
+    <label><span>読み終えたページ</span><input id="editAt" type="number" inputmode="numeric" min="0"></label>
     <div class="edit-acts">
       <button class="btn" value="save" type="submit">保存</button>
-      <button class="btn ghost" value="cancel" type="submit">やめる</button>
+      <button class="btn ghost" value="cancel" type="submit">キャンセル</button>
     </div>
     <button class="del" id="editDel" type="button">この本を削除</button>
   </form>

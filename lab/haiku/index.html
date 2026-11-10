@@ -2,7 +2,8 @@
 <html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>俳句カメラ</title>
-<meta name="description" content="写真を選び、季語を選んで、自分で五・七・五を詠む。音の数を行ごとに数え、写真と縦書きの句を一枚のカード画像（PNG）にします。">
+<meta name="description" content="写真に自分で詠んだ一句を添えて、縦書きの俳句カードに。音の数を数えながら詠めて、画像で保存できます。">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
 <meta name="theme-color" content="#1B1F33">
 <link rel="stylesheet" href="style.css">
 </head><body>
@@ -10,7 +11,7 @@
   <header class="head">
     <a class="back" href="../">App World Lab</a>
     <h1><span>俳句</span><span>カメラ</span></h1>
-    <p class="lead">一枚の写真に、自分の十七音を。</p>
+    <p class="lead">写真に一句添えて、縦書きの俳句カードに。</p>
   </header>
 
   <ol class="steps">
@@ -19,13 +20,13 @@
       <label class="pick" id="pickLabel">
         <input type="file" id="file" accept="image/*">
         <span class="pick-t" id="pickT">写真を選ぶ</span>
-        <span class="pick-s">写真はこの端末の中だけで使います。どこにも送りません。</span>
+        <span class="pick-s">写真なしでも作れます。<br>写真は保存も送信もしません。</span>
       </label>
       <p class="err" id="fileErr" role="alert"></p>
     </li>
 
     <li class="step">
-      <h2><span class="no">二</span>季節と季語</h2>
+      <h2><span class="no">二</span>季語を選ぶ</h2>
       <div class="seasons" role="radiogroup" aria-label="季節" id="seasons"></div>
       <div class="kigo" id="kigo" role="radiogroup" aria-label="季語"></div>
       <p class="kigo-now" id="kigoNow" aria-live="polite"></p>
@@ -33,10 +34,11 @@
 
     <li class="step">
       <h2><span class="no">三</span>五・七・五を詠む</h2>
-      <p class="help">漢字を使うときは、右の「よみ」にひらがなで読みを入れると音の数を数えます。小さい「ゃゅょ」は数えず、「っ」「ー」「ん」は1音に数えます。</p>
+      <p class="help">ひらがなで書くと、音の数を自動で数えます。漢字を使った行は、下の「よみ」に読みを入れてください。「ゃゅょ」は数えず、「っ」「ー」「ん」は1音です。</p>
+      <button class="ins sample" type="button" id="sample">例を入れてみる（芭蕉「古池や」）</button>
       <div class="lines" id="lines"></div>
       <p class="kcheck" id="kcheck" aria-live="polite"></p>
-      <label class="name"><span>詠み人（なくても可）</span><input type="text" id="author" maxlength="8" autocomplete="off" placeholder="例：さくら"></label>
+      <label class="name"><span>名前（任意）</span><input type="text" id="author" maxlength="8" autocomplete="off" placeholder="さくら"></label>
     </li>
   </ol>
 
@@ -51,19 +53,19 @@
       </div>
     </div>
     <div class="acts">
-      <button class="btn" type="button" id="export">画像にする（PNG）</button>
+      <button class="btn" type="button" id="export">画像で保存</button>
     </div>
     <p class="err" id="expErr" role="alert"></p>
     <figure class="out" id="out" hidden>
       <img id="outImg" alt="書き出した俳句カードの画像">
-      <figcaption>保存されない場合は、画像を長押しして保存してください。</figcaption>
+      <figcaption>ダウンロードされないときは、画像を長押しして保存してください。</figcaption>
     </figure>
   </section>
 
   <footer class="foot">
-    <p>句はあなたが詠みます。このアプリは句を自動で作りません。</p>
-    <p>作った人：App World Lab（App Worldの運営）</p>
-    <p>写真と句はこの端末の中だけで扱い、どこにも送られません。</p>
+    <p>句は自動では作りません。詠むのはあなたです。</p>
+    <p>詠んだ句は、この端末にだけ保存されます。</p>
+    <p>開発：App World Lab（App World 運営）</p>
     <p><a href="../">App World Lab</a></p>
   </footer>
 </div>

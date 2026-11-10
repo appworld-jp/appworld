@@ -2,14 +2,16 @@
 <html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>英語ひとこと日記</title>
-<meta name="description" content="毎日ひとつのテーマと、使える英語フレーズ。フレーズを手がかりに英語で一文だけ日記を書き、日付ごとに残せます。">
-<meta name="theme-color" content="#FDFDFB">
+<meta name="description" content="毎日ひとつのテーマで、英語の日記を一文だけ。使えるフレーズ付きなので、書き出しに迷いません。">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#E9EDF2" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0F141B" media="(prefers-color-scheme: dark)">
 <link rel="stylesheet" href="style.css">
 </head><body>
 <div class="app">
   <header class="top">
     <a class="back" href="../">App World Lab</a>
-    <div class="brand"><span class="logo" aria-hidden="true">Aa</span><div><h1>英語ひとこと日記</h1><p class="en">One-line English Diary</p></div></div>
+    <div class="brand"><span class="logo" aria-hidden="true">Aa</span><div><h1>英語ひとこと日記</h1><p class="en">フレーズを見ながら、英語で一文だけ書く日記です。</p></div></div>
   </header>
 
   <main>
@@ -20,18 +22,18 @@
         <h2 id="todayH" class="q" lang="en"></h2>
         <p class="qja" id="qja"></p>
 
-        <h3 class="sub">使えるフレーズ<small>「〜」に自分の言葉を入れます</small></h3>
+        <h3 class="sub">使えるフレーズ<small>〜には自分の言葉を</small></h3>
         <ul class="phrases" id="phrases"></ul>
 
         <form id="writeForm" class="write">
-          <label for="line" class="wlabel">今日の一文<small id="cnt">0 / 200</small></label>
+          <label for="line" class="wlabel">今日の一文<small id="cnt">0/200</small></label>
           <textarea id="line" lang="en" rows="3" maxlength="200" spellcheck="true" autocapitalize="sentences" placeholder="I had toast and coffee for breakfast."></textarea>
           <div class="wacts">
-            <button class="btn" type="submit" id="saveBtn">日記に書く</button>
-            <button class="btn ghost" type="button" id="other">別のテーマ</button>
+            <button class="btn" type="submit" id="saveBtn">保存</button>
+            <button class="btn ghost" type="button" id="other">ほかのテーマ</button>
           </div>
           <p class="saved" id="saved" aria-live="polite"></p>
-          <p class="note">このアプリは添削をしません。フレーズを手がかりに、自分の言葉で一文書いてみましょう。</p>
+          <p class="note">添削はしません。短くても、間違えても大丈夫です。</p>
         </form>
       </div>
     </section>
@@ -40,7 +42,7 @@
       <div class="page">
         <h2 id="diaryH" class="vh">日記<span id="diaryN"></span></h2>
         <ol class="diary" id="diary"></ol>
-        <div class="empty" id="diaryEmpty"><p class="eb">まだ日記はありません。</p><p>「今日」のページで、英語の一文を書いてみましょう。書いた日記は日付ごとにここへ並びます。</p></div>
+        <div class="empty" id="diaryEmpty"><p class="eb">まだ日記はありません</p><p>「今日」で一文書いて保存すると、日付ごとにここに並びます。</p><button class="btn ghost" type="button" data-go="today">今日の一文を書く</button></div>
       </div>
     </section>
 
@@ -48,21 +50,21 @@
       <div class="page">
         <h2 id="bookH" class="vh">フレーズ帳<span id="bookN"></span></h2>
         <ul class="phrases book" id="book"></ul>
-        <div class="empty" id="bookEmpty"><p class="eb">保存したフレーズはありません。</p><p>覚えたいフレーズの「☆」を押すと、ここに集まります。</p></div>
+        <div class="empty" id="bookEmpty"><p class="eb">保存したフレーズはありません</p><p>覚えたいフレーズの☆を押すと、ここに集まります。</p></div>
       </div>
     </section>
   </main>
 
   <footer class="foot">
-    <p>作った人：App World Lab（App Worldの運営）</p>
-    <p>日記とフレーズはこの端末の中だけに保存され、どこにも送られません。</p>
+    <p>日記とフレーズ帳は、この端末にだけ保存されます。</p>
+    <p>開発：App World Lab（App World 運営）</p>
     <p><a href="../">App World Lab</a></p>
   </footer>
 </div>
 
 <nav class="tabbar" aria-label="ページ">
   <button type="button" data-view="today" aria-current="page"><span class="ti" aria-hidden="true">✎</span>今日</button>
-  <button type="button" data-view="diary"><span class="ti" aria-hidden="true">≡</span>日記</button>
+  <button type="button" data-view="diary"><span class="ti" aria-hidden="true">≡<span class="tn"></span></span>日記</button>
   <button type="button" data-view="book"><span class="ti" aria-hidden="true">☆</span>フレーズ帳</button>
 </nav>
 <p class="sr" id="sr" aria-live="polite"></p>

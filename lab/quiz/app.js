@@ -74,6 +74,8 @@
     $("shareBox").hidden = !daily;
     if (daily) $("shareT").textContent = shareText(res);
     $("copied").textContent = "";
+    $("tmr").textContent = daily ? "次の問題は、明日の0時に出ます。" : "";
+    $("practice").textContent = daily ? "練習問題を解く" : "次の練習問題";
     renderBoard();
     $("result").scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "nearest" });
   }
@@ -95,7 +97,7 @@
         document.body.append(ta); ta.select(); ok = document.execCommand("copy"); ta.remove();
       } catch (e) { ok = false; }
     }
-    $("copied").textContent = ok ? "コピーしました。SNSやメッセージに貼りつけて、友だちと比べてみましょう。" : "コピーできませんでした。上の文字を長押しして選んでください。";
+    $("copied").textContent = ok ? "コピーしました。友だちに送って、秒数を比べてみましょう。" : "コピーできませんでした。上の文字を長押しして選んでください。";
   }
 
   function renderBoard() {
@@ -112,7 +114,15 @@
     $("bBest").textContent = best.length ? `${Math.min(...best).toFixed(1)}秒` : "-";
   }
 
-  $("start").addEventListener("click", () => ask(dailyIdx, true));
+  $("start").addEventListener("click", () => {
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return ask(dailyIdx, true);
+    const c = $("count"); $("start").hidden = true; c.hidden = false;
+    let n = 3; const step = () => {
+      if (!n) { c.hidden = true; $("start").hidden = false; return ask(dailyIdx, true); }
+      c.textContent = String(n); c.classList.remove("beat"); void c.offsetWidth; c.classList.add("beat"); n--; setTimeout(step, 650);
+    };
+    step();
+  });
   $("copy").addEventListener("click", copy);
   $("practice").addEventListener("click", () => {
     let i; do { i = Math.floor(Math.random() * Q.length); } while (i === dailyIdx && Q.length > 1);
