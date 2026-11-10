@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>レシピの分量換算</title>
+<meta name="description" content="レシピの材料を貼り付けて、人数や型の大きさを選ぶと、分量を計算し直します。大さじ・小さじとgの換算もできます。">
+<meta name="theme-color" content="#5E7A32">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="style.css">
+</head><body>
+<header class="top">
+  <div class="top-in">
+    <a class="back" href="../">App World Lab</a>
+    <h1>レシピの<br class="sp">分量換算</h1>
+    <p class="lead">材料を貼り付けると、作りたい人数や型に合わせた分量がわかります。</p>
+  </div>
+</header>
+
+<main class="wrap" id="app">
+  <div class="cols">
+    <div class="col-in">
+      <section class="card" aria-labelledby="h1s">
+        <h2 id="h1s"><span class="no">1</span>材料</h2>
+        <label class="field"><span>レシピの名前</span><input id="title" type="text" maxlength="40" autocomplete="off" placeholder="肉じゃが"></label>
+        <label class="field"><span>材料（1行に1つ）</span>
+          <textarea id="text" rows="9" spellcheck="false" placeholder="砂糖 大さじ2&#10;薄力粉 100g&#10;卵 2個&#10;塩 少々"></textarea>
+        </label>
+        <div class="samples">
+          <span class="s-l">例で試す</span>
+          <button type="button" class="chip" data-sample="nikujaga">肉じゃが（4人分）</button>
+          <button type="button" class="chip" data-sample="sponge">スポンジケーキ（18cm）</button>
+          <button type="button" class="chip ghost" id="clearBtn">消す</button>
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="h2s">
+        <h2 id="h2s"><span class="no">2</span>どう変える？</h2>
+        <div class="seg" id="modeSeg" role="group" aria-label="変え方">
+          <button type="button" data-m="serv" aria-pressed="true">人数</button>
+          <button type="button" data-m="pan" aria-pressed="false">型の大きさ</button>
+          <button type="button" data-m="mult" aria-pressed="false">倍率</button>
+        </div>
+
+        <div class="mode" id="mServ">
+          <div class="serv">
+            <div class="sv">
+              <span class="sv-l" id="lFrom">レシピ</span>
+              <div class="stepper">
+                <button type="button" class="step" data-k="from" data-d="-1" aria-label="レシピの人数を減らす">−</button>
+                <input id="sFrom" type="text" inputmode="decimal" autocomplete="off" aria-labelledby="lFrom">
+                <button type="button" class="step" data-k="from" data-d="1" aria-label="レシピの人数を増やす">＋</button>
+              </div>
+              <span class="sv-u">人分</span>
+            </div>
+            <span class="arrow" aria-hidden="true">→</span>
+            <div class="sv">
+              <span class="sv-l" id="lTo">作る</span>
+              <div class="stepper">
+                <button type="button" class="step" data-k="to" data-d="-1" aria-label="作る人数を減らす">−</button>
+                <input id="sTo" type="text" inputmode="decimal" autocomplete="off" aria-labelledby="lTo">
+                <button type="button" class="step" data-k="to" data-d="1" aria-label="作る人数を増やす">＋</button>
+              </div>
+              <span class="sv-u">人分</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="mode" id="mPan" hidden>
+          <div class="pans" id="pans"></div>
+          <p class="hint">同じ種類の型なら、底の面積で比べます。パウンド型と比べるときは、高さも入れると容積で計算します。</p>
+        </div>
+
+        <div class="mode" id="mMult" hidden>
+          <div class="chips" id="multChips">
+            <button type="button" data-v="1/2">半分</button>
+            <button type="button" data-v="2/3">2/3</button>
+            <button type="button" data-v="1.5">1.5倍</button>
+            <button type="button" data-v="2">2倍</button>
+            <button type="button" data-v="3">3倍</button>
+          </div>
+          <label class="field mult-f"><span>倍率</span><input id="mult" type="text" inputmode="decimal" autocomplete="off" placeholder="1.5"></label>
+        </div>
+
+        <h3 class="h3">単位</h3>
+        <div class="seg" id="unitSeg" role="group" aria-label="単位">
+          <button type="button" data-u="keep" aria-pressed="true">そのまま</button>
+          <button type="button" data-u="g">gにする</button>
+          <button type="button" data-u="spoon">大さじ・小さじに</button>
+        </div>
+        <p class="hint">はかりを使うなら「gにする」。計量スプーンで量るなら「大さじ・小さじに」。</p>
+      </section>
+    </div>
+
+    <section class="card result" id="result" aria-labelledby="h3s">
+      <h2 id="h3s"><span class="no">3</span>作る分量</h2>
+      <p class="factor" id="factor" aria-live="polite"></p>
+      <div id="outWrap">
+        <ul class="out" id="out"></ul>
+        <p class="out-empty" id="outEmpty">材料を入れると、ここに計算した分量が出ます。</p>
+      </div>
+      <div class="acts">
+        <button type="button" class="btn" id="copyBtn">コピー</button>
+        <button type="button" class="btn ghost" id="saveBtn">保存</button>
+      </div>
+      <p class="msg ok" id="copyMsg" role="status"></p>
+      <p class="msg" id="saveMsg" role="status"></p>
+    </section>
+  </div>
+
+  <details class="fold" id="savedBox">
+    <summary>保存したレシピ<span id="savedN"></span></summary>
+    <ul class="saved" id="savedList"></ul>
+    <p class="hint" id="savedNone">名前を付けて「保存」すると、ここから開けます。</p>
+  </details>
+
+  <details class="fold">
+    <summary>計量スプーン・カップ1杯の重さ</summary>
+    <p class="hint">小さじ5ml、大さじ15ml、1カップ200mlで量ったときの目安です。粉はふるわずにすり切りで量った重さです。ここにない材料は、重さとの換算をしません。</p>
+    <div class="tbl-wrap">
+      <table class="dens">
+        <thead><tr><th scope="col">材料</th><th scope="col">小さじ</th><th scope="col">大さじ</th><th scope="col">1カップ</th></tr></thead>
+        <tbody id="densBody"></tbody>
+      </table>
+    </div>
+    <p class="hint">卵は1個（Mサイズ）の中身を約50gとしています。</p>
+  </details>
+
+  <details class="fold">
+    <summary>データの引っ越し</summary>
+    <p class="hint">機種変更のときは、ファイルに書き出して、新しい端末で読み込みます。</p>
+    <div class="row-btns">
+      <button type="button" class="btn ghost small" id="expBtn">ファイルに書き出す</button>
+      <label class="btn ghost small file-btn">ファイルを読み込む<input type="file" id="impFile" accept="application/json,.json"></label>
+    </div>
+    <p class="msg" id="moveMsg" role="status"></p>
+  </details>
+
+  <footer class="foot">
+    <p>保存したレシピは、この端末にだけ保存されます。</p>
+    <p>開発：App World Lab（App World 運営）</p>
+    <p><a href="../">App World Lab</a></p>
+  </footer>
+</main>
+
+<div class="toast" id="toast" role="status" hidden><span id="toastMsg"></span><button type="button" id="toastUndo">元に戻す</button></div>
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body></html>

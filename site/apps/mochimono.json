@@ -1,0 +1,18 @@
+{
+  "id": "mochimono",
+  "name": "持ち物チェック",
+  "tagline": "曜日ごとの持ち物を、前の晩にタップで確認",
+  "description": "家族一人ひとりの持ち物を、毎日・曜日ごと・その日だけ（遠足のお弁当など）に分けて登録できる持ち物チェックリストです。今日と明日の分を切りかえて表示し、大きなチェックをタップしてそろえます。全部そろうと「全部そろった！」のはんこが出ます。チェックは日ごとに自動でリセット。小学生・中学生・会社員のひな形から始められます。データはこの端末にだけ保存され、ファイルに書き出して機種変更先へ移せます。",
+  "platform": "web",
+  "category": "lifestyle",
+  "ai_tools": [
+    "Claude Code"
+  ],
+  "maker_name": "App World Lab（運営）",
+  "url": "https://appworld-lab.pages.dev/mochimono/",
+  "launch_date": "2026-11-10",
+  "beta": false,
+  "operator": true,
+  "color": "#D23B4B",
+  "icon": true
+}

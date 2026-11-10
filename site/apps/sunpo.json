@@ -1,0 +1,18 @@
+{
+  "id": "sunpo",
+  "name": "寸法メモ",
+  "tagline": "測った寸法をメモ。買う前に「入る？」がわかる",
+  "description": "窓、冷蔵庫置き場、洗濯機パン、本棚のすき間などの幅・高さ・奥行きを、部屋ごとにメモできるアプリです。cmとmmを切りかえられ、全角数字や「1.2m」「850mm」のような書き方も読み取ります。「入る？」の画面で家具や家電の外形寸法を入れると、メモした場所のどこに入るか、何cm足りないかがわかります。左右・上・うしろのすき間や、向きを変えて置く場合も考えて比べます。データはこの端末にだけ保存され、ファイルで書き出し・読み込みができます。",
+  "platform": "web",
+  "category": "lifestyle",
+  "ai_tools": [
+    "Claude Code"
+  ],
+  "maker_name": "App World Lab（運営）",
+  "url": "https://appworld-lab.pages.dev/sunpo/",
+  "launch_date": "2026-11-10",
+  "beta": false,
+  "operator": true,
+  "color": "#F2B705",
+  "icon": true
+}

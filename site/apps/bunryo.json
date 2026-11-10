@@ -1,0 +1,18 @@
+{
+  "id": "bunryo",
+  "name": "レシピの分量換算",
+  "tagline": "人数や型に合わせて、材料の分量を計算し直す",
+  "description": "レシピの材料を1行ずつ貼り付けると、人数（4人分→3人分など）、型の大きさ（18cm丸型→15cm丸型、角型、パウンド型）、倍率に合わせて分量を計算し直します。「大さじ1と1/2」などの分数も読み取り、少々・適量はそのまま残します。大さじ・小さじ・カップとgの換算もでき、砂糖・塩・しょうゆ・小麦粉・バターなど38種類の材料の重さの目安を使います。卵は0.5個単位に丸め、溶いて量るときのg数も添えます。結果はコピーでき、名前を付けて保存できます。データはこの端末にだけ保存されます。",
+  "platform": "web",
+  "category": "lifestyle",
+  "ai_tools": [
+    "Claude Code"
+  ],
+  "maker_name": "App World Lab（運営）",
+  "url": "https://appworld-lab.pages.dev/bunryo/",
+  "launch_date": "2026-11-10",
+  "beta": false,
+  "operator": true,
+  "color": "#5E7A32",
+  "icon": true
+}

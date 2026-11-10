@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>持ち物チェック</title>
+<meta name="description" content="曜日ごとの持ち物を家族の分まで登録しておくと、今日と明日の持ち物がひと目でわかります。前の晩にタップでそろえられます。">
+<meta name="theme-color" content="#D23B4B">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="style.css">
+</head><body>
+<header class="top">
+  <div class="top-in">
+    <a class="back" href="../">App World Lab</a>
+    <h1><svg class="h-ic" viewBox="0 0 40 40" aria-hidden="true"><rect x="5" y="9" width="30" height="27" rx="8" fill="#fff"/><path d="M5 17c0-5 4-8 9-8h12c5 0 9 3 9 8v3H5z" fill="#F5C242"/><rect x="17" y="17" width="6" height="7" rx="2" fill="#2A2230"/><path d="M14 9V6a6 6 0 0 1 12 0v3" fill="none" stroke="#fff" stroke-width="3"/></svg>持ち物チェック</h1>
+    <p class="lead">曜日ごとに登録しておけば、前の晩にさっと確かめられます。</p>
+  </div>
+</header>
+
+<main class="wrap">
+  <section id="viewMain" aria-label="持ち物のチェック" hidden>
+    <div class="days" role="group" aria-label="いつの持ち物">
+      <button type="button" class="day" id="dayT" aria-pressed="false"><b>今日</b><small id="dayTd"></small></button>
+      <button type="button" class="day" id="dayN" aria-pressed="false"><b>明日</b><small id="dayNd"></small></button>
+    </div>
+    <p class="hint" id="nightHint" hidden>夕方からは、明日の分を出しています。</p>
+
+    <div class="people" id="people" role="group" aria-label="だれの持ち物"></div>
+
+    <section class="sheet" id="sheet" aria-labelledby="sheetH">
+      <div class="sheet-h">
+        <h2 id="sheetH"></h2>
+        <p class="left" id="left" aria-live="polite"></p>
+      </div>
+      <div class="bar" aria-hidden="true"><i id="barFill"></i></div>
+      <div id="groups"></div>
+      <div class="done" id="done" hidden aria-hidden="true">
+        <span class="stamp">全部<br>そろった！</span>
+      </div>
+      <div class="nothing" id="nothing" hidden>
+        <p class="nothing-h">この日の持ち物は、まだありません。</p>
+        <p>「持ち物を編集」から、曜日ごとの持ち物を入れられます。</p>
+      </div>
+    </section>
+
+    <div class="acts">
+      <button type="button" class="btn" id="editBtn">持ち物を編集</button>
+      <button type="button" class="btn ghost" id="clearBtn">チェックを外す</button>
+    </div>
+  </section>
+
+  <section id="viewSetup" class="panel" aria-labelledby="setupH" hidden>
+    <h2 id="setupH">だれの持ち物ですか？</h2>
+    <p class="sub" id="setupSub">ひな形を選ぶと、よくある持ち物が入ります。あとで自由に直せます。</p>
+    <form id="setupForm" novalidate>
+      <label class="field"><span>名前</span><input id="pName" type="text" maxlength="12" autocomplete="off" placeholder="自分、ひなた など"></label>
+      <fieldset class="presets">
+        <legend>持ち物のひな形</legend>
+        <label class="preset"><input type="radio" name="preset" value="elem" checked><span class="p-card"><b>小学生</b><small>連絡帳・筆箱・体操服・習字道具</small></span></label>
+        <label class="preset"><input type="radio" name="preset" value="junior"><span class="p-card"><b>中学生</b><small>生徒手帳・弁当・体操服・部活の着替え</small></span></label>
+        <label class="preset"><input type="radio" name="preset" value="work"><span class="p-card"><b>会社員</b><small>鍵・財布・スマホ・社員証</small></span></label>
+        <label class="preset"><input type="radio" name="preset" value="none"><span class="p-card"><b>あとで入れる</b><small>空っぽから始めます</small></span></label>
+      </fieldset>
+      <div class="row-btns">
+        <button class="btn" type="submit" id="pAdd">はじめる</button>
+        <button class="btn ghost" type="button" id="pCancel">やめる</button>
+      </div>
+    </form>
+  </section>
+
+  <section id="viewEdit" class="panel" aria-labelledby="edH" hidden>
+    <div class="ed-head">
+      <h2 id="edH"></h2>
+      <button type="button" class="btn small" id="edDone">完了</button>
+    </div>
+    <label class="field"><span>名前</span><input id="edName" type="text" maxlength="12" autocomplete="off"></label>
+    <div class="colors" id="edColors" role="radiogroup" aria-label="色"></div>
+
+    <section class="block" aria-labelledby="bDaily">
+      <h3 id="bDaily">毎日</h3>
+      <label class="switch"><input type="checkbox" id="edWeekend"><span>土日も出す</span></label>
+      <ul class="chips" id="edDaily"></ul>
+      <form class="add" data-k="daily" novalidate>
+        <input type="text" maxlength="60" autocomplete="off" placeholder="鍵、財布、ハンカチ" aria-label="毎日の持ち物を追加">
+        <button class="btn small" type="submit">追加</button>
+      </form>
+    </section>
+
+    <section class="block" aria-labelledby="bWeek">
+      <h3 id="bWeek">曜日ごと</h3>
+      <div class="wd" id="edWd" role="group" aria-label="曜日"></div>
+      <ul class="chips" id="edWeek"></ul>
+      <form class="add" data-k="week" novalidate>
+        <input type="text" maxlength="60" autocomplete="off" placeholder="体操服、習字道具" aria-label="この曜日の持ち物を追加" id="edWeekIn">
+        <button class="btn small" type="submit">追加</button>
+      </form>
+      <p class="hint">「、」で区切ると、まとめて追加できます。</p>
+    </section>
+
+    <section class="block" aria-labelledby="bOnce">
+      <h3 id="bOnce">この日だけ</h3>
+      <form class="once-form" id="onceForm" novalidate>
+        <label class="field"><span>日にち</span><input id="onceDate" type="date"></label>
+        <label class="field"><span>持ち物</span><input id="onceName" type="text" maxlength="30" autocomplete="off" placeholder="遠足のお弁当"></label>
+        <button class="btn small" type="submit">追加</button>
+        <p class="err" id="onceErr" role="alert"></p>
+      </form>
+      <ul class="once-list" id="edOnce"></ul>
+    </section>
+
+    <button type="button" class="link-danger" id="edDel">この人を削除</button>
+  </section>
+
+  <details class="move">
+    <summary>データの引っ越し</summary>
+    <p>機種変更のときは、ファイルに書き出して、新しい端末で読み込みます。</p>
+    <div class="row-btns">
+      <button type="button" class="btn ghost small" id="expBtn">ファイルに書き出す</button>
+      <label class="btn ghost small file-btn">ファイルを読み込む<input type="file" id="impFile" accept="application/json,.json"></label>
+    </div>
+    <p class="msg" id="moveMsg" role="status"></p>
+  </details>
+
+  <footer class="foot">
+    <p>持ち物のリストは、この端末にだけ保存されます。</p>
+    <p>開発：App World Lab（App World 運営）</p>
+    <p><a href="../">App World Lab</a></p>
+  </footer>
+</main>
+
+<div class="toast" id="toast" role="status" hidden><span id="toastMsg"></span><button type="button" id="toastUndo">元に戻す</button></div>
+<script src="app.js"></script>
+</body></html>

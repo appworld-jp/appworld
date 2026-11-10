@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>保証と説明書の台帳</title>
+<meta name="description" content="家電や買った物の型番、購入日、保証期間をまとめて記録。保証がもうすぐ切れる物がひと目でわかり、修理の申し込みに要る型番もすぐコピーできます。">
+<meta name="theme-color" content="#2B3A55">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="style.css">
+</head><body>
+<header class="cover">
+  <div class="cover-in">
+    <a class="back" href="../">App World Lab</a>
+    <h1><span class="h-sm">保証と説明書の</span>台帳</h1>
+    <p class="lead">買った日と保証の期限を控えておけば、壊れたときに慌てません。</p>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="tally" id="tally" aria-label="保証の状況" hidden>
+    <a class="t soon" href="#g-soon"><b id="nSoon">0</b><span>もうすぐ<br>切れる</span></a>
+    <a class="t ok" href="#g-ok"><b id="nOk">0</b><span>保証中</span></a>
+    <a class="t over" href="#g-over"><b id="nOver">0</b><span>保証切れ</span></a>
+  </section>
+
+  <div class="tools" id="tools" hidden>
+    <input id="q" type="search" placeholder="洗濯機、パナソニック、型番" aria-label="台帳を探す" autocomplete="off">
+  </div>
+  <p class="found" id="found" aria-live="polite"></p>
+
+  <div id="groups"></div>
+
+  <section class="empty" id="empty" hidden>
+    <svg viewBox="0 0 140 96" width="140" height="96" aria-hidden="true">
+      <rect x="16" y="10" width="78" height="80" rx="4" fill="#F7F3EA" stroke="#2B3A55" stroke-width="3"/>
+      <path d="M28 30h54M28 44h54M28 58h36" stroke="#9AA3B5" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="98" cy="64" r="22" fill="none" stroke="#C8373B" stroke-width="4"/>
+      <text x="98" y="70" text-anchor="middle" font-size="15" font-weight="700" fill="#C8373B">保証</text>
+    </svg>
+    <p class="empty-h">家電を1つ登録してみましょう。</p>
+    <p>購入日と保証の年数を入れると、いつまで無料で直せるかがわかります。</p>
+    <div class="row-btns center">
+      <button type="button" class="btn" id="firstAdd">登録する</button>
+      <button type="button" class="btn ghost" id="sample">例を見る</button>
+    </div>
+  </section>
+
+  <details class="move">
+    <summary>データの引っ越し</summary>
+    <p>機種変更のときは、ファイルに書き出して、新しい端末で読み込みます。</p>
+    <div class="row-btns">
+      <button type="button" class="btn ghost small" id="expBtn">ファイルに書き出す</button>
+      <label class="btn ghost small file-btn">ファイルを読み込む<input type="file" id="impFile" accept="application/json,.json"></label>
+    </div>
+    <p class="msg" id="moveMsg" role="status"></p>
+  </details>
+
+  <footer class="foot">
+    <p>台帳の内容は、この端末にだけ保存されます。</p>
+    <p>開発：App World Lab（App World 運営）</p>
+    <p><a href="../">App World Lab</a></p>
+  </footer>
+</main>
+
+<button type="button" class="fab" id="addBtn" hidden><span aria-hidden="true">＋</span>登録する</button>
+
+<dialog id="view" class="dlg" aria-labelledby="vName">
+  <div class="v-in">
+    <div class="v-top">
+      <p class="v-maker" id="vMaker"></p>
+      <h2 id="vName"></h2>
+      <div class="v-stamp" id="vStamp"></div>
+    </div>
+    <div class="v-model" id="vModelBox">
+      <div><small>型番</small><b id="vModel"></b></div>
+      <button type="button" class="btn small" id="copyModel">型番をコピー</button>
+    </div>
+    <p class="copied" id="copied" role="status"></p>
+    <dl class="v-dl" id="vDl"></dl>
+    <button type="button" class="btn ghost small wide" id="copyRepair">修理の申し込み用にまとめてコピー</button>
+    <div class="dlg-acts">
+      <button type="button" class="btn" id="vEdit">編集</button>
+      <button type="button" class="btn ghost" id="vClose">閉じる</button>
+    </div>
+    <button type="button" class="link-danger" id="vDel">この記録を削除</button>
+  </div>
+</dialog>
+
+<dialog id="edit" class="dlg" aria-labelledby="eH">
+  <form id="form" novalidate>
+    <h2 id="eH">登録する</h2>
+    <label class="field"><span>品名<em>必須</em></span><input id="fName" type="text" maxlength="40" autocomplete="off" placeholder="ドラム式洗濯機"></label>
+    <div class="two">
+      <label class="field"><span>メーカー</span><input id="fMaker" type="text" maxlength="30" autocomplete="off" placeholder="パナソニック"></label>
+      <label class="field"><span>型番</span><input id="fModel" type="text" maxlength="40" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="NA-LX127AL"></label>
+    </div>
+    <label class="field"><span>製造番号（あれば）</span><input id="fSerial" type="text" maxlength="40" autocomplete="off" spellcheck="false" placeholder="本体のラベルに書いてあります"></label>
+    <div class="two">
+      <label class="field"><span>購入日</span><input id="fDate" type="date"></label>
+      <label class="field"><span>価格（円）</span><input id="fPrice" type="text" inputmode="numeric" autocomplete="off" placeholder="198000"></label>
+    </div>
+    <label class="field"><span>購入店</span><input id="fShop" type="text" maxlength="40" autocomplete="off" placeholder="ヨドバシカメラ 梅田"></label>
+
+    <fieldset class="seg-f">
+      <legend>メーカー保証</legend>
+      <div class="seg" id="wSeg">
+        <label><input type="radio" name="w" value="12" checked><span>1年</span></label>
+        <label><input type="radio" name="w" value="36"><span>3年</span></label>
+        <label><input type="radio" name="w" value="60"><span>5年</span></label>
+        <label><input type="radio" name="w" value="m"><span>月数</span></label>
+        <label><input type="radio" name="w" value="end"><span>終了日</span></label>
+        <label><input type="radio" name="w" value="none"><span>なし</span></label>
+      </div>
+      <label class="field" id="wMonthsF" hidden><span>保証の月数</span><input id="wMonths" type="text" inputmode="numeric" autocomplete="off" placeholder="18"></label>
+      <label class="field" id="wEndF" hidden><span>保証の終了日</span><input id="wEnd" type="date"></label>
+    </fieldset>
+
+    <fieldset class="seg-f">
+      <legend>延長保証</legend>
+      <div class="seg" id="xSeg">
+        <label><input type="radio" name="x" value="none" checked><span>なし</span></label>
+        <label><input type="radio" name="x" value="36"><span>3年</span></label>
+        <label><input type="radio" name="x" value="60"><span>5年</span></label>
+        <label><input type="radio" name="x" value="120"><span>10年</span></label>
+        <label><input type="radio" name="x" value="end"><span>終了日</span></label>
+      </div>
+      <label class="field" id="xEndF" hidden><span>延長保証の終了日</span><input id="xEnd" type="date"></label>
+      <label class="field" id="xByF" hidden><span>加入先</span><input id="xBy" type="text" maxlength="40" autocomplete="off" placeholder="購入店の長期保証"></label>
+      <p class="hint">年数は購入日から数えます。</p>
+    </fieldset>
+
+    <div class="two">
+      <label class="field"><span>修理の窓口（電話）</span><input id="fPhone" type="text" inputmode="tel" maxlength="30" autocomplete="off" placeholder="0120-000-000"></label>
+      <label class="field"><span>サポートのページ</span><input id="fUrl" type="url" inputmode="url" maxlength="300" autocomplete="off" spellcheck="false" placeholder="https://"></label>
+    </div>
+    <label class="field"><span>メモ</span><textarea id="fNote" rows="2" maxlength="300" placeholder="保証書は台所の引き出し。説明書は紙の箱。"></textarea></label>
+    <p class="err" id="fErr" role="alert"></p>
+    <div class="dlg-acts">
+      <button class="btn" type="submit">保存</button>
+      <button class="btn ghost" type="button" id="eCancel">キャンセル</button>
+    </div>
+  </form>
+</dialog>
+
+<div class="toast" id="toast" role="status" hidden><span id="toastMsg"></span><button type="button" id="toastUndo">元に戻す</button></div>
+<script src="app.js"></script>
+</body></html>

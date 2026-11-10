@@ -1,0 +1,18 @@
+{
+  "id": "hosho",
+  "name": "保証と説明書の台帳",
+  "tagline": "家電の保証期限と型番を、ひとつの台帳に",
+  "description": "家電や買った物の品名、メーカー、型番、製造番号、購入日、購入店、価格、メーカー保証と延長保証、修理の窓口を記録する台帳です。保証の期限を計算して「もうすぐ切れる」「保証中」「保証切れ」に分け、残りの日数を表示します。型番や、修理の申し込みに要る情報をまとめてコピーできます。サポートページはhttpsのアドレスだけ登録できます。データはこの端末にだけ保存され、ファイルに書き出して機種変更先へ移せます。",
+  "platform": "web",
+  "category": "lifestyle",
+  "ai_tools": [
+    "Claude Code"
+  ],
+  "maker_name": "App World Lab（運営）",
+  "url": "https://appworld-lab.pages.dev/hosho/",
+  "launch_date": "2026-11-10",
+  "beta": false,
+  "operator": true,
+  "color": "#2B3A55",
+  "icon": true
+}
