@@ -1,66 +1,217 @@
 <!doctype html>
 <html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>コミット短歌</title>
-<meta name="description" content="コミットメッセージを貼るだけで、五・七・五・七・七の短歌になります。用意した言葉の型に、メッセージの単語をはめて詠む遊びです。">
-<meta name="theme-color" content="#EFE6D2">
+<title>コミット清書</title>
+<meta name="description" content="種類と要約を選んで入れるだけで、Conventional Commitsの形のコミットメッセージができます。書いたメッセージのチェックと清書もできます。AIは使わず、決まったルールで動きます。">
+<meta name="theme-color" content="#F5F6F8" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0F131A" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="style.css">
 </head><body>
-<div class="wrap">
-  <header class="masthead">
+<div class="shell">
+  <header class="top">
+    <div class="brand">
+      <svg class="mark" viewBox="0 0 40 40" aria-hidden="true"><path d="M12 6v28" class="m-rail"/><path d="M12 14c0 7 16 4 16 12v2" class="m-branch"/><circle cx="12" cy="10" r="4" class="m-node"/><circle cx="12" cy="30" r="4" class="m-node"/><circle cx="28" cy="30" r="4.5" class="m-head"/></svg>
+      <div>
+        <h1>コミット清書</h1>
+        <p class="lead">種類と要約を入れるだけで、Conventional Commitsの形のメッセージができます。</p>
+      </div>
+    </div>
     <a class="back" href="../">App World Lab</a>
-    <h1><span class="h-mono">git commit</span><span class="h-jp">コミット短歌</span></h1>
-    <p class="lead">コミットメッセージを貼るだけで、一首の短歌になります。</p>
   </header>
 
-  <section class="term" aria-labelledby="term-h">
-    <div class="term-bar"><span class="lights" aria-hidden="true"><i></i><i></i><i></i></span><h2 id="term-h">~/repo — コミットメッセージ</h2></div>
-    <div class="term-body">
-      <label for="msg" class="ps1"><span class="u">you@repo</span> <span class="p">$</span> git log -1 --format=%B</label>
-      <textarea id="msg" aria-label="コミットメッセージ" rows="4" spellcheck="false" autocapitalize="off" autocomplete="off" placeholder="fix: ログイン後にトップへ戻されるバグを修正"></textarea>
-      <p class="hint" id="hint" aria-live="polite"></p>
-      <div class="term-acts">
-        <button type="button" class="k primary" id="go">一首よむ</button>
-        <button type="button" class="k" id="sample">例で試す</button>
-      </div>
+  <nav class="tabs" role="tablist" aria-label="画面">
+    <button type="button" role="tab" id="tab-write" aria-controls="p-write" aria-selected="true">書く</button>
+    <button type="button" role="tab" id="tab-fix" aria-controls="p-fix" aria-selected="false" tabindex="-1">直す</button>
+    <button type="button" role="tab" id="tab-hist" aria-controls="p-hist" aria-selected="false" tabindex="-1">履歴<span class="count" id="hist-count"></span></button>
+    <button type="button" role="tab" id="tab-sheet" aria-controls="p-sheet" aria-selected="false" tabindex="-1">早見表</button>
+  </nav>
+
+  <div class="prefs" id="prefs">
+    <fieldset class="seg" id="lang-seg">
+      <legend>言語</legend>
+      <label><input type="radio" name="lang" value="ja" checked><span>日本語</span></label>
+      <label><input type="radio" name="lang" value="en"><span>English</span></label>
+    </fieldset>
+    <fieldset class="seg" id="style-seg">
+      <legend>日本語の文末</legend>
+      <label><input type="radio" name="jastyle" value="taigen" checked><span>体言止め</span></label>
+      <label><input type="radio" name="jastyle" value="desu"><span>です・ます</span></label>
+    </fieldset>
+  </div>
+
+  <!-- 書く -->
+  <main>
+  <section class="panel" role="tabpanel" id="p-write" aria-labelledby="tab-write">
+    <div class="write">
+      <form class="graph" id="form" autocomplete="off">
+        <ol class="steps">
+          <li class="step" id="st-type">
+            <fieldset>
+              <legend class="st-h">種類<span class="req">必須</span></legend>
+              <div class="types" id="types"></div>
+            </fieldset>
+          </li>
+          <li class="step" id="st-scope">
+            <label class="st-h" for="scope">範囲<span class="opt">なくてもOK</span></label>
+            <input id="scope" class="mono" type="text" inputmode="latin" spellcheck="false" autocapitalize="off" maxlength="30" placeholder="auth">
+            <p class="help">変えた場所を短い英語で。auth、cart、apiなど。</p>
+          </li>
+          <li class="step" id="st-summary">
+            <div class="st-row"><label class="st-h" for="summary">要約<span class="req">必須</span></label><span class="meter" id="meter" aria-live="polite"></span></div>
+            <input id="summary" type="text" spellcheck="false" autocapitalize="off" maxlength="200" placeholder="ログイン後にトップへ戻される問題を修正" aria-describedby="sum-help">
+            <p class="help" id="sum-help">何をしたかを1行で。全角は2文字分で数えます。</p>
+          </li>
+          <li class="step" id="st-body">
+            <span class="st-h">本文<span class="opt">なくてもOK</span></span>
+            <label class="sub-l" for="why">なぜ変えたか</label>
+            <textarea id="why" rows="3" spellcheck="false" placeholder="ログインのたびにトップへ戻され、見ていたページを開き直す手間があったため。"></textarea>
+            <label class="sub-l" for="what">変えたこと（1行に1つ）</label>
+            <textarea id="what" rows="3" spellcheck="false" placeholder="ログイン前のURLを保存して、ログイン後にそのページへ戻す&#10;戻り先は同じサイトのURLだけに限定"></textarea>
+            <label class="check"><input type="checkbox" id="wrap" checked><span>72文字分で折り返す</span></label>
+          </li>
+          <li class="step warnstep" id="st-break">
+            <label class="check st-h"><input type="checkbox" id="breaking"><span>互換性がなくなる変更</span></label>
+            <div id="break-box" hidden>
+              <label class="sub-l" for="break-note">何が変わるか</label>
+              <textarea id="break-note" rows="2" spellcheck="false" placeholder="設定のキー名をloginUrlからauthUrlに変更"></textarea>
+            </div>
+            <p class="help">使う側のコードや設定を直す必要がある変更なら、チェックします。種類に「!」が付きます。</p>
+          </li>
+          <li class="step" id="st-issue">
+            <label class="st-h" for="issues">関連するissue<span class="opt">なくてもOK</span></label>
+            <div class="issue-row">
+              <input id="issues" class="mono" type="text" inputmode="numeric" spellcheck="false" placeholder="12, 34">
+              <label class="sr" for="issue-kw">issueとの関係</label>
+              <select id="issue-kw">
+                <option value="Refs">参照（Refs）</option>
+                <option value="Closes">閉じる（Closes）</option>
+                <option value="Fixes">修正で閉じる（Fixes）</option>
+              </select>
+            </div>
+            <p class="help">「閉じる」にすると、デフォルトブランチに入ったときにGitHubがissueを閉じます。</p>
+          </li>
+        </ol>
+        <div class="form-acts">
+          <button type="button" class="btn ghost" id="example">例を入れる</button>
+          <button type="button" class="btn ghost" id="reset">入力を消す</button>
+        </div>
+      </form>
+
+      <aside class="preview" aria-labelledby="pv-h">
+        <div class="pv-card" id="pv-card">
+          <div class="pv-bar">
+            <h2 id="pv-h"><span class="dot" aria-hidden="true"></span>できたメッセージ</h2>
+            <span class="pv-hash mono" id="hash" aria-hidden="true"></span>
+          </div>
+          <pre class="msg" id="out" tabindex="0" aria-label="できたメッセージ"></pre>
+          <p class="pv-empty" id="out-empty">要約を入れると、ここにメッセージができます。</p>
+          <div class="pv-acts">
+            <button type="button" class="btn primary" id="copy-out">コピー</button>
+            <span class="toast" id="toast-out" role="status" aria-live="polite"></span>
+          </div>
+          <div class="oneline" id="oneline" hidden>
+            <p class="ol-h">1行だけなので、このまま打っても書けます</p>
+            <code class="ol-cmd mono" id="cmd"></code>
+            <button type="button" class="btn small" id="copy-cmd">コマンドをコピー</button>
+          </div>
+          <p class="ol-note" id="multi-note" hidden>2行以上あるときは、git commitで開くエディタに貼ってください。</p>
+        </div>
+        <div class="checks-box" id="checks-box">
+          <h3>チェック</h3>
+          <ul class="checks" id="checks" aria-live="polite"></ul>
+        </div>
+      </aside>
     </div>
+    <a class="dock" id="dock" href="#pv-card" hidden><span class="dock-line mono" id="dock-line"></span><span class="dock-go">確認する ↓</span></a>
   </section>
 
-  <section class="stage" aria-labelledby="poem-h">
-    <h2 id="poem-h" class="sr">できた短歌</h2>
-    <div class="empty" id="empty">
-      <p>ここに、短冊に書いた一首が出ます。</p>
-      <p class="sub">「fix:」などの種類と、「ログイン」などの言葉を拾って詠みます。</p>
-    </div>
-    <div id="result" hidden>
-      <div class="chips" id="chips" aria-label="拾った言葉"></div>
-      <div class="poem">
-        <figure class="tanzaku" id="tanzaku" aria-hidden="true">
-          <div class="tz-text" id="tanzaku-text"></div>
-          <span class="stamp" id="stamp">一首</span>
-        </figure>
-        <div class="count-card">
-          <ol class="lines" id="lines" aria-live="polite"></ol>
-          <p class="total" id="total"></p>
-          <p class="sr" id="poem-sr"></p>
-          <div class="acts">
-            <button type="button" class="k primary" id="again">もう一首</button>
-            <button type="button" class="k" id="copy">コピー</button>
-            <span class="toast" id="toast" aria-live="polite"></span>
+  <!-- 直す -->
+  <section class="panel" role="tabpanel" id="p-fix" aria-labelledby="tab-fix" hidden>
+    <div class="fix">
+      <div class="fix-in">
+        <label class="big-l" for="fix-src">書いたメッセージを貼る</label>
+        <textarea id="fix-src" rows="7" spellcheck="false" autocapitalize="off" placeholder="ログイン画面のバグを修正しました。&#10;#45"></textarea>
+        <p class="err" id="fix-err" role="alert"></p>
+        <div class="row-acts">
+          <button type="button" class="btn primary" id="fix-run">チェックして整える</button>
+          <button type="button" class="btn ghost" id="fix-sample">例を入れる</button>
+        </div>
+        <p class="help">種類がなければ、「修正」「README」などの言葉から考えます。</p>
+      </div>
+
+      <div class="fix-out" id="fix-out" hidden>
+        <div class="before">
+          <h2 class="sec-h">元のメッセージ<span class="badge" id="before-count"></span></h2>
+          <ul class="checks" id="before-checks"></ul>
+        </div>
+        <div class="after">
+          <h2 class="sec-h">整えた案</h2>
+          <div class="type-row">
+            <label for="fix-type">種類</label>
+            <select id="fix-type" class="mono"></select>
+            <span class="guess" id="fix-guess"></span>
           </div>
+          <label class="sr" for="fix-dst">整えた案（そのまま直せます）</label>
+          <textarea id="fix-dst" class="mono" rows="8" spellcheck="false" autocapitalize="off"></textarea>
+          <div class="row-acts">
+            <button type="button" class="btn primary" id="copy-fix">この案をコピー</button>
+            <button type="button" class="btn ghost" id="fix-redo">案を作り直す</button>
+            <span class="toast" id="toast-fix" role="status" aria-live="polite"></span>
+          </div>
+          <h3 class="mini-h">直したところ</h3>
+          <ul class="changes" id="changes"></ul>
+          <h3 class="mini-h">整えた案のチェック</h3>
+          <ul class="checks" id="after-checks" aria-live="polite"></ul>
         </div>
       </div>
+      <div class="fix-empty" id="fix-empty">
+        <p class="fe-h">こんなふうに整えます</p>
+        <pre class="fe-before mono" aria-label="整える前の例">ログイン画面のバグを修正しました。
+#45</pre>
+        <span class="fe-arrow" aria-hidden="true">↓</span>
+        <pre class="fe-after mono" aria-label="整えたあとの例">fix: ログイン画面のバグを修正
+
+Refs #45</pre>
+      </div>
     </div>
-    <p class="disclaimer">用意した言葉の型に、メッセージから拾った単語をはめて詠んでいます（AIは使っていません）。音の数はよみがなで数えます。「きゃ」は1音、「っ」「ん」「ー」も1音です。</p>
   </section>
 
+  <!-- 履歴 -->
+  <section class="panel" role="tabpanel" id="p-hist" aria-labelledby="tab-hist" hidden>
+    <div class="hist-head">
+      <h2 class="sec-h">最近コピーしたメッセージ</h2>
+      <button type="button" class="btn ghost small" id="hist-clear" hidden>すべて消す</button>
+    </div>
+    <ol class="hist" id="hist"></ol>
+    <p class="hist-empty" id="hist-empty">まだありません。コピーしたメッセージが、新しい順に20件まで残ります。</p>
+    <p class="toast" id="toast-hist" role="status" aria-live="polite"></p>
+  </section>
+
+  <!-- 早見表 -->
+  <section class="panel" role="tabpanel" id="p-sheet" aria-labelledby="tab-sheet" hidden>
+    <h2 class="sec-h">種類の早見表</h2>
+    <ul class="sheet" id="sheet"></ul>
+    <h2 class="sec-h">書き方のきまり</h2>
+    <ol class="rules">
+      <li><code>種類(範囲): 要約</code>の形で1行目を書きます。種類は小文字です。</li>
+      <li>1行目は半角50文字分までが目安です（全角は2文字分）。72を超えないようにします。</li>
+      <li>1行目の最後に「。」や「.」を付けません。</li>
+      <li>本文を書くときは、1行目のあとに空行を1行入れます。本文は72文字分で折り返します。</li>
+      <li>互換性がなくなる変更は、種類に「!」を付け、最後に<code>BREAKING CHANGE: 何が変わるか</code>を書きます。</li>
+      <li>issueは最後の行に<code>Refs #12</code>や<code>Closes #12</code>と書きます。</li>
+      <li>英語は命令形で書きます（added ではなく add）。日本語は文末をチームで決めて、そろえます。</li>
+    </ol>
+  </section>
+  </main>
+
   <footer class="foot">
-    <p>貼ったメッセージは、この端末にだけ保存されます。</p>
+    <p class="honest">AIは使っていません。決まったルールとひな形だけで組み立てて、チェックします。入力した文字は外に送りません。</p>
+    <p>コピーしたメッセージと設定は、この端末にだけ保存されます。</p>
     <p>開発：App World Lab（App World 運営）</p>
-    <a href="../">App World Lab</a>
+    <p><a href="../">App World Lab</a></p>
   </footer>
 </div>
-<script src="words.js"></script>
+<script src="rules.js"></script>
 <script src="app.js"></script>
 </body></html>
