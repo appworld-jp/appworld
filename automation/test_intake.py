@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 """Tests for intake.py. Run: python3 automation/test_intake.py"""
+import json
 import pathlib
 import tempfile
 import unittest
 from datetime import date
 
-from intake import to_listing
+from intake import FIELDS, to_listing
 from check_listing import check
 
 BODY = """### 作品名
@@ -45,6 +46,7 @@ https://example.com/kondate
 ### 確認
 
 - [x] 自分（または自分のチーム）がつくった作品です
+- [x] 掲載規約（https://appworld-1ug.pages.dev/about.html#terms）を読み、同意します
 """
 
 
@@ -82,6 +84,22 @@ class IntakeTest(unittest.TestCase):
         self.assertEqual(listing["platform"], "")
         self.assertNotIn("EvilTool", listing["ai_tools"])
 
+    def test_agreement_section_does_not_leak_into_the_listing(self):
+        listing = to_listing(45, BODY, date(2026, 10, 26), self.apps)
+        self.assertNotIn("about.html", json.dumps(listing, ensure_ascii=False))
+        self.assertEqual(listing["maker_name"], "ゆう")
+
+    def test_form_labels_match_the_issue_template(self):
+        try:
+            import yaml
+        except ImportError:
+            self.skipTest("PyYAML is not installed")
+        form = yaml.safe_load((pathlib.Path(__file__).resolve().parent.parent / ".github/ISSUE_TEMPLATE/listing.yml").read_text(encoding="utf-8"))
+        labels = {b["attributes"]["label"] for b in form["body"] if b["type"] != "markdown"}
+        self.assertTrue(set(FIELDS) <= labels, set(FIELDS) - labels)
+        agree = next(b for b in form["body"] if b.get("id") == "agree")
+        self.assertTrue(all(o.get("required") for o in agree["attributes"]["options"]))
+        self.assertTrue(any("掲載規約" in o["label"] for o in agree["attributes"]["options"]))
 
     def test_prototype_stage_sets_beta(self):
         body = BODY.replace("### リンク", "### 開発の段階\n\n試作中（ベータ）\n\n### リンク")

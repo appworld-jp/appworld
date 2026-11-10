@@ -1,8 +1,8 @@
-# Listing request form (GitHub issue form). Copy to .github/ISSUE_TEMPLATE/
-# in Shipyard's own public repository at launch. Everything entered here is
-# public on GitHub, so it asks for nothing private.
+# Listing request form for App World (GitHub issue form). Everything entered
+# here is public on GitHub, so it asks for nothing private.
+# automation/intake.py reads the answers by their labels; keep them in sync.
 name: 作品を掲載する
-description: AIでつくったアプリやWebサービスを、Shipyard に無料で掲載します
+description: AIで作ったアプリやWebサービスを、App World に無料で掲載します
 title: "掲載申請: "
 labels: ["listing"]
 body:
@@ -76,4 +76,6 @@ body:
         - label: リンク先で、誰でも実際にアプリを触れる状態です
           required: true
         - label: 入力した内容が公開されることに同意します
+          required: true
+        - label: 掲載規約（https://appworld-1ug.pages.dev/about.html#terms）を読み、同意します
           required: true

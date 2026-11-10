@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Post today's debuts to the Shipyard X account (requirement FR-AUTO2).
+"""Post today's debuts to the App World X account (requirement FR-AUTO2).
 
 Only our own account, only our own listings, one post per run: allowed under
 X's automation rules (the account must carry X's "Automated" label). It never
