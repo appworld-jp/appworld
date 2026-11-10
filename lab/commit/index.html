@@ -2,26 +2,27 @@
 <html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>コミット短歌</title>
-<meta name="description" content="コミットメッセージを貼ると、修正・追加などの種類と単語を拾い、手書きの言葉の型に当てはめて五・七・五・七・七の短歌を作ります。音の数も表示します。AIではなく、型で遊ぶアプリです。">
+<meta name="description" content="コミットメッセージを貼るだけで、五・七・五・七・七の短歌になります。用意した言葉の型に、メッセージの単語をはめて詠む遊びです。">
 <meta name="theme-color" content="#EFE6D2">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="style.css">
 </head><body>
 <div class="wrap">
   <header class="masthead">
     <a class="back" href="../">App World Lab</a>
     <h1><span class="h-mono">git commit</span><span class="h-jp">コミット短歌</span></h1>
-    <p class="lead">コミットメッセージを、五・七・五・七・七に。</p>
+    <p class="lead">コミットメッセージを貼るだけで、一首の短歌になります。</p>
   </header>
 
   <section class="term" aria-labelledby="term-h">
     <div class="term-bar"><span class="lights" aria-hidden="true"><i></i><i></i><i></i></span><h2 id="term-h">~/repo — コミットメッセージ</h2></div>
     <div class="term-body">
       <label for="msg" class="ps1"><span class="u">you@repo</span> <span class="p">$</span> git log -1 --format=%B</label>
-      <textarea id="msg" rows="4" spellcheck="false" autocapitalize="off" autocomplete="off" placeholder="fix: ログイン後にトップへ戻されるバグを修正"></textarea>
+      <textarea id="msg" aria-label="コミットメッセージ" rows="4" spellcheck="false" autocapitalize="off" autocomplete="off" placeholder="fix: ログイン後にトップへ戻されるバグを修正"></textarea>
       <p class="hint" id="hint" aria-live="polite"></p>
       <div class="term-acts">
         <button type="button" class="k primary" id="go">一首よむ</button>
-        <button type="button" class="k" id="sample">例を入れる</button>
+        <button type="button" class="k" id="sample">例で試す</button>
       </div>
     </div>
   </section>
@@ -29,13 +30,13 @@
   <section class="stage" aria-labelledby="poem-h">
     <h2 id="poem-h" class="sr">できた短歌</h2>
     <div class="empty" id="empty">
-      <p>ここに短冊が出ます。</p>
-      <p class="sub">「fix:」「feat:」などの種類と、「ログイン」「キャッシュ」などの単語を拾って詠みます。</p>
+      <p>ここに、短冊に書いた一首が出ます。</p>
+      <p class="sub">「fix:」などの種類と、「ログイン」などの言葉を拾って詠みます。</p>
     </div>
     <div id="result" hidden>
       <div class="chips" id="chips" aria-label="拾った言葉"></div>
       <div class="poem">
-        <figure class="tanzaku" aria-hidden="true">
+        <figure class="tanzaku" id="tanzaku" aria-hidden="true">
           <div class="tz-text" id="tanzaku-text"></div>
           <span class="stamp" id="stamp">一首</span>
         </figure>
@@ -51,12 +52,12 @@
         </div>
       </div>
     </div>
-    <p class="disclaimer">これは遊びです。手で書いた言葉の型に、メッセージから拾った単語をはめて作っています。AIは使っていません。音の数はふりがなから数えています（小さい「ゃゅょ」は前の音とあわせて1音、「っ」「ん」「ー」は1音）。</p>
+    <p class="disclaimer">用意した言葉の型に、メッセージから拾った単語をはめて詠んでいます（AIは使っていません）。音の数はよみがなで数えます。「きゃ」は1音、「っ」「ん」「ー」も1音です。</p>
   </section>
 
   <footer class="foot">
-    <p>作った人：App World Lab（App Worldの運営）</p>
-    <p>貼ったメッセージはこの端末の中だけで使われ、どこにも送られません。</p>
+    <p>貼ったメッセージは、この端末にだけ保存されます。</p>
+    <p>開発：App World Lab（App World 運営）</p>
     <a href="../">App World Lab</a>
   </footer>
 </div>

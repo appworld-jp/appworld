@@ -169,21 +169,21 @@
           delBtn(`${i + 1}行目を消す`, () => { r[k].splice(i, 1); save(); renderAll(); }));
         ul.append(li);
       });
-      if (!r[k].length) { const li = document.createElement("li"); li.className = "none"; li.textContent = "見つかりませんでした。"; ul.append(li); }
+      if (!r[k].length) { const li = document.createElement("li"); li.className = "none"; li.textContent = "なし"; ul.append(li); }
     });
     const ul = $("list-todo"); ul.replaceChildren();
     r.todo.forEach((t, i) => {
       const li = document.createElement("li");
       li.append(
-        input("who", t.who, `宿題${i + 1}の担当`, "担当未定", v => { t.who = v; }),
-        input("what", t.what, `宿題${i + 1}の内容`, "内容", v => { t.what = v; }),
-        input("due", t.due, `宿題${i + 1}の期限`, "期限なし", v => { t.due = v; }),
+        input("who", t.who, `宿題${i + 1}の担当`, "担当", v => { t.who = v; }),
+        input("what", t.what, `宿題${i + 1}のやること`, "やること", v => { t.what = v; }),
+        input("due", t.due, `宿題${i + 1}の期限`, "期限", v => { t.due = v; }),
         delBtn(`宿題${i + 1}を消す`, () => { r.todo.splice(i, 1); save(); renderAll(); }));
       ul.append(li);
     });
-    if (!r.todo.length) { const li = document.createElement("li"); li.className = "none"; li.textContent = "見つかりませんでした。"; ul.append(li); }
+    if (!r.todo.length) { const li = document.createElement("li"); li.className = "none"; li.textContent = "なし"; ul.append(li); }
     $("n-dec").textContent = r.dec.length; $("n-todo").textContent = r.todo.length; $("n-carry").textContent = r.carry.length;
-    $("total").textContent = `決まったこと${r.dec.length}件・宿題${r.todo.length}件・持ち越し${r.carry.length}件`;
+    $("total").textContent = `決まったこと${r.dec.length}件、宿題${r.todo.length}件、持ち越し${r.carry.length}件を見つけました。違うところは、そのまま書き直せます。`;
   }
   function dateLabel(v) {
     const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(v || ""); if (!m) return "";
@@ -214,8 +214,10 @@
 
   $("run").addEventListener("click", () => {
     state.src = $("src").value;
-    if (!state.src.trim()) { $("src").focus(); $("total").textContent = "メモを貼ってください。"; return; }
+    if (!state.src.trim()) { $("src").focus(); $("src").setAttribute("aria-invalid", "true"); $("src-err").textContent = "メモが空です。会議のメモを貼ってから押してください。"; return; }
+    $("src").removeAttribute("aria-invalid"); $("src-err").textContent = "";
     state.res = analyse(state.src); save(); renderAll();
+    document.querySelectorAll(".badge").forEach(b => { b.classList.remove("bump"); void b.offsetWidth; b.classList.add("bump"); });
     if (window.matchMedia("(max-width:959px)").matches) $("out-h").scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion:reduce)").matches ? "auto" : "smooth" });
   });
   $("sample").addEventListener("click", () => {
@@ -223,10 +225,10 @@
     $("run").click();
   });
   $("clear").addEventListener("click", () => {
-    if (($("src").value || state.res) && !confirm("貼った文章と結果を消しますか？")) return;
+    if (($("src").value || state.res) && !confirm("メモと結果を消しますか？")) return;
     $("src").value = ""; state.src = ""; state.res = null; save(); renderAll(); $("src").focus();
   });
-  $("src").addEventListener("input", () => { state.src = $("src").value; save(); });
+  $("src").addEventListener("input", () => { state.src = $("src").value; save(); if ($("src-err").textContent && state.src.trim()) { $("src-err").textContent = ""; $("src").removeAttribute("aria-invalid"); } });
   $("title").addEventListener("input", () => { state.title = $("title").value; save(); renderSummary(); });
   $("date").addEventListener("input", () => { state.date = $("date").value; save(); renderSummary(); });
   document.querySelectorAll("[data-add]").forEach(b => b.addEventListener("click", () => {
@@ -247,10 +249,9 @@
     try { await navigator.clipboard.writeText(text); ok = true; } catch (e) {
       $("summary").select(); try { ok = document.execCommand("copy"); } catch (e2) { ok = false; }
     }
-    $("toast").textContent = ok ? "コピーしました。" : "コピーできませんでした。まとめ文を選んでコピーしてください。";
+    $("toast").textContent = ok ? "コピーしました。チャットやメールに貼れます。" : "コピーできませんでした。まとめの文を選んでコピーしてください。";
     setTimeout(() => { $("toast").textContent = ""; }, 2500);
   });
 
   renderAll();
-  window.__gijiroku = { analyse }; // handy for checking rules in the console
 })();

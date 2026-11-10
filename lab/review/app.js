@@ -42,7 +42,7 @@
       }
       const h = /^@@ -(\d+)(?:,(\d+))? \+(\d+)(?:,(\d+))? @@/.exec(line);
       if (h) {
-        if (!cur) start("", "(不明なファイル)");
+        if (!cur) start("", "（不明なファイル）");
         cur.hunks++; oN = +h[1]; nN = +h[3];
         oRem = h[2] === undefined ? 1 : +h[2]; nRem = h[4] === undefined ? 1 : +h[4];
       }
@@ -162,7 +162,7 @@
         });
         close();
       }
-      if (code && !test && !/(^|\/)(config|constants?|settings|types?|index)\.[a-z]+$|\.d\.ts$/i.test(f.path) && f.status !== "D" && f.add > 0 && !testBases.has(baseName(f.path))) F.notest.push({ f: f.path, n: null, t: tests.length ? "対応するテストファイルの変更が見当たりません" : "この diff にテストの変更がありません" });
+      if (code && !test && !/(^|\/)(config|constants?|settings|types?|index)\.[a-z]+$|\.d\.ts$/i.test(f.path) && f.status !== "D" && f.add > 0 && !testBases.has(baseName(f.path))) F.notest.push({ f: f.path, n: null, t: tests.length ? "対応するテストファイルの変更が見当たりません" : "このdiffにはテストの変更がありません" });
       if (test && f.del > f.add) F.lesstest.push({ f: f.path, n: null, t: f.status === "D" ? "テストファイルが削除されています" : `テストが${f.del - f.add}行減っています` });
     });
     return { F, total };
@@ -176,14 +176,14 @@
 
   const META = {
     secret: { sev: "high", title: "秘密情報らしき文字列", why: "鍵やパスワードがコードに入ると、履歴に残り続けます。環境変数や秘密情報の管理機能に移しましょう。", check: "鍵・パスワードがコードに入っていない", comment: h => `${h.label}らしき値が直接書かれているようです。公開されると取り消せないので、環境変数などに移し、もし本物なら鍵の作り直しも検討してください。` },
-    debug: { sev: "warn", title: "デバッグ出力が残っている", why: "確認用の出力は、本番でログを汚したり情報を漏らしたりします。", check: "デバッグ用の出力を消した", comment: () => "デバッグ用の出力が残っているようです。不要なら消し、必要ならロガー経由にしませんか？" },
-    todo: { sev: "info", title: "TODO・FIXME が追加された", why: "あとでやることは、課題として登録しておくと忘れません。", check: "追加した TODO・FIXME を課題に登録した", comment: h => `${h.label} が追加されています。このプルリクエストで対応しますか？ あとに回す場合は、課題を作ってリンクを書いておくと追いやすいです。` },
-    bigfn: { sev: "warn", title: `長い関数（${FN_LIMIT}行超）`, why: "長い関数は読みにくく、テストもしにくくなります。役割ごとに分けられないか見てみましょう。", check: "長い関数を分けられないか検討した", comment: h => `\`${h.name}\` が${h.len}行あります。入力チェック、組み立て、送信などに分けると読みやすく、テストもしやすくなりそうです。` },
+    debug: { sev: "warn", title: "デバッグ出力の消し忘れ", why: "確認用の出力は、本番でログを汚したり情報を漏らしたりします。", check: "デバッグ用の出力を消した", comment: () => "デバッグ用の出力が残っているようです。不要なら消して、必要ならロガーを使いませんか？" },
+    todo: { sev: "info", title: "TODO・FIXMEの追加", why: "あとでやることは、課題として登録しておくと忘れません。", check: "追加したTODO・FIXMEを課題に登録した", comment: h => `${h.label}が追加されています。このプルリクエストで対応しますか？ あとに回す場合は、課題を作ってリンクを書いておくと追いやすいです。` },
+    bigfn: { sev: "warn", title: `長い関数（${FN_LIMIT}行超）`, why: "長い関数は読みにくく、テストもしにくくなります。役割ごとに分けられないか見てみましょう。", check: "長い関数を分けられないか検討した", comment: h => `\`${h.name}\`が${h.len}行あります。役割ごとに小さな関数に分けると、読みやすく、テストもしやすくなりそうです。` },
     bigfile: { sev: "info", title: `大きな変更（1ファイル${FILE_LIMIT}行以上）`, why: "変更が大きいと、レビューの見落としが増えます。", check: "大きな変更は分けられないか検討した", comment: () => "このファイルの変更が大きいので、いくつかのプルリクエストに分けられると見やすいです。" },
-    notest: { sev: "warn", title: "テストの変更がないソース", why: "ふるまいを変えたなら、テストも足すか直すのが安全です。", check: "変更したソースにテストを足した（または不要な理由を書いた）", comment: () => "変更に対応するテストが見当たりません。テストを足すか、不要ならその理由を説明に書いてもらえると助かります。" },
+    notest: { sev: "warn", title: "テストのない変更", why: "ふるまいを変えたなら、テストも足すか直すのが安全です。", check: "変更したソースにテストを足した（または不要な理由を書いた）", comment: () => "変更に対応するテストが見当たりません。テストを足すか、不要ならその理由を説明に書いてもらえると助かります。" },
     lesstest: { sev: "info", title: "テストが減っている", why: "テストを消すときは、理由を説明に書いておきましょう。", check: "テストを減らした理由を説明に書いた", comment: () => "テストが減っています。消した理由を教えてください。" },
     commented: { sev: "info", title: "コメントアウトされたコード", why: "使わないコードは消しても履歴に残ります。コメントで残すと読み手が迷います。", check: "コメントアウトしたコードを消した", comment: h => `コメントアウトされたコードが${h.count > 1 ? `${h.count}行` : ""}あります。不要なら消してしまいませんか？（履歴には残ります）` },
-    magic: { sev: "info", title: "意味の書かれていない数値", why: "数値に名前をつけると、意味と変える場所がはっきりします。", check: "数値に名前（定数）をつけた", comment: h => `\`${h.nums.join("`、`")}\` は何の数か名前のある定数にすると、意味が伝わりやすく、変更もしやすくなります。` }
+    magic: { sev: "info", title: "名前のない数値", why: "数値に名前をつけると、意味と変える場所がはっきりします。", check: "数値に名前（定数）をつけた", comment: h => `\`${h.nums.join("`、`")}\`に名前をつけて定数にすると、何の数か伝わりやすく、変えるときも楽です。` }
   };
   const ORDER = ["secret", "debug", "notest", "bigfn", "bigfile", "todo", "commented", "magic", "lesstest"];
   const SEV = { high: "要対応", warn: "注意", info: "確認" };
@@ -198,7 +198,11 @@
     const add = files.reduce((a, f) => a + f.add, 0), del = files.reduce((a, f) => a + f.del, 0);
     const nFind = ORDER.reduce((a, k) => a + F[k].length, 0);
     $("welcome").hidden = true; $("report").hidden = false;
-    $("stat-line").textContent = `${files.length}ファイル・+${add} −${del}・指摘${nFind}件`;
+    $("stat-line").textContent = `${files.length}ファイル・+${add}／−${del}・指摘${nFind}件`;
+    const bySev = { high: 0, warn: 0, info: 0 };
+    ORDER.forEach(k => { bySev[META[k].sev] += F[k].length; });
+    const v = $("verdict"); v.className = "verdict " + (bySev.high ? "high" : bySev.warn ? "warn" : "ok");
+    v.textContent = bySev.high ? `要対応${bySev.high}件。まず、ここから直しましょう。` : bySev.warn ? `要対応はなし。注意${bySev.warn}件を見ておきましょう。` : nFind ? `確認${bySev.info}件。軽く見ておけば大丈夫です。` : "気になる行はありませんでした。";
 
     const st = $("stats"); st.replaceChildren();
     [["", files.length, "ファイル"], ["add", "+" + add, "追加行"], ["del", "−" + del, "削除行"], [nFind ? "warn" : "", nFind, "見つかったこと"]].forEach(([c, v, l]) => {
@@ -224,9 +228,9 @@
     const box = $("findings"); box.replaceChildren();
     $("n-find").textContent = `（${nFind}件）`;
     if (total > PR_LIMIT) {
-      const p = el("p", "fine", `変更が合計${total}行あります。${PR_LIMIT}行を超えるプルリクエストは、分けるとレビューしやすくなります。`); p.style.padding = "0 0 8px"; box.append(p);
+      const p = el("p", "fine", `変更が合計${total}行あります。${PR_LIMIT}行を超えるときは、プルリクエストを分けるとレビューしやすくなります。`); p.style.padding = "0 0 8px"; box.append(p);
     }
-    if (!nFind) box.append(el("p", "ok", "✓ ルールに引っかかる行はありませんでした。"));
+    if (!nFind) box.append(el("p", "ok", "✓ 気になる行は見つかりませんでした。"));
     ORDER.forEach(k => {
       const hits = F[k]; if (!hits.length) return;
       const m = META[k], d = el("details", "find " + m.sev); d.open = m.sev !== "info" || hits.length <= 3;
@@ -255,7 +259,7 @@
 
     // draft comments
     const out = ["## レビューコメント（下書き）", "", `変更：${files.length}ファイル（+${add} −${del}）`, ""];
-    if (!nFind) out.push("ルールで探せる範囲では、気になる点は見つかりませんでした。動作確認の結果だけ教えてください。");
+    if (!nFind) out.push("ざっと見た範囲では、気になる点はありませんでした。動作確認の結果だけ教えてください。");
     ORDER.forEach(k => {
       const hits = F[k]; if (!hits.length) return;
       out.push(`### ${META[k].title}`);
@@ -268,7 +272,7 @@
       if (hits.length > 15) out.push(`- ほか${hits.length - 15}か所あります。`);
       out.push("");
     });
-    out.push("気になったのは以上です。ご確認お願いします。");
+    out.push("以上です。ご確認をお願いします。");
     $("draft").value = out.join("\n");
   }
 
@@ -278,7 +282,7 @@
       const ta = el("textarea", "sr"); ta.value = text; document.body.append(ta); ta.select();
       try { ok = document.execCommand("copy"); } catch (e2) { ok = false; } ta.remove();
     }
-    $("toast").textContent = ok ? msg : "コピーできませんでした。";
+    $("toast").textContent = ok ? msg : "コピーできませんでした。下書きを選んでコピーしてください。";
     setTimeout(() => { $("toast").textContent = ""; }, 2500);
   }
 
@@ -287,19 +291,20 @@
     const files = parse(txt);
     if (!txt.trim() || !files.length) {
       $("welcome").hidden = false; $("report").hidden = true;
-      $("stat-line").textContent = txt.trim() ? "diff として読めませんでした。「diff --git」や「@@」の行を含めて貼ってください。" : "diff を貼ってください。";
-      $("diff").focus(); return;
+      $("stat-line").textContent = "";
+      $("err").textContent = txt.trim() ? "diffとして読めませんでした。「diff --git」や「@@」で始まる行も含めて貼ってください。" : "diffが空です。git diffの出力を貼ってから押してください。";
+      $("diff").setAttribute("aria-invalid", "true"); $("diff").focus(); return;
     }
+    $("err").textContent = ""; $("diff").removeAttribute("aria-invalid");
     render(files);
     if (matchMedia("(max-width:999px)").matches) $("out-h").scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion:reduce)").matches ? "auto" : "smooth" });
   });
   $("sample").addEventListener("click", () => { $("diff").value = window.REVIEW_SAMPLE || ""; $("run").click(); });
-  $("clear").addEventListener("click", () => { $("diff").value = ""; $("welcome").hidden = false; $("report").hidden = true; $("stat-line").textContent = ""; $("diff").focus(); });
+  $("clear").addEventListener("click", () => { $("diff").value = ""; $("err").textContent = ""; $("welcome").hidden = false; $("report").hidden = true; $("stat-line").textContent = ""; $("diff").focus(); });
   $("copy").addEventListener("click", () => copy($("draft").value, "下書きをコピーしました。"));
   $("copy-check").addEventListener("click", () => {
     if (!last) return;
     const boxes = $("check").querySelectorAll("input");
     copy(last.items.map((it, i) => `- [${boxes[i] && boxes[i].checked ? "x" : " "}] ${it.t}`).join("\n"), "チェックリストをコピーしました。");
   });
-  window.__review = { parse, analyse };
 })();

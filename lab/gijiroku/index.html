@@ -2,15 +2,16 @@
 <html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>議事録まとめ</title>
-<meta name="description" content="会議のメモや文字起こしを貼ると、決まったこと・宿題（担当・期限）・持ち越しを決まったルールで抜き出し、共有用のまとめ文を作ります。AIは使いません。">
+<meta name="description" content="会議のメモを貼るだけで、決まったこと・宿題・持ち越しに分けて、チャットに貼れるまとめを作ります。">
 <meta name="theme-color" content="#14213D">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="style.css">
 </head><body>
 <header class="appbar">
   <div class="appbar-in">
-    <a class="back" href="../" aria-label="App World Lab に戻る">App World Lab</a>
     <div class="brand"><span class="logo" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 11h7M9 15h7M9 7h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><h1>議事録まとめ</h1></div>
-    <span class="tag">ルールで抽出</span>
+    <a class="back" href="../">App World Lab</a>
+    <p class="lead">会議のメモを貼るだけで、決まったこと・宿題・持ち越しに分かれます。</p>
   </div>
 </header>
 
@@ -18,77 +19,79 @@
   <section class="panel" aria-labelledby="in-h">
     <div class="panel-head"><h2 id="in-h"><span class="step">1</span>メモを貼る</h2></div>
     <div class="meta">
-      <label class="field"><span>会議名</span><input id="title" type="text" maxlength="60" placeholder="例：週次定例" autocomplete="off"></label>
+      <label class="field"><span>会議名</span><input id="title" type="text" maxlength="60" placeholder="週次定例" autocomplete="off"></label>
       <label class="field"><span>日付</span><input id="date" type="date"></label>
     </div>
-    <label class="field grow" for="src"><span>会議のメモ・文字起こし</span></label>
-    <textarea id="src" rows="12" spellcheck="false" placeholder="例）&#10;佐藤：A案で進めることに決定しました。&#10;田中さん、修正版を11/13までにお願いします。&#10;公開日はどうしますか？"></textarea>
+    <label class="field grow" for="src"><span>メモ・文字起こし</span></label>
+    <textarea id="src" rows="12" spellcheck="false" aria-describedby="src-err" placeholder="佐藤：A案で進めることに決まりました。&#10;田中さん、修正版を11/13までに。&#10;公開日はどうしますか？"></textarea>
+    <p class="err" id="src-err" role="alert"></p>
     <div class="actions">
       <button type="button" class="btn primary" id="run">まとめる</button>
-      <button type="button" class="btn" id="sample">サンプルを入れる</button>
+      <button type="button" class="btn" id="sample">サンプルで試す</button>
       <button type="button" class="btn ghost" id="clear">消す</button>
     </div>
     <details class="rules">
-      <summary>どんなルールで抜き出すか</summary>
+      <summary>どうやって分けているの？</summary>
       <ul>
-        <li><b>決まったこと</b>：「決定」「決まった」「合意」「確定」「承認」を含む行。</li>
-        <li><b>宿題</b>：人の名前（「〇〇さん」、話し手、「参加：」の名前）と、「〜まで」「までに」「担当」「対応」「TODO」「宿題」などを含む行。期限（11/13、金曜、来週中など）も拾います。</li>
-        <li><b>持ち越し</b>：「？」で終わる質問や、「未定」「保留」「次回」などを含む行。</li>
-        <li>「決定事項」「TODO」「課題」などの見出しの下の箇条書きは、その見出しの種類として扱います。</li>
+        <li><b>決まったこと</b>：「決定」「決まった」「合意」「確定」「承認」が入った発言。</li>
+        <li><b>宿題</b>：人の名前と、「〜まで」「担当」「対応」「お願いします」「TODO」などが入った発言。11/13、金曜、来週中といった期限も拾います。</li>
+        <li><b>持ち越し</b>：「？」で終わる質問や、「未定」「保留」「次回」などが入った発言。</li>
+        <li>「決定事項」「TODO」「課題」といった見出しの下の箇条書きは、その見出しに合わせて分けます。</li>
       </ul>
-      <p>AIは使っていません。拾いもれや誤りは、右の結果で直してください。</p>
+      <p>AIは使っていません。言葉の決まりで分けているので、もれや間違いは結果の欄で直せます。</p>
     </details>
   </section>
 
   <section class="panel" aria-labelledby="out-h">
-    <div class="panel-head"><h2 id="out-h"><span class="step">2</span>結果を確認・修正</h2><span class="count" id="total" aria-live="polite"></span></div>
+    <div class="panel-head"><h2 id="out-h"><span class="step">2</span>中身を確かめる</h2></div>
 
     <div class="empty" id="empty">
       <svg viewBox="0 0 120 80" aria-hidden="true"><rect x="8" y="8" width="64" height="64" rx="6" class="e1"/><path d="M20 26h40M20 38h40M20 50h26" class="e2"/><path d="M78 40h14m-6-7 7 7-7 7" class="e3"/><rect x="96" y="14" width="18" height="10" rx="3" class="e4"/><rect x="96" y="34" width="18" height="10" rx="3" class="e5"/><rect x="96" y="54" width="18" height="10" rx="3" class="e6"/></svg>
-      <p>メモを貼って「まとめる」を押すと、<br>決まったこと・宿題・持ち越しに分けて表示します。</p>
-      <p class="sub">まずは「サンプルを入れる」で試せます。</p>
+      <p>ここに、決まったこと・宿題・持ち越しが<br class="pc">分かれて出ます。</p>
+      <p class="sub">まずは「サンプルで試す」を押してみてください。</p>
     </div>
 
     <div id="results" hidden>
+      <p class="score" id="total" aria-live="polite"></p>
       <div class="group g-dec">
-        <div class="group-head"><h3>決まったこと</h3><span class="badge" id="n-dec">0</span></div>
+        <div class="group-head"><span class="gi" aria-hidden="true">✓</span><h3>決まったこと</h3><span class="badge" id="n-dec">0</span></div>
         <ul class="rows" id="list-dec"></ul>
-        <button type="button" class="add" data-add="dec">＋ 行を足す</button>
+        <button type="button" class="add" data-add="dec">＋ 追加</button>
       </div>
       <div class="group g-todo">
-        <div class="group-head"><h3>宿題</h3><span class="badge" id="n-todo">0</span></div>
-        <div class="todo-head" aria-hidden="true"><span>担当</span><span>内容</span><span>期限</span><span></span></div>
+        <div class="group-head"><span class="gi" aria-hidden="true">→</span><h3>宿題</h3><span class="badge" id="n-todo">0</span></div>
+        <div class="todo-head" aria-hidden="true"><span>担当</span><span>やること</span><span>期限</span><span></span></div>
         <ul class="rows todo" id="list-todo"></ul>
-        <button type="button" class="add" data-add="todo">＋ 行を足す</button>
+        <button type="button" class="add" data-add="todo">＋ 追加</button>
       </div>
       <div class="group g-carry">
-        <div class="group-head"><h3>持ち越し</h3><span class="badge" id="n-carry">0</span></div>
+        <div class="group-head"><span class="gi" aria-hidden="true">?</span><h3>持ち越し</h3><span class="badge" id="n-carry">0</span></div>
         <ul class="rows" id="list-carry"></ul>
-        <button type="button" class="add" data-add="carry">＋ 行を足す</button>
+        <button type="button" class="add" data-add="carry">＋ 追加</button>
       </div>
     </div>
   </section>
 
-  <section class="panel wide" aria-labelledby="sum-h" id="sumpanel" hidden>
+  <section class="panel wide memo" aria-labelledby="sum-h" id="sumpanel" hidden>
     <div class="panel-head">
-      <h2 id="sum-h"><span class="step">3</span>まとめをコピー</h2>
-      <div class="seg" role="group" aria-label="書式">
+      <h2 id="sum-h"><span class="step">3</span>コピーして共有</h2>
+      <div class="seg" role="group" aria-label="形式">
         <button type="button" data-fmt="text" aria-pressed="true">テキスト</button>
         <button type="button" data-fmt="md" aria-pressed="false">Markdown</button>
       </div>
     </div>
-    <label class="sr" for="summary">まとめ文</label>
+    <label class="sr" for="summary">まとめ</label>
     <textarea id="summary" rows="14" readonly></textarea>
     <div class="actions">
-      <button type="button" class="btn primary" id="copy">まとめをコピー</button>
+      <button type="button" class="btn primary" id="copy">コピー</button>
       <span class="toast" id="toast" aria-live="polite"></span>
     </div>
   </section>
 </main>
 
 <footer class="foot">
-  <p>作った人：App World Lab（App Worldの運営）</p>
-  <p>貼った文章はこの端末の中だけで処理され、どこにも送られません。</p>
+  <p>貼ったメモは、この端末にだけ保存されます。</p>
+  <p>開発：App World Lab（App World 運営）</p>
   <a href="../">App World Lab</a>
 </footer>
 <script src="app.js"></script>

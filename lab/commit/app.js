@@ -116,17 +116,18 @@
     $("total").textContent = `${t.lines.map(M).join("・")}（計${t.lines.reduce((a, l) => a + M(l), 0)}音）`;
     $("poem-sr").textContent = t.lines.map(plain).join("　");
     const stamp = $("stamp"); stamp.classList.remove("in"); void stamp.offsetWidth; stamp.classList.add("in");
+    const tzf = $("tanzaku"); tzf.classList.remove("in"); void tzf.offsetWidth; tzf.classList.add("in");
   }
   function chips(inf) {
     const box = $("chips"); box.replaceChildren();
     const add = (label, cls) => { const c = document.createElement("span"); c.className = "chip " + (cls || ""); c.textContent = label; box.append(c); };
     add(`種類：${kindName(inf.kind)}`, "kind");
     if (inf.nouns.length) inf.nouns.slice(0, 6).forEach(n => add(plain(n)));
-    else add("単語：見つからないので定番の言葉で", "muted");
+    else add("拾える言葉がないので、定番の言葉で詠みました", "muted");
   }
   function run(again) {
     const msg = $("msg").value.trim();
-    if (!msg) { $("msg").focus(); $("hint").textContent = "コミットメッセージを貼ってください。"; return; }
+    if (!msg) { $("msg").focus(); $("hint").textContent = "メッセージが空です。1行だけでも詠めます。"; return; }
     $("hint").textContent = "";
     if (!again || !info) { info = detect(msg); chips(info); }
     const t = compose(info, cur && cur.key);
@@ -148,10 +149,9 @@
       const ta = document.createElement("textarea"); ta.value = text; ta.className = "sr"; document.body.append(ta); ta.select();
       try { ok = document.execCommand("copy"); } catch (e2) { ok = false; } ta.remove();
     }
-    $("toast").textContent = ok ? "コピーしました。" : "コピーできませんでした。";
+    $("toast").textContent = ok ? "コピーしました" : "コピーできませんでした。短歌を選んでコピーしてください。";
     setTimeout(() => { $("toast").textContent = ""; }, 2400);
   });
   try { const saved = localStorage.getItem(KEY); if (saved) $("msg").value = saved; } catch (e) { /* ignore */ }
 
-  window.__tanka = { mora, reading, M, detect, compose, pools: { L1, L2, L3, L4, L5 } };
 })();

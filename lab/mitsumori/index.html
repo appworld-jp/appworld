@@ -2,8 +2,10 @@
 <html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>見積もりくん</title>
-<meta name="description" content="作業をS・M・Lか時間で並べて単価を選ぶと、テストや打ち合わせなど忘れがちな作業をルールで足し、予備の時間も入れて合計時間と金額を出します。コピーしてそのまま使える表になります。">
-<meta name="theme-color" content="#F6F1E4">
+<meta name="description" content="作業をS・M・Lで並べるだけ。テストや打ち合わせなど忘れがちな作業と予備の時間を足して、金額まで出します。">
+<meta name="theme-color" content="#E4DCC8" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#14171F" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="style.css">
 </head><body>
 <div class="page">
@@ -13,21 +15,21 @@
       <h1>見積もりくん</h1>
       <span class="stamp" aria-hidden="true">見積</span>
     </div>
-    <p class="lead">作業を並べるだけで、忘れがちな作業と予備の時間を足して、合計の時間と金額を出します。</p>
+    <p class="lead">作業を並べるだけで、忘れがちな作業まで入った見積もりができます。</p>
   </header>
 
   <main class="sheet">
     <section class="block" aria-labelledby="t-h">
       <div class="block-head">
         <h2 id="t-h"><span class="no">一</span>作業を並べる</h2>
-        <button type="button" class="text-btn" id="sample">例を入れる</button>
+        <button type="button" class="text-btn" id="sample">例で試す</button>
       </div>
-      <label class="line-field"><span>案件名</span><input id="proj" type="text" maxlength="50" placeholder="例：お店の予約サイト" autocomplete="off"></label>
+      <label class="line-field"><span>案件名</span><input id="proj" type="text" maxlength="50" placeholder="お店の予約サイト" autocomplete="off"></label>
       <ol class="tasks" id="tasks"></ol>
-      <p class="empty" id="empty">まだ作業がありません。「作業を足す」から、思いつく作業を書き出してください。大きさは S・M・L で十分です。</p>
-      <button type="button" class="add-btn" id="add">＋ 作業を足す</button>
+      <p class="empty" id="empty">やる作業を1つずつ追加してください。大きさはS・M・Lのざっくりで大丈夫です。</p>
+      <button type="button" class="add-btn" id="add">＋ 作業を追加</button>
       <details class="sizes">
-        <summary>S・M・L の時間を変える</summary>
+        <summary><span id="legend">S＝2時間・M＝6時間・L＝16時間</span><span class="chg">変える</span></summary>
         <div class="size-set">
           <label>S<input type="number" id="hS" min="0.5" max="200" step="0.5" inputmode="decimal">時間</label>
           <label>M<input type="number" id="hM" min="0.5" max="200" step="0.5" inputmode="decimal">時間</label>
@@ -39,56 +41,56 @@
     <section class="block" aria-labelledby="r-h">
       <h2 id="r-h"><span class="no">二</span>単価と予備</h2>
       <div class="rate">
-        <label class="line-field"><span>役割</span>
+        <label class="line-field"><span>職種</span>
           <select id="role">
             <option value="eng">エンジニア</option>
             <option value="des">デザイナー</option>
             <option value="dir">ディレクター</option>
             <option value="wri">ライター</option>
-            <option value="own">自分で入力</option>
+            <option value="own">自分で決める</option>
           </select>
         </label>
         <label class="line-field"><span>時間単価（円）</span><input id="rate" type="number" min="0" max="1000000" step="100" inputmode="numeric"></label>
       </div>
-      <p class="note">単価は目安です。自分の単価に書き換えてください。</p>
-      <label class="buffer"><span>予備（バッファ）<output id="bufv" for="buf">20%</output></span>
+      <p class="note">単価は目安です。自分の単価があれば書き換えてください。</p>
+      <label class="buffer"><span>予備の時間<output id="bufv" for="buf">20%</output></span>
         <input id="buf" type="range" min="0" max="50" step="5" value="20">
       </label>
-      <p class="note">思わぬ手戻りや体調不良に備える時間です。初めての種類の仕事なら30%以上がおすすめです。</p>
+      <p class="note">手戻りや体調不良に備える時間です。はじめての種類の仕事なら、30%以上がおすすめです。</p>
     </section>
 
     <section class="block" aria-labelledby="x-h">
       <h2 id="x-h"><span class="no">三</span>忘れがちな作業</h2>
-      <p class="note">作業の内容から、見積もりに入れ忘れやすい作業を足しています。いらないものは外してください。</p>
+      <p class="note">作業の名前から、入れ忘れやすい作業を自動で足しています。いらないものはチェックを外してください。</p>
       <ul class="extras" id="extras"></ul>
     </section>
 
-    <section class="block receipt" aria-labelledby="s-h">
+    <section class="block receipt" id="receipt" aria-labelledby="s-h">
       <h2 id="s-h"><span class="no">四</span>合計</h2>
       <dl class="totals" id="totals" aria-live="polite"></dl>
-      <div class="grand"><span>お見積もり（税込）</span><strong id="grand">0円</strong></div>
+      <div class="grand"><span>お見積もり（税込）</span><strong id="grand">0円</strong><span class="seal" id="seal" aria-hidden="true">見積済</span></div>
       <p class="note" id="grand-sub"></p>
     </section>
 
-    <section class="block" aria-labelledby="o-h">
+    <section class="block" id="outblock" aria-labelledby="o-h">
       <div class="block-head">
-        <h2 id="o-h"><span class="no">五</span>見積もり表をコピー</h2>
+        <h2 id="o-h"><span class="no">五</span>コピーして送る</h2>
         <div class="seg" role="group" aria-label="書式">
           <button type="button" data-fmt="text" aria-pressed="true">文章</button>
           <button type="button" data-fmt="md" aria-pressed="false">Markdown</button>
-          <button type="button" data-fmt="tsv" aria-pressed="false">表計算</button>
+          <button type="button" data-fmt="tsv" aria-pressed="false">表計算用</button>
         </div>
       </div>
       <label class="sr" for="out">見積もり表</label>
       <textarea id="out" rows="14" readonly></textarea>
-      <div class="copy-row"><button type="button" class="primary" id="copy">コピーする</button><span class="toast" id="toast" aria-live="polite"></span></div>
-      <p class="note" id="tsv-note" hidden>表計算ソフトに貼ると、列ごとに分かれます。</p>
+      <div class="copy-row"><button type="button" class="primary" id="copy">コピー</button><span class="toast" id="toast" aria-live="polite"></span></div>
+      <p class="note" id="tsv-note" hidden>Excelやスプレッドシートに貼ると、列ごとに分かれます。</p>
     </section>
   </main>
 
   <footer class="foot">
-    <p>作った人：App World Lab（App Worldの運営）</p>
-    <p>入力した内容はこの端末の中だけに保存され、どこにも送られません。</p>
+    <p>入力した内容は、この端末にだけ保存されます。</p>
+    <p>開発：App World Lab（App World 運営）</p>
     <a href="../">App World Lab</a>
   </footer>
 </div>

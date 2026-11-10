@@ -91,7 +91,9 @@
     $("mode").textContent = modeName(mode);
     const w = $("wedge"); w.setAttribute("d", wedge(ms / 60000)); w.classList.toggle("rest", mode !== "focus");
     $("knob").style.transform = `rotate(${(ms / 60000 / 60) * 360}deg)`;
-    $("cycle").textContent = "●".repeat(st.streak % LONG_EVERY) + "○".repeat(LONG_EVERY - (st.streak % LONG_EVERY));
+    const done = st.streak % LONG_EVERY;
+    $("cycle").textContent = "●".repeat(done) + "○".repeat(LONG_EVERY - done);
+    $("cycle").setAttribute("aria-label", `長休憩まであと${LONG_EVERY - done}回`);
     const go = $("start");
     const ticking = run && run.paused == null;
     go.textContent = !run ? "スタート" : ticking ? "一時停止" : "再開";
@@ -103,12 +105,19 @@
     document.title = ticking ? `${$("clock").textContent} ${modeName(mode)}｜ポモドーロ箱` : "ポモドーロ箱";
   }
   const say = t => { $("status").textContent = t; };
+  const idleMsg = () => `スタートを押すと、${st.len}分の集中がはじまります。`;
+  // a little shake of the whole box when the bell rings
+  const calm = matchMedia("(prefers-reduced-motion: reduce)");
+  function ring() {
+    const b = $("box"); if (calm.matches) return;
+    b.classList.remove("ring"); void b.offsetWidth; b.classList.add("ring");
+  }
 
   function begin(mode, minutes) {
     audio();
     st.run = { mode, min: minutes, start: Date.now(), end: Date.now() + minutes * 60000, paused: null };
     save(); draw();
-    say(mode === "focus" ? `${minutes}分の集中を始めました。` : `${modeName(mode)}（${minutes}分）です。体を伸ばしましょう。`);
+    say(mode === "focus" ? `${minutes}分、集中しましょう。終わるとベルが鳴ります。` : `${minutes}分の休憩です。立って、体を伸ばしましょう。`);
   }
   function finish() {
     const run = st.run; if (!run) return;
@@ -116,14 +125,15 @@
     if (run.mode === "focus") {
       const entry = { id: run.start, s: run.start, e: run.end, m: run.min, note: "" };
       st.log.push(entry); st.streak++; pendingId = entry.id;
-      save(); chime("focus"); draw(); renderLog();
-      say(`${run.min}分の集中が終わりました。`);
+      save(); chime("focus"); ring(); draw(); renderLog();
+      say(`${run.min}分の集中、おつかれさまでした。`);
+      $("ask-h").textContent = `${run.min}分、おつかれさまでした`;
       $("ask").hidden = false; $("rest").hidden = true;
       $("what").value = ""; $("what").focus();
     } else {
       if (run.mode === "long") st.streak = 0;
-      save(); chime("rest"); draw();
-      say("休憩が終わりました。次の集中を始めましょう。");
+      save(); chime("rest"); ring(); draw();
+      say("休憩おわり。スタートで次の集中をはじめます。");
       $("start").focus();
     }
   }
@@ -134,17 +144,18 @@
   $("start").addEventListener("click", () => {
     const run = st.run;
     if (!run) { $("rest").hidden = true; $("ask").hidden = true; begin("focus", st.len); return; }
-    if (run.paused == null) { run.paused = Math.max(0, run.end - Date.now()); say("一時停止しています。"); }
-    else { run.end = Date.now() + run.paused; run.paused = null; audio(); say("再開しました。"); }
+    if (run.paused == null) { run.paused = Math.max(0, run.end - Date.now()); say("止めています。再開で続きから計ります。"); }
+    else { run.end = Date.now() + run.paused; run.paused = null; audio(); say("続きから計っています。"); }
     save(); draw();
   });
   $("reset").addEventListener("click", () => {
-    if (!st.run) { say("長さを選んで、スタートを押してください。"); return; }
-    st.run = null; save(); draw(); say("リセットしました。この回は記録されません。");
+    if (!st.run) { say(idleMsg()); return; }
+    if (st.run.mode === "focus" && !confirm("この回の集中をやめますか？ 記録には残りません。")) return;
+    st.run = null; save(); draw(); say("リセットしました。この回は記録していません。");
   });
   document.querySelectorAll(".len").forEach(b => b.addEventListener("click", () => {
     if (st.run) return;
-    st.len = Number(b.dataset.min); save(); draw(); say(`${st.len}分にセットしました。`);
+    st.len = Number(b.dataset.min); save(); draw(); say(idleMsg());
   }));
 
   // note after focus
@@ -152,7 +163,7 @@
     $("ask").hidden = true; $("rest").hidden = false;
     const longNext = st.streak > 0 && st.streak % LONG_EVERY === 0;
     $("short").classList.toggle("rec", !longNext); $("long").classList.toggle("rec", longNext);
-    $("rest-hint").textContent = longNext ? `${LONG_EVERY}回続きました。長めに休むのがおすすめです。` : `あと${LONG_EVERY - (st.streak % LONG_EVERY)}回で長休憩です。`;
+    $("rest-hint").textContent = longNext ? `${LONG_EVERY}回続きました。今回は長めに休みましょう。` : `あと${LONG_EVERY - (st.streak % LONG_EVERY)}回集中すると、長休憩です。`;
     (longNext ? $("long") : $("short")).focus();
   }
   $("ask").addEventListener("submit", ev => {
@@ -161,9 +172,10 @@
     if (e) e.note = $("what").value.trim().slice(0, 60);
     pendingId = null; save(); renderLog(); showRest();
   });
+  $("skip-note").addEventListener("click", () => { pendingId = null; showRest(); });
   $("short").addEventListener("click", () => { $("rest").hidden = true; begin("short", SHORT); });
   $("long").addEventListener("click", () => { $("rest").hidden = true; begin("long", LONG); });
-  $("norest").addEventListener("click", () => { $("rest").hidden = true; say("次の集中はスタートで始まります。"); $("start").focus(); });
+  $("norest").addEventListener("click", () => { $("rest").hidden = true; say("スタートで、次の集中をはじめます。"); $("start").focus(); });
 
   // press feedback for keyboard users
   document.querySelectorAll(".key").forEach(k => {
@@ -182,7 +194,7 @@
       const t = document.createElement("time"); t.textContent = `${hm(e.s)}〜${hm(e.e)}`;
       const n = document.createElement("span"); n.className = "note" + (e.note ? "" : " none");
       const m = document.createElement("span"); m.className = "mins"; m.textContent = `${e.m}分`;
-      n.append(m, document.createTextNode(e.note || "（一言なし）"));
+      n.append(m, document.createTextNode(e.note || "（メモなし）"));
       const d = document.createElement("button"); d.type = "button"; d.className = "del"; d.textContent = "×";
       d.setAttribute("aria-label", `${hm(e.s)}の記録を消す`);
       d.addEventListener("click", () => {
@@ -194,7 +206,7 @@
     const total = items.reduce((a, e) => a + e.m, 0);
     $("empty").hidden = items.length > 0;
     $("sum").textContent = items.length ? `${items.length}回・${fmtMin(total)}` : "";
-    $("copy").disabled = !items.length;
+    $("paper-foot").hidden = !items.length;
     renderWeek();
   }
   function renderWeek() {
@@ -209,14 +221,15 @@
     box.replaceChildren();
     days.forEach(d => {
       const c = document.createElement("div"); c.className = "day" + (d.today ? " today" : "");
-      const v = document.createElement("span"); v.className = "v"; v.textContent = d.min ? String(d.min) : "";
+      const v = document.createElement("span"); v.className = "v"; v.textContent = d.min ? `${d.min}分` : "";
       const col = document.createElement("span"); col.className = "col" + (d.min ? "" : " zero");
       col.style.height = d.min ? `${Math.max(6, (d.min / max) * 76)}%` : "3px";
       const lb = document.createElement("span"); lb.className = "lb"; lb.textContent = d.lb;
       c.append(v, col, lb); box.append(c);
     });
     const total = days.reduce((a, d) => a + d.min, 0);
-    $("wsum").textContent = total ? `合計 ${fmtMin(total)}` : "まだありません";
+    $("wsum").textContent = total ? `合計${fmtMin(total)}` : "まだありません";
+    box.classList.toggle("nil", !total);
     box.setAttribute("aria-label", "今週の集中時間：" + days.map(d => `${d.lb}曜${d.min}分`).join("、"));
   }
 
@@ -233,15 +246,16 @@
     const d = new Date();
     const total = items.reduce((a, e) => a + e.m, 0);
     const lines = [`${d.getMonth() + 1}月${d.getDate()}日の集中記録`]
-      .concat(items.map(e => `${hm(e.s)}〜${hm(e.e)}（${e.m}分）${e.note || "（一言なし）"}`))
+      .concat(items.map(e => `${hm(e.s)}〜${hm(e.e)}（${e.m}分）${e.note || "（メモなし）"}`))
       .concat([`合計：${items.length}回・${fmtMin(total)}`]);
     const ok = await copyText(lines.join("\n"));
-    $("copied").textContent = ok ? "コピーしました。" : "コピーできませんでした。";
+    $("copied").textContent = ok ? "コピーしました" : "コピーできませんでした。もう一度押してください。";
     setTimeout(() => { $("copied").textContent = ""; }, 2500);
   });
 
   // resume after reload
   if (st.run && st.run.paused == null && Date.now() >= st.run.end) finish();
-  else if (st.run) say(st.run.paused != null ? "一時停止しています。" : `${modeName(st.run.mode)}の途中です。`);
+  else if (st.run) say(st.run.paused != null ? "止めています。再開で続きから計ります。" : `${modeName(st.run.mode)}の途中です。`);
+  else say(idleMsg());
   draw(); renderLog();
 })();

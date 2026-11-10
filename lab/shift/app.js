@@ -47,7 +47,7 @@
 
   function shareText(r, url) {
     const lines = [r.k === "swap" ? "【シフト交換のお願い】" : "【シフトを代わってくれる方を探しています】",
-      `${dateLabel(r.d, true)} ${timeLabel(r)}`];
+      `${dateLabel(r.d, true)}${timeLabel(r)}`];
     if (r.p) lines.push(`場所：${r.p}`);
     if (r.o) lines.push(`${offerLabel(r.k)}：${r.o}`);
     if (r.m) lines.push(r.m);
@@ -58,7 +58,7 @@
   function replyText(r, name, msg) {
     const who = name.trim() || "（名前）";
     const lines = ["【引き受けます】",
-      `${r.n ? `${r.n}さん、` : ""}${dateLabel(r.d, true)} ${timeLabel(r)}${r.p ? `（${r.p}）` : ""}のシフト、${r.k === "swap" ? "交換できます" : "私が入ります"}。`];
+      `${r.n ? `${r.n}さん、` : ""}${dateLabel(r.d, true)}${timeLabel(r)}${r.p ? `（${r.p}）` : ""}のシフト、${r.k === "swap" ? "交換できます" : "私が入ります"}。`];
     if (r.k === "swap" && r.o) lines.push(`代わりに「${r.o}」でお願いします。`);
     if (msg.trim()) lines.push(msg.trim());
     lines.push(`${who}より`);
@@ -88,7 +88,7 @@
       const ta = document.createElement("textarea"); ta.value = text; ta.className = "sr"; document.body.append(ta); ta.select();
       try { done = document.execCommand("copy"); } catch (e2) { done = false; } ta.remove();
     }
-    $(toastId).textContent = done ? ok : "コピーできませんでした。文を長押しして選んでください。";
+    $(toastId).textContent = done ? ok : "コピーできませんでした。上の文を長押しして選んでください。";
     setTimeout(() => { $(toastId).textContent = ""; }, 2600);
   }
   const canShare = typeof navigator.share === "function";
@@ -105,8 +105,8 @@
   const kindVal = () => document.querySelector("input[name=kind]:checked").value;
   function syncKind() {
     const k = kindVal();
-    $("offer-label").textContent = k === "swap" ? "代わりに入れる日" : "お礼・こちらから出せるもの";
-    $("f-offer").placeholder = k === "swap" ? "例：11/22（土）の朝番に入れます" : "例：今度どこか1回代わります";
+    $("offer-label").textContent = k === "swap" ? "代わりに入れる日" : "お礼（なくてもOK）";
+    $("f-offer").placeholder = k === "swap" ? "11/22（土）の朝番" : "今度どこか1回代わります";
   }
   document.querySelectorAll("input[name=kind]").forEach(r => r.addEventListener("change", syncKind));
   (function defaults() {
@@ -126,8 +126,9 @@
   $("form").addEventListener("submit", ev => {
     ev.preventDefault();
     const r = clean({ k: kindVal(), d: $("f-date").value, s: $("f-start").value, e: $("f-end").value, p: $("f-place").value, n: $("f-name").value, o: $("f-offer").value, m: $("f-note").value });
-    if (!r) { $("f-err").textContent = "日付を入れてください。"; $("f-date").focus(); return; }
-    if (!r.s || !r.e) { $("f-err").textContent = "開始と終了の時間を入れてください。"; (r.s ? $("f-end") : $("f-start")).focus(); return; }
+    ["f-date", "f-start", "f-end"].forEach(id => $(id).removeAttribute("aria-invalid"));
+    if (!r) { $("f-err").textContent = "日付が空です。シフトの日を選んでください。"; $("f-date").setAttribute("aria-invalid", "true"); $("f-date").focus(); return; }
+    if (!r.s || !r.e) { const id = r.s ? "f-end" : "f-start"; $("f-err").textContent = `${r.s ? "終了" : "開始"}の時間が空です。時間を入れてください。`; $(id).setAttribute("aria-invalid", "true"); $(id).focus(); return; }
     $("f-err").textContent = "";
     try { localStorage.setItem(KEY + ".name", r.n); } catch (e) { /* ignore */ }
     r.id = Date.now(); r.done = false;
@@ -136,7 +137,7 @@
     $("o-h").setAttribute("tabindex", "-1"); $("o-h").focus();
     $("out").scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion:reduce)").matches ? "auto" : "smooth", block: "start" });
   });
-  $("copy-text").addEventListener("click", () => copy($("share-text").value, "toast", "コピーしました。LINEやSlackに貼ってください。"));
+  $("copy-text").addEventListener("click", () => copy($("share-text").value, "toast", "コピーしました。LINEやSlackのグループに貼りましょう。"));
   $("copy-url").addEventListener("click", () => current && copy(shareUrl(current), "toast", "リンクをコピーしました。"));
   $("share").addEventListener("click", () => share($("share-text").value));
 
@@ -146,33 +147,35 @@
     mine.forEach(r => {
       const li = document.createElement("li");
       const past = new Date(r.d + "T00:00") < today;
-      li.className = (r.done ? "done " : "") + (past ? "past" : "");
+      li.className = (r.done ? "done " : "") + (past ? "past" : ""); li.dataset.id = String(r.id);
       const top = document.createElement("div"); top.className = "m-top";
       const d = document.createElement("span"); d.className = "m-date"; d.textContent = `${dateLabel(r.d, true)} ${timeLabel(r)}`;
       const chip = document.createElement("span"); chip.className = "chip" + (r.done ? " done" : past ? " past" : "");
-      chip.textContent = r.done ? "決まった" : past ? "日付が過ぎた" : "募集中";
+      chip.textContent = r.done ? "決定" : past ? "終了" : "募集中";
       top.append(d, chip);
       const sub = document.createElement("div"); sub.className = "m-sub"; sub.textContent = [kindLabel(r.k), r.p, r.o].filter(Boolean).join("・");
       const btns = document.createElement("div"); btns.className = "m-btns";
       const b = (label, fn, aria) => { const x = document.createElement("button"); x.type = "button"; x.className = "btn small"; x.textContent = label; if (aria) x.setAttribute("aria-label", aria); x.addEventListener("click", fn); btns.append(x); };
-      b("文を出す", () => { showOut(r); $("out").scrollIntoView({ block: "start" }); $("o-h").focus(); }, `${dateLabel(r.d)}の依頼文を出す`);
-      b(r.done ? "募集中に戻す" : "決まった", () => { r.done = !r.done; save(); renderMine(); }, `${dateLabel(r.d)}の依頼を${r.done ? "募集中に戻す" : "決まったにする"}`);
+      b("文を見る", () => { showOut(r); $("out").scrollIntoView({ block: "start" }); $("o-h").focus(); }, `${dateLabel(r.d)}の依頼文を見る`);
+      b(r.done ? "募集中に戻す" : "決まった", () => { r.done = !r.done; save(); renderMine(); if (r.done) { const x = $("mine").querySelector(`[data-id="${r.id}"]`); if (x) x.classList.add("just"); } }, r.done ? `${dateLabel(r.d)}の依頼を募集中に戻す` : `${dateLabel(r.d)}の依頼を、代わりが決まったことにする`);
       b("消す", () => { if (confirm("この依頼を一覧から消しますか？")) { mine = mine.filter(x => x !== r); save(); renderMine(); } }, `${dateLabel(r.d)}の依頼を消す`);
       li.append(top, sub, btns); ul.append(li);
     });
     $("mine-empty").hidden = mine.length > 0;
-    $("l-count").textContent = mine.length ? `${mine.filter(x => !x.done).length}件募集中` : "";
+    $("l-count").textContent = mine.length ? `募集中${mine.filter(x => !x.done && new Date(x.d + "T00:00") >= today).length}件` : "";
+    $("example").hidden = mine.length > 0;
   }
 
   // ---------- received view ----------
   let recv = null;
   function updateReply() { if (recv) $("rep-text").value = replyText(recv, $("rep-name").value, $("rep-msg").value); }
   $("rep-name").value = lastName;
-  $("rep-name").addEventListener("input", () => { updateReply(); try { localStorage.setItem(KEY + ".name", $("rep-name").value.trim()); } catch (e) { /* ignore */ } });
+  $("rep-name").addEventListener("input", () => { updateReply(); if ($("rep-name").value.trim()) { $("rep-err").textContent = ""; $("rep-name").removeAttribute("aria-invalid"); } try { localStorage.setItem(KEY + ".name", $("rep-name").value.trim()); } catch (e) { /* ignore */ } });
   $("rep-msg").addEventListener("input", updateReply);
   $("rep-copy").addEventListener("click", () => {
-    if (!$("rep-name").value.trim()) { $("rep-toast").textContent = "名前を入れると、誰からの返事か伝わります。"; $("rep-name").focus(); return; }
-    copy($("rep-text").value, "rep-toast", "コピーしました。依頼が届いた場所に貼って返してください。");
+    if (!$("rep-name").value.trim()) { $("rep-err").textContent = "名前が空です。誰からの返事か分かるように、名前を入れてください。"; $("rep-name").setAttribute("aria-invalid", "true"); $("rep-name").focus(); return; }
+    $("rep-err").textContent = ""; $("rep-name").removeAttribute("aria-invalid");
+    copy($("rep-text").value, "rep-toast", "コピーしました");
   });
   $("rep-share").addEventListener("click", () => share($("rep-text").value));
   $("to-new").addEventListener("click", ev => { ev.preventDefault(); history.pushState(null, "", baseUrl()); route(); });
@@ -197,5 +200,12 @@
   }
   window.addEventListener("hashchange", route);
   window.addEventListener("popstate", route);
+  // a sample ticket in the hero shows first-time users what they will make
+  (function example() {
+    const t = new Date(); t.setDate(t.getDate() + 5);
+    const d = `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, "0")}-${String(t.getDate()).padStart(2, "0")}`;
+    const cap = document.createElement("p"); cap.className = "ex-cap"; cap.textContent = "見本：こんなカードと依頼文ができます";
+    $("example").replaceChildren(card({ k: "cover", d, s: "17:00", e: "22:00", p: "駅前店・ホール", n: "佐藤", o: "今度どこか1回代わります", m: "" }), cap);
+  })();
   syncKind(); renderMine(); route();
 })();
