@@ -49,6 +49,17 @@ REVIEW_WORDS = re.compile(
 )
 ID_RE = re.compile(r"^[a-z0-9][a-z0-9-]{2,39}$")
 LIMITS = {"name": 30, "tagline": 40, "description": 600, "maker_name": 30}
+COLOR_RE = re.compile(r"^#[0-9A-Fa-f]{6}$")
+ICON_MAX_BYTES = 50_000
+# An icon is shown with <img>, but it is still checked so it can never carry
+# script, event handlers, links out or embedded HTML.
+ICON_BAD = [
+    (re.compile(r"<script", re.I), "<script は使えない"),
+    (re.compile(r"<foreignObject", re.I), "<foreignObject は使えない"),
+    (re.compile(r"<!(DOCTYPE|ENTITY)", re.I), "DOCTYPE や ENTITY は使えない"),
+    (re.compile(r"[\s\"'/]on[a-z]+\s*=", re.I), "on…= の属性は使えない"),
+]
+HREF_RE = re.compile(r"href\s*=\s*(.)", re.I)
 
 
 def check(listing: dict, filename: str = "") -> tuple[list[str], list[str]]:
@@ -125,17 +136,48 @@ def check(listing: dict, filename: str = "") -> tuple[list[str], list[str]]:
     if not listing.get("sample"):
         warnings.append("リンク先の安全性の判定（Safe Browsing）は公開前に運営が実行する")
 
+    for key in ("operator", "icon"):
+        if not isinstance(listing.get(key, False), bool):
+            errors.append(f"{key} は true か false")
+    if listing.get("operator") is True:
+        warnings.append("「運営」の表示がつく（運営が作ったアプリか確認する）")
+    color = listing.get("color")
+    if color is not None and not (isinstance(color, str) and COLOR_RE.match(color)):
+        errors.append("color は #RRGGBB の形")
+
     featured = listing.get("featured_week")
     if featured is not None and not re.match(r"^\d{4}-W\d{2}$", str(featured)):
         errors.append("featured_week は 2026-W43 の形")
     return errors, warnings
 
 
-def load_all(folder: pathlib.Path) -> tuple[list[dict], dict]:
+def check_icon(path: pathlib.Path) -> list[str]:
+    """Errors for an app icon (site/icons/<id>.svg). An empty list means it is safe to publish."""
+    if not path.is_file():
+        return [f"アイコンのファイルがない（icons/{path.name}）"]
+    raw = path.read_bytes()
+    if len(raw) >= ICON_MAX_BYTES:
+        return [f"アイコンは {ICON_MAX_BYTES // 1000}KB 未満（今は {len(raw)} バイト）"]
+    try:
+        text = raw.decode("utf-8")
+    except UnicodeDecodeError:
+        return ["アイコンは UTF-8 の SVG"]
+    errors = [msg for pattern, msg in ICON_BAD if pattern.search(text)]
+    if any(m.group(1) not in "\"'" or not text.startswith("#", m.end()) for m in HREF_RE.finditer(text)):
+        errors.append("アイコンの href は #… だけ使える")
+    if not re.match(r"^\s*(<\?xml[^>]*>\s*)?<svg[\s>]", text):
+        errors.append("アイコンは <svg> で始まる SVG")
+    return errors
+
+
+def load_all(folder: pathlib.Path, icons: pathlib.Path | None = None) -> tuple[list[dict], dict]:
+    icons = icons or folder.parent / "icons"
     listings, problems, seen_urls = [], {}, {}
     for path in sorted(folder.glob("*.json")):
         data = json.loads(path.read_text(encoding="utf-8"))
         errors, warnings = check(data, str(path))
+        if data.get("icon") is True and ID_RE.match(str(data.get("id", ""))):
+            errors += check_icon(icons / f"{data['id']}.svg")
         other = seen_urls.get(data.get("url"))
         if other:
             errors.append(f"同じリンクがすでに掲載されている（{other}）")  # FR-C5
