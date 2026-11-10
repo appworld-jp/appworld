@@ -2,7 +2,7 @@
 <html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>俳句カメラ</title>
-<meta name="description" content="写真に自分で詠んだ一句を添えて、縦書きの俳句カードに。音の数を数えながら詠めて、画像で保存できます。">
+<meta name="description" content="写真を選ぶと、色と明るさに合わせて五・七・五の一句を詠み、縦書きの俳句カードにします。句は人が用意した季語と言葉の組み合わせで、AIは使っていません。写真は送信しません。自分で直して、画像で保存できます。">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <meta name="theme-color" content="#1B1F33">
 <link rel="stylesheet" href="style.css">
@@ -11,7 +11,7 @@
   <header class="head">
     <a class="back" href="../">App World Lab</a>
     <h1><span>俳句</span><span>カメラ</span></h1>
-    <p class="lead">写真に一句添えて、縦書きの俳句カードに。</p>
+    <p class="lead">写真を選ぶと、<br class="sp">その色と明るさから一句詠みます。</p>
   </header>
 
   <ol class="steps">
@@ -20,30 +20,52 @@
       <label class="pick" id="pickLabel">
         <input type="file" id="file" accept="image/*">
         <span class="pick-t" id="pickT">写真を選ぶ</span>
-        <span class="pick-s">写真なしでも作れます。<br>写真は保存も送信もしません。</span>
+        <span class="pick-s">写真はこの端末の中だけで読みとります。</span>
       </label>
       <p class="err" id="fileErr" role="alert"></p>
+      <div class="samples">
+        <p class="samples-h" id="samplesH">写真がなければ、見本で試せます</p>
+        <div class="samples-row" role="group" aria-labelledby="samplesH" id="samples"></div>
+      </div>
     </li>
 
-    <li class="step">
-      <h2><span class="no">二</span>季語を選ぶ</h2>
-      <div class="seasons" role="radiogroup" aria-label="季節" id="seasons"></div>
-      <div class="kigo" id="kigo" role="radiogroup" aria-label="季語"></div>
-      <p class="kigo-now" id="kigoNow" aria-live="polite"></p>
+    <li class="step" id="resultStep">
+      <h2><span class="no">二</span>できた一句</h2>
+      <div class="seasons-wrap">
+        <span class="seasons-h" id="seasonsH">季節</span>
+        <div class="seasons" role="radiogroup" aria-labelledby="seasonsH" id="seasons"></div>
+      </div>
+      <p class="empty" id="empty">写真を選ぶと、ここに一句できます。</p>
+      <div id="result" hidden>
+        <p class="readout" id="readout"></p>
+        <ol class="poem" id="poem" aria-live="polite"></ol>
+        <p class="kigo-used" id="kigoUsed"></p>
+        <div class="again-row">
+          <button class="btn" type="button" id="again">もう一句</button>
+        </div>
+      </div>
+      <p class="how">句は、人が用意した季語と言葉を、写真の色と明るさに合わせて組み合わせたものです。AIは使っていません。写真はどこにも送られません。</p>
     </li>
 
-    <li class="step">
-      <h2><span class="no">三</span>五・七・五を詠む</h2>
-      <p class="help">ひらがなで書くと、音の数を自動で数えます。漢字を使った行は、下の「よみ」に読みを入れてください。「ゃゅょ」は数えず、「っ」「ー」「ん」は1音です。</p>
-      <button class="ins sample" type="button" id="sample">例を入れてみる（芭蕉「古池や」）</button>
-      <div class="lines" id="lines"></div>
-      <p class="kcheck" id="kcheck" aria-live="polite"></p>
-      <label class="name"><span>名前（任意）</span><input type="text" id="author" maxlength="8" autocomplete="off" placeholder="さくら"></label>
+    <li class="step edit-step">
+      <details id="edit">
+        <summary><span class="no">三</span>自分で直す</summary>
+        <div class="edit-body">
+          <h3 class="sub-h">季語を選ぶ</h3>
+          <div class="kigo" id="kigo" role="radiogroup" aria-label="季語"></div>
+          <p class="kigo-now" id="kigoNow" aria-live="polite"></p>
+          <h3 class="sub-h">五・七・五を直す</h3>
+          <p class="help">ひらがなは音の数を自動で数えます。漢字を使った行は「よみ」に読みを入れてください。「ゃゅょ」は数えず、「っ」「ー」「ん」は1音です。</p>
+          <div class="lines" id="lines"></div>
+          <p class="kcheck" id="kcheck" aria-live="polite"></p>
+          <label class="name"><span>名前（任意）</span><input type="text" id="author" maxlength="8" autocomplete="off" placeholder="さくら"></label>
+        </div>
+      </details>
     </li>
   </ol>
 
   <section class="preview" aria-labelledby="pvH">
-    <h2 id="pvH" class="pv-h">できあがり</h2>
+    <h2 id="pvH" class="pv-h">俳句カード</h2>
     <div class="card" id="card">
       <div class="card-photo" id="cardPhoto"><span class="card-empty">写真</span></div>
       <div class="card-paper">
@@ -63,7 +85,6 @@
   </section>
 
   <footer class="foot">
-    <p>句は自動では作りません。詠むのはあなたです。</p>
     <p>詠んだ句は、この端末にだけ保存されます。</p>
     <p>開発：App World Lab（App World 運営）</p>
     <p><a href="../">App World Lab</a></p>
@@ -71,5 +92,7 @@
 </div>
 <script src="../img.js"></script>
 <script src="kigo.js"></script>
+<script src="words.js"></script>
+<script src="compose.js"></script>
 <script src="app.js"></script>
 </body></html>

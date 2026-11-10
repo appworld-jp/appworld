@@ -37,6 +37,43 @@ h1 span+span{color:var(--text)}
 .season{font:inherit;font-size:15px;min-width:58px;min-height:44px;padding:4px 14px;border-radius:999px;border:1px solid var(--line);background:none;color:var(--text);cursor:pointer;letter-spacing:.1em}
 .season[aria-checked=true]{background:var(--gold);color:var(--night);border-color:var(--gold);font-weight:700}
 .kigo{display:flex;flex-wrap:wrap;gap:6px}
+br.sp{display:none}
+@media (max-width:420px){br.sp{display:inline}}
+.samples{margin-top:14px}
+.samples-h{margin:0 0 8px;font-size:13px;color:var(--dim);letter-spacing:.08em}
+.samples-row{display:flex;flex-wrap:wrap;gap:6px}
+.smp{font:inherit;font-size:14px;min-height:44px;padding:4px 14px;border:1px solid var(--line);background:var(--night2);color:var(--text);border-radius:3px;cursor:pointer;letter-spacing:.1em}
+.smp:hover{border-color:var(--gold)}
+.seasons-wrap{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.seasons-h{font-size:12px;color:var(--gold);letter-spacing:.15em}
+.seasons-wrap .seasons{margin:0}
+.empty{margin:0;padding:22px 12px;text-align:center;color:var(--dim);border:1px dashed var(--line);border-radius:4px;font-size:14px}
+.empty[hidden],#result[hidden],.btn[hidden]{display:none}
+.readout{margin:0 0 10px;font-size:13px;color:var(--dim);display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.chip{display:inline-block;font-size:12px;padding:1px 10px;border-radius:999px;border:1px solid var(--gold);color:var(--gold2);letter-spacing:.1em}
+.chip.mine{border-color:var(--warn);color:var(--warn)}
+.poem{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.poem li{display:grid;grid-template-columns:1fr auto;grid-template-areas:"pl m" "py py";align-items:center;column-gap:10px;padding:8px 2px;border-bottom:1px solid var(--line)}
+.poem li:nth-child(2) .pl{padding-left:1em}.poem li:nth-child(3) .pl{padding-left:2em}
+.pl{grid-area:pl;font-size:24px;letter-spacing:.12em;color:var(--text);line-height:1.4;word-break:keep-all}
+.py{grid-area:py;font-size:12px;color:var(--dim);letter-spacing:.12em}
+.poem li:nth-child(2) .py{padding-left:2em}.poem li:nth-child(3) .py{padding-left:4em}
+.mora{grid-area:m;font-family:ui-monospace,Menlo,monospace;font-size:12px;border-radius:999px;padding:2px 9px;border:1px solid var(--warn);color:var(--warn)}
+.mora.ok{background:var(--ok);border-color:var(--ok);color:var(--night)}
+.kigo-used{margin:10px 0 0;font-size:13px;color:var(--gold2)}
+.kigo-used:empty{display:none}
+.again-row{display:flex;justify-content:center;margin-top:14px}
+.how{margin:16px 0 0;font-size:12px;color:var(--dim);line-height:1.7;border-top:1px solid var(--line);padding-top:10px}
+.edit-step{padding:0}
+.edit-step summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;min-height:60px;padding:12px 16px;font-size:17px;font-weight:600;letter-spacing:.2em}
+.edit-step summary::-webkit-details-marker{display:none}
+.edit-step summary::after{content:"＋";margin-left:auto;color:var(--gold)}
+.edit-step details[open] summary::after{content:"－"}
+.edit-step summary:focus-visible{outline:2px solid var(--gold2);outline-offset:-2px}
+.edit-body{padding:0 16px 18px}
+.sub-h{font-size:14px;font-weight:600;letter-spacing:.15em;color:var(--gold2);margin:8px 0 10px}
+.edit-body .sub-h+.help{margin-top:0}
+.kigo-now+.sub-h{margin-top:20px}
 .kg{font:inherit;font-size:16px;min-height:52px;padding:6px 12px 4px;border:1px solid var(--line);background:var(--night2);color:var(--text);border-radius:3px;cursor:pointer;line-height:1.2}
 .kg rt{font-size:10px;color:var(--dim);letter-spacing:.05em}
 .kg[aria-checked=true]{border-color:var(--gold2);box-shadow:inset 0 0 0 1px var(--gold2);color:var(--gold2)}
@@ -44,8 +81,6 @@ h1 span+span{color:var(--text)}
 .kigo-now{margin:12px 0 0;font-size:14px;color:var(--gold2);display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 .ins{font:inherit;font-size:13px;min-height:44px;padding:2px 12px;border:1px solid var(--gold);background:none;color:var(--gold2);border-radius:999px;cursor:pointer}
 .help{font-size:12.5px;color:var(--dim);margin:0 0 12px;line-height:1.7}
-.sample{margin:0 0 6px;min-height:44px}
-.sample[hidden]{display:none}
 .lines{display:grid;gap:10px}
 .line{display:grid;grid-template-columns:auto 1fr auto;grid-template-areas:"lt t c" "lr r r";gap:6px 10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
 .lt{grid-area:lt}.line>input:first-of-type{grid-area:t}.lr{grid-area:lr}.line>input:last-of-type{grid-area:r}.cnt{grid-area:c}
@@ -93,6 +128,9 @@ h1 span+span{color:var(--text)}
   .card.sealed .card-seal{animation:seal .5s cubic-bezier(.2,1.6,.4,1) both}
   .card.sealed{animation:glint .9s ease-out}
   .out:not([hidden]){animation:rise .5s ease-out}
+  .poem.in li{animation:rise .5s ease-out both}
+  .poem.in li:nth-child(2){animation-delay:.12s}
+  .poem.in li:nth-child(3){animation-delay:.24s}
 }
 @keyframes seal{from{transform:scale(2.2) rotate(-20deg);opacity:0}}
 @keyframes glint{0%{box-shadow:0 30px 60px -30px #000,0 0 0 1px var(--gold),0 0 0 0 rgba(230,207,151,.6)}100%{box-shadow:0 30px 60px -30px #000,0 0 0 1px var(--gold),0 0 0 22px rgba(230,207,151,0)}}
