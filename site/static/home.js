@@ -1,57 +1,67 @@
-const APPS=window.APPS.filter(a=>a.d===window.TODAY);
+/* Home page: the 新着 rail is pre-rendered by build.py; this adds the progress bar and mouse dragging.
+   The hero sphere is drawn with three.js from window.APPS (data.js, generated from site/apps/*.json). */
+const APPS=window.APPS||[];
 const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 /* ---- rail ---- */
-const rail=document.getElementById("rail");
-APPS.forEach((a,i)=>{
-  const el=document.createElement("a");el.className="panel glass";el.href="app.html?id="+encodeURIComponent(a.id);el.style.setProperty("--c",a.c);
-  el.innerHTML=`<div class="p-top"><span class="cap">${String(i+1).padStart(2,"0")}</span><span class="p-price">¥0<i>FREE</i></span><h3 class="p-name"></h3><span class="sample">運営</span></div>
-    <div class="p-vis"><div class="icon"><b></b></div></div>
-    <div><p class="p-line"></p><div class="p-spec"><span></span><span></span></div></div>`;
-  el.querySelector(".p-name").textContent=a.n;
-  if(a.b){const bt=document.createElement("span");bt.className="beta";bt.textContent="試作中";el.querySelector(".sample").after(bt);}el.querySelector(".icon b").textContent=a.n[0];el.querySelector(".p-line").textContent=a.t;
-  const sp=el.querySelectorAll(".p-spec span");sp[0].textContent=a.p;sp[1].textContent=a.a;
-  rail.appendChild(el);
-});
-const prog=document.getElementById("prog");
-function upd(){const m=rail.scrollWidth-rail.clientWidth;const f=m>0?rail.scrollLeft/m:1;const vis=Math.min(1,rail.clientWidth/rail.scrollWidth);prog.style.width=(vis*100)+"%";prog.style.left=(f*(1-vis)*100)+"%";}
-rail.addEventListener("scroll",upd,{passive:true});addEventListener("resize",upd);upd();
-let down=false,sx=0,sl=0,moved=false;
-rail.addEventListener("pointerdown",e=>{if(e.pointerType!=="mouse")return;down=true;moved=false;sx=e.clientX;sl=rail.scrollLeft;rail.classList.add("dragging");});
-addEventListener("pointermove",e=>{if(!down)return;const dx=e.clientX-sx;if(Math.abs(dx)>4)moved=true;rail.scrollLeft=sl-dx;});
-addEventListener("pointerup",()=>{if(!down)return;down=false;rail.classList.remove("dragging");});
-rail.addEventListener("click",e=>{if(moved){e.preventDefault();moved=false;}},true);
-rail.addEventListener("wheel",e=>{if(Math.abs(e.deltaY)>Math.abs(e.deltaX)&&rail.scrollWidth>rail.clientWidth){const b=rail.scrollLeft;rail.scrollLeft+=e.deltaY;if(rail.scrollLeft!==b)e.preventDefault();}},{passive:false});
+(function(){
+  const rail=document.getElementById("rail"),prog=document.getElementById("prog");
+  if(!rail||!prog)return;
+  function upd(){const m=rail.scrollWidth-rail.clientWidth;const f=m>0?rail.scrollLeft/m:1;const vis=Math.min(1,rail.clientWidth/rail.scrollWidth);prog.style.width=(vis*100)+"%";prog.style.left=(f*(1-vis)*100)+"%";}
+  rail.addEventListener("scroll",upd,{passive:true});addEventListener("resize",upd);upd();
+  let down=false,sx=0,sl=0,moved=false;
+  rail.addEventListener("pointerdown",e=>{if(e.pointerType!=="mouse")return;down=true;moved=false;sx=e.clientX;sl=rail.scrollLeft;rail.classList.add("dragging");});
+  addEventListener("pointermove",e=>{if(!down)return;const dx=e.clientX-sx;if(Math.abs(dx)>4)moved=true;rail.scrollLeft=sl-dx;});
+  addEventListener("pointerup",()=>{if(!down)return;down=false;rail.classList.remove("dragging");});
+  rail.addEventListener("click",e=>{if(moved){e.preventDefault();moved=false;}},true);
+  rail.addEventListener("dragstart",e=>e.preventDefault());
+  rail.addEventListener("wheel",e=>{if(Math.abs(e.deltaY)>Math.abs(e.deltaX)&&rail.scrollWidth>rail.clientWidth){const b=rail.scrollLeft;rail.scrollLeft+=e.deltaY;if(rail.scrollLeft!==b)e.preventDefault();}},{passive:false});
+})();
 
 /* ---- hero: the apps themselves.
    Every listed app is its own icon. On load the icons fly in and settle into a slowly turning sphere
-   (Fibonacci layout); today's apps carry a thin amber ring. Hover shows the name, click opens the app. ---- */
+   (Fibonacci layout); the newest apps carry a thin amber ring. Hover shows the name, click shows a card. ---- */
 (function(){
-  if(!window.THREE)return;
   const hero=document.querySelector(".hero"),cv=document.getElementById("net");
-  const renderer=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:true});
+  if(!window.THREE||!hero||!cv||!APPS.length)return;
+  let renderer;
+  try{renderer=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:true});}catch(err){return;}   // no WebGL: the hero still reads fine
   renderer.setPixelRatio(Math.min(devicePixelRatio,2));
   const scene=new THREE.Scene();scene.fog=new THREE.Fog(0xC9C9C8,9.0,13.6);   // icons at the back fade into the silver
   const cam=new THREE.PerspectiveCamera(32,1,0.1,100);cam.position.set(0,0,11);
   const world=new THREE.Group();scene.add(world);
   // spread apps over the sphere in a stable but mixed order, so today's are not all bunched at the top
   const hash=s=>[...s].reduce((h,c)=>(h*31+c.charCodeAt(0))>>>0,7);
-  const ALL=[...window.APPS].sort((a,b)=>hash(a.id)-hash(b.id));
+  const ALL=[...APPS].sort((a,b)=>hash(a.id)-hash(b.id));
+  // ring the newest day's apps, unless that is every app (then a ring would mean nothing)
+  const NEW=new Set(APPS.filter(a=>a.d===window.LATEST).map(a=>a.id));if(NEW.size===APPS.length)NEW.clear();
 
-  // icon textures drawn on a canvas: rounded tile, colour gradient, highlight, initial
-  function iconTex(app){
+  // icon textures drawn on a canvas: the app's own SVG icon (same origin) when it has one,
+  // otherwise a rounded colour tile with the initial; then a highlight and a thin edge
+  function iconTex(app,img){
     const S=256,c=document.createElement("canvas");c.width=c.height=S;const g=c.getContext("2d");
     const r=74,p=10;
     const path=()=>{g.beginPath();g.moveTo(p+r,p);g.arcTo(S-p,p,S-p,S-p,r);g.arcTo(S-p,S-p,p,S-p,r);g.arcTo(p,S-p,p,p,r);g.arcTo(p,p,S-p,p,r);g.closePath();};
-    path();const lg=g.createLinearGradient(0,0,S,S);lg.addColorStop(0,"#ffffff");lg.addColorStop(0.08,app.c);lg.addColorStop(1,"#1e1e1e");
-    g.fillStyle=app.c;g.fill();g.save();g.globalAlpha=0.45;g.fillStyle=lg;g.fill();g.restore();
-    const hl=g.createRadialGradient(S*0.3,S*0.2,0,S*0.3,S*0.2,S*0.6);hl.addColorStop(0,"rgba(255,255,255,.75)");hl.addColorStop(1,"rgba(255,255,255,0)");
+    if(img){
+      g.save();path();g.clip();g.fillStyle=app.c;g.fillRect(0,0,S,S);g.drawImage(img,p,p,S-2*p,S-2*p);g.restore();
+    }else{
+      path();const lg=g.createLinearGradient(0,0,S,S);lg.addColorStop(0,"#ffffff");lg.addColorStop(0.08,app.c);lg.addColorStop(1,"#1e1e1e");
+      g.fillStyle=app.c;g.fill();g.save();g.globalAlpha=0.45;g.fillStyle=lg;g.fill();g.restore();
+    }
+    const hl=g.createRadialGradient(S*0.3,S*0.2,0,S*0.3,S*0.2,S*0.6);hl.addColorStop(0,img?"rgba(255,255,255,.4)":"rgba(255,255,255,.75)");hl.addColorStop(1,"rgba(255,255,255,0)");
     g.save();path();g.clip();g.fillStyle=hl;g.fillRect(0,0,S,S);g.restore();
     g.lineWidth=3;g.strokeStyle="rgba(255,255,255,.55)";path();g.stroke();
-    g.fillStyle="#ffffff";g.font=`700 ${S*0.42}px "Zen Kaku Gothic New","Hiragino Sans","Noto Sans JP",sans-serif`;
-    g.textAlign="center";g.textBaseline="middle";g.shadowColor="rgba(0,0,0,.25)";g.shadowBlur=10;g.shadowOffsetY=3;
-    g.fillText(app.n[0],S/2,S/2+S*0.03);
+    if(!img){
+      g.fillStyle="#ffffff";g.font=`700 ${S*0.42}px "Zen Kaku Gothic New","Hiragino Sans","Noto Sans JP",sans-serif`;
+      g.textAlign="center";g.textBaseline="middle";g.shadowColor="rgba(0,0,0,.25)";g.shadowBlur=10;g.shadowOffsetY=3;
+      g.fillText(app.n[0],S/2,S/2+S*0.03);
+    }
     const t=new THREE.CanvasTexture(c);t.anisotropy=4;return t;
+  }
+  // resolves with the loaded image, or null (no icon, or it failed: the letter tile is used instead)
+  function loadIcon(src){
+    return new Promise(res=>{if(!src)return res(null);const im=new Image();im.decoding="async";
+      im.onload=()=>res(im.naturalWidth?im:null);im.onerror=()=>res(null);im.src=src;});
   }
   function ringTex(){
     const S=256,c=document.createElement("canvas");c.width=c.height=S;const g=c.getContext("2d");
@@ -68,11 +78,16 @@ rail.addEventListener("wheel",e=>{if(Math.abs(e.deltaY)>Math.abs(e.deltaX)&&rail
     const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:null,transparent:true,fog:true,depthWrite:false}));
     sp.scale.set(TILE,TILE,1);sp.userData.app=app;world.add(sp);
     let halo=null;
-    if(app.d===window.TODAY){halo=new THREE.Sprite(new THREE.SpriteMaterial({map:ring,transparent:true,fog:true,depthWrite:false}));halo.scale.set(TILE*1.22,TILE*1.22,1);world.add(halo);}
+    if(NEW.has(app.id)){halo=new THREE.Sprite(new THREE.SpriteMaterial({map:ring,transparent:true,fog:true,depthWrite:false}));halo.scale.set(TILE*1.22,TILE*1.22,1);world.add(halo);}
     return{app,home,from,sp,halo,delay:0.15+Math.random()*1.4};
   });
-  // draw textures once the web font is ready so the initials use it
-  (document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).then(()=>items.forEach(it=>{it.sp.material.map=iconTex(it.app);it.sp.material.needsUpdate=true;}));
+  // draw each texture once its icon has loaded (and the web font is ready, for the initials)
+  const fontsReady=document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve();
+  let withIcon=0;
+  items.forEach(it=>Promise.all([loadIcon(it.app.i),fontsReady]).then(([img])=>{
+    it.sp.material.map=iconTex(it.app,img);it.sp.material.needsUpdate=true;
+    if(img)cv.dataset.icons=String(++withIcon);   // how many sprites show their SVG icon
+  }));
 
   // tooltip
   const tip=document.createElement("a");tip.className="w-tip glass";tip.hidden=true;hero.appendChild(tip);
@@ -81,7 +96,7 @@ rail.addEventListener("wheel",e=>{if(Math.abs(e.deltaY)>Math.abs(e.deltaX)&&rail
     const b=document.createElement("b");b.textContent=it.app.n;
     const p=document.createElement("span");p.textContent=it.app.t;
     const m=document.createElement("small");m.textContent=`${it.app.p} ・ ${it.app.g}${it.app.b?" ・ 試作中":""} ・ 詳しく見る →`;
-    tip.append(b,p,m);tip.href="app.html?id="+encodeURIComponent(it.app.id);
+    tip.append(b,p,m);tip.href=it.app.h;
     tip.style.transform=`translate(${Math.max(8,Math.min(x+18,hero.clientWidth-262))}px,${Math.max(70,y-24)}px)`;tip.hidden=false;
   }
 

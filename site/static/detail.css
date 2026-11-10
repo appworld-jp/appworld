@@ -1,6 +1,5 @@
 /* App page: one glass hero with the app's icon in a small orbit, then about / details, then related apps. */
 .detail{display:grid;gap:22px;padding-block:28px 0}
-.detail[hidden]{display:none}
 .crumb{display:flex;gap:10px;align-items:center}
 .crumb a{text-decoration:none}
 .crumb a:hover{color:var(--char)}
@@ -20,13 +19,13 @@
 .d-main h1{font-size:clamp(32px,4.4vw,52px);font-weight:500;line-height:1.25;letter-spacing:.01em}
 .d-tag{margin:0;font-size:clamp(15px,1.6vw,18px);color:var(--graphite);line-height:1.7}
 .d-acts{display:flex;gap:14px 18px;align-items:center;flex-wrap:wrap;margin-top:6px}
-.d-acts .btn[aria-disabled="true"]{opacity:.45;pointer-events:none}
 .d-note{font-size:12px;color:var(--graphite)}
+.d-op{margin:0;font-size:13px;color:#6E4510}
 
 .d-cols{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:22px;align-items:start}
 @media (max-width:820px){.d-cols{grid-template-columns:minmax(0,1fr)}}
 .d-about{display:grid;gap:14px;padding:6px 4px}
-.d-about p{margin:0;font-size:15.5px;line-height:2;max-width:38em}
+.d-about>p{margin:0;font-size:15.5px;line-height:2;max-width:38em;white-space:pre-line}
 .d-share{border-radius:18px;padding:16px 18px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
 .d-share p{font-size:13px;color:var(--graphite);line-height:1.7}
 .d-share b{display:block;color:var(--char);font-weight:500}
@@ -43,7 +42,4 @@
 .d-pager{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:1px solid var(--hair);padding-top:18px}
 .d-pager a:empty{visibility:hidden}
 .d-report{margin:0;font-size:12px;color:var(--graphite)}
-#missing{gap:12px;padding-block:80px}
-#missing h1{font-size:28px;font-weight:500}
-#missing p{margin:0;color:var(--graphite)}
 @media (prefers-reduced-motion:reduce){.orbit::after{animation:none}}
