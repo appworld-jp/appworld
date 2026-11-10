@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>洗濯表示よみとき</title>
+<meta name="description" content="服のタグの洗濯表示をタップすると、意味と実際のお手入れのしかたがわかります。今の記号（JIS L 0001）と2016年までの旧表示に対応。1着ぶんの記号を選ぶと、洗い方をまとめて教えてくれます。">
+<meta name="theme-color" content="#24408E">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="style.css">
+</head><body>
+<header class="top">
+  <div class="top-in">
+    <a class="back" href="../">App World Lab</a>
+    <div class="tag">
+      <h1>洗濯表示<span>よみとき</span></h1>
+      <p class="lead">タグの記号をタップすると、意味と洗い方がわかります。</p>
+    </div>
+  </div>
+  <nav class="tabs" aria-label="画面の切りかえ">
+    <button type="button" class="tab" id="tabFind" aria-pressed="true">記号を調べる</button>
+    <button type="button" class="tab" id="tabBuild" aria-pressed="false">この服の表示</button>
+    <button type="button" class="tab" id="tabOld" aria-pressed="false">旧表示</button>
+  </nav>
+</header>
+
+<main class="wrap">
+  <section id="vFind" aria-label="記号を調べる">
+    <div id="cats"></div>
+    <section class="words">
+      <h2>記号のそばの文字</h2>
+      <p>記号だけでは伝えきれないことは、文字で書き添えられています（付記用語）。記号と同じくらい大切です。</p>
+      <dl>
+        <div><dt>洗濯ネット使用</dt><dd>洗濯ネットに入れて洗います。</dd></div>
+        <div><dt>裏返しにして洗う</dt><dd>毛玉や色あせを防ぐため、裏返してから洗います。</dd></div>
+        <div><dt>弱く絞る</dt><dd>脱水は短く、手で絞るなら軽く。</dd></div>
+        <div><dt>色落ちします・濃色は分けて</dt><dd>白い物や淡い色の物とは別に洗います。</dd></div>
+        <div><dt>中性洗剤使用</dt><dd>おしゃれ着用の中性洗剤を使います。</dd></div>
+        <div><dt>あて布使用</dt><dd>アイロンは布を一枚あててからかけます。</dd></div>
+      </dl>
+    </section>
+  </section>
+
+  <section id="vBuild" aria-label="この服の表示" hidden>
+    <p class="howto">タグに並んでいる記号を、左から順に選んでください。洗い方をまとめます。</p>
+    <div class="strip" id="strip" role="group" aria-label="この服の記号"></div>
+    <div class="row">
+      <button type="button" class="btn ghost small" id="bClear">選び直す</button>
+      <button type="button" class="btn ghost small" id="bSample">例：ニット</button>
+    </div>
+    <section class="result" id="result" aria-live="polite"></section>
+    <form class="savebox" id="saveForm" novalidate>
+      <label for="gName">この服の名前</label>
+      <div class="save-row">
+        <input id="gName" type="text" maxlength="30" autocomplete="off" placeholder="グレーのウールニット">
+        <button class="btn" type="submit">保存</button>
+      </div>
+      <p class="err" id="saveErr" role="alert"></p>
+    </form>
+    <section class="saved" id="saved">
+      <h2>保存した服</h2>
+      <p class="empty" id="savedEmpty">よく洗う服を保存しておくと、次からタグを探さずにすみます。</p>
+      <ul id="savedList"></ul>
+    </section>
+  </section>
+
+  <section id="vOld" aria-label="旧表示" hidden>
+    <div class="old-note">
+      <b>2016年11月までの表示です。</b>
+      <p>2016年12月に今の記号へ変わりました。昔買った服のタグには、こちらが付いています。点線の四角は、絵を省いて書かれている文字だけを示したものです。</p>
+    </div>
+    <div class="grid" id="oldGrid"></div>
+  </section>
+
+  <details class="move">
+    <summary>データの引っ越し</summary>
+    <p>保存した服は、この端末だけに残ります。機種変更のときは、ファイルに書き出して、新しい端末で読み込んでください。</p>
+    <div class="row">
+      <button type="button" class="btn ghost small" id="expBtn">ファイルに書き出す</button>
+      <label class="btn ghost small file-btn">ファイルを読み込む<input type="file" id="impFile" accept="application/json,.json"></label>
+    </div>
+    <p class="msg" id="moveMsg" role="status"></p>
+  </details>
+
+  <footer class="foot">
+    <p>保存した服は、この端末にだけ保存されます。</p>
+    <p>記号の意味は JIS L 0001（ISO 3758）と旧 JIS L 0217 にもとづいています。</p>
+    <p>開発：App World Lab（App World 運営）</p>
+    <p><a href="../">App World Lab</a></p>
+  </footer>
+</main>
+
+<dialog id="sheet" class="sheet" aria-labelledby="shName">
+  <div class="sh-in">
+    <div class="sh-sym" id="shSym"></div>
+    <p class="sh-cat" id="shCat"></p>
+    <h2 id="shName"></h2>
+    <p class="sh-mean" id="shMean"></p>
+    <div class="sh-do"><b>やること</b><p id="shDo"></p></div>
+    <div class="sh-acts">
+      <button type="button" class="btn" id="shAdd">この服の表示に入れる</button>
+      <button type="button" class="btn ghost" id="shClose">閉じる</button>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="picker" class="sheet" aria-labelledby="pkH">
+  <div class="sh-in">
+    <h2 id="pkH"></h2>
+    <p class="pk-note" id="pkNote"></p>
+    <div class="grid pk" id="pkGrid"></div>
+    <div class="sh-acts">
+      <button type="button" class="btn ghost" id="pkNone">この記号はない</button>
+      <button type="button" class="btn ghost" id="pkClose">閉じる</button>
+    </div>
+  </div>
+</dialog>
+
+<div class="toast" id="toast" role="status" hidden><span id="toastMsg"></span><button type="button" id="toastUndo">元に戻す</button></div>
+<script src="symbols.js"></script>
+<script src="app.js"></script>
+</body></html>

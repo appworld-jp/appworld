@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>どっちが安い？</title>
+<meta name="description" content="値段と量を入れるだけで、100gあたり・1Lあたり・1mあたりの値段を出して、いちばん安い商品がすぐわかります。税抜き表示やポイント還元にも対応。お店で片手で使えます。">
+<meta name="theme-color" content="#FFD31A">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="style.css">
+</head><body>
+<header class="pop">
+  <div class="pop-in">
+    <a class="back" href="../">App World Lab</a>
+    <h1><span class="q">どっちが</span><span class="big">安い？</span></h1>
+    <p class="lead">値段と量を入れると、いちばんお得な商品がすぐわかります。</p>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="opts" role="group" aria-label="計算のしかた">
+    <div class="seg" role="group" aria-label="税抜き価格にかける税率">
+      <span class="seg-l">税率</span>
+      <button type="button" class="segb" id="r8" aria-pressed="true">8%</button>
+      <button type="button" class="segb" id="r10" aria-pressed="false">10%</button>
+    </div>
+    <button type="button" class="chip" id="baseBtn" aria-live="polite">100gあたり</button>
+    <button type="button" class="chip ghost" id="clearBtn">全部消す</button>
+  </div>
+  <p class="opt-hint" id="optHint">食品は8%、日用品は10%。税抜きの値札は、商品ごとに「税抜」に切りかえてください。</p>
+
+  <div id="cards" class="cards"></div>
+  <button type="button" class="add" id="addBtn">＋ 比べる商品を足す</button>
+
+  <section class="memo" aria-labelledby="memoH">
+    <h2 id="memoH">底値メモ</h2>
+    <p class="memo-hint" id="memoHint">いちばん安かった値段を残しておくと、次の買い物で「いつもより高いか」がわかります。</p>
+    <ul id="memoList"></ul>
+  </section>
+
+  <details class="move">
+    <summary>データの引っ越し</summary>
+    <p>底値メモは、この端末だけに残ります。機種変更のときは、ファイルに書き出して、新しい端末で読み込んでください。</p>
+    <div class="row">
+      <button type="button" class="btn ghost small" id="expBtn">ファイルに書き出す</button>
+      <label class="btn ghost small file-btn">ファイルを読み込む<input type="file" id="impFile" accept="application/json,.json"></label>
+    </div>
+    <p class="msg" id="moveMsg" role="status"></p>
+  </details>
+
+  <footer class="foot">
+    <p>入れた値段と底値メモは、この端末にだけ保存されます。</p>
+    <p>開発：App World Lab（App World 運営）</p>
+    <p><a href="../">App World Lab</a></p>
+  </footer>
+</main>
+
+<section class="bar" id="bar" aria-live="polite" aria-atomic="true">
+  <div class="bar-in">
+    <div class="bar-txt" id="barTxt"><p class="bar-sub">値段と量を2つ以上入れると、ここに答えが出ます。</p></div>
+    <button type="button" class="memo-btn" id="memoBtn" hidden>底値メモに残す</button>
+  </div>
+</section>
+
+<div class="toast" id="toast" role="status" hidden><span id="toastMsg"></span><button type="button" id="toastUndo">元に戻す</button></div>
+<script src="app.js"></script>
+</body></html>
