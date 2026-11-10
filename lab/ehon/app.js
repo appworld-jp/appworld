@@ -37,36 +37,24 @@
     const words = Object.assign({}, H, P, T);
     const endList = T0.p.some(p => /\{F\}|\{f\}/.test([].concat(p.s).join())) ? D.ends : D.ends.slice(0, 2);
     words.end = pick(endList);
+    const dreamFriend = /\{f\}/.test(words.end);
     const fill = s => { let out = s; for (let i = 0; i < 3; i++) out = out.replace(/\{(\w+)\}/g, (m, k) => (k in words ? words[k] : m)); return out; };
     return {
-      title: fill(T0.title), hero: H.id, place: P.id, thing: T.id,
-      pages: T0.p.map(p => ({ text: fill(pick(p.s)), pos: p.pos, night: !!p.night, nothing: !!p.nothing }))
+      title: fill(T0.title), hero: H.id, place: P.id, thing: T.id, tpl: t % D.templates.length, dreamFriend,
+      pages: T0.p.map(p => ({ text: fill(pick(p.s)), art: p.art }))
     };
   }
 
-  // ---- 絵 ----
+  // ---- 絵（art.js がページごとの場面を描く） ----
   function draw(p, cover) {
-    const sc = $("scene"); sc.textContent = "";
-    sc.append(use("p-" + book.place, 0, 0, 320, 200));
-    if (p.night) {
-      sc.append(svg("rect", { width: 320, height: 200, fill: "#141a3a", opacity: ".55" }));
-      sc.append(svg("path", { d: "M286 20a14 14 0 1 0 10 24 11 11 0 0 1-10-24z", fill: "#f2d27a" }));
-      [[30, 24], [80, 46], [140, 18], [200, 36], [250, 60], [110, 70]].forEach(([x, y], i) => sc.append(svg("circle", { cx: x, cy: y, r: i % 2 ? 1.6 : 2.2, fill: "#fff6cf", class: "twinkle" })));
-    }
-    const X = { l: 40, c: 110, r: 180 }[p.pos] || 110;
-    const g = svg("g", { class: "actor" });
-    if (cover) { g.append(use("h-" + book.hero, 90, 56, 140, 140)); g.append(use("t-" + book.thing, 210, 110, 70, 70, "prop")); }
-    else {
-      g.append(use("h-" + book.hero, X, 92, 100, 100));
-      if (!p.nothing) g.append(use("t-" + book.thing, X + (p.pos === "r" ? -46 : 86), 124, 56, 56, "prop"));
-    }
-    sc.append(g);
+    const T0 = D.templates[book.tpl];
+    window.EHON_ART.draw($("scene"), book, cover ? T0.cover : p.art, { cover, dreamFriend: book.dreamFriend });
   }
 
   // ---- ページ ----
   const total = () => book.pages.length + 1;
   function render() {
-    const cover = page === 0, p = cover ? { pos: "c", night: book.pages[0].night } : book.pages[page - 1];
+    const cover = page === 0, p = cover ? null : book.pages[page - 1];
     draw(p, cover);
     $("page-no").textContent = cover ? "" : `${page} / ${book.pages.length}`;
     const tx = $("text"); tx.textContent = "";

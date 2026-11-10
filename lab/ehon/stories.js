@@ -67,47 +67,90 @@ window.EHON = {
       bed: "マフラーは、ふとんのうえでまるくなっています。" }
   ],
   ends: ["おやすみなさい。", "あしたも、いい日になりますように。おやすみなさい。", "ゆめのなかでも、{f}にあえるといいね。おやすみなさい。"],
-  // p: ページ。s は文（配列ならどれか1つ）。pos は絵の中の位置、night は夜の絵、nothing はすきなものを描かない。
+  // p: ページ。s は文（配列ならどれか1つ）。art はそのページの絵の指定（art.js が描く）。
+  //   set: place（ばしょ）/ room（へや）、shot: wide（ひき）/ mid / low（空が大きい）/ close（アップ）、time: morning / day / dusk / night
+  //   cast: 登場するもの（who: hero / friend / child / mom / crowd、x: 横の位置 0〜1、pose、face、thing: すきなものの持ち方）
+  //   ほか: lost（なくす）/ spot（見つかった場所）/ path（さがす道）/ signal（あいず）/ wonder（夜のけしき）/ fest（おまつり）/ tfest / house / bed / dream / fx（記号）
   templates: [
-    { title: "{h}の、なくしもの", p: [
-      { s: ["あるところに、{H}がいました。{h}のたからものは、{T}です。", "{H}は、{T}がだいすき。どこへいくときも、いっしょです。"], pos: "c" },
-      { s: "ある日、{h}は{T}をもって、{at}へでかけました。{scene}", pos: "l" },
-      { s: "ところが、{lost}、{t}がみえなくなってしまいました。「どうしよう」", pos: "c", nothing: true },
-      { s: "そこへ、{F}がやってきました。「いっしょに、さがしてあげる」。ふたりは{path}、さがしました。", pos: "r", nothing: true },
-      { s: "{found}、{t}がありました。「あった！」{h}は、{t}をぎゅっとだきしめました。", pos: "l" },
-      { s: "{night}{h}は、{t}をそばにおいて、ぐっすりねむりました。{end}", pos: "c", night: true }
+    { title: "{h}の、なくしもの",
+      cover: { shot: "mid", time: "day", cast: [{ who: "hero", x: .5, pose: "hug", face: "happy", thing: "hug" }], fx: ["hearts"] },
+      p: [
+      { s: ["あるところに、{H}がいました。{h}のたからものは、{T}です。", "{H}は、{T}がだいすき。どこへいくときも、いっしょです。"],
+        art: { set: "room", time: "morning", morning: true, cast: [{ who: "hero", x: .66, pose: "hug", face: "happy", thing: "hug", s: 1.05 }], fx: ["hearts"] } },
+      { s: "ある日、{h}は{T}をもって、{at}へでかけました。{scene}",
+        art: { shot: "wide", time: "morning", cast: [{ who: "hero", x: .44, dy: 14, pose: "walk", face: "normal", thing: "hold" }], fx: ["puffs"] } },
+      { s: "ところが、{lost}、{t}がみえなくなってしまいました。「どうしよう」",
+        art: { shot: "mid", time: "day", lost: true, cast: [{ who: "hero", x: .3, pose: "reach", face: "surprised", look: 1 }], fx: ["bang"] } },
+      { s: "そこへ、{F}がやってきました。「いっしょに、さがしてあげる」。ふたりは{path}、さがしました。",
+        art: { shot: "mid", time: "day", path: true, cast: [{ who: "hero", x: .36, pose: "search", face: "worry", look: 1, jumpOn: true }, { who: "friend", x: .7, pose: "stand", face: "normal", look: -1, s: 1.1 }] } },
+      { s: "{found}、{t}がありました。「あった！」{h}は、{t}をぎゅっとだきしめました。",
+        art: { shot: "close", time: "dusk", spot: true, cast: [{ who: "hero", x: .36, pose: "hug", face: "happy", thing: "hug" }], fx: ["sparkle"] } },
+      { s: "{night}{h}は、{t}をそばにおいて、ぐっすりねむりました。{end}",
+        art: { set: "room", time: "night", bed: true, thingAt: "beside", face: "sleep", fx: ["zzz"] } }
     ]},
-    { title: "{h}の、おくりもの", p: [
-      { s: ["{at}に、{H}がすんでいました。{h}は、{trait}です。", "むかしむかし、{at}に、{trait}がいました。名前は、{H}です。"], pos: "c" },
-      { s: "ある日、{h}が{T}をもってあるいていると、{F}が、しょんぼりすわっていました。", pos: "l" },
-      { s: "「どうしたの？」ときくと、{f}は「きょうは、ひとりぼっちなんだ」とこたえました。", pos: "r" },
-      { s: "{h}はすこしかんがえてから、{T}をさしだしました。「これ、かしてあげる」", pos: "c" },
-      { s: "{gift}{f}は、にっこりわらいました。ふたりは、お日さまがしずむまで、いっしょにあそびました。", pos: "l" },
-      { s: "「またあしたね」と手をふって、{h}はおうちにかえりました。{night}{end}", pos: "c", night: true, nothing: true }
+    { title: "{h}の、おくりもの",
+      cover: { shot: "mid", time: "dusk", cast: [{ who: "hero", x: .38, pose: "hold", face: "happy", thing: "hold" }, { who: "friend", x: .66, face: "happy", s: 1.15 }], fx: [{ k: "hearts", at: 1 }] },
+      p: [
+      { s: ["{at}に、{H}がすんでいました。{h}は、{trait}です。", "むかしむかし、{at}に、{trait}がいました。名前は、{H}です。"],
+        art: { shot: "wide", time: "morning", house: "left", cast: [{ who: "hero", x: .5, dy: 8, pose: "wave", face: "happy", s: 1.2 }] } },
+      { s: "ある日、{h}が{T}をもってあるいていると、{F}が、しょんぼりすわっていました。",
+        art: { shot: "mid", time: "day", cast: [{ who: "hero", x: .26, pose: "walk", face: "normal", thing: "hold", look: 1 }, { who: "friend", x: .76, pose: "sit", face: "sad", s: 1.05 }], fx: [{ k: "gloom", at: 1 }] } },
+      { s: "「どうしたの？」ときくと、{f}は「きょうは、ひとりぼっちなんだ」とこたえました。",
+        art: { shot: "close", time: "day", cast: [{ who: "hero", x: .3, pose: "lean", face: "worry", look: 1 }, { who: "friend", x: .74, pose: "sit", face: "sad", look: -1, s: 1.15 }], fx: [{ k: "bubble", at: 1 }] } },
+      { s: "{h}はすこしかんがえてから、{T}をさしだしました。「これ、かしてあげる」",
+        art: { shot: "mid", time: "day", cast: [{ who: "hero", x: .4, pose: "offer", face: "happy", thing: "offer", look: 1 }, { who: "friend", x: .7, pose: "stand", face: "surprised", look: -1, s: 1.15 }], fx: [{ k: "sparkle", at: 0 }] } },
+      { s: "{gift}{f}は、にっこりわらいました。ふたりは、お日さまがしずむまで、いっしょにあそびました。",
+        art: { shot: "wide", time: "dusk", cast: [{ who: "hero", x: .36, dy: 10, pose: "jump", face: "happy", s: 1.3 }, { who: "friend", x: .58, dy: 10, pose: "jump", face: "happy", gift: true, s: 1.4 }], fx: [{ k: "hearts", at: 1 }] } },
+      { s: "「またあしたね」と手をふって、{h}はおうちにかえりました。{night}{end}",
+        art: { shot: "wide", time: "night", house: "right", cast: [{ who: "friend", x: .14, dy: 14, pose: "stand", face: "happy", s: 1.2 }, { who: "hero", x: .6, dy: 8, pose: "wave", face: "happy", s: 1.1, dir: -1 }] } }
     ]},
-    { title: "{h}の、よるのさんぽ", p: [
-      { s: ["ある夜のこと。{H}は、なかなかねむれませんでした。", "しずかな夜です。でも、{H}は、目がぱっちりあいたままです。"], pos: "c", night: true },
-      { s: "{h}は{hold}、そっとおうちをぬけだしました。{walk}、{at}へむかいます。", pos: "l", night: true },
-      { s: "{nightScene}「わあ、きれい」。{h}は、おもわずつぶやきました。", pos: "r", night: true },
-      { s: "「こんばんは」。こえをかけてきたのは、{F}です。「{f}も、ねむれないの？」ときくと、{f}はこくりとうなずきました。", pos: "c", night: true },
-      { s: "ふたりはならんで、{sky}をながめました。{sound}だんだん、まぶたがおもくなってきます。", pos: "l", night: true },
-      { s: "{h}はおうちにもどって、ふとんにもぐりこみました。{bed}{end}", pos: "c", night: true }
+    { title: "{h}の、よるのさんぽ",
+      cover: { shot: "low", time: "night", wonder: true, cast: [{ who: "hero", x: .46, pose: "walk", face: "wonder", thing: "hold", s: 1.9 }] },
+      p: [
+      { s: ["ある夜のこと。{H}は、なかなかねむれませんでした。", "しずかな夜です。でも、{H}は、目がぱっちりあいたままです。"],
+        art: { set: "room", time: "night", bed: true, sitUp: true, face: "awake" } },
+      { s: "{h}は{hold}、そっとおうちをぬけだしました。{walk}、{at}へむかいます。",
+        art: { shot: "wide", time: "night", house: "left", door: true, cast: [{ who: "hero", x: .5, dy: 10, pose: "tiptoe", face: "normal", thing: "hold", look: 1, s: 1.2 }] } },
+      { s: "{nightScene}「わあ、きれい」。{h}は、おもわずつぶやきました。",
+        art: { shot: "wide", time: "night", wonder: true, cast: [{ who: "hero", x: .28, dy: 22, pose: "stand", face: "wonder", s: 1.5 }], fx: [{ k: "sparkle", at: 0 }] } },
+      { s: "「こんばんは」。こえをかけてきたのは、{F}です。「{f}も、ねむれないの？」ときくと、{f}はこくりとうなずきました。",
+        art: { shot: "close", time: "night", cast: [{ who: "hero", x: .3, pose: "wave", face: "happy", look: 1 }, { who: "friend", x: .72, pose: "stand", face: "sleepy", look: -1, s: 1.2 }], fx: [{ k: "hello", at: 1 }, { k: "nod", at: 1 }] } },
+      { s: "ふたりはならんで、{sky}をながめました。{sound}だんだん、まぶたがおもくなってきます。",
+        art: { shot: "low", time: "night", moon: "big", cast: [{ who: "hero", x: .36, pose: "sit", face: "sleepy", s: 1.6 }, { who: "friend", x: .56, pose: "sit", face: "sleepy", s: 1.7 }] } },
+      { s: "{h}はおうちにもどって、ふとんにもぐりこみました。{bed}{end}",
+        art: { set: "room", time: "night", bed: true, thingAt: "bed", face: "sleep", fx: ["zzz"] } }
     ]},
-    { title: "{h}と、まいごの{kind}", p: [
-      { s: ["{at}で、{H}は{T}といっしょにあそんでいました。", "よくはれた日のこと。{H}は、{T}をもって、{at}へあそびにいきました。"], pos: "c" },
-      { s: "すると、どこからか、なきごえがきこえてきます。みると、{kind}の子どもが、ひとりでないていました。", pos: "l" },
-      { s: "「おかあさんと、はぐれちゃったの」。{h}は、「だいじょうぶ。いっしょにさがそう」といいました。", pos: "r" },
-      { s: "{h}は、{signal}", pos: "c" },
-      { s: "「ぼうや！」。むこうから、{kind}のおかあさんが{come}。「ありがとう、{h}」", pos: "l" },
-      { s: "{night}{h}は、きょうのことを思いだしながら、ねむりにつきました。{end}", pos: "c", night: true }
+    { title: "{h}と、まいごの{kind}",
+      cover: { shot: "mid", time: "day", cast: [{ who: "hero", x: .38, pose: "hold", face: "happy", thing: "hold" }, { who: "child", x: .62, face: "happy", s: .8 }], fx: [{ k: "hearts", at: 1 }] },
+      p: [
+      { s: ["{at}で、{H}は{T}といっしょにあそんでいました。", "よくはれた日のこと。{H}は、{T}をもって、{at}へあそびにいきました。"],
+        art: { shot: "wide", time: "morning", cast: [{ who: "hero", x: .5, dy: 10, pose: "jump", face: "happy", thing: "hold", s: 1.3 }] } },
+      { s: "すると、どこからか、なきごえがきこえてきます。みると、{kind}の子どもが、ひとりでないていました。",
+        art: { shot: "mid", time: "day", cast: [{ who: "hero", x: .26, pose: "stand", face: "surprised", thing: "hold", look: 1 }, { who: "child", x: .8, dy: -10, pose: "sit", face: "cry", s: .75 }], fx: [{ k: "sob", at: 1 }, { k: "bang", at: 0 }] } },
+      { s: "「おかあさんと、はぐれちゃったの」。{h}は、「だいじょうぶ。いっしょにさがそう」といいました。",
+        art: { shot: "close", time: "day", cast: [{ who: "hero", x: .34, pose: "lean", face: "happy", look: 1 }, { who: "child", x: .72, pose: "stand", face: "sad", look: -1, s: .85 }] } },
+      { s: "{h}は、{signal}",
+        art: { shot: "wide", time: "day", signal: true, cast: [{ who: "hero", x: .46, dy: 10, pose: "raise", face: "happy", thing: "raise", s: 1.45 }, { who: "child", x: .62, dy: 10, pose: "stand", face: "normal", look: -1, s: .9 }] } },
+      { s: "「ぼうや！」。むこうから、{kind}のおかあさんが{come}。「ありがとう、{h}」",
+        art: { shot: "mid", time: "dusk", cast: [{ who: "hero", x: .22, pose: "stand", face: "happy", thing: "hold", look: 1 }, { who: "child", x: .54, pose: "jump", face: "happy", s: .75 }, { who: "mom", x: .78, pose: "stand", face: "happy", look: -1, s: 1.45 }], fx: [{ k: "rush", at: 2 }, { k: "hearts", at: 1 }] } },
+      { s: "{night}{h}は、きょうのことを思いだしながら、ねむりにつきました。{end}",
+        art: { set: "room", time: "night", bed: true, face: "sleep", dream: "family" } }
     ]},
-    { title: "{at}の、おまつり", p: [
-      { s: ["きょうは、{at}の、ちいさなおまつりの日です。", "{at}から、たのしそうなおとがきこえてきます。きょうは、おまつりの日です。"], pos: "c" },
-      { s: "{H}は、{T}をもって、{walk}でかけました。", pos: "l" },
-      { s: "{fest}{F}も、みんなも、とてもたのしそうです。", pos: "r" },
-      { s: "でも、なんだかすこし、ものたりません。「なにか、たりないなあ」と{f}がいいました。", pos: "c" },
-      { s: "{tfest}「これだ！」みんなは大よろこびです。", pos: "l" },
-      { s: "{night}おまつりのあと、{h}は、たのしいゆめをみながらねむりました。{end}", pos: "c", night: true }
+    { title: "{at}の、おまつり",
+      cover: { shot: "mid", time: "dusk", fest: true, cast: [{ who: "crowd", x: .5, dy: -6, span: 250, s: .9 }, { who: "hero", x: .5, pose: "raise", face: "happy", thing: "raise" }], fx: ["confetti"] },
+      p: [
+      { s: ["きょうは、{at}の、ちいさなおまつりの日です。", "{at}から、たのしそうなおとがきこえてきます。きょうは、おまつりの日です。"],
+        art: { shot: "wide", time: "day", fest: true, cast: [{ who: "crowd", x: .5, dy: 6, span: 230, s: 1.3, face: "happy" }], fx: [{ k: "notes", at: 0 }] } },
+      { s: "{H}は、{T}をもって、{walk}でかけました。",
+        art: { shot: "mid", time: "day", cast: [{ who: "hero", x: .34, pose: "walk", face: "happy", thing: "hold", look: 1 }], fx: ["puffs", { k: "notes", at: 0 }] } },
+      { s: "{fest}{F}も、みんなも、とてもたのしそうです。",
+        art: { shot: "wide", time: "day", fest: true, cast: [{ who: "crowd", x: .72, dy: 8, span: 130, s: 1.1, pose: "dance" }, { who: "hero", x: .2, dy: 14, pose: "stand", face: "happy", thing: "hold", s: 1.2, look: 1 }, { who: "friend", x: .4, dy: 16, pose: "jump", face: "happy", s: 1.3 }] } },
+      { s: "でも、なんだかすこし、ものたりません。「なにか、たりないなあ」と{f}がいいました。",
+        art: { shot: "close", time: "dusk", fest: true, cast: [{ who: "hero", x: .32, pose: "think", face: "worry", look: 1 }, { who: "friend", x: .72, pose: "stand", face: "worry", look: -1, s: 1.15 }], fx: [{ k: "question", at: 1 }] } },
+      { s: "{tfest}「これだ！」みんなは大よろこびです。",
+        art: { shot: "mid", time: "dusk", fest: true, tfest: true, cast: [{ who: "crowd", x: .5, dy: -4, span: 270, s: .85, pose: "jump" }, { who: "friend", x: .76, pose: "jump", face: "happy", s: 1.05 }, { who: "hero", x: .48, pose: "raise", face: "happy", thing: "raise" }], fx: ["confetti"] } },
+      { s: "{night}おまつりのあと、{h}は、たのしいゆめをみながらねむりました。{end}",
+        art: { set: "room", time: "night", bed: true, face: "sleep", dream: "fest" } }
     ]}
   ]
 };

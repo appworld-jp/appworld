@@ -43,7 +43,8 @@ button, input { font: inherit; color: inherit; }
 .reader { margin-top: 14px; }
 .spread { background: var(--paper); color: var(--ink); border-radius: 10px 22px 22px 10px; overflow: hidden; box-shadow: inset 12px 0 18px -10px rgba(0,0,0,.25), 0 14px 30px rgba(0,0,0,.4); touch-action: pan-y; user-select: none; }
 .pic { background: var(--paper2); padding: 12px 12px 0; }
-.pic svg { display: block; width: 100%; height: auto; border-radius: 12px; }
+.pic > svg { display: block; width: 100%; height: auto; border-radius: 12px; aspect-ratio: 16 / 10; }
+#scene .grain { mix-blend-mode: multiply; }
 .words { padding: 16px 22px 22px; min-height: 190px; }
 .page-no { margin: 0; font-size: 12px; color: var(--sub); text-align: right; min-height: 1.2em; }
 .text { margin: 4px 0 0; font-family: var(--mincho); font-size: 21px; line-height: 2; letter-spacing: .04em; }
@@ -69,10 +70,22 @@ button, input { font: inherit; color: inherit; }
 
 @media (prefers-reduced-motion: no-preference) {
   .flip { animation: flip .45s ease both; }
-  .actor { animation: sway 3.2s ease-in-out infinite; transform-box: fill-box; transform-origin: bottom center; }
-  .twinkle { animation: tw 2s ease-in-out infinite alternate; }
-  .twinkle:nth-of-type(2n) { animation-delay: .8s; }
+  #scene .actor { animation: sway 3.2s ease-in-out infinite; transform-box: fill-box; transform-origin: bottom center; }
+  #scene .actor:nth-of-type(2n) { animation-delay: -1.4s; }
+  #scene .twinkle { animation: tw 2s ease-in-out infinite alternate; }
+  #scene .twinkle:nth-of-type(2n) { animation-delay: .8s; }
+  #scene .float { animation: bob 2.6s ease-in-out infinite; }
+  #scene .sway { animation: swing 3s ease-in-out infinite; transform-box: fill-box; transform-origin: bottom center; }
+  #scene .drift { animation: drift 4s ease-in-out infinite; }
+  #scene .hop { animation: hop .9s ease-in-out infinite alternate; }
+  #scene .hop2 { animation: hop .9s ease-in-out -.45s infinite alternate; }
+  #scene .flow { animation: flow 3s linear infinite; }
 }
+@keyframes bob { 50% { transform: translateY(-3px); } }
+@keyframes swing { 0%, 100% { transform: rotate(-3deg); } 50% { transform: rotate(3deg); } }
+@keyframes drift { 50% { transform: translate(6px, -6px); } }
+@keyframes hop { to { transform: translateY(-4px); } }
+@keyframes flow { to { transform: translateX(-80px); } }
 @keyframes flip { from { opacity: 0; transform: perspective(900px) rotateY(-8deg) translateX(10px); } to { opacity: 1; transform: none; } }
 @keyframes sway { 50% { transform: translateY(-3px) rotate(1deg); } }
 @keyframes tw { to { opacity: .3; } }
