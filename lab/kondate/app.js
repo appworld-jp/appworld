@@ -32,7 +32,7 @@
   function syncChecks() { document.querySelectorAll("#groups input").forEach(i => { i.checked = have.has(i.value); }); syncGo(); }
   function syncGo() {
     $("go").disabled = have.size === 0;
-    $("go-label").textContent = have.size ? `献立を考える（${have.size}品から）` : "食材を選んでください";
+    $("go-label").textContent = have.size ? `献立を決める（${have.size}品）` : "食材を選んでください";
   }
 
   // 点数：手持ちを多く使うほど高く、足りないものが多いほど低く
@@ -63,7 +63,7 @@
     const meta = el("div", "meta");
     meta.append(el("span", "tag", r.t), el("span", null, `約${r.m}分`), el("span", null, "2人分"));
     const need = r.i.filter(([, a]) => !OPT.test(a)).length;
-    meta.append(el("span", "score", x.miss === 0 ? "手持ちだけで作れます" : `${need}品中${need - x.miss}品が手持ち`));
+    meta.append(el("span", "score", x.miss === 0 ? "買い足しなし" : `買い足し${x.miss}品`));
     c.append(meta, el("h3", null, r.n));
     const ul = el("ul", "ing");
     r.i.forEach(([id, amt]) => {
@@ -83,7 +83,7 @@
   function show() {
     const out = $("out"); out.textContent = "";
     if (!triples.length) {
-      const e = el("div", "empty"); e.append(el("p", null, "選んだ食材を使う料理が見つかりませんでした。ほかの食材も選んでみてください。"));
+      const e = el("div", "empty"); e.append(el("p", null, "合う料理がありませんでした。食材をもう少し選んでみてください。"));
       out.append(e); $("shop").hidden = true; $("more").hidden = true; return;
     }
     const t = triples[page % triples.length];
@@ -101,7 +101,7 @@
       need.get(id).push(r.n);
     }));
     $("shop").hidden = false;
-    if (!need.size) { const li = el("li"); li.append(el("span", "none", "買い足すものはありません。手持ちで3品とも作れます。")); memo.append(li); return; }
+    if (!need.size) { const li = el("li"); li.append(el("span", "none", "買い足すものはありません。")); memo.append(li); return; }
     need.forEach((dishes, id) => {
       const li = el("li"), lab = el("label"), cb = el("input"); cb.type = "checkbox";
       lab.append(cb, el("span", "nm", label(id)), el("span", "for", dishes.join("・")));
@@ -123,8 +123,8 @@
   $("copy").addEventListener("click", async () => {
     const items = [...$("memo").querySelectorAll(".nm")].map(n => "・" + n.textContent);
     const text = items.length ? "買い物リスト\n" + items.join("\n") : "買い足すものはありません";
-    try { await navigator.clipboard.writeText(text); $("copy-msg").textContent = "コピーしました。メモやメッセージに貼りつけられます。"; }
-    catch (e) { $("copy-msg").textContent = "この環境ではコピーできませんでした。"; }
+    try { await navigator.clipboard.writeText(text); $("copy-msg").textContent = "コピーしました"; }
+    catch (e) { $("copy-msg").textContent = "コピーできませんでした。リストを長押しして選んでください。"; }
   });
 
   load(); syncChecks();

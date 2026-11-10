@@ -2,7 +2,7 @@
 <html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>こんだて帖</title>
-<meta name="description" content="家にある食材を選ぶと、手持ちをいちばん使える晩ごはんを3品えらび、足りない食材の買い物リストもまとめます。">
+<meta name="description" content="冷蔵庫にある食材から、今夜の晩ごはんを3品。足りないものは買い物リストに。">
 <meta name="theme-color" content="#f6ecdc">
 <link rel="stylesheet" href="style.css">
 </head><body>
@@ -14,14 +14,14 @@
       <h1>こんだて帖</h1>
     </div>
   </header>
-  <p class="lead">冷蔵庫にあるものに印をつけると、手持ちをいちばん使える料理を3品えらびます。足りないものは買い物リストにまとめます。</p>
+  <p class="lead">冷蔵庫にあるものを選ぶだけで、今夜の3品が決まります。</p>
 
   <section class="pantry" aria-labelledby="h-pantry">
     <div class="sec-head">
       <h2 id="h-pantry"><span class="num">一</span>家にある食材</h2>
-      <button type="button" class="link" id="clear">選択をはずす</button>
+      <button type="button" class="link" id="clear">すべて解除</button>
     </div>
-    <p class="hint">しょうゆ・みそ・砂糖・塩・油などの調味料は、家にある前提です。</p>
+    <p class="hint">しょうゆ・みそ・砂糖などの調味料は、選ばなくて大丈夫です。</p>
     <div id="groups"></div>
   </section>
 
@@ -32,12 +32,12 @@
   <section class="results" aria-labelledby="h-res">
     <div class="sec-head">
       <h2 id="h-res"><span class="num">二</span>きょうの3品</h2>
-      <button type="button" class="link" id="more" hidden>別の3品を見る</button>
+      <button type="button" class="link" id="more" hidden>ほかの3品</button>
     </div>
     <div id="out" aria-live="polite">
       <div class="empty" id="empty">
-        <p>食材を選んで「献立を考える」を押すと、ここに3品の作り方が並びます。</p>
-        <button type="button" class="sample" id="sample">例：たまねぎ・にんじん・じゃがいも・豚肉・卵で試す</button>
+        <p>ここに、今夜の3品と作り方が出ます。</p>
+        <button type="button" class="sample" id="sample">お試し：たまねぎ・にんじん・じゃがいも・豚肉・卵</button>
       </div>
     </div>
   </section>
@@ -45,15 +45,15 @@
   <section class="shop" id="shop" hidden aria-labelledby="h-shop">
     <div class="sec-head">
       <h2 id="h-shop"><span class="num">三</span>買い物リスト</h2>
-      <button type="button" class="link" id="copy">文字でコピー</button>
+      <button type="button" class="link" id="copy">コピー</button>
     </div>
     <ul class="memo" id="memo"></ul>
     <p class="hint" id="copy-msg" aria-live="polite"></p>
   </section>
 
   <footer class="foot">
-    <p>作った人：App World Lab（App Worldの運営）</p>
-    <p>選んだ食材はこの端末の中だけに保存され、どこにも送られません。</p>
+    <p>選んだ食材は、この端末にだけ保存されます。</p>
+    <p>開発：App World Lab（App World 運営）</p>
     <p><a href="../">App World Lab</a></p>
   </footer>
 </div>
