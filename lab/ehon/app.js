@@ -73,7 +73,7 @@
     tx.className = "text" + (cover ? " is-cover" : "");
     if (cover) {
       const h = document.createElement("span"); h.className = "book-name"; h.textContent = book.title;
-      const s = document.createElement("span"); s.className = "book-sub"; s.textContent = "つぎのページから、はじまります";
+      const s = document.createElement("span"); s.className = "book-sub"; s.textContent = "ページを めくってね";
       tx.append(h, s);
     } else {
       tx.append(document.createTextNode(p.text));
@@ -121,10 +121,17 @@
     if (miss) { $("msg").textContent = `${miss}を えらんでね。`; return; }
     open();
   });
+  $("omakase").addEventListener("click", () => {
+    const r = a => a[Math.floor(Math.random() * a.length)].id;
+    sel = { hero: r(D.heroes), place: r(D.places), thing: r(D.things) };
+    tpl = Math.floor(Math.random() * D.templates.length);
+    ["hero", "place", "thing"].forEach(k => { const i = document.querySelector(`input[name=${k}][value=${sel[k]}]`); if (i) i.checked = true; });
+    $("msg").textContent = ""; store(); open();
+  });
   $("prev").addEventListener("click", () => { stopReading(); go(-1); });
   $("next").addEventListener("click", () => { stopReading(); go(1); });
   $("another").addEventListener("click", () => { tpl = (tpl + 1) % D.templates.length; store(); open(); });
-  $("back").addEventListener("click", () => { stopReading(); $("reader").hidden = true; $("maker").hidden = false; $("make").focus(); });
+  $("back").addEventListener("click", () => { stopReading(); $("reader").hidden = true; $("maker").hidden = false; $("maker").scrollIntoView({ block: "start" }); $("make").focus(); });
   document.addEventListener("keydown", e => {
     if ($("reader").hidden || e.target.closest("input")) return;
     if (e.key === "ArrowRight") { stopReading(); go(1); } else if (e.key === "ArrowLeft") { stopReading(); go(-1); }

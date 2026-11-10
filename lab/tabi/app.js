@@ -69,9 +69,9 @@
       L.push({ g, n, why: why || "", done: false });
     });
     const nights = c.days - 1, m = new Date(c.start + "T00:00:00").getMonth() + 1;
-    add("貴重品", ["財布", "交通系ICカード", "健康保険証", "スマートフォン"]);
+    add("貴重品", ["財布", "交通系ICカード", "保険証（マイナ保険証）", "スマートフォン"]);
     if (c.car) add("貴重品", ["運転免許証"], "車");
-    if (c.plane) add("貴重品", ["搭乗券（スマホのチケットでも）", "本人確認書類"], "飛行機");
+    if (c.plane) add("貴重品", ["搭乗券（スマホでも可）", "本人確認書類"], "飛行機");
     if (nights > 0) add("貴重品", ["宿の予約の控え"]);
     add("身のまわり", ["ハンカチ・ティッシュ", "常備薬", "折りたたみ傘", "エコバッグ", "ビニール袋（ぬれた物・ごみ用）"]);
     add("電子機器", ["スマホの充電器・ケーブル", "モバイルバッテリー"]);
@@ -94,7 +94,7 @@
       add("子ども", ["子どもの着替え（多め）", "子どもの保険証・医療証", "おやつ", "おもちゃ・絵本", "ウェットティッシュ"], "子ども");
       if (c.plane) add("子ども", ["耳抜き用の飲み物・あめ"], "飛行機");
     }
-    if (c.plane) add("飛行機", ["イヤホン", "液体は100ml以下の容器に入れる"], "飛行機");
+    if (c.plane) add("飛行機", ["イヤホン", "機内に持ちこむ液体の確認（国際線は100ml以下）"], "飛行機");
     if (c.car) add("車", ["ETCカード", "車用の充電ケーブル", "ごみ袋"], "車");
     return L;
   }
@@ -105,7 +105,7 @@
     return `${d.getMonth() + 1}月${d.getDate()}日（${WD[d.getDay()]}）`;
   }
   function renderCover() {
-    if (!S) { $("cover-title").textContent = "どこへ行きますか？"; $("cover-sub").textContent = "行き先と日程を入れると、予定表と持ち物リストができあがります。"; return; }
+    if (!S) { const h = $("cover-title"); h.textContent = ""; h.append(el("span", "ln", "どこへ"), el("span", "ln", "行きますか？")); const c2 = $("cover-sub"); c2.textContent = ""; c2.append(el("span", "ln", "行き先と日にちを入れるだけで、"), el("span", "ln", "旅の予定表と持ち物リストができます。")); return; }
     const c = S.cfg, n = c.days;
     $("cover-title").textContent = `${c.dest}の旅`;
     $("cover-sub").textContent = `${dayLabel(0)}${n > 1 ? "〜" + dayLabel(n - 1) : ""}　${n === 1 ? "日帰り" : `${n - 1}泊${n}日`}`;
@@ -169,12 +169,14 @@
   }
   function count() {
     const done = S.pack.filter(p => p.done).length;
-    $("pack-count").textContent = done === S.pack.length ? `全${S.pack.length}点、準備ができました。` : `全${S.pack.length}点のうち${done}点を準備済み。印をつけながら詰めていけます。`;
+    const all = S.pack.length > 0 && done === S.pack.length;
+    $("pack-count").textContent = all ? `${S.pack.length}点すべて準備できました。いってらっしゃい！` : `準備済み：${done}／${S.pack.length}点。カバンに入れたら印をつけましょう。`;
+    $("ready").classList.toggle("on", all);
   }
 
   function renderAll() {
     renderCover();
-    $("setup").hidden = !!S; $("plan").hidden = !S;
+    $("setup").hidden = !!S; $("plan").hidden = !S; $("cancel").hidden = true;
     if (!S) return;
     renderDays(); renderPack(); $("memo").value = S.memo || "";
   }
@@ -195,22 +197,26 @@
   $("setup").addEventListener("submit", ev => {
     ev.preventDefault();
     const c = readForm();
-    if (!c.dest) { $("err").textContent = "行き先を入れてください。"; $("dest").focus(); return; }
-    if (!c.start) { $("err").textContent = "出発日を選んでください。"; $("start").focus(); return; }
-    $("err").textContent = "";
+    $("dest-err").textContent = c.dest ? "" : "行き先を入れてください。";
+    $("start-err").textContent = c.start ? "" : "出発日を選んでください。";
+    if (!c.dest) { $("dest").focus(); return; }
+    if (!c.start) { $("start").focus(); return; }
+    if (S && !confirm("つくり直すと、書きかえた予定と持ち物のチェックが元に戻ります。つくり直しますか？")) return;
     S = { cfg: c, days: buildDays(c), pack: buildPack(c), memo: S ? S.memo : "" };
     save(); renderAll();
     $("cover-title").scrollIntoView({ block: "start" });
   });
   $("edit").addEventListener("click", () => {
-    if (!confirm("条件を変えてつくり直すと、書きかえた予定と持ち物の印は元に戻ります。よろしいですか？")) return;
-    fillForm(S.cfg); $("setup").hidden = false; $("plan").hidden = true; $("dest").focus();
+    fillForm(S.cfg); $("setup").hidden = false; $("plan").hidden = true; $("cancel").hidden = false; $("dest").focus();
   });
   $("reset").addEventListener("click", () => {
     if (!confirm("いまのしおりを消して、新しくつくりますか？")) return;
     S = null; try { localStorage.removeItem(KEY); } catch (e) {}
     $("setup").reset(); setDefaultDate(); document.title = "旅のしおり"; renderAll(); $("dest").focus();
   });
+  $("cancel").addEventListener("click", () => { renderAll(); $("edit").focus(); });
+  $("dest").addEventListener("input", () => { $("dest-err").textContent = ""; });
+  $("start").addEventListener("input", () => { $("start-err").textContent = ""; });
   $("print").addEventListener("click", () => window.print());
   $("add-pack").addEventListener("submit", ev => {
     ev.preventDefault();

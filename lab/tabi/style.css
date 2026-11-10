@@ -102,3 +102,20 @@ textarea { min-height: 110px; resize: vertical; }
   .foot { margin-top: 16px; }
   * { animation: none !important; }
 }
+
+/* 仕上げ */
+h1, h2, h3 { text-wrap: balance; }
+p { text-wrap: pretty; }
+.field legend small { font-weight: 400; color: var(--sub); font-size: 12px; }
+.ferr { margin: 6px 0 0; font-family: var(--gothic); font-size: 13px; font-weight: 700; color: var(--red); }
+.ferr:empty { display: none; }
+.back-link { display: block; margin: 12px auto 0; min-height: 44px; padding: 6px 12px; border: 0; background: none; color: var(--indigo); text-decoration: underline; text-underline-offset: 4px; cursor: pointer; font-family: var(--gothic); font-size: 14px; }
+.back-link[hidden] { display: none; }
+.pack-sec { position: relative; }
+.ready { position: absolute; right: 6px; top: 14px; margin: 0; width: 64px; height: 64px; display: grid; place-items: center; text-align: center; line-height: 1.15; border: 3px double var(--red); color: var(--red); border-radius: 50%; font-size: 15px; font-weight: 700; letter-spacing: .1em; transform: rotate(-14deg) scale(.6); opacity: 0; pointer-events: none; }
+.ready.on { opacity: .9; transform: rotate(-14deg) scale(1); }
+@media (prefers-reduced-motion: no-preference) { .ready.on { animation: stamp .45s cubic-bezier(.3,1.6,.5,1) both; } }
+@keyframes stamp { from { opacity: 0; transform: rotate(-14deg) scale(1.8); } to { opacity: .9; transform: rotate(-14deg) scale(1); } }
+.cover h1 { padding-right: 62px; }
+@media print { .ready:not(.on) { display: none; } }
+.ln { display: inline-block; }

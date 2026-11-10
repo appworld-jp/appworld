@@ -83,3 +83,12 @@ button, input { font: inherit; color: inherit; }
   .title h1 { font-size: 38px; }
 }
 @media (max-width: 360px) { .choices { grid-template-columns: repeat(2, 1fr); } .text { font-size: 19px; } }
+
+/* 仕上げ */
+h1, h2 { text-wrap: balance; }
+p { text-wrap: pretty; }
+.omakase { display: block; margin: 10px auto 0; min-height: 48px; padding: 6px 18px; border: 0; background: none; color: var(--gold); font-weight: 700; font-size: 16px; text-decoration: underline; text-underline-offset: 5px; text-decoration-style: dotted; cursor: pointer; }
+.parent { text-align: left; background: rgba(255,255,255,.06); border-radius: 14px; padding: 10px 14px; margin: 0 0 12px !important; line-height: 1.7; }
+.foot a { display: inline-block; padding: 8px; }
+.fin::before { content: "☆ "; } .fin::after { content: " ☆"; }
+.title p, .step legend, .tools, .omakase { word-break: keep-all; overflow-wrap: anywhere; }

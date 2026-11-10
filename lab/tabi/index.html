@@ -2,28 +2,31 @@
 <html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>旅のしおり</title>
-<meta name="description" content="行き先と日程、旅のスタイルを選ぶと、書きかえられる日ごとの予定表と持ち物リストができます。そのまま印刷もできます。">
-<meta name="theme-color" content="#f3eee2">
+<meta name="description" content="行き先と日にちを入れるだけで、旅の予定表と持ち物リストができる、しおり作りのアプリです。">
+<meta name="theme-color" content="#27406b">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="style.css">
 </head><body>
 <div class="book">
   <header class="cover">
     <p class="stamp" aria-hidden="true">旅</p>
     <p class="series">旅のしおり</p>
-    <h1 id="cover-title">どこへ行きますか？</h1>
-    <p class="cover-sub" id="cover-sub">行き先と日程を入れると、予定表と持ち物リストができあがります。</p>
+    <h1 id="cover-title"><span class="ln">どこへ</span><span class="ln">行きますか？</span></h1>
+    <p class="cover-sub" id="cover-sub"><span class="ln">行き先と日にちを入れるだけで、</span><span class="ln">旅の予定表と持ち物リストができます。</span></p>
   </header>
 
   <form class="setup no-print" id="setup" novalidate aria-labelledby="h-setup">
     <h2 id="h-setup" class="tab">旅の基本</h2>
     <div class="field">
       <label for="dest">行き先</label>
-      <input id="dest" type="text" maxlength="30" placeholder="例：箱根" required autocomplete="off">
+      <input id="dest" type="text" maxlength="30" placeholder="箱根" required autocomplete="off" aria-describedby="dest-err">
+      <p class="ferr" id="dest-err"></p>
     </div>
     <div class="two">
       <div class="field">
         <label for="start">出発日</label>
-        <input id="start" type="date" required>
+        <input id="start" type="date" required aria-describedby="start-err">
+        <p class="ferr" id="start-err"></p>
       </div>
       <div class="field">
         <label for="days">日数</label>
@@ -43,39 +46,40 @@
       </div>
     </fieldset>
     <fieldset class="field">
-      <legend>あてはまるもの</legend>
+      <legend>あてはまるもの<small>（いくつでも）</small></legend>
       <div class="opts">
         <label><input type="checkbox" id="o-onsen"><span>温泉に入る</span></label>
         <label><input type="checkbox" id="o-sea"><span>海・プール</span></label>
         <label><input type="checkbox" id="o-kids"><span>子どもと一緒</span></label>
-        <label><input type="checkbox" id="o-plane"><span>飛行機に乗る</span></label>
+        <label><input type="checkbox" id="o-plane"><span>飛行機で行く</span></label>
         <label><input type="checkbox" id="o-car"><span>車で行く</span></label>
       </div>
     </fieldset>
     <button type="submit" class="primary" id="make">しおりをつくる</button>
-    <p class="err" id="err" role="alert"></p>
+    <button type="button" class="back-link" id="cancel" hidden>やめて、いまのしおりに戻る</button>
   </form>
 
   <div id="plan" hidden>
     <div class="toolbar no-print">
-      <button type="button" class="pill" id="print">印刷する</button>
+      <button type="button" class="pill" id="print">印刷</button>
       <button type="button" class="pill" id="edit">条件を変える</button>
-      <button type="button" class="pill quiet" id="reset">新しくつくる</button>
+      <button type="button" class="pill quiet" id="reset">新しいしおり</button>
     </div>
 
     <section aria-labelledby="h-days">
       <h2 id="h-days" class="tab">日程</h2>
-      <p class="hint no-print">時刻と内容はそのまま書きかえられます。↑↓で順番を入れかえます。</p>
+      <p class="hint no-print"><span class="ln">時刻も予定も、タップすれば書きかえられます。</span><span class="ln">↑↓で並べかえ。</span></p>
       <div id="days-out"></div>
     </section>
 
     <section aria-labelledby="h-pack" class="pack-sec">
       <h2 id="h-pack" class="tab">持ち物</h2>
+      <p class="ready" id="ready" aria-hidden="true">準備<br>完了</p>
       <p class="hint" id="pack-count" aria-live="polite"></p>
       <div id="pack-out" class="pack"></div>
       <form class="add-pack no-print" id="add-pack">
         <label for="pack-new" class="sr">持ち物を追加</label>
-        <input id="pack-new" type="text" maxlength="30" placeholder="ほかに持っていくもの">
+        <input id="pack-new" type="text" maxlength="30" placeholder="カメラ">
         <button type="submit" class="pill">追加</button>
       </form>
     </section>
@@ -83,13 +87,13 @@
     <section aria-labelledby="h-memo">
       <h2 id="h-memo" class="tab">メモ</h2>
       <label for="memo" class="sr">メモ</label>
-      <textarea id="memo" rows="4" maxlength="600" placeholder="宿の電話番号、集合場所など"></textarea>
+      <textarea id="memo" rows="4" maxlength="600" placeholder="8:00 東京駅の改札前に集合&#10;宿のチェックインは15時から"></textarea>
     </section>
   </div>
 
   <footer class="foot">
-    <p>作った人：App World Lab（App Worldの運営）</p>
-    <p>しおりの内容はこの端末の中だけに保存され、どこにも送られません。</p>
+    <p>しおりは、この端末にだけ保存されます。</p>
+    <p>開発：App World Lab（App World 運営）</p>
     <p class="no-print"><a href="../">App World Lab</a></p>
   </footer>
 </div>

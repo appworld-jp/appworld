@@ -2,8 +2,10 @@
 <html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>みずのむ</title>
-<meta name="description" content="飲んだ水をタップで記録。1日の目標までボトルが満ちていき、きょうの記録と7日分の推移もひと目でわかります。">
-<meta name="theme-color" content="#f2fbff">
+<meta name="description" content="飲んだ量をタップするだけの水分記録。ボトルが満ちていく様子で、きょうの目標まであとどれくらいかがわかります。">
+<meta name="theme-color" content="#f2fbff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#08202e" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="style.css">
 </head><body>
 <main class="app">
@@ -11,9 +13,11 @@
     <h1><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5c3.5 4.6 6.5 8.4 6.5 12a6.5 6.5 0 0 1-13 0c0-3.6 3-7.4 6.5-12z"/></svg>みずのむ</h1>
     <p class="date" id="today"></p>
   </header>
+  <p class="lead"><span class="ln">飲んだらコップを押すだけ。</span><span class="ln">ボトルに水がたまります。</span></p>
 
   <section class="hero" aria-labelledby="amount">
     <div class="bottle-wrap">
+      <span class="ripple" aria-hidden="true"></span>
       <svg class="bottle" viewBox="0 0 120 220" aria-hidden="true">
         <defs>
           <clipPath id="inside"><path d="M44 8h32v20c0 6 18 14 18 34v134a16 16 0 0 1-16 16H42a16 16 0 0 1-16-16V62c0-20 18-28 18-34z"/></clipPath>
@@ -29,29 +33,31 @@
         <path class="outline" d="M44 8h32v20c0 6 18 14 18 34v134a16 16 0 0 1-16 16H42a16 16 0 0 1-16-16V62c0-20 18-28 18-34z"/>
         <rect class="cap" x="42" y="2" width="36" height="12" rx="4"/>
       </svg>
+      <p class="pct" id="pct" aria-hidden="true">0%</p>
     </div>
     <div class="readout">
-      <p class="pct" id="pct" aria-hidden="true">0%</p>
       <h2 class="amount" id="amount" aria-live="polite">0<small>ml</small></h2>
-      <p class="goal-line">目標 <b id="goal-v">1,500ml</b> <button type="button" class="link" id="goal-edit">変更</button></p>
       <p class="left" id="left"></p>
+      <p class="goal-line">1日の目標 <b id="goal-v">1,500ml</b><button type="button" class="link" id="goal-edit" aria-expanded="false">変える</button></p>
     </div>
-    <form class="goal-form" id="goal-form" hidden>
-      <label for="goal-in">1日の目標（ml）</label>
-      <div class="row"><input id="goal-in" type="number" inputmode="numeric" min="300" max="5000" step="50"><button type="submit" class="btn-s">保存</button></div>
-      <p class="note">飲み物からとる水分の目安は、体格や季節、運動量で変わります。持病がある方は医師の指示に従ってください。</p>
+    <form class="goal-form" id="goal-form" hidden novalidate>
+      <label for="goal-in">1日の目標</label>
+      <div class="row"><input id="goal-in" type="number" inputmode="numeric" min="300" max="5000" step="50" aria-describedby="goal-err"><span class="unit">ml</span><button type="submit" class="btn-s">保存</button></div>
+      <p class="ferr" id="goal-err"></p>
+      <p class="note">必要な量は、体格や季節、運動量で変わります。水分を控えるよう言われている方は、医師の指示を優先してください。</p>
     </form>
   </section>
 
-  <section aria-labelledby="h-add">
-    <h2 id="h-add" class="sec">のんだ量をタップ</h2>
+  <section class="add" aria-labelledby="h-add">
+    <h2 id="h-add" class="sec">飲んだら、押す</h2>
     <div class="cups" id="cups"></div>
-    <form class="custom" id="custom">
+    <form class="custom" id="custom" novalidate>
       <label for="custom-in">ほかの量</label>
-      <input id="custom-in" type="number" inputmode="numeric" min="10" max="2000" step="10" placeholder="例：330">
+      <input id="custom-in" type="number" inputmode="numeric" min="10" max="2000" step="10" placeholder="350" aria-describedby="custom-err">
       <span>ml</span>
-      <button type="submit" class="btn-s">記録</button>
+      <button type="submit" class="btn-s">記録する</button>
     </form>
+    <p class="ferr" id="custom-err"></p>
     <p class="toast" id="toast" role="status"></p>
   </section>
 
@@ -61,13 +67,13 @@
   </section>
 
   <section aria-labelledby="h-week">
-    <h2 id="h-week" class="sec">7日間</h2>
+    <h2 id="h-week" class="sec">この7日間</h2>
     <div class="week" id="week" role="img"></div>
   </section>
 
   <footer class="foot">
-    <p>作った人：App World Lab（App Worldの運営）</p>
-    <p>記録はこの端末の中だけに保存され、どこにも送られません。</p>
+    <p>記録は、この端末にだけ保存されます。</p>
+    <p>開発：App World Lab（App World 運営）</p>
     <p><a href="../">App World Lab</a></p>
   </footer>
 </main>

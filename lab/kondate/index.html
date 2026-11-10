@@ -3,7 +3,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>こんだて帖</title>
 <meta name="description" content="冷蔵庫にある食材から、今夜の晩ごはんを3品。足りないものは買い物リストに。">
-<meta name="theme-color" content="#f6ecdc">
+<meta name="theme-color" content="#f6ecdc" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#241a13" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="style.css">
 </head><body>
 <div class="app">
@@ -14,14 +16,18 @@
       <h1>こんだて帖</h1>
     </div>
   </header>
-  <p class="lead">冷蔵庫にあるものを選ぶだけで、今夜の3品が決まります。</p>
+  <p class="lead"><span class="ln">冷蔵庫にあるものを選ぶだけで、</span><span class="ln">今夜の3品が決まります。</span></p>
 
   <section class="pantry" aria-labelledby="h-pantry">
     <div class="sec-head">
       <h2 id="h-pantry"><span class="num">一</span>家にある食材</h2>
       <button type="button" class="link" id="clear">すべて解除</button>
     </div>
-    <p class="hint">しょうゆ・みそ・砂糖などの調味料は、選ばなくて大丈夫です。</p>
+    <p class="hint"><span class="ln">しょうゆ・みそ・砂糖などの調味料は、</span><span class="ln">選ばなくて大丈夫です。</span></p>
+    <div class="try" id="try">
+      <p><span class="ln">はじめてなら、</span><span class="ln">たまねぎ・にんじん・じゃがいも・豚肉・卵で</span><span class="ln">試してみましょう。</span></p>
+      <button type="button" class="sample" id="sample">例で試す</button>
+    </div>
     <div id="groups"></div>
   </section>
 
@@ -36,8 +42,7 @@
     </div>
     <div id="out" aria-live="polite">
       <div class="empty" id="empty">
-        <p>ここに、今夜の3品と作り方が出ます。</p>
-        <button type="button" class="sample" id="sample">お試し：たまねぎ・にんじん・じゃがいも・豚肉・卵</button>
+        <p><span class="ln">食材を選んで「献立を決める」を押すと、</span><span class="ln">ここに今夜の3品と作り方が出ます。</span></p>
       </div>
     </div>
   </section>

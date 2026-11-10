@@ -2,33 +2,36 @@
 <html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>家計ひとめ</title>
-<meta name="description" content="金額を入れて項目を押すだけの家計簿。今月の合計と予算の残り、項目ごとの使い道がひと目でわかります。">
-<meta name="theme-color" content="#eef2f1">
+<meta name="description" content="金額を入れて項目を押すだけの家計簿。今月いくら使ったか、予算があといくら残っているかがすぐわかります。">
+<meta name="theme-color" content="#eef2f1" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#111917" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="style.css">
 </head><body>
 <div class="shell">
   <header class="bar">
     <p class="brand"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="12" width="4" height="9" rx="1"/><rect x="10" y="7" width="4" height="14" rx="1"/><rect x="17" y="3" width="4" height="18" rx="1"/></svg>家計ひとめ</p>
-    <nav class="month" aria-label="月の切りかえ">
+    <nav class="month" aria-label="表示する月">
       <button type="button" id="prev" aria-label="前の月">‹</button>
       <h1 id="month">—</h1>
       <button type="button" id="next" aria-label="次の月">›</button>
     </nav>
   </header>
 
-  <section class="summary" aria-live="polite">
-    <p class="label">今月の支出</p>
+  <section class="summary" aria-live="polite" aria-label="今月のまとめ">
+    <p class="label" id="total-l">今月使ったお金</p>
     <p class="total"><span class="yen">¥</span><span id="total">0</span></p>
     <div class="meter" aria-hidden="true"><i id="meter"></i></div>
     <div class="facts">
       <p><span>予算</span><b id="budget-v">—</b></p>
       <p><span id="left-l">残り</span><b id="left">—</b></p>
-      <p><span>1日あたりの目安</span><b id="perday">—</b></p>
+      <p><span>1日に使える額</span><b id="perday">—</b></p>
     </div>
-    <button type="button" class="ghost" id="edit-budget">予算を設定する</button>
-    <form class="budget-form" id="budget-form" hidden>
-      <label for="budget-in">ひと月の予算（円）</label>
-      <div class="inline"><input id="budget-in" type="text" inputmode="numeric" autocomplete="off" placeholder="例：60000"><button type="submit" class="solid">保存</button></div>
+    <button type="button" class="ghost" id="edit-budget">予算を決める</button>
+    <form class="budget-form" id="budget-form" hidden novalidate>
+      <label for="budget-in">ひと月の予算</label>
+      <div class="inline"><span class="pre" aria-hidden="true">¥</span><input id="budget-in" type="text" inputmode="numeric" autocomplete="off" placeholder="60,000" aria-describedby="budget-help"><button type="submit" class="solid">保存</button></div>
+      <p class="help" id="budget-help">空にして保存すると、予算なしに戻ります。</p>
     </form>
   </section>
 
@@ -37,30 +40,31 @@
     <div class="amount-row">
       <label for="amount" class="sr">金額（円）</label>
       <span class="yen-big" aria-hidden="true">¥</span>
-      <input id="amount" type="text" inputmode="numeric" autocomplete="off" placeholder="0" maxlength="9">
+      <input id="amount" type="text" inputmode="numeric" autocomplete="off" placeholder="0" maxlength="11" aria-describedby="amount-err">
     </div>
+    <p class="field-err" id="amount-err" aria-live="assertive"></p>
     <div class="sub-row">
       <label for="date">日付</label><input id="date" type="date">
-      <label for="memo" class="sr">メモ</label><input id="memo" type="text" maxlength="30" placeholder="メモ（なくても可）">
+      <label for="memo">メモ</label><input id="memo" type="text" maxlength="30" placeholder="スーパー、ランチなど">
     </div>
-    <p class="hint">金額を入れて、項目を押すと記録されます。</p>
+    <p class="hint">金額を入れたら、項目を押して記録します。</p>
     <div class="cats" id="cats"></div>
     <p class="toast" id="toast" role="status"></p>
   </section>
 
-  <section aria-labelledby="h-cat">
-    <h2 id="h-cat">項目ごと</h2>
+  <section class="breakdown" aria-labelledby="h-cat">
+    <h2 id="h-cat">使いみち</h2>
     <ul class="bars" id="bars"></ul>
   </section>
 
-  <section aria-labelledby="h-list">
-    <h2 id="h-list">日ごとの記録</h2>
+  <section class="ledger" aria-labelledby="h-list">
+    <h2 id="h-list">記録</h2>
     <div id="list"></div>
   </section>
 
   <footer class="foot">
-    <p>作った人：App World Lab（App Worldの運営）</p>
-    <p>記録はこの端末の中だけに保存され、どこにも送られません。</p>
+    <p>記録は、この端末にだけ保存されます。</p>
+    <p>開発：App World Lab（App World 運営）</p>
     <p><a href="../">App World Lab</a></p>
   </footer>
 </div>

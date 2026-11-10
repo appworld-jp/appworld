@@ -33,6 +33,7 @@
   function syncGo() {
     $("go").disabled = have.size === 0;
     $("go-label").textContent = have.size ? `献立を決める（${have.size}品）` : "食材を選んでください";
+    $("try").hidden = have.size > 0;
   }
 
   // 点数：手持ちを多く使うほど高く、足りないものが多いほど低く
@@ -62,7 +63,6 @@
     const r = x.r, c = el("article", "card");
     const meta = el("div", "meta");
     meta.append(el("span", "tag", r.t), el("span", null, `約${r.m}分`), el("span", null, "2人分"));
-    const need = r.i.filter(([, a]) => !OPT.test(a)).length;
     meta.append(el("span", "score", x.miss === 0 ? "買い足しなし" : `買い足し${x.miss}品`));
     c.append(meta, el("h3", null, r.n));
     const ul = el("ul", "ing");
@@ -70,7 +70,7 @@
       const opt = OPT.test(amt), ok = has(id), nm = label(id);
       const li = el("li", ok ? "have" : opt ? "opt" : "need");
       li.append(el("span", "mk", ok ? "○" : opt ? "・" : "×"), el("span", "nm", nm), el("span", "amt", amt));
-      li.setAttribute("aria-label", `${nm} ${amt}、${ok ? "手持ちあり" : opt ? "なくても可" : "買い足し"}`);
+      li.setAttribute("aria-label", `${nm} ${amt}、${ok ? "家にある" : opt ? "なくてもよい" : "買い足す"}`);
       ul.append(li);
     });
     c.append(ul, el("p", "season", "調味料：" + r.s));
@@ -93,7 +93,7 @@
   }
 
   function shopping(t) {
-    const memo = $("memo"); memo.textContent = ""; $("copy-msg").textContent = "";
+    const memo = $("memo"); memo.textContent = ""; memo.classList.remove("all-done"); $("copy-msg").textContent = "";
     const need = new Map();
     t.forEach(({ r }) => r.i.forEach(([id, a]) => {
       if (has(id) || OPT.test(a)) return;
@@ -104,9 +104,18 @@
     if (!need.size) { const li = el("li"); li.append(el("span", "none", "買い足すものはありません。")); memo.append(li); return; }
     need.forEach((dishes, id) => {
       const li = el("li"), lab = el("label"), cb = el("input"); cb.type = "checkbox";
+      cb.addEventListener("change", doneCheck);
       lab.append(cb, el("span", "nm", label(id)), el("span", "for", dishes.join("・")));
       li.append(lab); memo.append(li);
     });
+  }
+
+  // 買い物リストをすべてチェックしたら、ひとこと出す
+  function doneCheck() {
+    const all = [...$("memo").querySelectorAll("input")];
+    const done = all.length && all.every(c => c.checked);
+    $("copy-msg").textContent = done ? "買い物完了です。いただきます！" : "";
+    $("memo").classList.toggle("all-done", !!done);
   }
 
   function run() {

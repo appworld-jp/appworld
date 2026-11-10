@@ -2,8 +2,9 @@
 <html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>えほんメーカー</title>
-<meta name="description" content="しゅじんこう、ばしょ、すきなものを選ぶと、手書きのお話の型から、ねる前に読む短い絵本ができあがります。読み上げもできます。">
+<meta name="description" content="主人公と場所と好きなものを選ぶだけで、寝る前に読む6ページの絵本ができます。声での読み上げつき。">
 <meta name="theme-color" content="#1e2340">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="style.css">
 </head><body>
 <svg class="defs" aria-hidden="true" focusable="false">
@@ -38,7 +39,7 @@
   <header class="title">
     <svg class="moon" viewBox="0 0 40 40" aria-hidden="true"><path d="M26 4a16 16 0 1 0 10 26A13 13 0 0 1 26 4z" fill="#f2d27a"/></svg>
     <h1>えほんメーカー</h1>
-    <p>3つえらぶと、ねるまえの えほんが できるよ。</p>
+    <p>3つ えらぶと、ねるまえに よむ えほんが できるよ。</p>
   </header>
 
   <form id="maker" class="maker" novalidate>
@@ -55,6 +56,7 @@
       <div class="choices" id="c-thing"></div>
     </fieldset>
     <button type="submit" class="make" id="make">えほんを つくる</button>
+    <button type="button" class="omakase" id="omakase">まよったら、おまかせで つくる</button>
     <p class="msg" id="msg" role="alert"></p>
   </form>
 
@@ -82,9 +84,9 @@
   </section>
 
   <footer class="foot">
-    <p>おうちの方へ：お話は、あらかじめ人が書いた文章の型に、選んだものを当てはめて作っています。読み上げは端末の音声機能を使います。</p>
-    <p>作った人：App World Lab（App Worldの運営）</p>
-    <p>選んだものはこの端末の中だけに保存され、どこにも送られません。</p>
+    <p class="parent">おうちの方へ：お話は、人が書いた5つのお話に、選んだ主人公や場所を当てはめて作ります。「こえで よむ」を押すと、端末の音声で読み上げます。</p>
+    <p>選んだものは、この端末にだけ保存されます。</p>
+    <p>開発：App World Lab（App World 運営）</p>
     <p><a href="../">App World Lab</a></p>
   </footer>
 </div>

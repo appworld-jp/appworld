@@ -18,7 +18,7 @@
   let lastId = null, toastTimer = null;
 
   try { const v = JSON.parse(localStorage.getItem(KEY) || "null"); if (v && Array.isArray(v.e)) st = { e: v.e.filter(x => x && typeof x.a === "number"), budget: +v.budget || 0 }; } catch (e) {}
-  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) { toast("この端末に保存できませんでした。", true); } };
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) { toast("保存できませんでした。ブラウザの設定で、サイトのデータ保存を許可してください。", true); } };
   const el = (t, c, x) => { const e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; };
   const svg = (p, color) => {
     const ns = "http://www.w3.org/2000/svg", s = document.createElementNS(ns, "svg"), path = document.createElementNS(ns, "path");
@@ -45,7 +45,8 @@
 
   function add(ci) {
     const a = parseAmount($("amount").value);
-    if (!a) { toast("先に金額を入れてください。", true); $("amount").focus(); return; }
+    if (!a) { $("amount-err").textContent = $("amount").value.trim() ? "金額は数字だけで入れてください（例：1200）。" : "先に金額を入れてください。"; $("amount").focus(); return; }
+    $("amount-err").textContent = "";
     const d = $("date").value || iso(new Date());
     const item = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), d, a, c: ci, m: $("memo").value.trim().slice(0, 30) };
     st.e.push(item); save();
@@ -54,7 +55,7 @@
     const [y, m] = d.split("-").map(Number);
     if (y !== view.getFullYear() || m !== view.getMonth() + 1) { view = new Date(y, m - 1, 1); }
     render();
-    toast(`${CATS[ci].n} ${yen(a)} を記録しました。`, false, true);
+    toast(`${CATS[ci].n}に${yen(a)}を記録しました。`, false, true); bump();
     $("amount").focus();
   }
 
@@ -67,6 +68,9 @@
       t.append(b);
     }
     clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.textContent = ""; }, 6000);
+  }
+  function bump() {
+    const t = $("total"); t.classList.remove("bump"); void t.offsetWidth; t.classList.add("bump");
   }
   function remove(id) { st.e = st.e.filter(x => x.id !== id); save(); render(); }
 
@@ -82,9 +86,10 @@
     $("total").textContent = Math.round(total).toLocaleString("ja-JP");
     const B = st.budget;
     $("budget-v").textContent = B ? yen(B) : "未設定";
-    $("edit-budget").textContent = B ? "予算を変更する" : "予算を設定する";
+    $("edit-budget").textContent = B ? "予算を変える" : "予算を決める";
+    $("total-l").textContent = cur ? "今月使ったお金" : `${m}月に使ったお金`;
     const left = B - total;
-    $("left-l").textContent = B && left < 0 ? "超えた分" : "残り";
+    $("left-l").textContent = B && left < 0 ? "予算オーバー" : "残り";
     $("left").textContent = B ? yen(Math.abs(left)) : "—";
     $("left").className = B && left < 0 ? "neg" : "";
     const dim = new Date(y, m, 0).getDate();
@@ -98,6 +103,8 @@
     const sums = CATS.map((_, i) => items.filter(x => x.c === i).reduce((s, x) => s + x.a, 0));
     const max = Math.max(1, ...sums);
     const bars = $("bars"); bars.textContent = "";
+    if (!total) { bars.append(el("li", "empty", "記録すると、食費・日用品などの合計がここに出ます。")); }
+    else
     sums.forEach((v, i) => {
       const li = el("li"), tr = el("span", "track"), fill = el("i");
       fill.style.width = (v / max * 100) + "%"; fill.style.background = color(i);
@@ -111,7 +118,7 @@
     // 日ごとの一覧（新しい日付が上）
     const list = $("list"); list.textContent = "";
     if (!items.length) {
-      list.append(el("p", "empty", cur ? "まだ記録がありません。金額を入れて、上の項目を押してみてください。" : "この月の記録はありません。"));
+      list.append(el("p", "empty", cur ? "記録した支出が、日付ごとにここに並びます。" : `${m}月の記録はありません。`));
       return;
     }
     const byDay = {};
@@ -144,9 +151,14 @@
   $("budget-form").addEventListener("submit", ev => {
     ev.preventDefault();
     const raw = $("budget-in").value.trim();
-    st.budget = raw ? parseAmount(raw) : 0; save();
+    const v = raw ? parseAmount(raw) : 0;
+    if (raw && !v) { $("budget-help").textContent = "数字だけで入れてください（例：60000）。"; $("budget-help").className = "help err"; $("budget-in").focus(); return; }
+    $("budget-help").textContent = "空にして保存すると、予算なしに戻ります。"; $("budget-help").className = "help";
+    st.budget = v; save();
     $("budget-form").hidden = true; render();
   });
+
+  $("amount").addEventListener("input", () => { $("amount-err").textContent = ""; });
 
   render();
 })();

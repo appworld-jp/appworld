@@ -29,11 +29,18 @@
     const sv = svgEl("svg", { viewBox: "0 0 24 24", "aria-hidden": "true" });
     sv.append(svgEl("path", { d: COVERS[i % COVERS.length][1], fill: "none", stroke: "#23325a", "stroke-width": "2.2", "stroke-linecap": "round", "stroke-linejoin": "round" }));
     cv.append(sv);
-    const t = document.createElement("span"); t.textContent = s.title;
+    const t = document.createElement("span"); t.className = "name"; titleInto(t, s.title);
     b.append(cv, t);
     b.addEventListener("click", () => { pick = i; saved.pick = i; store(); syncBooks(); preview(); });
     $("books").append(b);
   });
+  // 「くじらのクウと、ひかるかい」→ 読点のあとで改行する
+  function titleInto(node, title) {
+    node.textContent = "";
+    const i = title.indexOf("、");
+    const parts = i < 0 ? [title] : [title.slice(0, i + 1), title.slice(i + 1)];
+    parts.forEach(x => { const e = document.createElement("span"); e.className = "ln"; e.textContent = x; node.append(e); });
+  }
   function syncBooks() { [...$("books").children].forEach((b, i) => { b.setAttribute("aria-checked", String(i === pick)); b.tabIndex = i === pick ? 0 : -1; }); }
   $("books").addEventListener("keydown", e => {
     const d = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key]; if (!d || timer) return;
@@ -82,8 +89,8 @@
   function show(p) {
     const st = S[pick], a = A[p];
     where(a.say.split("、")[1], a.say.split("、")[0], "をみがこう！");
-    $("part-label").textContent = `${p + 1}ばんめのばめん（ぜんぶで6つ）`;
-    $("title").textContent = st.title;
+    $("part-label").textContent = `ばめん${p + 1}／6`;
+    titleInto($("title"), st.title);
     $("text").textContent = st.parts[p];
     drawMap(a); stars(p);
     say(`${a.say}を、みがこう。${st.parts[p]}`);
@@ -126,7 +133,7 @@
       clearInterval(timer); timer = null; remain = Math.max(0, endAt - Date.now()); paused = true;
       if (canSpeak) speechSynthesis.cancel();
       $("pause").querySelector("span").textContent = "つづける"; setMode("pause");
-      where("ひとやすみ", "", "つづけるをおしてね");
+      where("ひとやすみ", "", "「つづける」をおしてね");
     } else {
       paused = false; endAt = Date.now() + remain; part = -1;
       $("pause").querySelector("span").textContent = "ちょっとまって"; setMode("run");
@@ -143,6 +150,7 @@
     saved.done = (saved.done || 0) + 1; store();
     setMode("done"); stars(6, true); drawMap(null);
     $("time").textContent = "0:00";
+    $("arc").style.strokeDashoffset = "0";
     where("ぴかぴか！", "", "よくがんばったね");
     $("part-label").textContent = "おしまい";
     count();
@@ -150,17 +158,17 @@
     say("ぴかぴか。よくがんばったね。");
     $("start").focus();
   }
-  function count() { $("count").textContent = saved.done ? `これまでに ${saved.done}かい、ぴかぴかにしたよ` : ""; }
+  function count() { $("count").textContent = saved.done ? `これまでに${saved.done}かい、ぴかぴかにしたよ！` : ""; }
   function preview() {
     if (timer || paused) return;
     $("part-label").textContent = "きょうのおはなし";
-    $("title").textContent = S[pick].title;
-    $("text").textContent = "はじめるをおすと、おはなしがはじまるよ。30びょうごとに、つぎのばめんにすすみます。";
+    titleInto($("title"), S[pick].title);
+    $("text").textContent = "「はじめる」をおすと、おはなしがはじまるよ。30びょうごとに、つぎのばめんにすすむよ。";
   }
   function reset() {
     setMode("idle"); remain = TOTAL;
     $("time").textContent = fmt(TOTAL); $("arc").style.strokeDashoffset = "0";
-    where("じゅんびはいい？", "", "はじめるをおしてね");
+    where("よーい", "", "「はじめる」をおしてね");
     $("start").querySelector("span").textContent = "はじめる";
     stars(-1); drawMap(null); preview();
   }
@@ -171,4 +179,5 @@
   document.addEventListener("visibilitychange", () => { if (!document.hidden && timer) { tick(); wake(true); } });
 
   syncBooks(); reset(); count();
+  { const b = $("books"), c = b.children[pick]; if (c) b.scrollLeft = c.offsetLeft - b.offsetLeft - 16; }
 })();

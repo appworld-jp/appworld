@@ -90,3 +90,14 @@ details[open] summary::before { content: "－ "; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 @media (prefers-reduced-motion: no-preference) { .card { animation: up .35s ease both; } .card:nth-child(2) { animation-delay: .06s; } .card:nth-child(3) { animation-delay: .12s; } }
 @keyframes up { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+/* 改行のととのえ */
+h1, h2, h3, .sample { text-wrap: balance; }
+p, li { text-wrap: pretty; }
+.try { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 0 0 16px; padding: 12px 14px; border-radius: 14px; background: var(--paper); border: 1.5px dashed var(--mustard); }
+.try[hidden] { display: none; }
+.try p { margin: 0; font-size: 14px; flex: 1 1 14em; }
+.try .sample { min-height: 44px; background: var(--accent); color: var(--accent-ink); border-color: var(--accent); font-weight: 700; }
+.memo.all-done { border-left-color: var(--herb); }
+.ln { display: inline-block; }
+.try .sample { padding: 10px 22px; }
