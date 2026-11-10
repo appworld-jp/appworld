@@ -2,7 +2,7 @@
 <html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>こんだて帖</title>
-<meta name="description" content="冷蔵庫にある食材から、今夜の晩ごはんを3品。足りないものは買い物リストに。">
+<meta name="description" content="家にある食材を入れると、約330品の家庭料理から今夜の主菜・副菜・汁物を選びます。足りないものは買い物リストに。">
 <meta name="theme-color" content="#f6ecdc" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#241a13" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
@@ -16,40 +16,76 @@
       <h1>こんだて帖</h1>
     </div>
   </header>
-  <p class="lead"><span class="ln">冷蔵庫にあるものを選ぶだけで、</span><span class="ln">今夜の3品が決まります。</span></p>
+  <p class="lead"><span class="ln">家にある食材を入れるだけで、</span><span class="ln">今夜の3品が決まります。</span></p>
 
   <section class="pantry" aria-labelledby="h-pantry">
     <div class="sec-head">
       <h2 id="h-pantry"><span class="num">一</span>家にある食材</h2>
-      <button type="button" class="link" id="clear">すべて解除</button>
+      <button type="button" class="link" id="clear">すべて外す</button>
     </div>
-    <p class="hint"><span class="ln">しょうゆ・みそ・砂糖などの調味料は、</span><span class="ln">選ばなくて大丈夫です。</span></p>
+
+    <div class="finder">
+      <label for="q" class="f-label">食材の名前</label>
+      <div class="f-row">
+        <input id="q" type="text" inputmode="search" enterkeyhint="done" autocomplete="off" autocapitalize="off" spellcheck="false"
+          placeholder="豚こま、ツナ缶、アボカド" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="sugg" aria-describedby="f-hint">
+        <button type="button" class="add" id="add">追加</button>
+      </div>
+      <ul id="sugg" class="sugg" role="listbox" aria-label="食材の候補" hidden></ul>
+      <p class="hint" id="f-hint"><span class="ln">ひらがなでも入れられます。</span><span class="ln">しょうゆ・みそ・砂糖などの調味料は、</span><span class="ln">入れなくて大丈夫です。</span></p>
+      <p class="say" id="say" aria-live="polite"></p>
+    </div>
+
+    <div class="picked-wrap" id="picked-wrap" hidden>
+      <p class="picked-head">入れた食材 <span id="picked-n"></span></p>
+      <div class="picked" id="picked"></div>
+      <p class="hint" id="free-note" hidden><span class="ln">点線の食材は一覧にないので、</span><span class="ln">料理名や材料名に同じ言葉があるときに使います。</span></p>
+    </div>
+
     <div class="try" id="try">
-      <p><span class="ln">はじめてなら、</span><span class="ln">たまねぎ・にんじん・じゃがいも・豚肉・卵で</span><span class="ln">試してみましょう。</span></p>
+      <p><span class="ln">はじめてなら、</span><span class="ln">たまねぎ・にんじん・</span><span class="ln">じゃがいも・豚肉・卵で</span><span class="ln">試してみましょう。</span></p>
       <button type="button" class="sample" id="sample">例で試す</button>
     </div>
+
+    <p class="list-head">よく使う食材から選ぶ</p>
     <div id="groups"></div>
   </section>
 
   <div class="dock">
-    <button type="button" class="go" id="go"><span id="go-label">食材を選んでください</span></button>
+    <button type="button" class="go" id="go"><span id="go-label">食材を入れてください</span></button>
   </div>
 
   <section class="results" aria-labelledby="h-res">
     <div class="sec-head">
-      <h2 id="h-res"><span class="num">二</span>きょうの3品</h2>
+      <h2 id="h-res"><span class="num">二</span>今夜の3品</h2>
       <button type="button" class="link" id="more" hidden>ほかの3品</button>
     </div>
+    <div class="filters" role="group" aria-label="絞り込み">
+      <button type="button" class="fchip quick" id="quick" aria-pressed="false">20分以内</button>
+      <div class="genres" id="genres" role="group" aria-label="ジャンル"></div>
+    </div>
+    <p class="hint" id="pick-msg" aria-live="polite"></p>
     <div id="out" aria-live="polite">
       <div class="empty" id="empty">
-        <p><span class="ln">食材を選んで「献立を決める」を押すと、</span><span class="ln">ここに今夜の3品と作り方が出ます。</span></p>
+        <p><span class="ln">食材を入れて「献立を決める」を押すと、</span><span class="ln"><span id="dish-count">約330品</span>の家庭料理から、</span><span class="ln">主菜・副菜・汁物の3品と作り方が出ます。</span></p>
       </div>
     </div>
   </section>
 
+  <section class="cands" id="cands" hidden aria-labelledby="h-cands">
+    <div class="sec-head">
+      <h2 id="h-cands"><span class="num">三</span>ほかの候補</h2>
+    </div>
+    <p class="hint" id="cands-sum"></p>
+    <div class="ltabs" id="ltabs" role="group" aria-label="料理の種類"></div>
+    <ul class="clist" id="clist"></ul>
+    <button type="button" class="lmore" id="lmore" hidden>もっと見る</button>
+  </section>
+
   <section class="shop" id="shop" hidden aria-labelledby="h-shop">
     <div class="sec-head">
-      <h2 id="h-shop"><span class="num">三</span>買い物リスト</h2>
+      <h2 id="h-shop"><span class="num">四</span>買い物リスト</h2>
+      <span class="shop-n" id="shop-n"></span>
       <button type="button" class="link" id="copy">コピー</button>
     </div>
     <ul class="memo" id="memo"></ul>
@@ -57,11 +93,12 @@
   </section>
 
   <footer class="foot">
-    <p>選んだ食材は、この端末にだけ保存されます。</p>
+    <p>入れた食材は、この端末にだけ保存されます。</p>
     <p>開発：App World Lab（App World 運営）</p>
     <p><a href="../">App World Lab</a></p>
   </footer>
 </div>
+<script src="foods.js"></script>
 <script src="recipes.js"></script>
 <script src="app.js"></script>
 </body></html>
