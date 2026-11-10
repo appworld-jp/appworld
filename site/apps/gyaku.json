@@ -1,0 +1,18 @@
+{
+  "id": "gyaku",
+  "name": "出発から逆算タイマー",
+  "tagline": "出る時刻から逆算、今やることと遅れを大きく表示",
+  "description": "家を出る時刻（または着く時刻）と、それまでにやることの時間を入れると、何時に何を始めればいいかを逆算して表示します。「はじめる」を押すと、今やること、次のやることまでの残り時間、「2分おくれ」「3分よゆう」を大きく表示。やることの開始時刻にチャイムを鳴らすこともできます（チャイムのボタンでオン）。朝の支度、子どもの登園、出張の日などのひな形があり、段取りは並べかえて複数保存できます。段取りはこの端末にだけ保存されます。",
+  "platform": "web",
+  "category": "productivity",
+  "ai_tools": [
+    "Claude Code"
+  ],
+  "maker_name": "App World Lab（運営）",
+  "url": "https://appworld-lab.pages.dev/gyaku/",
+  "launch_date": "2026-11-10",
+  "beta": false,
+  "operator": true,
+  "color": "#FFA630",
+  "icon": true
+}

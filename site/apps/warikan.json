@@ -1,0 +1,18 @@
+{
+  "id": "warikan",
+  "name": "立て替え精算",
+  "tagline": "旅行や飲み会の立て替えを、少ない送金回数で精算",
+  "description": "旅行や飲み会で立て替えたお金を入れると、だれがだれにいくら払えばいいかを計算します。支払いごとに「だれの分か」を選べて、先輩多めなどの割合も決められます。送金の回数ができるだけ少なくなる組み合わせを出し、1円・10円・100円単位にそろえたときの端数をだれが持つかも選べます。LINEに貼れるまとめ文をコピーでき、精算はいくつでも保存できます。全角の数字やカンマ入りの金額もそのまま入力できます。記録はこの端末にだけ保存されます。",
+  "platform": "web",
+  "category": "lifestyle",
+  "ai_tools": [
+    "Claude Code"
+  ],
+  "maker_name": "App World Lab（運営）",
+  "url": "https://appworld-lab.pages.dev/warikan/",
+  "launch_date": "2026-11-10",
+  "beta": false,
+  "operator": true,
+  "color": "#24324F",
+  "icon": true
+}

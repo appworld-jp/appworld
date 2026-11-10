@@ -18,8 +18,11 @@ HERE = pathlib.Path(__file__).resolve().parent
 URLS = dict(site_url="https://appworld-1ug.pages.dev",
             submit_url="https://github.com/appworld-jp/appworld/issues/new?template=listing.yml",
             contact_url="https://github.com/appworld-jp/appworld/issues/new")
-LAB = ["kondate", "kakei", "tabi", "hamigaki", "ehon", "mizu", "tsundoku", "kanji", "eigo", "kotoba", "haiku", "quiz",
-       "pomodoro", "gijiroku", "mitsumori", "shift", "review", "commit", "gym", "nemu", "sanpo", "palette", "dot", "bug"]
+KONDATE_TAGLINE = json.loads((HERE / "apps" / "kondate.json").read_text(encoding="utf-8"))["tagline"]
+# The operator's own listings that are live on the build date used below.
+LAB = sorted(p.stem for p in (HERE / "apps").glob("*.json")
+             if json.loads(p.read_text(encoding="utf-8")).get("operator")
+             and json.loads(p.read_text(encoding="utf-8"))["launch_date"] <= "2026-11-10")
 
 
 class Audit(HTMLParser):
@@ -118,7 +121,7 @@ class BuildTest(unittest.TestCase):
         self.run_build()
         text = (self.out / "app-kondate.html").read_text(encoding="utf-8")
         for needle in ["<title>こんだて帖 | App World</title>",
-                       '<meta name="description" content="冷蔵庫の食材から、今夜の3品が決まる">',
+                       f'<meta name="description" content="{KONDATE_TAGLINE}">',
                        '<link rel="canonical" href="https://appworld-1ug.pages.dev/app-kondate">',
                        '<meta property="og:title"', '<meta property="og:description"', '<meta property="og:url"',
                        '<meta property="og:type"', '<meta property="og:site_name" content="App World">',
@@ -135,12 +138,12 @@ class BuildTest(unittest.TestCase):
         for tag in ("title", "link", "description"):
             self.assertTrue(channel.findtext(tag))
         items = channel.findall("item")
-        self.assertEqual(len(items), 24)
+        self.assertEqual(len(items), min(30, len(LAB)))
         for it in items:
             self.assertTrue(it.findtext("link").startswith("https://appworld-1ug.pages.dev/app-"))
             self.assertRegex(it.findtext("pubDate"), r"^\w{3}, \d{2} \w{3} \d{4} 00:00:00 \+0900$")
         locs = [u.findtext("{http://www.sitemaps.org/schemas/sitemap/0.9}loc") for u in ET.parse(self.out / "sitemap.xml").getroot()]
-        self.assertEqual(len(locs), 4 + 24)
+        self.assertEqual(len(locs), 4 + len(LAB))
         self.assertTrue(all(u.startswith("https://appworld-1ug.pages.dev/") for u in locs))
         self.assertIn("Sitemap: https://appworld-1ug.pages.dev/sitemap.xml", (self.out / "robots.txt").read_text())
 

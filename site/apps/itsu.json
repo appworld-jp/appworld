@@ -1,0 +1,18 @@
+{
+  "id": "itsu",
+  "name": "いつやった？帳",
+  "tagline": "家事の「前回いつ？」を記録、次の時期がわかる帳面",
+  "description": "エアコンのフィルター掃除、シーツの洗濯、歯ブラシの交換など、ときどきやる家事や手入れを記録する帳面です。項目ごとにめやす（2週間ごと、毎月など）を決めておき、やったら「今日やった」を押すだけ。「3日すぎています」「あと2日」のように、過ぎている順に並びます。別の日の記録、項目ごとの履歴、よくある項目からの追加、取り消しにも対応。記録はこの端末にだけ保存され、ファイルに書き出して別の端末へ移せます。",
+  "platform": "web",
+  "category": "lifestyle",
+  "ai_tools": [
+    "Claude Code"
+  ],
+  "maker_name": "App World Lab（運営）",
+  "url": "https://appworld-lab.pages.dev/itsu/",
+  "launch_date": "2026-11-10",
+  "beta": false,
+  "operator": true,
+  "color": "#C8432B",
+  "icon": true
+}

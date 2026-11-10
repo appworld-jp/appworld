@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ごみの日カレンダー</title>
+<meta name="description" content="お住まいの地域のごみの収集日を一度登録すれば、今日と明日に出すごみ、月のカレンダー、種類ごとの次の収集日がすぐにわかります。">
+<meta name="theme-color" content="#1d5a3a">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="style.css">
+</head><body>
+<header class="board">
+  <div class="board-in">
+    <p class="area" id="area-label" hidden></p>
+    <h1>ごみの日カレンダー</h1>
+    <nav class="tabs" aria-label="画面の切りかえ" id="tabs" hidden>
+      <button type="button" class="tab" id="tab-cal" aria-current="page">カレンダー</button>
+      <button type="button" class="tab" id="tab-rules">収集日の設定</button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <!-- はじめて -->
+  <section class="start" id="start" aria-labelledby="h-start" hidden>
+    <h2 id="h-start">収集日を一度登録すれば、<br>今日出すごみがすぐわかります。</h2>
+    <p>よくある分け方から始めて、曜日をお住まいの地域に合わせるのがかんたんです。手元に自治体のごみカレンダーを用意してください。</p>
+    <ol class="start-demo" aria-label="例">
+      <li><span class="bdg c0">燃</span>燃えるごみ<b>毎週 月・木</b></li>
+      <li><span class="bdg c3">プ</span>プラスチック<b>毎週 水</b></li>
+      <li><span class="bdg c4">缶</span>びん・缶<b>第1・第3 金</b></li>
+    </ol>
+    <div class="start-btns">
+      <button type="button" class="btn main" id="start-preset">よくある分け方ではじめる</button>
+      <button type="button" class="btn" id="start-blank">自分で1つずつ登録する</button>
+    </div>
+  </section>
+
+  <!-- カレンダー -->
+  <section id="view-cal" aria-label="カレンダー" hidden>
+    <div class="days">
+      <article class="day today" aria-labelledby="h-today">
+        <h2 id="h-today"><span>今日</span><small id="today-date"></small></h2>
+        <ul class="day-kinds" id="today-kinds" aria-live="polite"></ul>
+      </article>
+      <article class="day tmr" aria-labelledby="h-tmr">
+        <h2 id="h-tmr"><span>明日</span><small id="tmr-date"></small></h2>
+        <ul class="day-kinds" id="tmr-kinds"></ul>
+      </article>
+    </div>
+    <p class="time-note" id="time-note" hidden></p>
+
+    <section class="next" aria-labelledby="h-next">
+      <h2 id="h-next" class="sec">次の収集日</h2>
+      <ul class="next-list" id="next-list"></ul>
+    </section>
+
+    <section class="month" aria-labelledby="h-month">
+      <div class="month-head">
+        <button type="button" class="nav" id="prev" aria-label="前の月">‹</button>
+        <h2 id="h-month" class="sec" aria-live="polite"></h2>
+        <button type="button" class="nav" id="next" aria-label="次の月">›</button>
+      </div>
+      <div class="cal" id="cal" role="grid" aria-labelledby="h-month"></div>
+      <p class="pick" id="pick" aria-live="polite"></p>
+      <ul class="legend" id="legend" aria-label="凡例"></ul>
+    </section>
+  </section>
+
+  <!-- 設定 -->
+  <section id="view-rules" aria-labelledby="h-rules" hidden>
+    <h2 id="h-rules" class="sec">収集日の設定</h2>
+    <p class="hint" id="rules-hint">自治体のごみカレンダーを見ながら、曜日を合わせてください。変えた内容は、すぐに保存されます。</p>
+    <div class="kinds" id="kinds"></div>
+
+    <div class="add-kind">
+      <h3 class="sec2">種類を追加</h3>
+      <div class="kind-presets" id="kind-presets"></div>
+      <form class="row" id="kind-form" novalidate>
+        <label class="vh" for="kind-name">種類の名前</label>
+        <input id="kind-name" maxlength="16" placeholder="小型家電" aria-describedby="kind-err" autocomplete="off">
+        <button type="submit" class="btn">追加</button>
+      </form>
+      <p class="ferr" id="kind-err"></p>
+    </div>
+
+    <section class="opt" aria-labelledby="h-skip">
+      <h3 id="h-skip" class="sec2">収集のない日</h3>
+      <p class="hint">年末年始などで収集が休みの日です。この日は、どの種類も表示しません。</p>
+      <form class="row" id="skip-form" novalidate>
+        <label class="vh" for="skip-date">休みの日</label>
+        <input type="date" id="skip-date" aria-describedby="skip-err">
+        <button type="submit" class="btn">追加</button>
+      </form>
+      <button type="button" class="link" id="skip-ny"></button>
+      <p class="ferr" id="skip-err"></p>
+      <ul class="chips" id="skips"></ul>
+    </section>
+
+    <section class="opt" aria-labelledby="h-more">
+      <h3 id="h-more" class="sec2">表示するメモ</h3>
+      <label class="field"><span>地区の名前</span><input id="opt-area" maxlength="24" placeholder="桜町3丁目" autocomplete="off"></label>
+      <label class="field"><span>出す時間</span><input id="opt-time" maxlength="24" placeholder="朝8時30分まで" autocomplete="off"></label>
+    </section>
+
+    <section class="opt" aria-labelledby="h-move">
+      <h3 id="h-move" class="sec2">機種変更のとき</h3>
+      <p class="hint">設定はこの端末の中だけにあります。新しい端末へは、ファイルに書き出して読みこんでください。</p>
+      <div class="row wrap-row">
+        <button type="button" class="btn" id="export">ファイルに書き出す</button>
+        <label class="btn file">ファイルを読みこむ<input type="file" id="import" accept="application/json,.json"></label>
+      </div>
+      <p class="ferr" id="move-err" role="alert"></p>
+    </section>
+    <button type="button" class="btn main done-btn" id="to-cal">カレンダーを見る</button>
+  </section>
+
+  <footer class="foot">
+    <p>設定は、この端末にだけ保存されます。</p>
+    <p>開発：App World Lab（App World 運営）</p>
+    <p><a href="../">App World Lab</a></p>
+  </footer>
+</main>
+<div class="toast" id="toast" role="status" aria-live="polite"><span id="toast-t"></span><button type="button" id="toast-undo" hidden>取り消す</button></div>
+<script src="app.js"></script>
+</body></html>

@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>いつやった？帳</title>
+<meta name="description" content="エアコンのフィルターやシーツの洗濯など、ときどきやる家事を「今日やった」で記録。次はいつか、どれくらい過ぎているかがひと目でわかります。">
+<meta name="theme-color" content="#f4eedf" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1d1b17" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="style.css">
+</head><body>
+<main class="book">
+  <header class="cover">
+    <div class="title">
+      <h1>いつやった？<span class="cho">帳</span></h1>
+      <p class="today" id="today"></p>
+    </div>
+    <p class="lead"><span>やったら押すだけ。</span><span>次はいつか、すぐにわかります。</span></p>
+    <p class="tally" id="tally" aria-live="polite" hidden></p>
+  </header>
+
+  <section class="pages" aria-labelledby="h-list">
+    <h2 id="h-list" class="vh">項目</h2>
+    <ol class="list" id="list"></ol>
+    <button type="button" class="add-open" id="add-open" aria-expanded="false" aria-controls="add" hidden>＋ 項目を追加</button>
+  </section>
+
+  <section class="add" id="add" aria-labelledby="h-add">
+    <h2 id="h-add" class="sec">よくある項目から選ぶ</h2>
+    <p class="hint" id="add-hint">気になるものを選んで「追加する」を押してください。めやすは、あとから変えられます。</p>
+    <div class="presets" id="presets" role="group" aria-labelledby="h-add"></div>
+    <div class="add-row"><button type="button" class="btn ink" id="add-presets" disabled>追加する</button><span class="pcount" id="pcount" aria-live="polite"></span></div>
+
+    <h3 class="sec2">自分で入れる</h3>
+    <form class="custom" id="custom" novalidate>
+      <label class="f-name"><span>項目</span><input id="c-name" maxlength="30" placeholder="ベランダの掃除" aria-describedby="c-err" autocomplete="off"></label>
+      <div class="f-every"><span id="c-every-l">めやす</span>
+        <div class="every" role="group" aria-labelledby="c-every-l">
+          <input id="c-n" type="text" inputmode="numeric" value="1" aria-label="数" aria-describedby="c-err">
+          <select id="c-unit" aria-label="単位"><option value="d">日</option><option value="w">週間</option><option value="m" selected>か月</option></select>
+          <span>ごと</span>
+        </div>
+      </div>
+      <button type="submit" class="btn">追加</button>
+      <p class="ferr" id="c-err"></p>
+    </form>
+    <button type="button" class="link" id="add-close" hidden>閉じる</button>
+  </section>
+
+  <section class="move" aria-labelledby="h-move">
+    <h2 id="h-move" class="sec">機種変更のとき</h2>
+    <p class="hint">記録はこの端末の中だけにあります。新しい端末へは、ファイルに書き出して読みこんでください。</p>
+    <div class="move-row">
+      <button type="button" class="btn ghost" id="export">ファイルに書き出す</button>
+      <label class="btn ghost file">ファイルを読みこむ<input type="file" id="import" accept="application/json,.json"></label>
+    </div>
+    <p class="ferr" id="move-err" role="alert"></p>
+  </section>
+
+  <footer class="foot">
+    <p>記録は、この端末にだけ保存されます。</p>
+    <p>開発：App World Lab（App World 運営）</p>
+    <p><a href="../">App World Lab</a></p>
+  </footer>
+</main>
+
+<dialog class="sheet" id="sheet" aria-labelledby="d-name">
+  <form method="dialog" class="sheet-close"><button class="x" aria-label="閉じる">×</button></form>
+  <h2 id="d-name"></h2>
+  <p class="d-status" id="d-status"></p>
+  <form class="d-other" id="d-other" novalidate>
+    <label for="d-date">別の日にやった</label>
+    <div class="row"><input type="date" id="d-date" aria-describedby="d-date-err"><button type="submit" class="btn">記録する</button></div>
+    <p class="ferr" id="d-date-err"></p>
+  </form>
+  <h3 class="sec2">これまでの記録</h3>
+  <ul class="hist" id="d-hist"></ul>
+  <details class="d-edit">
+    <summary>名前とめやすを変える</summary>
+    <form id="d-edit" novalidate>
+      <label class="f-name"><span>項目</span><input id="e-name" maxlength="30" aria-describedby="e-err" autocomplete="off"></label>
+      <div class="every" role="group" aria-label="めやす">
+        <input id="e-n" type="text" inputmode="numeric" aria-label="数" aria-describedby="e-err">
+        <select id="e-unit" aria-label="単位"><option value="d">日</option><option value="w">週間</option><option value="m">か月</option></select>
+        <span>ごと</span>
+      </div>
+      <p class="ferr" id="e-err"></p>
+      <button type="submit" class="btn ink">保存</button>
+    </form>
+  </details>
+  <button type="button" class="link danger" id="d-del">この項目を削除</button>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite" popover="manual"><span id="toast-t"></span><button type="button" id="toast-undo" hidden>取り消す</button></div>
+<script src="app.js"></script>
+</body></html>
