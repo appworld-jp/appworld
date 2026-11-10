@@ -2,18 +2,19 @@
 <html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>バグ探し練習帳</title>
-<meta name="description" content="1日1問、JavaScriptかPythonの短いコードからバグのある行を探す練習帳。答えると、原因と直し方、実際に起きがちな事故がわかります。">
+<meta name="description" content="1日1問、JavaScriptかPythonの短いコードからバグのある行を当てる練習帳。答えると、原因と直し方、実際に起きる事故がわかります。">
 <meta name="theme-color" content="#FBF8EF">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="style.css">
 </head><body>
 <div class="app">
   <header class="head">
     <div class="label">
-      <p class="sub">CODE REVIEW DRILL</p>
       <h1>バグ探し練習帳</h1>
     </div>
     <dl class="score" id="score" aria-live="polite"></dl>
   </header>
+  <p class="lead"><span class="nw">1日1問、バグのある行を当てるだけで、</span><span class="nw">よくある落とし穴が身につきます。</span></p>
 
   <nav class="tabs" aria-label="画面の切り替え">
     <button type="button" class="tab" id="tabToday" aria-pressed="true">今日の1問</button>
@@ -28,33 +29,34 @@
           <span class="qno" id="qNo"></span>
         </div>
         <h2 class="qtitle" id="qTitle"></h2>
-        <p class="ask" id="ask">バグがある行を1つ、タップしてください。</p>
+        <p class="ask" id="ask">バグのある行を1つ選んでください。</p>
         <div class="code" id="code" role="group" aria-labelledby="ask"></div>
       </div>
 
       <section class="result" id="result" hidden aria-live="polite">
+        <span class="hanko" id="hanko" aria-hidden="true"></span>
         <p class="verdict" id="verdict"></p>
-        <h3>なぜバグなのか</h3>
+        <h3>原因</h3>
         <p id="why"></p>
         <h3>直し方</h3>
         <pre class="fix" id="fix"></pre>
-        <h3>現実に起きがちな事故</h3>
+        <h3>実際に起きること</h3>
         <p class="incident" id="incident"></p>
-        <div class="next"><button type="button" class="btn" id="nextBtn">次の問題を解く</button></div>
+        <div class="next"><button type="button" class="btn" id="nextBtn">次の問題</button></div>
       </section>
     </section>
 
     <section id="viewList" hidden aria-labelledby="listTitle">
       <h2 class="h2" id="listTitle">問題一覧</h2>
-      <p class="note">毎日1問が「今日の1問」になります。ここからは、ほかの問題も練習できます。正解・不正解は最初の1回の答えで記録します。</p>
+      <p class="note">好きな問題から解けます。成績は、最初に選んだ答えで記録されます。</p>
       <ol class="qlist" id="qlist"></ol>
       <button type="button" class="reset" id="reset">成績をリセット</button>
     </section>
   </main>
 
   <footer class="foot">
-    <p>作った人：App World Lab（App Worldの運営）</p>
-    <p>成績はこの端末の中だけに保存され、どこにも送られません。</p>
+    <p>成績は、この端末にだけ保存されます。</p>
+    <p>開発：App World Lab（App World 運営）</p>
     <p><a href="../">App World Lab</a></p>
   </footer>
 </div>

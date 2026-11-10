@@ -14,15 +14,13 @@ a{color:var(--cyan)}
 :focus-visible{outline:4px solid var(--yel);outline-offset:4px}
 .app{max-width:640px;margin:0 auto;padding:max(20px,env(safe-area-inset-top)) max(20px,env(safe-area-inset-right)) calc(32px + env(safe-area-inset-bottom)) max(20px,env(safe-area-inset-left));display:grid;gap:26px}
 .title{text-align:center}
-.press{margin:0;color:var(--red);font-weight:700;letter-spacing:.3em;font-size:13px}
 .title h1{margin:4px 0;font-size:clamp(28px,8vw,40px);font-weight:700;letter-spacing:.06em;color:var(--yel);text-shadow:4px 4px 0 var(--red)}
-.lead{margin:0;color:var(--dim);font-size:14px}
+.lead{margin:0;color:var(--dim);font-size:14px;text-wrap:balance}
 /* chunky pixel frame with notched corners */
 .win{position:relative;background:var(--win);margin:4px;padding:16px;
   box-shadow:0 -4px 0 0 var(--edge),0 4px 0 0 var(--edge),-4px 0 0 0 var(--edge),4px 0 0 0 var(--edge),0 -8px 0 0 var(--bg),0 8px 0 0 var(--bg),8px 8px 0 0 #000}
 .start{display:grid;gap:14px;justify-items:center;text-align:center}
 .sprite{width:112px;height:72px}
-.howto{margin:0;font-size:14px;color:var(--dim)}
 .drop{position:relative;display:grid;justify-items:center;gap:4px;width:100%;padding:26px 10px;border:4px dashed var(--dim);cursor:pointer}
 .drop.over{border-color:var(--yel);background:rgba(254,231,97,.06)}
 .drop input{position:absolute;inset:0;opacity:0;width:100%;cursor:pointer}
@@ -51,6 +49,11 @@ a{color:var(--cyan)}
 .opt{margin-bottom:16px}
 .ol{display:block;font-size:14px;margin-bottom:6px}
 .ol output{color:var(--yel);font-weight:700}
+.ol small{font-size:12px;color:var(--dim);margin-left:4px}
+#view.boot{animation:boot .45s steps(4) both}
+@keyframes boot{0%{filter:brightness(3) contrast(.3);transform:scaleY(.04)}50%{transform:scaleY(1);filter:brightness(1.8)}100%{filter:none;transform:none}}
+.sprite{animation:bob 1.2s steps(2) infinite}
+@keyframes bob{50%{transform:translateY(-4px)}}
 .seg{display:flex;flex-wrap:wrap;gap:8px}
 .seg button{border:0;background:#2A2945;min-height:44px;min-width:52px;padding:0 12px;cursor:pointer;font-weight:700;box-shadow:inset 0 0 0 3px #4A4870}
 .seg button[aria-pressed=true]{background:var(--yel);color:#111;box-shadow:inset 0 0 0 3px #000}
@@ -70,3 +73,7 @@ input[type=range]{width:100%;accent-color:var(--yel);height:32px}
 .foot{text-align:center;font-size:12px;color:var(--dim)}
 .foot p{margin:0}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+.nw{display:inline-block}
+.saves{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.saves .btn{margin:4px;min-width:0}
+.saves #saveBig{grid-column:1/-1}

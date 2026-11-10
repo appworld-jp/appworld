@@ -2,24 +2,24 @@
 <html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>おえかき色見本</title>
-<meta name="description" content="写真から3〜8色の配色を取り出して、色見本カードにします。HEXとRGBのコピー、気に入った色の固定と作り直し、PNG画像での保存ができます。">
+<meta name="description" content="写真を選ぶだけで、その写真の色が3〜8色の色見本になります。色コードをコピーしたり、カードを画像で保存したりできます。">
 <meta name="theme-color" content="#F6F2EA">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="style.css">
 </head><body>
 <div class="app">
   <header class="head">
-    <p class="kicker">COLOR CHIPS</p>
     <h1>おえかき色見本</h1>
-    <p class="lead">好きな写真から、絵やデザインに使える色を取り出して、色見本カードにします。</p>
+    <p class="lead"><span class="nw">写真を選ぶだけで、</span><span class="nw">その写真の色が色見本になります。</span></p>
   </header>
 
   <label class="drop" id="drop">
     <input type="file" id="file" accept="image/*">
     <span class="drop-art" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
     <span class="drop-t">写真を選ぶ</span>
-    <span class="drop-s">ここに写真をドロップしても選べます</span>
+    <span class="drop-s">ドラッグ＆ドロップでも読み込めます</span>
   </label>
-  <p class="or"><button type="button" class="textbtn" id="sample">見本の絵で試してみる</button></p>
+  <p class="or"><button type="button" class="textbtn" id="sample">お試し：夕焼けの絵で作ってみる</button></p>
   <p class="msg" id="loadMsg" role="alert"></p>
 
   <section class="work" id="work" hidden>
@@ -31,20 +31,20 @@
     </div>
 
     <ol class="chips" id="chips" aria-live="polite" aria-label="取り出した色"></ol>
-    <p class="hint">気に入った色は「固定」すると、「作り直す」を押しても残ります。</p>
+    <p class="hint"><span class="nw">気に入った色は「固定」すると、</span><span class="nw">作り直しても残ります。</span></p>
 
     <div class="actions">
       <button type="button" class="btn ink" id="regen">作り直す</button>
-      <button type="button" class="btn" id="copyAll">色コードをまとめてコピー</button>
-      <button type="button" class="btn" id="savePng">カードをPNGで保存</button>
+      <button type="button" class="btn" id="copyAll">色コードをコピー</button>
+      <button type="button" class="btn" id="savePng">画像で保存</button>
     </div>
     <p class="msg" id="msg" role="status" aria-live="polite"></p>
-    <textarea class="fallback" id="fallback" readonly hidden aria-label="コピー用の色コード"></textarea>
+    <textarea class="fallback" id="fallback" readonly hidden aria-label="色コード（長押しで選んでコピー）"></textarea>
   </section>
 
   <footer class="foot">
-    <p>作った人：App World Lab（App Worldの運営）</p>
-    <p>写真はこの端末の中だけで処理され、どこにも送られません。</p>
+    <p>写真は、この端末の中だけで処理されます。</p>
+    <p>開発：App World Lab（App World 運営）</p>
     <p><a href="../">App World Lab</a></p>
   </footer>
 </div>

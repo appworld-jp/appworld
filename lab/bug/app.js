@@ -61,7 +61,7 @@
       code.appendChild(b);
     });
     const r = S.res[cur.id];
-    if (r) reveal(r.line, false); else { $("result").hidden = true; code.classList.remove("done"); $("ask").classList.remove("good"); $("ask").textContent = "バグがある行を1つ、タップしてください。"; }
+    if (r) reveal(r.line, false); else { $("result").hidden = true; code.classList.remove("done"); $("ask").classList.remove("good"); $("ask").textContent = "バグのある行を1つ選んでください。"; }
     $("tabToday").setAttribute("aria-pressed", String(isDaily));
     if (focus) $("qTitle").scrollIntoView({ block: "start", behavior: "auto" });
   }
@@ -84,15 +84,17 @@
       b.classList.toggle("right", ok && i === pick);
       b.setAttribute("aria-disabled", "true");
     });
-    $("ask").textContent = ok ? `あなたの答え：${pick + 1}行目（正解）` : `あなたの答え：${pick + 1}行目（不正解）`;
+    $("ask").textContent = `あなたの答え：${pick + 1}行目`;
     $("ask").classList.toggle("good", ok);
     const res = $("result"); res.hidden = false; res.classList.toggle("ok", ok);
-    $("verdict").textContent = ok ? (fresh ? "正解です！" : "この問題は正解しています") : `おしい！ バグは${cur.bug + 1}行目です`;
+    $("verdict").textContent = ok ? (fresh ? "正解！" : "正解済みの問題です") : `残念！バグは${cur.bug + 1}行目でした`;
+    const hk = $("hanko"); hk.textContent = ok ? "正解" : "復習"; hk.classList.toggle("ok", ok);
+    hk.classList.remove("press"); if (fresh) { void hk.offsetWidth; hk.classList.add("press"); }
     $("why").textContent = cur.why;
     $("fix").textContent = cur.fix;
     $("incident").textContent = cur.incident;
     const rest = P.filter(p => !S.res[p.id]).length;
-    $("nextBtn").textContent = rest ? (cur.id === dailyId() ? "練習でもう1問解く" : "次の問題を解く") : "問題一覧を見る";
+    $("nextBtn").textContent = rest ? (cur.id === dailyId() ? "もう1問解く" : "次の問題") : "全問解きました！一覧へ";
     if (fresh) $("verdict").scrollIntoView({ block: "nearest", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
   }
   $("nextBtn").addEventListener("click", () => {
@@ -118,7 +120,7 @@
     });
   }
   $("reset").addEventListener("click", () => {
-    if (!confirm("正解・不正解の記録と連続日数をすべて消します。よろしいですか？")) return;
+    if (!confirm("成績と連続日数をリセットしますか？元に戻せません。")) return;
     S.res = {}; S.daily = []; S.pick = null; save(); renderScore(); renderList();
   });
 

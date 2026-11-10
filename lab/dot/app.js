@@ -4,12 +4,12 @@
   const L = window.LabImg;
   const hex2 = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
   const PALETTES = [
-    { id: "auto", name: "自動（写真の色から）", colors: null },
-    { id: "gb", name: "携帯ゲーム機風 緑4色", colors: ["#0F380F", "#306230", "#8BAC0F", "#9BBC0F"] },
+    { id: "auto", name: "写真の色から", colors: null },
+    { id: "gb", name: "携帯ゲーム機風（緑4色）", colors: ["#0F380F", "#306230", "#8BAC0F", "#9BBC0F"] },
     { id: "r16", name: "レトロ16色", colors: ["#000000", "#1D2B53", "#7E2553", "#008751", "#AB5236", "#5F574F", "#C2C3C7", "#FFF1E8", "#FF004D", "#FFA300", "#FFEC27", "#00E436", "#29ADFF", "#83769C", "#FF77A8", "#FFCCAA"] },
-    { id: "cga", name: "初期パソコン風 4色", colors: ["#000000", "#55FFFF", "#FF55FF", "#FFFFFF"] },
-    { id: "sepia", name: "セピア4色", colors: ["#2B1D14", "#6B4A2F", "#B58B5A", "#F1DDB5"] },
-    { id: "mono", name: "白黒2色", colors: ["#000000", "#FFFFFF"] }
+    { id: "cga", name: "昔のパソコン風（4色）", colors: ["#000000", "#55FFFF", "#FF55FF", "#FFFFFF"] },
+    { id: "sepia", name: "セピア（4色）", colors: ["#2B1D14", "#6B4A2F", "#B58B5A", "#F1DDB5"] },
+    { id: "mono", name: "白黒（2色）", colors: ["#000000", "#FFFFFF"] }
   ];
   const SIZES = [16, 24, 32, 48, 64];
   const st = { img: null, size: 32, pal: "auto", n: 8, dither: false, outline: false, out: null };
@@ -92,7 +92,11 @@
     const cv = $("view"); cv.width = w; cv.height = h;
     cv.getContext("2d").putImageData(out, 0, 0);
     st.out = { w, h };
-    $("info").textContent = `${w}×${h}ドット・${used.size}色` + (st.dither ? "・ディザあり" : "") + (st.outline ? "・輪郭線あり" : "");
+    $("info").textContent = `${w}×${h}ドット・${used.size}色` + (st.dither ? "・網目あり" : "") + (st.outline ? "・ふちどりあり" : "");
+    $("saveRaw").textContent = `原寸で保存（${w}×${h}）`;
+    const sc = Math.max(1, Math.floor(1024 / Math.max(w, h)));
+    $("saveBig").textContent = `画像で保存（${w * sc}×${h * sc}）`;
+    cv.classList.remove("boot"); void cv.offsetWidth; cv.classList.add("boot");
     $("view").setAttribute("aria-label", `ドット絵にした画像（${w}×${h}ドット、${used.size}色）`);
     const sw = $("swatches"); sw.textContent = "";
     [...used].sort((a, b) => a - b).forEach(j => { const i = document.createElement("i"); i.style.background = L.hex(pal[j]); sw.appendChild(i); });
@@ -130,12 +134,12 @@
     const g = c.getContext("2d"); g.imageSmoothingEnabled = false;
     g.drawImage(src, 0, 0, c.width, c.height);
     c.toBlob(b => {
-      if (!b) { $("saveMsg").textContent = "画像を作れませんでした。"; return; }
+      if (!b) { $("saveMsg").textContent = "画像を作れませんでした。もう一度お試しください。"; return; }
       const url = URL.createObjectURL(b), a = document.createElement("a");
       a.href = url; a.download = `dot-${st.out.w}x${st.out.h}${scale > 1 ? "-x" + scale : ""}.png`;
       document.body.appendChild(a); a.click(); a.remove();
       setTimeout(() => URL.revokeObjectURL(url), 4000);
-      $("saveMsg").textContent = `${c.width}×${c.height}ピクセルのPNGを保存しました。`;
+      $("saveMsg").textContent = `${c.width}×${c.height}の画像を保存しました。`;
     }, "image/png");
   }
   $("saveBig").addEventListener("click", () => download(Math.max(1, Math.floor(1024 / Math.max(st.out ? st.out.w : 1, st.out ? st.out.h : 1)))));
@@ -150,7 +154,7 @@
   }
   async function fromFile(f) {
     try { const { img } = await L.load(f); use(img); }
-    catch (e) { $("err").textContent = e.message || "画像を読み込めませんでした。"; $("startWin").hidden = false; }
+    catch (e) { $("err").textContent = /ファイルを選んで/.test(e.message || "") ? "写真（画像ファイル）を選んでください。" : "この写真は読み込めませんでした。JPEGかPNGの写真でお試しください。"; $("work").hidden = !st.img; $("startWin").hidden = !!st.img; if (st.img) $("saveMsg").textContent = $("err").textContent; }
   }
   L.bind($("drop"), $("file"), fromFile);
   $("file2").addEventListener("change", () => { const f = $("file2").files[0]; if (f) fromFile(f); $("file2").value = ""; });

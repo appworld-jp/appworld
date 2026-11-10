@@ -79,9 +79,9 @@
       const bst = best(setsOf(S.ex));
       if (bst) { const e = document.createElement("span"); e.textContent = "ベスト " + setText(bst); p.append(e); }
     } else if (todays.length) {
-      p.textContent = "今日が初めての記録です。次回はここに今日のセットが表示されます。";
+      p.textContent = "今日が初めての記録です。次回は、今日のセットがここに出ます。";
     } else {
-      p.textContent = "この種目はまだ記録がありません。重さと回数を合わせて記録しましょう。次回からは前回のセットが自動で入ります。";
+      p.textContent = "はじめての種目です。重さと回数を合わせて記録すると、次回はその数字が最初から入ります。";
     }
     const list = $("today"); list.textContent = "";
     let running = null;
@@ -95,9 +95,16 @@
       if (better(s, running)) running = s;
       const del = document.createElement("button"); del.type = "button"; del.textContent = "取り消す";
       del.setAttribute("aria-label", `${i + 1}セット目（${setText(s)}）を取り消す`);
-      del.addEventListener("click", () => { S.sets = S.sets.filter(x => x.id !== s.id); save(); renderLog(); toast("セットを取り消しました"); });
+      del.addEventListener("click", () => {
+        const at = S.sets.indexOf(s);
+        S.sets = S.sets.filter(x => x.id !== s.id); save(); prefill(); renderLog();
+        toast(`${i + 1}セット目を取り消しました`, () => { S.sets.splice(at, 0, s); save(); prefill(); renderLog(); toast("元に戻しました"); });
+      });
+      if (s.id === fresh) li.className = "fresh";
       li.append(n, v, del); list.appendChild(li);
     });
+    fresh = null;
+    $("lead").hidden = S.sets.length > 0;
     $("todayEmpty").hidden = todays.length > 0;
     renderNums();
   }
@@ -105,8 +112,8 @@
   function renderNums() {
     if (document.activeElement !== $("wIn")) $("wIn").value = num(cur.w);
     if (document.activeElement !== $("rIn")) $("rIn").value = cur.r;
-    $("stepBtn").textContent = `刻み ${num(S.step)}kg（タップで変更）`;
-    $("wHint").textContent = cur.w === 0 ? "重さ0は自重として記録します" : "";
+    $("stepBtn").textContent = `刻み ${num(S.step)}kg・変更`;
+    $("wHint").textContent = cur.w === 0 ? "0kgは自重として記録します。" : "";
     $("goSub").textContent = setText(cur);
   }
 
@@ -131,15 +138,22 @@
     toast(`「${name}」を追加しました`);
   });
 
-  let toastT = 0;
-  function toast(msg) { const t = $("toast"); t.textContent = msg; clearTimeout(toastT); toastT = setTimeout(() => { t.textContent = ""; }, 2600); }
+  let toastT = 0, toastFn = null, fresh = null;
+  function toast(msg, undo) {
+    $("toastMsg").textContent = msg; toastFn = undo || null;
+    $("toastAct").hidden = !undo; $("toast").classList.add("show");
+    clearTimeout(toastT); toastT = setTimeout(() => { $("toast").classList.remove("show"); $("toastMsg").textContent = ""; $("toastAct").hidden = true; toastFn = null; }, undo ? 5000 : 2600);
+  }
+  $("toastAct").addEventListener("click", () => { const f = toastFn; toastFn = null; if (f) f(); });
 
   $("record").addEventListener("click", () => {
     audioInit();
     const before = best(setsOf(S.ex));
     const s = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), ex: S.ex, w: cur.w, r: cur.r, t: Date.now() };
-    S.sets.push(s); save();
-    toast(before && better(s, before) ? `自己ベスト更新！ ${setText(s)}` : `記録しました：${setText(s)}`);
+    S.sets.push(s); save(); fresh = s.id;
+    const pb = before && better(s, before);
+    toast(pb ? `自己ベスト更新！${setText(s)}` : `記録しました：${setText(s)}`);
+    const go = $("record"); go.classList.remove("hit", "pb"); void go.offsetWidth; go.classList.add(pb ? "pb" : "hit");
     prefill(); renderLog(); startRest();
   });
 
@@ -184,7 +198,7 @@
     $("arc").style.strokeDashoffset = String(CIRC * (1 - left / timer.total));
     if (left === 0 && !timer.done) {
       timer.done = true; alarm();
-      $("rest").classList.add("done"); $("restLbl").textContent = "休憩おわり。次のセットへ";
+      $("rest").classList.add("done"); $("restLbl").textContent = "休憩終わり。次のセットへ";
       clearInterval(tickI);
       setTimeout(() => { if (timer && timer.done) stopRest(); }, 6000);
     }
@@ -223,7 +237,7 @@
       const t = document.createElement("span"); t.className = "t"; t.textContent = ex;
       const b = document.createElement("span"); b.className = "best"; b.textContent = "ベスト " + setText(bst);
       const m = document.createElement("span"); m.className = "meta";
-      m.textContent = `${ses.length}回 ・ 最後は${dayLabel(ses[0][0])}` + (bst.w > 0 ? ` ・ ベストの日 ${dayLabel(dayKey(bst.t))}` : "");
+      m.textContent = `${ses.length}日分の記録・最後は${dayLabel(ses[0][0])}` + (bst.w > 0 ? `・ベストは${dayLabel(dayKey(bst.t))}` : "");
       sm.append(t, b, m); d.appendChild(sm);
       const ul = document.createElement("ul");
       for (const [k, list] of ses.slice(0, 30)) {
@@ -242,7 +256,7 @@
     $("wipe").hidden = used.length === 0;
   }
   $("wipe").addEventListener("click", () => {
-    if (!confirm("すべての記録を消します。元に戻せません。よろしいですか？")) return;
+    if (!confirm("すべての記録を消しますか？元に戻せません。")) return;
     S.sets = []; save(); renderHist(); prefill(); renderLog();
   });
 

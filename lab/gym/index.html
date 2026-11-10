@@ -2,8 +2,9 @@
 <html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>ジムメモ</title>
-<meta name="description" content="片手で使える筋トレ記録。前回の重さと回数が最初から入っていて、記録するとセット間の休憩タイマーが動きます。">
+<meta name="description" content="前回の重さと回数が最初から入るので、ジムではボタンを押すだけ。記録すると休憩タイマーが動きます。">
 <meta name="theme-color" content="#0B0B0C">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="style.css">
 </head><body>
 <div class="app">
@@ -16,13 +17,14 @@
   </header>
 
   <main>
+    <p class="lead" id="lead">前回の重さと回数が最初から入るので、押すだけで記録できます。</p>
     <section id="viewLog" aria-labelledby="exLbl">
       <div class="block">
         <h2 class="lbl" id="exLbl">種目</h2>
         <div class="chips" id="chips" role="group" aria-labelledby="exLbl"></div>
         <form class="addform" id="addForm" hidden>
           <label class="sr" for="addName">新しい種目の名前</label>
-          <input id="addName" maxlength="20" autocomplete="off" placeholder="例：ケーブルフライ">
+          <input id="addName" maxlength="20" autocomplete="off" placeholder="ケーブルフライ">
           <button type="submit" class="mini">追加</button>
         </form>
       </div>
@@ -55,21 +57,21 @@
       <div class="block">
         <h2 class="lbl">今日のセット</h2>
         <ol class="today" id="today"></ol>
-        <p class="empty" id="todayEmpty">まだありません。下の大きなボタンで1セット目を記録しましょう。</p>
+        <p class="empty" id="todayEmpty">1セット終えたら、下の「セットを記録」を押します。</p>
       </div>
 
       <div class="block settings">
         <h2 class="lbl" id="restSetLbl">休憩の長さ</h2>
         <div class="seg" id="restSeg" role="group" aria-labelledby="restSetLbl"></div>
-        <label class="switch"><input type="checkbox" id="sound"> 休憩の終わりに音と振動で知らせる</label>
+        <label class="switch"><input type="checkbox" id="sound">休憩が終わったら、音と振動で知らせる</label>
       </div>
     </section>
 
     <section id="viewHist" hidden aria-labelledby="histTitle">
       <h2 class="h2" id="histTitle">種目ごとの履歴</h2>
-      <p class="sub">ベストは最も重いセットです（同じ重さなら回数の多いほう）。自重の種目は回数で比べます。</p>
+      <p class="sub">ベストは、いちばん重いセットです（同じ重さなら回数が多いほう）。自重の種目は回数で比べます。</p>
       <div id="hist"></div>
-      <p class="empty" id="histEmpty">まだ記録がありません。「記録」でセットを残すと、種目ごとの履歴とベストがここに並びます。</p>
+      <p class="empty" id="histEmpty">セットを記録すると、種目ごとの履歴とベストがここに並びます。</p>
       <button type="button" class="danger" id="wipe">すべての記録を消す</button>
     </section>
   </main>
@@ -80,16 +82,16 @@
         <div class="restmid"><span class="restlbl" id="restLbl">休憩中</span><span class="resttime" id="restTime">1:30</span></div>
         <div class="restbtns">
           <button type="button" class="mini" id="restAdd">＋30秒</button>
-          <button type="button" class="mini" id="restSkip">終わる</button>
+          <button type="button" class="mini" id="restSkip">終了</button>
         </div>
       </section>
-    <p class="toast" id="toast" role="status" aria-live="polite"></p>
+    <div class="toast" id="toast" role="status" aria-live="polite"><span id="toastMsg"></span><button type="button" id="toastAct" hidden>元に戻す</button></div>
     <button type="button" class="go" id="record"><span class="go-l">セットを記録</span><span class="go-s" id="goSub">60kg × 10回</span></button>
   </div>
 
   <footer class="foot">
-    <p>作った人：App World Lab（App Worldの運営）</p>
-    <p>記録はこの端末の中だけに保存され、どこにも送られません。</p>
+    <p>記録は、この端末にだけ保存されます。</p>
+    <p>開発：App World Lab（App World 運営）</p>
     <p><a href="../">App World Lab</a></p>
   </footer>
 </div>

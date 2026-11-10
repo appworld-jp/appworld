@@ -3,7 +3,7 @@
   const $ = id => document.getElementById(id);
   const L = window.LabImg;
   const COUNTS = [3, 4, 5, 6, 7, 8];
-  const SORTS = [["share", "多い順"], ["light", "明るい順"], ["hue", "色相順"]];
+  const SORTS = [["share", "多い順"], ["light", "明るい順"], ["hue", "虹の順"]];
   const st = { px: [], k: 5, sort: "share", pal: [], seed: 1, img: null, total: 1 };
 
   // ---------- colour helpers ----------
@@ -112,6 +112,7 @@
       const hex = L.hex(c.rgb), ink = L.ink(c.rgb);
       const li = document.createElement("li"); li.className = "chip" + (c.locked ? " locked" : "");
       const sw = document.createElement("div"); sw.className = "sw"; sw.style.background = hex; sw.style.color = ink;
+      li.style.animationDelay = (i * 45) + "ms";
       const no = document.createElement("span"); no.className = "no"; no.textContent = "No." + String(i + 1).padStart(2, "0");
       sw.appendChild(no);
       if (c.locked) { const lm = document.createElement("span"); lm.className = "lockmark"; lm.textContent = "固定"; sw.appendChild(lm); }
@@ -123,9 +124,9 @@
       lab.append(nm, hx, rgb, pct);
       const bt = document.createElement("div"); bt.className = "bt";
       const cp = document.createElement("button"); cp.type = "button"; cp.textContent = "コピー"; cp.setAttribute("aria-label", `${hex}をコピー`);
-      cp.addEventListener("click", () => copy(hex, `${hex}をコピーしました`));
+      cp.addEventListener("click", () => copy(hex, `${hex}をコピーしました。`));
       const lk = document.createElement("button"); lk.type = "button"; lk.textContent = c.locked ? "固定中" : "固定"; lk.setAttribute("aria-pressed", String(!!c.locked));
-      lk.setAttribute("aria-label", `${hex}を固定する`);
+      lk.setAttribute("aria-label", `${hex}を固定`);
       lk.addEventListener("click", () => { c.locked = !c.locked; render(); renderControls(); say(c.locked ? `${hex}を固定しました。` : `${hex}の固定を外しました。`); });
       bt.append(cp, lk);
       li.append(sw, lab, bt); ol.appendChild(li);
@@ -139,13 +140,13 @@
     try { await navigator.clipboard.writeText(text); say(okMsg); return; } catch (e) { /* fall back below */ }
     const f = $("fallback"); f.hidden = false; f.value = text; f.focus(); f.select();
     let ok = false; try { ok = document.execCommand("copy"); } catch (e) { ok = false; }
-    say(ok ? okMsg : "自動でコピーできませんでした。下の欄から選んでコピーしてください。");
+    say(ok ? okMsg : "コピーできませんでした。下の欄を長押しして選んでください。");
   }
   $("copyAll").addEventListener("click", () => {
     const lines = sorted().map(c => `${L.hex(c.rgb)}  rgb(${c.rgb.join(", ")})  ${colorName(c.rgb)}`);
-    copy(lines.join("\n"), `${lines.length}色の色コードをコピーしました`);
+    copy(lines.join("\n"), `${lines.length}色の色コードをコピーしました。`);
   });
-  $("regen").addEventListener("click", () => { st.seed++; generate(); say("固定していない色を作り直しました。"); });
+  $("regen").addEventListener("click", () => { st.seed++; generate(); say(st.pal.some(c => c.locked) ? "固定した色はそのままで、ほかの色を作り直しました。" : "色を作り直しました。"); });
 
   // ---------- PNG card ----------
   $("savePng").addEventListener("click", () => {
@@ -155,7 +156,6 @@
     const SERIF = '"Hiragino Mincho ProN","Yu Mincho","Noto Serif JP",serif', MONO = 'ui-monospace,"SF Mono",Menlo,Consolas,monospace';
     g.fillStyle = "#F6F2EA"; g.fillRect(0, 0, W, H);
     g.fillStyle = "#1F1C18"; g.font = `600 52px ${SERIF}`; g.textBaseline = "alphabetic"; g.fillText("おえかき色見本", P, 110);
-    g.font = `22px ${MONO}`; g.fillStyle = "#C8361E"; g.fillText("COLOR CHIPS", P, 56);
     g.fillStyle = "#1F1C18"; g.fillRect(P, 136, W - P * 2, 3);
     // photo, cropped to fill
     const ph = { x: P, y: 168, w: W - P * 2, h: 440 };
@@ -178,13 +178,13 @@
       g.font = `${cw > 200 ? 20 : 16}px ${SERIF}`; g.fillText(colorName(c.rgb), x + 14, y + sh + 104);
     });
     g.fillStyle = "#6E675C"; g.font = `18px ${SERIF}`;
-    g.fillText("App World Lab「おえかき色見本」で作成", P, H - 30);
+    g.fillText("おえかき色見本（App World Lab）で作成", P, H - 30);
     cv.toBlob(b => {
-      if (!b) { say("画像を作れませんでした。"); return; }
+      if (!b) { say("画像を作れませんでした。もう一度お試しください。"); return; }
       const url = URL.createObjectURL(b), a = document.createElement("a");
       a.href = url; a.download = "irominohon.png"; document.body.appendChild(a); a.click(); a.remove();
       setTimeout(() => URL.revokeObjectURL(url), 4000);
-      say("色見本カードをPNGで保存しました。");
+      say("色見本カードを画像で保存しました。");
     }, "image/png");
   });
 
@@ -193,19 +193,19 @@
     const { data } = L.pixels(img, 160);
     const px = [];
     for (let i = 0; i < data.length; i += 4) if (data[i + 3] > 127) px.push([data[i], data[i + 1], data[i + 2]]);
-    if (!px.length) { $("loadMsg").textContent = "色を読み取れませんでした。ほかの写真を選んでください。"; return; }
+    if (!px.length) { $("loadMsg").textContent = "この写真からは色を読み取れませんでした。ほかの写真を選んでください。"; return; }
     $("loadMsg").textContent = "";
     st.px = px; st.img = img; st.pal = []; st.seed = 1;
     $("preview").src = src;
     $("work").hidden = false;
-    $("drop").classList.add("compact"); $("drop").querySelector(".drop-t").textContent = "べつの写真を選ぶ";
+    $("drop").classList.add("compact"); $("drop").querySelector(".drop-t").textContent = "ほかの写真を選ぶ";
     $("sample").parentElement.hidden = true;
     generate(); renderControls();
     $("chips").scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "nearest" });
   }
   L.bind($("drop"), $("file"), async f => {
     try { const { img, url } = await L.load(f); useImage(img, url); }
-    catch (e) { $("loadMsg").textContent = e.message || "画像を読み込めませんでした。"; }
+    catch (e) { $("loadMsg").textContent = /ファイルを選んで/.test(e.message || "") ? "写真（画像ファイル）を選んでください。" : "この写真は読み込めませんでした。JPEGかPNGの写真でお試しください。"; }
   });
   $("sample").addEventListener("click", () => {
     // a small painted scene drawn on this device

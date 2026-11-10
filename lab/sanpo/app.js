@@ -42,16 +42,16 @@
     clearInterval(tickI);
     if (on) {
       const st = new Date(S.running);
-      $("clockSub").textContent = `${st.getHours()}:${pad(st.getMinutes())}に出発。いってらっしゃい。`;
+      $("clockSub").textContent = `${st.getHours()}:${pad(st.getMinutes())}に出発。帰ったら「ただいま」を押してください。`;
       const t = () => { const s = Math.max(0, Math.floor((Date.now() - S.running) / 1000)); const h = Math.floor(s / 3600); $("clock").textContent = h ? `${h}:${pad(Math.floor(s / 60) % 60)}:${pad(s % 60)}` : `${Math.floor(s / 60)}:${pad(s % 60)}`; };
       t(); tickI = setInterval(t, 1000);
     } else {
       $("clock").textContent = "0:00";
-      $("clockSub").textContent = "歩きはじめるときにタップしてください。";
+      $("clockSub").textContent = "出かけるときに押すと、歩いた時間を計ります。";
     }
   }
   $("startBtn").addEventListener("click", () => { S.running = Date.now(); save(); renderTimer(); $("stopBtn").focus(); });
-  $("cancelBtn").addEventListener("click", () => { if (!confirm("このさんぽの計測を取り消しますか？")) return; S.running = null; save(); renderTimer(); });
+  $("cancelBtn").addEventListener("click", () => { if (!confirm("計っている時間を取り消しますか？")) return; S.running = null; save(); renderTimer(); });
   $("stopBtn").addEventListener("click", () => {
     const min = Math.max(1, Math.round((Date.now() - S.running) / 60000));
     openSheet(min, keyOf(new Date(S.running)));
@@ -83,7 +83,7 @@
   function openSheet(min, date, isManual) {
     manual = !!isManual;
     pickTags = new Set(); pickMood = null; buildSheet();
-    $("sheetTitle").textContent = manual ? "さんぽを記録する" : "おかえりなさい";
+    $("sheetTitle").textContent = manual ? "さんぽを記録" : "おかえりなさい！";
     $("fDate").value = date; $("fDate").max = todayKey(); $("fMin").value = min;
     $("fTheme").checked = false; $("fThemeTxt").textContent = theme();
     $("fNote").value = ""; $("fErr").textContent = "";
@@ -99,7 +99,7 @@
     if (!(min >= 1 && min <= 600)) { $("fErr").textContent = "歩いた時間は1〜600分で入れてください。"; return; }
     S.walks.push({ id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), date, min, tags: [...pickTags], mood: pickMood, note: $("fNote").value.trim().slice(0, 140), theme: $("fTheme").checked ? theme() : null, t: Date.now() });
     if (!manual) S.running = null;
-    save(); closeSheet(); calMonth = date.slice(0, 7); renderAll();
+    save(); closeSheet(); calMonth = date.slice(0, 7); stampDay = date; renderAll();
     $("startBtn").focus();
   });
 
@@ -119,7 +119,7 @@
     $("streakBadge").textContent = s.cur ? `${s.cur}日連続` : "";
   }
 
-  let calMonth = todayKey().slice(0, 7);
+  let calMonth = todayKey().slice(0, 7), stampDay = null;
   const lvl = m => (m <= 0 ? "" : m < 15 ? "l1" : m < 30 ? "l2" : m < 60 ? "l3" : "l4");
   function renderCal() {
     const [y, mo] = calMonth.split("-").map(Number);
@@ -136,22 +136,23 @@
     for (let d = 1; d <= days; d++) {
       const k = `${calMonth}-${pad(d)}`, m = map.get(k) || 0;
       const c = document.createElement("span");
-      c.className = "c " + lvl(m) + (k === todayKey() ? " today" : "") + (themes.has(k) ? " th" : "");
+      c.className = "c " + lvl(m) + (k === todayKey() ? " today" : "") + (themes.has(k) ? " th" : "") + (k === stampDay ? " stamp" : "");
       c.textContent = d;
       c.setAttribute("role", "img");
-      c.setAttribute("aria-label", `${mo}月${d}日 ${m ? fmtMin(m) + "歩いた" + (themes.has(k) ? "、テーマ達成" : "") : "記録なし"}`);
+      c.setAttribute("aria-label", `${mo}月${d}日：${m ? fmtMin(m) + "歩いた" + (themes.has(k) ? "、テーマ達成" : "") : "記録なし"}`);
       if (m) c.title = fmtMin(m);
       cal.appendChild(c);
     }
+    stampDay = null;
     const tot = $("totals"); tot.textContent = "";
     const s = streaks();
-    [["この月のさんぽ", count, "回"], ["合計", total ? fmtMin(total) : "0分", ""], ["いちばん長い", longest ? fmtMin(longest) : "—", ""], ["いまの連続", s.cur, "日"], ["最長の連続", s.best, "日"], ["テーマ達成", S.walks.filter(w => w.theme && w.date.startsWith(calMonth)).length, "回"]].forEach(([a, b, u]) => {
+    [["さんぽ", count, "回"], ["合計", total ? fmtMin(total) : "0分", ""], ["いちばん長い日", longest ? fmtMin(longest) : "—", ""], ["いまの連続", s.cur, "日"], ["最長の連続", s.best, "日"], ["テーマ達成", S.walks.filter(w => w.theme && w.date.startsWith(calMonth)).length, "回"]].forEach(([a, b, u]) => {
       const d = document.createElement("div"); const dt = document.createElement("dt"); dt.textContent = a;
       const dd = document.createElement("dd"); dd.textContent = b; if (u) { const sm = document.createElement("small"); sm.textContent = u; dd.appendChild(sm); }
       d.append(dt, dd); tot.appendChild(d);
     });
     const top = [...tagCount.entries()].sort((a, b) => b[1] - a[1]).slice(0, 3);
-    $("favs").textContent = top.length ? `この月によく見たもの：${top.map(([t, n]) => `${t}（${n}回）`).join("、")}` : "";
+    $("favs").textContent = top.length ? `今月よく見たもの：${top.map(([t, n]) => `${t}（${n}回）`).join("、")}` : "";
   }
   $("calPrev").addEventListener("click", () => { const d = parseKey(calMonth + "-01"); d.setMonth(d.getMonth() - 1); calMonth = keyOf(d).slice(0, 7); renderCal(); });
   $("calNext").addEventListener("click", () => { const d = parseKey(calMonth + "-01"); d.setMonth(d.getMonth() + 1); calMonth = keyOf(d).slice(0, 7); renderCal(); });
@@ -171,9 +172,9 @@
       for (const t of w.tags) { const s = document.createElement("span"); s.textContent = t; tg.appendChild(s); }
       if (tg.childNodes.length) li.appendChild(tg);
       if (w.note) { const n = document.createElement("p"); n.className = "n"; n.textContent = w.note; li.appendChild(n); }
-      const del = document.createElement("button"); del.type = "button"; del.className = "del"; del.textContent = "この記録を消す";
-      del.setAttribute("aria-label", `${label(w.date)}の記録を消す`);
-      del.addEventListener("click", () => { if (!confirm(`${label(w.date)}の記録を消しますか？`)) return; S.walks = S.walks.filter(x => x.id !== w.id); save(); renderAll(); });
+      const del = document.createElement("button"); del.type = "button"; del.className = "del"; del.textContent = "削除";
+      del.setAttribute("aria-label", `${label(w.date)}の記録を削除`);
+      del.addEventListener("click", () => { if (!confirm(`${label(w.date)}の記録を削除しますか？`)) return; S.walks = S.walks.filter(x => x.id !== w.id); save(); renderAll(); });
       li.appendChild(del); ol.appendChild(li);
     }
     $("jEmpty").hidden = list.length > 0;

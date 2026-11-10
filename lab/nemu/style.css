@@ -8,8 +8,8 @@
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
-html{background:#0B1029}
-body{margin:0;color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.75;min-height:100vh;background:linear-gradient(180deg,#0B1029 0%,#141A46 55%,#24205A 100%) fixed}
+html{background:#0B1029 linear-gradient(180deg,#0B1029 0%,#141A46 55%,#24205A 100%) no-repeat;min-height:100%}
+body{margin:0;color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.75;min-height:100vh}
 .sky{position:fixed;inset:0;pointer-events:none;opacity:.75;background-image:
   radial-gradient(1.2px 1.2px at 12% 18%,#fff 50%,transparent 51%),radial-gradient(1px 1px at 28% 8%,#fff 50%,transparent 51%),
   radial-gradient(1.5px 1.5px at 46% 22%,#fff 50%,transparent 51%),radial-gradient(1px 1px at 64% 12%,#fff 50%,transparent 51%),
@@ -27,8 +27,14 @@ button,input{font:inherit;color:inherit}
 .head{display:flex;align-items:center;gap:10px}
 .head h1{margin:0;font-family:var(--serif);font-weight:600;font-size:24px;letter-spacing:.18em}
 .moon{width:30px;height:30px;fill:var(--moon);filter:drop-shadow(0 0 8px rgba(244,227,163,.6))}
-.now{text-align:center;padding:26px 8px 10px}
-.greet{font-family:var(--serif);font-size:19px;margin:0 0 18px;letter-spacing:.06em}
+.lead{margin:-8px 0 0;color:var(--sub);font-size:14px;text-wrap:balance}
+.now{text-align:center;padding:16px 8px 10px}
+.now>div{animation:fade .6s ease both}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+#sleeping .big.wake{animation:dawn 1.2s ease both}
+@keyframes dawn{from{box-shadow:0 0 0 0 rgba(255,197,138,0),0 0 0 rgba(255,197,138,0);filter:brightness(.6)}to{filter:none}}
+.chartempty{margin:0 0 4px;text-align:center;font-size:13px;color:var(--sub)}
+.greet{font-family:var(--serif);font-size:19px;margin:0 0 18px;letter-spacing:.06em;text-wrap:balance;word-break:keep-all;overflow-wrap:anywhere}
 .greet span{display:block;font-size:15px;color:var(--sub);margin-top:4px;font-family:var(--sans)}
 .big{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;width:176px;height:176px;border-radius:50%;border:0;cursor:pointer;font-family:var(--serif);font-size:26px;font-weight:600;letter-spacing:.2em;transition:transform .3s ease,box-shadow .3s ease}
 .big svg{width:42px;height:42px}
@@ -46,7 +52,7 @@ button,input{font:inherit;color:inherit}
 .feel{border:0;border-radius:999px;min-height:52px;padding:0 22px;font-weight:700;cursor:pointer;color:#14163A}
 .feel.f2{background:var(--f2)}.feel.f1{background:var(--f1)}.feel.f0{background:var(--f0)}
 .link{display:block;margin:16px auto 0;background:none;border:0;color:var(--sub);text-decoration:underline;text-underline-offset:4px;cursor:pointer;min-height:44px;font-size:14px}
-.small{font-size:13px;color:var(--sub);margin:12px 0 0}
+.small{font-size:13px;color:var(--sub);margin:12px 0 0;text-wrap:pretty}
 .card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:18px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
 .card h2{margin:0;font-family:var(--serif);font-size:18px;font-weight:600;letter-spacing:.1em}
 .weekhead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
@@ -83,7 +89,7 @@ button,input{font:inherit;color:inherit}
 .edit input[type=datetime-local]{background:#0F1435;border:1px solid var(--line);border-radius:12px;padding:10px;color:var(--ink);min-height:46px;width:100%;min-width:0}
 .edit fieldset{border:0;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px 14px}
 .edit legend{font-size:13px;color:var(--sub);margin-bottom:4px;padding:0}
-.edit .r{display:flex;flex-direction:row;align-items:center;gap:6px;color:var(--ink);font-size:15px;min-height:40px}
+.edit .r{display:flex;flex-direction:row;align-items:center;gap:6px;color:var(--ink);font-size:15px;min-height:44px}
 .edit .r input{accent-color:var(--moon);width:18px;height:18px}
 .err{color:var(--f0);margin:0;font-size:14px}
 .err:empty{display:none}
@@ -95,7 +101,8 @@ button,input{font:inherit;color:inherit}
 .log .d{font-weight:700}
 .log .t{font-size:13px;color:var(--sub);grid-column:2}
 .log .acts{grid-row:1/span 2;grid-column:3;display:flex;gap:4px}
-.log .acts button{background:none;border:0;color:var(--sub);text-decoration:underline;cursor:pointer;min-height:40px;padding:0 6px;font-size:13px}
+.log .acts button{background:none;border:0;color:var(--sub);text-decoration:underline;cursor:pointer;min-height:44px;min-width:44px;padding:0 6px;font-size:13px}
 .foot{font-size:12px;color:var(--sub);text-align:center;padding-top:6px}
 .foot p{margin:0}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+.nw{display:inline-block}

@@ -37,7 +37,9 @@
       $("slept").textContent = `${dur(rateE.wake - rateE.bed)}眠りました。`;
     } else {
       const h = new Date().getHours();
-      $("greet").textContent = h >= 5 && h < 11 ? "おはようございます。昨夜の分は、下の「手で追加」から記録できます。" : h >= 11 && h < 18 ? "こんにちは。寝るときに、このボタンをタップしてください。" : "今日も、おつかれさまでした。";
+      const morning = h >= 5 && h < 11, day = h >= 11 && h < 18;
+      $("greet").textContent = morning ? "おはようございます。" : day ? "こんにちは。" : "今日もおつかれさまでした。";
+      $("idleHint").textContent = morning ? "昨夜の分は、下の「＋ 追加」から入れられます。" : day ? "寝るときに押してください。昼寝の記録にも使えます。" : "布団に入ったら押してください。朝は「起きた」を押すだけです。";
     }
   }
   $("goSleep").addEventListener("click", () => { S.pending = Date.now(); S.rateId = null; save(); renderNow(); $("goWake").focus(); });
@@ -46,7 +48,7 @@
     const bed = S.pending, wake = Date.now();
     S.pending = null;
     if (wake - bed < 10 * M) { save(); renderNow(); flashGreet("10分未満だったので、記録しませんでした。"); return; }
-    if (wake - bed > 20 * H) { save(); renderNow(); flashGreet("20時間を超えていたので、記録しませんでした。「手で追加」から入れてください。"); return; }
+    if (wake - bed > 20 * H) { save(); renderNow(); flashGreet("20時間を超えたので、記録しませんでした。"); $("idleHint").textContent = "下の「＋ 追加」から、時刻を入れて記録できます。"; return; }
     const e = { id: uid(), bed, wake, feel: null };
     S.entries.push(e); S.rateId = e.id; save(); renderAll();
   });
@@ -55,7 +57,7 @@
     const e = S.entries.find(x => x.id === S.rateId);
     if (e) e.feel = Number(b.dataset.feel);
     S.rateId = null; save(); renderAll();
-    flashGreet(`記録しました。今日もいい一日を。`);
+    flashGreet("記録しました。今日もいい一日を。");
   }));
   $("rateLater").addEventListener("click", () => { S.rateId = null; save(); renderNow(); });
 
@@ -95,6 +97,7 @@
       svg.appendChild(el("line", { class: "grid", x1: x(h), x2: x(h), y1: T - 4, y2: HGT - 6 }));
       svg.appendChild(el("text", { x: x(h), y: 12, "text-anchor": "middle" }, `${((h % 24) + 24) % 24}時`));
     }
+    $("chartEmpty").hidden = all.length > 0;
     const desc = [];
     rows.forEach((r, i) => {
       const y = T + i * RH;
@@ -150,18 +153,19 @@
   function renderTips(all) {
     const ul = $("tips"); ul.textContent = "";
     const add = (t, cls) => { const li = document.createElement("li"); li.textContent = t; if (cls) li.className = cls; ul.appendChild(li); };
-    if (all.length < 3) { add(`この週の記録が3日分たまると、傾向に合わせたヒントが出ます（いま${all.length}日分）。`, "wait"); return; }
+    const nd = nights(all).length;
+    if (nd < 3) { add(`この週の記録が3日分になると、あなたの眠りに合わせたヒントが出ます（あと${3 - nd}日）。`, "wait"); return; }
     const n = nights(all), avg = mean(n) / H, beds = all.map(e => bedMin(e.bed)), wakes = all.map(e => wakeMin(e.wake));
     const avgBed = mean(beds) + 720; // minutes since midnight of the evening, may exceed 1440
     let k = 0;
-    if (avg < 6) { add(`平均の睡眠が${dur(mean(n))}で、6時間を切っています。厚生労働省の睡眠ガイド（2023）では、大人は6時間以上が目安とされています。まずは寝る時刻を15分早めてみましょう。`); k++; }
+    if (avg < 6) { add(`平均の睡眠が${dur(mean(n))}で、6時間を切っています。厚生労働省の「健康づくりのための睡眠ガイド2023」では、大人は6時間以上が目安です。まずは寝る時刻を15分早めてみましょう。`); k++; }
     else if (avg > 9.5) { add(`平均の睡眠が${dur(mean(n))}と長めです。寝床で長く過ごしすぎると、眠りが浅くなることがあります。眠くなってから布団に入るのも一つの方法です。`); k++; }
     if (beds.length >= 3 && sd(beds) > 60) { add(`寝る時刻が日によって1時間以上ばらついています（±${Math.round(sd(beds))}分）。まずは起きる時刻を毎日そろえると、寝る時刻もそろいやすくなります。`); k++; }
-    else if (wakes.length >= 3 && sd(wakes) > 60) { add(`起きる時刻のばらつきが±${Math.round(sd(wakes))}分あります。休みの日も、いつもとの差を1時間ほどにおさえると体内時計が乱れにくくなります。`); k++; }
+    else if (wakes.length >= 3 && sd(wakes) > 60) { add(`起きる時刻のばらつきが±${Math.round(sd(wakes))}分あります。休みの日も平日との差を1時間ほどにおさえると、体内時計が乱れにくくなります。`); k++; }
     const wk = all.filter(e => { const g = new Date(e.wake).getDay(); return g > 0 && g < 6; }).map(e => wakeMin(e.wake));
     const we = all.filter(e => { const g = new Date(e.wake).getDay(); return g === 0 || g === 6; }).map(e => wakeMin(e.wake));
-    if (wk.length >= 2 && we.length >= 1 && mean(we) - mean(wk) >= 120) { add(`休日の起床が平日より${dur((mean(we) - mean(wk)) * M)}遅くなっています。いわゆる「社会的時差ぼけ」で、週明けがつらくなりやすい状態です。差を縮めてみましょう。`); k++; }
-    if (avgBed >= 1440 + 60) { add(`寝る時刻の平均が${clockOf(avgBed)}と遅めです。寝る1時間前からスマホやパソコンの画面を見る時間を減らし、部屋の明かりを落とすと寝つきやすくなります。`); k++; }
+    if (wk.length >= 2 && we.length >= 1 && mean(we) - mean(wk) >= 120) { add(`休日の起床が平日より${dur((mean(we) - mean(wk)) * M)}遅くなっています。「社会的時差ぼけ」と呼ばれる状態で、週明けがつらくなりがちです。差を少しずつ縮めてみましょう。`); k++; }
+    if (avgBed >= 1440 + 60) { add(`寝る時刻の平均が${clockOf(avgBed)}と遅めです。寝る1時間前からスマホの画面を見る時間を減らし、部屋の明かりを落とすと寝つきやすくなります。`); k++; }
     const good = all.filter(e => e.feel === 2), bad = all.filter(e => e.feel === 0);
     if (good.length && bad.length) {
       const g = mean(good.map(e => e.wake - e.bed)), b = mean(bad.map(e => e.wake - e.bed));
@@ -178,7 +182,7 @@
   const fromLocal = v => { const m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/.exec(v || ""); return m ? new Date(+m[1], m[2] - 1, +m[3], +m[4], +m[5]).getTime() : NaN; };
   function openEdit(e) {
     editId = e ? e.id : null;
-    $("editTitle").textContent = e ? "記録を直す" : "記録を追加";
+    $("editTitle").textContent = e ? "記録を編集" : "記録を追加";
     const now = new Date(); now.setSeconds(0, 0);
     const wake = e ? e.wake : (now.getHours() < 12 ? now.getTime() : midnight(now.getTime()) + 7 * H);
     const bed = e ? e.bed : wake - 7 * H - 30 * M;
@@ -194,10 +198,10 @@
     const bed = fromLocal($("inBed").value), wake = fromLocal($("inWake").value);
     const fr = document.querySelector("input[name=feel]:checked");
     const feel = fr && fr.value !== "" ? Number(fr.value) : null;
-    if (!isFinite(bed) || !isFinite(wake)) { $("err").textContent = "日時を入れてください。"; return; }
+    if (!isFinite(bed) || !isFinite(wake)) { $("err").textContent = "寝た時刻と起きた時刻を入れてください。"; return; }
     if (wake <= bed) { $("err").textContent = "起きた時刻は、寝た時刻よりあとにしてください。"; return; }
     if (wake - bed > 20 * H) { $("err").textContent = "20時間を超える記録は入れられません。日付を確かめてください。"; return; }
-    if (S.entries.some(e => e.id !== editId && e.bed < wake && bed < e.wake)) { $("err").textContent = "ほかの記録と時間が重なっています。"; return; }
+    if (S.entries.some(e => e.id !== editId && e.bed < wake && bed < e.wake)) { $("err").textContent = "ほかの記録と時間が重なっています。時刻を確かめてください。"; return; }
     if (editId) Object.assign(S.entries.find(e => e.id === editId), { bed, wake, feel });
     else S.entries.push({ id: uid(), bed, wake, feel });
     save(); $("edit").hidden = true; weekBack = Math.max(0, Math.floor((midnight(Date.now()) - midnight(wake)) / DAY / 7));
@@ -210,12 +214,12 @@
       const li = document.createElement("li");
       const dot = document.createElement("span"); dot.className = "dot " + fcls(e.feel);
       const d = document.createElement("span"); d.className = "d"; d.textContent = `${dayName(e.wake)} ${dur(e.wake - e.bed)}`;
-      const t = document.createElement("span"); t.className = "t"; t.textContent = `${hm(e.bed)}〜${hm(e.wake)}・${e.feel == null ? "未評価" : FEEL[e.feel]}`;
+      const t = document.createElement("span"); t.className = "t"; t.textContent = `${hm(e.bed)}〜${hm(e.wake)}・${e.feel == null ? "目覚め未入力" : FEEL[e.feel]}`;
       const acts = document.createElement("span"); acts.className = "acts";
-      const ed = document.createElement("button"); ed.type = "button"; ed.textContent = "直す"; ed.setAttribute("aria-label", `${dayName(e.wake)}の記録を直す`);
+      const ed = document.createElement("button"); ed.type = "button"; ed.textContent = "編集"; ed.setAttribute("aria-label", `${dayName(e.wake)}の記録を編集`);
       ed.addEventListener("click", () => openEdit(e));
-      const rm = document.createElement("button"); rm.type = "button"; rm.textContent = "消す"; rm.setAttribute("aria-label", `${dayName(e.wake)}の記録を消す`);
-      rm.addEventListener("click", () => { if (!confirm(`${dayName(e.wake)}の記録を消しますか？`)) return; S.entries = S.entries.filter(x => x.id !== e.id); if (S.rateId === e.id) S.rateId = null; save(); renderAll(); });
+      const rm = document.createElement("button"); rm.type = "button"; rm.textContent = "削除"; rm.setAttribute("aria-label", `${dayName(e.wake)}の記録を削除`);
+      rm.addEventListener("click", () => { if (!confirm(`${dayName(e.wake)}の記録を削除しますか？`)) return; S.entries = S.entries.filter(x => x.id !== e.id); if (S.rateId === e.id) S.rateId = null; save(); renderAll(); });
       acts.append(ed, rm); li.append(dot, d, acts, t); ol.appendChild(li);
     }
     $("logEmpty").hidden = list.length > 0;

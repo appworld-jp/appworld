@@ -18,7 +18,7 @@ scores.sort();
 const best = scores[scores.length - 1];
 console.log("最高点:", best);`,
 fix: `scores.sort((a, b) => a - b);`,
-why: "比較関数を渡さない sort() は、要素を文字列にして辞書順に並べます。結果は [10, 100, 25, 9] となり、最後の要素は 9 です。",
+why: "比較関数を渡さない sort() は、要素を文字列にして辞書順に並べます。結果は [10, 100, 25, 9] になり、最後の要素は 9 です。",
 incident: "ランキングや価格の並べ替えで、100 が 25 より前に来るなど順位が崩れる。テストのデータが1桁だけだと気づけません。" },
 
 { id: "js-assign", lang: "JavaScript", title: "管理者だけに削除を許す", bug: 1,
