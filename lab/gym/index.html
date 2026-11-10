@@ -2,12 +2,12 @@
 <html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>ジムメモ</title>
-<meta name="description" content="前回の重さと回数が最初から入るので、ジムではボタンを押すだけ。記録すると休憩タイマーが動きます。">
+<meta name="description" content="約150の種目から名前で探して記録できます。前回の重さと回数が最初から入るので、ジムではボタンを押すだけ。記録すると休憩タイマーが動きます。">
 <meta name="theme-color" content="#0B0B0C">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="style.css">
 </head><body>
-<div class="app">
+<div class="app" id="app">
   <header class="bar">
     <h1 class="logo">ジム<span>メモ</span></h1>
     <nav class="tabs" aria-label="画面の切り替え">
@@ -18,41 +18,101 @@
 
   <main>
     <p class="lead" id="lead">前回の重さと回数が最初から入るので、押すだけで記録できます。</p>
-    <section id="viewLog" aria-labelledby="exLbl">
-      <div class="block">
-        <h2 class="lbl" id="exLbl">種目</h2>
-        <div class="chips" id="chips" role="group" aria-labelledby="exLbl"></div>
-        <form class="addform" id="addForm" hidden>
-          <label class="sr" for="addName">新しい種目の名前</label>
-          <input id="addName" maxlength="20" autocomplete="off" placeholder="ケーブルフライ">
-          <button type="submit" class="mini">追加</button>
+    <section id="viewLog" aria-label="記録">
+      <div class="picker" id="picker">
+        <div class="find">
+          <div class="search">
+            <svg class="glass" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/></svg>
+            <input id="q" type="search" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="sugg" aria-label="種目をさがす" placeholder="ベンチ、懸垂" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search" maxlength="30">
+          </div>
+          <button type="button" class="browse" id="browseBtn" aria-expanded="false" aria-controls="browse">部位から選ぶ</button>
+        </div>
+        <ul class="sugg" id="sugg" role="listbox" aria-label="候補" hidden></ul>
+        <p class="sr" id="suggStatus" aria-live="polite"></p>
+
+        <form class="addform" id="addForm" hidden novalidate>
+          <h2 class="addttl">新しい種目を追加</h2>
+          <label class="lbl" for="addName">名前</label>
+          <input id="addName" maxlength="20" autocomplete="off" placeholder="ハーフデッドリフト" aria-describedby="addErr">
+          <p class="err" id="addErr" aria-live="polite"></p>
+          <span class="lbl" id="addTypeLbl">記録するもの</span>
+          <div class="seg kinds" id="addType" role="group" aria-labelledby="addTypeLbl"></div>
+          <div class="addbtns">
+            <button type="submit" class="mini solid">追加する</button>
+            <button type="button" class="mini" id="addCancel">やめる</button>
+          </div>
         </form>
+
+        <div class="browsepanel" id="browse" hidden>
+          <div class="parts" id="parts" role="group" aria-label="部位"></div>
+          <ul class="plist" id="plist" aria-live="polite"></ul>
+        </div>
+
+        <div class="fav" id="favWrap">
+          <h2 class="lbl" id="favLbl">よく使う</h2>
+          <div class="chips" id="fav" role="group" aria-labelledby="favLbl"></div>
+        </div>
       </div>
 
-      <div class="exname" id="exName" aria-live="polite"></div>
+      <div class="exhead">
+        <div class="exname" id="exName" aria-live="polite"></div>
+        <div class="exmeta" id="exMeta"></div>
+      </div>
       <div class="prev" id="prev"></div>
 
-      <div class="steppers">
-        <div class="step">
-          <label class="lbl" for="wIn">重さ（kg）</label>
+      <div class="steppers" id="steppers">
+        <div class="step" id="stW">
+          <label class="lbl" for="wIn" id="wLbl">重さ（kg）</label>
           <div class="ctrl">
             <button type="button" class="pm" id="wMinus" aria-label="重さを減らす">−</button>
             <input id="wIn" type="number" inputmode="decimal" min="0" max="999" step="any">
             <button type="button" class="pm" id="wPlus" aria-label="重さを増やす">＋</button>
           </div>
-          <button type="button" class="stepsize" id="stepBtn">刻み 2.5kg</button>
+          <div class="steprow">
+            <button type="button" class="stepsize" id="stepBtn">刻み 2.5kg・変更</button>
+            <button type="button" class="stepsize" id="unload" hidden>おもりを外す</button>
+          </div>
           <span class="hint" id="wHint"></span>
         </div>
-        <div class="step">
+        <div class="step" id="stR">
           <label class="lbl" for="rIn">回数</label>
           <div class="ctrl">
             <button type="button" class="pm" id="rMinus" aria-label="回数を減らす">−</button>
             <input id="rIn" type="number" inputmode="numeric" min="1" max="999" step="1">
             <button type="button" class="pm" id="rPlus" aria-label="回数を増やす">＋</button>
           </div>
+          <button type="button" class="stepsize" id="load" hidden>おもりを付ける</button>
+        </div>
+        <div class="step" id="stS">
+          <label class="lbl" for="sIn">時間（秒）</label>
+          <div class="ctrl">
+            <button type="button" class="pm" id="sMinus" aria-label="5秒減らす">−</button>
+            <input id="sIn" type="number" inputmode="numeric" min="1" max="3600" step="1">
+            <button type="button" class="pm" id="sPlus" aria-label="5秒増やす">＋</button>
+          </div>
+          <div class="steprow">
+            <button type="button" class="watch" id="watch" aria-pressed="false">計る</button>
+            <span class="hint inline" id="sHint"></span>
+          </div>
+        </div>
+        <div class="step" id="stM">
+          <label class="lbl" for="mIn">時間（分）</label>
+          <div class="ctrl">
+            <button type="button" class="pm" id="mMinus" aria-label="1分減らす">−</button>
+            <input id="mIn" type="number" inputmode="numeric" min="1" max="600" step="1">
+            <button type="button" class="pm" id="mPlus" aria-label="1分増やす">＋</button>
+          </div>
+        </div>
+        <div class="step" id="stK">
+          <label class="lbl" for="kIn">距離（km）</label>
+          <div class="ctrl">
+            <button type="button" class="pm" id="kMinus" aria-label="距離を0.1km減らす">−</button>
+            <input id="kIn" type="number" inputmode="decimal" min="0" max="999" step="any">
+            <button type="button" class="pm" id="kPlus" aria-label="距離を0.1km増やす">＋</button>
+          </div>
+          <span class="hint">0のままなら、時間だけを記録します。</span>
         </div>
       </div>
-
 
       <div class="block">
         <h2 class="lbl">今日のセット</h2>
@@ -69,22 +129,22 @@
 
     <section id="viewHist" hidden aria-labelledby="histTitle">
       <h2 class="h2" id="histTitle">種目ごとの履歴</h2>
-      <p class="sub">ベストは、いちばん重いセットです（同じ重さなら回数が多いほう）。自重の種目は回数で比べます。</p>
+      <p class="sub">ベストは、重さの種目ならいちばん重いセット（同じ重さなら回数が多いほう）、自重の種目なら回数、時間の種目ならいちばん長い記録です。</p>
       <div id="hist"></div>
       <p class="empty" id="histEmpty">セットを記録すると、種目ごとの履歴とベストがここに並びます。</p>
       <button type="button" class="danger" id="wipe">すべての記録を消す</button>
     </section>
   </main>
 
-  <div class="dock">
+  <div class="dock" id="dock">
     <section class="rest" id="rest" hidden aria-label="休憩タイマー">
-        <svg class="ring" viewBox="0 0 120 120" aria-hidden="true"><circle class="trk" cx="60" cy="60" r="52"/><circle class="arc" id="arc" cx="60" cy="60" r="52"/></svg>
-        <div class="restmid"><span class="restlbl" id="restLbl">休憩中</span><span class="resttime" id="restTime">1:30</span></div>
-        <div class="restbtns">
-          <button type="button" class="mini" id="restAdd">＋30秒</button>
-          <button type="button" class="mini" id="restSkip">終了</button>
-        </div>
-      </section>
+      <svg class="ring" viewBox="0 0 120 120" aria-hidden="true"><circle class="trk" cx="60" cy="60" r="52"/><circle class="arc" id="arc" cx="60" cy="60" r="52"/></svg>
+      <div class="restmid"><span class="restlbl" id="restLbl">休憩中</span><span class="resttime" id="restTime">1:30</span></div>
+      <div class="restbtns">
+        <button type="button" class="mini" id="restAdd">＋30秒</button>
+        <button type="button" class="mini" id="restSkip">終了</button>
+      </div>
+    </section>
     <div class="toast" id="toast" role="status" aria-live="polite"><span id="toastMsg"></span><button type="button" id="toastAct" hidden>元に戻す</button></div>
     <button type="button" class="go" id="record"><span class="go-l">セットを記録</span><span class="go-s" id="goSub">60kg × 10回</span></button>
   </div>
@@ -95,5 +155,7 @@
     <p><a href="../">App World Lab</a></p>
   </footer>
 </div>
+<script src="exercises.js"></script>
+<script src="catalog.js"></script>
 <script src="app.js"></script>
 </body></html>
