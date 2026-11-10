@@ -473,7 +473,7 @@ def about_page(site: Site) -> str:
     <h1>このサイトについて</h1>
     <p>{SITE_NAME}は、AIを使って作られたアプリやWebサービスを紹介するサイトです。アプリを作るのは開発者で、私たちは紹介する場所を用意しています。</p>
     <p>掲載しているアプリの一部は、{SITE_NAME}の運営が作ったものです。これらには「<span class="op">運営</span>」と表示しています。</p>
-    <nav class="toc glass" aria-label="このページの内容"><a href="#safety">安全のために決めていること</a><a href="#report">通報・お問い合わせ</a><a href="#terms">掲載規約</a><a href="#privacy">プライバシーポリシー</a><a href="#law">特定商取引法に基づく表記</a></nav>
+    <nav class="toc glass" aria-label="このページの内容"><a href="#safety">安全のために決めていること</a><a href="#report">通報・お問い合わせ</a><a href="#terms">掲載規約</a><a href="#privacy">プライバシーポリシー</a><a href="#code">コードについて</a><a href="#law">特定商取引法に基づく表記</a></nav>
 
     <h2 id="safety">安全のために決めていること</h2>
     <ul>
@@ -508,8 +508,11 @@ def about_page(site: Site) -> str:
       <li>お問い合わせへの対応に必要な範囲を超えて、情報を使ったり第三者に渡したりしません。</li>
     </ul>
 
+    <h2 id="code">運営のアプリのコードについて</h2>
+    <p>「運営」の印がついたアプリは、ブラウザで使うのは無料です。コードを複製・改変して自分で使う、公開する、自分のアプリに組み込むには、有料の利用許諾が必要です。購入の窓口は準備中です。詳しくは<a href="https://github.com/appworld-jp/appworld/blob/main/LICENSE.md" target="_blank" rel="noopener noreferrer">ライセンス</a>をご覧ください。</p>
+
     <h2 id="law">特定商取引法に基づく表記</h2>
-    <p>現在、有料のサービスは提供していません。有料の掲載を始める前に、このページに掲載します。</p>
+    <p>現在、有料のサービスは提供していません。有料のサービスを始める前に、このページに掲載します。</p>
   </div>
 </main>"""
     return page(site, path="about.html", title=f"このサイトについて | {SITE_NAME}",
