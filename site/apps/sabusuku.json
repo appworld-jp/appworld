@@ -1,0 +1,18 @@
+{
+  "id": "sabusuku",
+  "name": "サブスク棚卸し",
+  "tagline": "毎月の支払いを並べて、やめてもいい物を探す",
+  "description": "動画や音楽、アプリ、スマホ代、保険、ジムなどの定期的な支払いを、金額、支払いの間隔（毎月・毎年・数か月ごと・毎週）、次の支払日、支払い方法、種類、使っている度（★1〜3）で記録します。1か月あたりと1年あたりの合計、種類ごとの内訳、14日以内の支払いを表示し、「あまり使っていない」物を一覧にします。やめたい物を選ぶと、毎月と1年で浮く金額がわかります。全角の数字でも入力できます。解約の手続きはできません。データはこの端末にだけ保存され、ファイルに書き出して移せます。",
+  "platform": "web",
+  "category": "lifestyle",
+  "ai_tools": [
+    "Claude Code"
+  ],
+  "maker_name": "App World Lab（運営）",
+  "url": "https://appworld-lab.pages.dev/sabusuku/",
+  "launch_date": "2026-11-10",
+  "beta": false,
+  "operator": true,
+  "color": "#F2C230",
+  "icon": true
+}

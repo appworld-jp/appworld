@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>サブスク棚卸し</title>
+<meta name="description" content="動画や音楽、アプリ、スマホ代、保険などの毎月の支払いを並べて、月と年の合計を計算。あまり使っていない物や、やめたらいくら浮くかがすぐわかります。">
+<meta name="theme-color" content="#F2C230">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="style.css">
+</head><body>
+<header class="hd">
+  <a class="back" href="../">App World Lab</a>
+  <h1><span class="mk">サブスク</span>棚卸し</h1>
+  <p class="lead">毎月の支払いを並べると、やめてもいい物が見えてきます。</p>
+</header>
+
+<main class="wrap">
+  <section class="receipt" id="receipt" aria-labelledby="rcH">
+    <h2 id="rcH" class="sr">合計</h2>
+    <div class="tot">
+      <div><small>1か月あたり</small><b id="totM">0円</b></div>
+      <div><small>1年あたり</small><b id="totY">0円</b></div>
+    </div>
+    <p class="tot-sub" id="totSub" aria-live="polite"></p>
+    <div class="bar" id="bar" aria-hidden="true"></div>
+    <ul class="legend" id="legend"></ul>
+    <button type="button" class="whatif" id="wiBtn" aria-pressed="false" hidden>やめたら、いくら浮く？</button>
+  </section>
+
+  <section class="empty" id="empty" hidden>
+    <p class="empty-h">まずは、思いつくものから1つ。</p>
+    <p>動画、音楽、アプリ、スマホ代、保険、ジム。毎月や毎年払っているものを入れると、合計が出ます。</p>
+    <div class="row center">
+      <button type="button" class="btn" id="firstAdd">追加する</button>
+      <button type="button" class="btn ghost" id="sample">例を見る</button>
+    </div>
+  </section>
+
+  <section class="sec" id="soonSec" hidden aria-labelledby="soonH">
+    <h2 id="soonH">14日以内の支払い</h2>
+    <ol class="soon" id="soonList"></ol>
+  </section>
+
+  <section class="sec cand" id="candSec" hidden aria-labelledby="candH">
+    <h2 id="candH">あまり使っていない物</h2>
+    <p class="note" id="candNote"></p>
+    <ul class="rows" id="candList"></ul>
+    <button type="button" class="btn ghost small" id="candPick" hidden>この全部をやめたら？</button>
+  </section>
+
+  <section class="sec" id="allSec" hidden aria-labelledby="allH">
+    <div class="sec-head">
+      <h2 id="allH">すべて<span class="cnt" id="allCnt"></span></h2>
+      <div class="sort" role="group" aria-label="並べ方" id="sortSeg">
+        <button type="button" data-v="price" aria-pressed="true">高い順</button>
+        <button type="button" data-v="date" aria-pressed="false">支払日順</button>
+        <button type="button" data-v="cat" aria-pressed="false">種類別</button>
+      </div>
+    </div>
+    <input id="q" type="search" placeholder="動画、カード、Netflix" aria-label="探す" autocomplete="off" hidden>
+    <ul class="rows" id="allList"></ul>
+  </section>
+
+  <details class="box" id="offBox" hidden>
+    <summary id="offSum">やめた物</summary>
+    <ul class="rows off" id="offList"></ul>
+  </details>
+
+  <details class="box">
+    <summary>データの引っ越し</summary>
+    <p>記録はこの端末の中にだけあります。機種変更のときは、ファイルに書き出して、新しい端末で読み込みます。</p>
+    <div class="row">
+      <button type="button" class="btn ghost small" id="expBtn">ファイルに書き出す</button>
+      <label class="btn ghost small file-btn">ファイルを読み込む<input type="file" id="impFile" accept="application/json,.json"></label>
+    </div>
+    <p class="msg" id="moveMsg" role="status"></p>
+  </details>
+
+  <footer class="foot">
+    <p>支払いの記録は、この端末にだけ保存されます。</p>
+    <p>開発：App World Lab（App World 運営）</p>
+    <p><a href="../">App World Lab</a></p>
+  </footer>
+</main>
+
+<div class="save-bar" id="saveBar" hidden>
+  <p aria-live="polite"><span id="saveTxt"></span></p>
+  <div class="sb-acts">
+    <button type="button" class="btn small" id="saveOff">解約した物にする</button>
+    <button type="button" class="btn ghost small" id="saveClose">やめる</button>
+  </div>
+</div>
+
+<button type="button" class="fab" id="addBtn" hidden><span aria-hidden="true">＋</span>追加</button>
+
+<dialog id="edit" class="dlg" aria-labelledby="eH">
+  <form class="d-in" id="form" novalidate>
+    <h2 id="eH">追加する</h2>
+    <label class="field"><span>名前</span><input id="fName" type="text" maxlength="30" autocomplete="off" list="svc" placeholder="Netflix"></label>
+    <datalist id="svc"></datalist>
+    <div class="two">
+      <label class="field"><span>金額（円）</span><input id="fPrice" type="text" inputmode="numeric" autocomplete="off" placeholder="1590"></label>
+      <label class="field"><span>次の支払日</span><input id="fNext" type="date"></label>
+    </div>
+    <fieldset class="seg-f">
+      <legend>支払いの間隔</legend>
+      <div class="seg" id="cycSeg">
+        <label><input type="radio" name="cyc" value="m" checked><span>毎月</span></label>
+        <label><input type="radio" name="cyc" value="y"><span>毎年</span></label>
+        <label><input type="radio" name="cyc" value="n"><span>数か月ごと</span></label>
+        <label><input type="radio" name="cyc" value="w"><span>毎週</span></label>
+      </div>
+      <label class="field inline" id="fNF" hidden><input id="fN" type="text" inputmode="numeric" autocomplete="off" placeholder="3" aria-label="何か月ごと"><span>か月ごと</span></label>
+    </fieldset>
+    <p class="calc" id="fCalc" aria-live="polite"></p>
+    <fieldset class="seg-f">
+      <legend>使っている度</legend>
+      <div class="stars" id="starSeg">
+        <label><input type="radio" name="star" value="3" checked><span><b>★★★</b>よく使う</span></label>
+        <label><input type="radio" name="star" value="2"><span><b>★★</b>ときどき</span></label>
+        <label><input type="radio" name="star" value="1"><span><b>★</b>あまり</span></label>
+      </div>
+    </fieldset>
+    <fieldset class="seg-f">
+      <legend>種類</legend>
+      <div class="cats" id="catSeg"></div>
+    </fieldset>
+    <label class="field"><span>支払い方法</span><input id="fPay" type="text" maxlength="30" autocomplete="off" list="pays" placeholder="クレジットカード（青）"></label>
+    <datalist id="pays"></datalist>
+    <label class="field"><span>メモ</span><textarea id="fNote" rows="2" maxlength="300" placeholder="家族で共有。解約はアプリではなくウェブから。"></textarea></label>
+    <p class="err" id="fErr" role="alert"></p>
+    <div class="acts">
+      <button class="btn" type="submit">保存</button>
+      <button class="btn ghost" type="button" id="eCancel">キャンセル</button>
+    </div>
+    <div class="acts sub" id="eMore" hidden>
+      <button type="button" class="link" id="eOff">解約した</button>
+      <button type="button" class="link danger" id="eDel">削除</button>
+    </div>
+  </form>
+</dialog>
+
+<div class="toast" id="toast" role="status" hidden><span id="toastMsg"></span><button type="button" id="toastUndo">元に戻す</button></div>
+<script src="app.js"></script>
+</body></html>

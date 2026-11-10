@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>いただきもの帳</title>
+<meta name="description" content="いただいた物と贈った物を、相手と行事ごとに記録。内祝いや香典返しの金額と時期の目安、お返しがまだの物、お年玉の一覧がすぐわかります。">
+<meta name="theme-color" content="#A8323E">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="style.css">
+</head><body>
+<header class="hd">
+  <div class="hd-in">
+    <a class="back" href="../">App World Lab</a>
+    <h1>いただきもの帳</h1>
+    <p class="lead">いただいた物を控えておけば、お返しの時期と金額に迷いません。</p>
+    <button type="button" class="btn add" id="addBtn"><span aria-hidden="true">＋</span>記録する</button>
+  </div>
+  <svg class="mizuhiki" viewBox="0 0 400 24" preserveAspectRatio="none" aria-hidden="true"><path d="M0 8 C100 20 300 -4 400 8" stroke="#C9A24B" stroke-width="2" fill="none"/><path d="M0 13 C100 25 300 1 400 13" stroke="#A8323E" stroke-width="2" fill="none"/><path d="M0 18 C100 30 300 6 400 18" stroke="#C9A24B" stroke-width="2" fill="none"/></svg>
+</header>
+
+<main class="wrap">
+  <!-- お返し -->
+  <section class="pane" id="p-todo" aria-labelledby="t-todo">
+    <h2 class="pane-h">お返し・お礼がまだの物<span class="cnt" id="todoCnt"></span></h2>
+    <ul class="list" id="todoList"></ul>
+    <div class="empty" id="todoEmpty" hidden>
+      <p class="empty-h" id="todoEmptyH"></p>
+      <p id="todoEmptyP"></p>
+      <div class="row center" id="firstBtns">
+        <button type="button" class="btn" id="firstAdd">いただいた物を記録</button>
+        <button type="button" class="btn ghost" id="sample">例を見る</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 記録 -->
+  <section class="pane" id="p-all" aria-labelledby="t-all" hidden>
+    <h2 class="pane-h">すべての記録<span class="cnt" id="allCnt"></span></h2>
+    <div class="filters">
+      <div class="seg" id="dirSeg" role="group" aria-label="向きで絞り込む">
+        <button type="button" data-v="" aria-pressed="true">すべて</button>
+        <button type="button" data-v="in" aria-pressed="false">いただいた</button>
+        <button type="button" data-v="out" aria-pressed="false">贈った</button>
+      </div>
+      <input id="q" type="search" placeholder="田中、お歳暮、タオル" aria-label="記録を探す" autocomplete="off">
+    </div>
+    <p class="found" id="found" aria-live="polite"></p>
+    <ul class="list" id="allList"></ul>
+    <p class="none" id="allEmpty" hidden>まだ記録がありません。上の「記録する」から始めましょう。</p>
+  </section>
+
+  <!-- 人 -->
+  <section class="pane" id="p-people" aria-labelledby="t-people" hidden>
+    <h2 class="pane-h">相手ごと<span class="cnt" id="pplCnt"></span></h2>
+    <p class="pane-note">名前を押すと、これまでのやりとりが見られます。</p>
+    <ul class="people" id="pplList"></ul>
+    <p class="none" id="pplEmpty" hidden>記録すると、相手ごとにまとまります。</p>
+  </section>
+
+  <!-- お年玉 -->
+  <section class="pane" id="p-nen" aria-labelledby="t-nen" hidden>
+    <h2 class="pane-h">お年玉</h2>
+    <div class="seg" id="nenSeg" role="group" aria-label="あげた・もらった">
+      <button type="button" data-v="out" aria-pressed="true">あげた</button>
+      <button type="button" data-v="in" aria-pressed="false">もらった</button>
+    </div>
+    <p class="pane-note" id="nenNote"></p>
+    <div class="tbl-wrap" id="nenWrap" tabindex="0" aria-label="お年玉の表"><table class="nen" id="nenTbl"></table></div>
+    <p class="none" id="nenEmpty" hidden></p>
+    <button type="button" class="btn ghost" id="nenAdd">お年玉を記録</button>
+  </section>
+
+  <details class="box">
+    <summary>お返しの目安について</summary>
+    <p>金額や時期は、一般的に言われている目安です。地域や家のならわし、相手との関係で変わります。迷ったら、家族や身近な年長の人に相談してください。</p>
+    <ul class="guide" id="guideList"></ul>
+  </details>
+  <details class="box">
+    <summary>データの引っ越し</summary>
+    <p>記録はこの端末の中にだけあります。機種変更のときは、ファイルに書き出して、新しい端末で読み込みます。</p>
+    <div class="row">
+      <button type="button" class="btn ghost small" id="expBtn">ファイルに書き出す</button>
+      <label class="btn ghost small file-btn">ファイルを読み込む<input type="file" id="impFile" accept="application/json,.json"></label>
+    </div>
+    <p class="msg" id="moveMsg" role="status"></p>
+  </details>
+
+  <footer class="foot">
+    <p>いただきものの記録は、この端末にだけ保存されます。</p>
+    <p>開発：App World Lab（App World 運営）</p>
+    <p><a href="../">App World Lab</a></p>
+  </footer>
+</main>
+
+<nav class="tabs" aria-label="画面の切り替え">
+  <button type="button" id="t-todo" data-p="todo" aria-current="page"><i aria-hidden="true"></i>お返し<b class="badge" id="badge" hidden></b></button>
+  <button type="button" id="t-all" data-p="all"><i aria-hidden="true"></i>記録</button>
+  <button type="button" id="t-people" data-p="people"><i aria-hidden="true"></i>相手</button>
+  <button type="button" id="t-nen" data-p="nen"><i aria-hidden="true"></i>お年玉</button>
+</nav>
+
+<dialog id="edit" class="dlg" aria-labelledby="eH">
+  <form class="d-in" id="form" novalidate>
+    <h2 id="eH">記録する</h2>
+    <div class="seg big" id="fDir" role="radiogroup" aria-label="向き">
+      <label><input type="radio" name="dir" value="in" checked><span>いただいた</span></label>
+      <label><input type="radio" name="dir" value="out"><span>贈った</span></label>
+    </div>
+    <fieldset class="evs">
+      <legend>行事</legend>
+      <div class="ev-chips" id="evChips"></div>
+    </fieldset>
+    <label class="field"><span id="fWhoL">誰から</span><input id="fWho" type="text" maxlength="30" autocomplete="off" list="names" placeholder="田中さん（夫の会社）"></label>
+    <datalist id="names"></datalist>
+    <label class="field" id="fKidF" hidden><span>受け取った子</span><input id="fKid" type="text" maxlength="20" autocomplete="off" list="kids" placeholder="はると"></label>
+    <datalist id="kids"></datalist>
+    <label class="field"><span>何を</span><input id="fWhat" type="text" maxlength="40" autocomplete="off" placeholder="今治タオルのセット"></label>
+    <div class="two">
+      <label class="field"><span>いくらくらい（円）</span><input id="fAmt" type="text" inputmode="numeric" autocomplete="off" placeholder="10000"></label>
+      <label class="field"><span>日付</span><input id="fDate" type="date"></label>
+    </div>
+    <p class="tip" id="fTip" aria-live="polite"></p>
+    <fieldset class="seg-f" id="fStateF">
+      <legend id="fStateL">お返し</legend>
+      <div class="seg" id="fState">
+        <label><input type="radio" name="state" value="todo" checked><span>まだ</span></label>
+        <label><input type="radio" name="state" value="done"><span>済み</span></label>
+        <label><input type="radio" name="state" value="none"><span>しない</span></label>
+      </div>
+    </fieldset>
+    <div class="ret" id="retBox" hidden>
+      <label class="field"><span>お返しした物</span><input id="fRetWhat" type="text" maxlength="40" autocomplete="off" placeholder="カタログギフト"></label>
+      <div class="two">
+        <label class="field"><span>いくらくらい（円）</span><input id="fRetAmt" type="text" inputmode="numeric" autocomplete="off" placeholder="5000"></label>
+        <label class="field"><span>贈った日</span><input id="fRetDate" type="date"></label>
+      </div>
+    </div>
+    <label class="field"><span>メモ</span><textarea id="fNote" rows="2" maxlength="300" placeholder="住所は年賀状の束にある。のしは「内祝」。"></textarea></label>
+    <p class="err" id="fErr" role="alert"></p>
+    <div class="acts">
+      <button class="btn" type="submit">保存</button>
+      <button class="btn ghost" type="button" id="eCancel">キャンセル</button>
+    </div>
+    <button type="button" class="link danger" id="eDel" hidden>この記録を削除</button>
+  </form>
+</dialog>
+
+<dialog id="person" class="dlg" aria-labelledby="pName">
+  <div class="d-in">
+    <h2 id="pName"></h2>
+    <div class="sums" id="pSums"></div>
+    <ol class="tl" id="pTl"></ol>
+    <button type="button" class="btn ghost" id="pClose">閉じる</button>
+  </div>
+</dialog>
+
+<div class="toast" id="toast" role="status" hidden><span id="toastMsg"></span><button type="button" id="toastUndo">元に戻す</button></div>
+<script src="app.js"></script>
+</body></html>

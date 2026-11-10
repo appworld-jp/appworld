@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>冷凍ストック帳</title>
+<meta name="description" content="冷凍庫に何が、いつから入っているかを記録。古い順に並ぶので、奥で眠っている物を先に使えます。食品ごとの保存の目安つき。">
+<meta name="theme-color" content="#1C6E9E">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="style.css">
+</head><body>
+<header class="top">
+  <div class="top-in">
+    <a class="back" href="../">App World Lab</a>
+    <h1><svg class="flake" viewBox="0 0 40 40" width="34" height="34" aria-hidden="true"><path d="M20 3v34M5.3 11.5l29.4 17M5.3 28.5l29.4-17M15 5l5 5 5-5M15 35l5-5 5 5M4 17l7 1-2 6M36 23l-7-1 2-6M4 23l7-1-2-6M36 17l-7 1 2 6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>冷凍ストック帳</h1>
+    <p class="lead">冷凍庫の中身と入れた日がわかるので、古い物から使えます。</p>
+  </div>
+</header>
+
+<main class="wrap">
+  <form class="add" id="addForm" novalidate aria-label="冷凍庫に入れた物を記録">
+    <div class="add-row">
+      <label class="f-name"><span class="sr">品名</span><input id="aName" type="text" maxlength="30" autocomplete="off" placeholder="豚こま（下味つき）" enterkeyhint="done"></label>
+      <label class="f-amt"><span class="sr">量</span><input id="aAmt" type="text" maxlength="12" autocomplete="off" placeholder="2袋"></label>
+    </div>
+    <div class="add-opts">
+      <div class="places" role="radiogroup" aria-label="入れた場所" id="aPlace">
+        <label><input type="radio" name="ap" value="" checked><span>場所なし</span></label>
+        <label><input type="radio" name="ap" value="上段"><span>上段</span></label>
+        <label><input type="radio" name="ap" value="下段"><span>下段</span></label>
+        <label><input type="radio" name="ap" value="引き出し"><span>引き出し</span></label>
+      </div>
+      <div class="add-sub">
+        <label class="f-type"><span>種類</span><select id="aType"></select></label>
+        <label class="f-date"><span>冷凍した日</span><input id="aDate" type="date"></label>
+      </div>
+      <label class="f-exp" id="aExpF" hidden><span>袋に書いてある期限</span><input id="aExp" type="date"></label>
+      <p class="guide" id="aGuide" aria-live="polite"></p>
+    </div>
+    <p class="err" id="aErr" role="alert"></p>
+    <button class="btn-in" type="submit"><span aria-hidden="true">＋</span>冷凍庫に入れる</button>
+  </form>
+
+  <section class="staples" id="staples" hidden aria-labelledby="stH">
+    <div class="st-head">
+      <h2 id="stH">いつもの</h2>
+      <button type="button" class="tiny" id="stEdit" aria-pressed="false">整理</button>
+    </div>
+    <p class="st-note" id="stNote">押すと、今日の日付ですぐ入ります。</p>
+    <div class="st-chips" id="stChips"></div>
+  </section>
+
+  <section class="stock" id="stock" aria-labelledby="stockH">
+    <div class="stock-head" id="stockHead" hidden>
+      <h2 id="stockH">冷凍庫の中<span class="cnt" id="cnt"></span></h2>
+      <p class="sort">古い順</p>
+    </div>
+    <div class="filters" id="filters" hidden>
+      <div class="pf" id="pf" role="group" aria-label="場所で絞り込む"></div>
+      <input id="q" type="search" placeholder="ごはん、鮭" aria-label="品名で探す" autocomplete="off">
+    </div>
+    <p class="found" id="found" aria-live="polite"></p>
+    <ul class="bags" id="bags"></ul>
+
+    <div class="empty" id="empty" hidden>
+      <svg viewBox="0 0 160 120" width="160" height="120" aria-hidden="true">
+        <rect x="34" y="6" width="92" height="108" rx="10" fill="#F4FAFD" stroke="#1C6E9E" stroke-width="4"/>
+        <path d="M34 46h92M34 80h92" stroke="#1C6E9E" stroke-width="3"/>
+        <rect x="46" y="20" width="30" height="20" rx="4" fill="#BFE0F0"/><rect x="84" y="24" width="26" height="16" rx="4" fill="#FFE2A8"/>
+        <rect x="48" y="56" width="40" height="18" rx="4" fill="#D7EEDB"/><rect x="50" y="90" width="58" height="16" rx="4" fill="#BFE0F0"/>
+        <path d="M118 12l6 6M124 12l-6 6" stroke="#7BBBD9" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+      <p class="empty-h">冷凍庫に入れた物を、上の欄から記録します。</p>
+      <p>入れた日から何日たったかと、おいしく食べられる目安がわかります。</p>
+      <button type="button" class="btn-ghost" id="sample">例を入れてみる</button>
+    </div>
+  </section>
+
+  <details class="about">
+    <summary>保存の目安について</summary>
+    <p>目安は、家庭の冷凍庫で、空気を抜いてしっかり包んだ場合の、おいしく食べられる期間のおおよそです。安全を保証するものではありません。</p>
+    <p>霜がたくさん付いた物や、色やにおいがおかしい物は、食べないでください。市販の冷凍食品は、袋に書いてある期限に従ってください。</p>
+    <ul class="tbl" id="guideList"></ul>
+  </details>
+
+  <details class="about" id="move">
+    <summary>データの引っ越し</summary>
+    <p>記録はこの端末の中にだけあります。機種変更のときは、ファイルに書き出して、新しい端末で読み込みます。</p>
+    <div class="row">
+      <button type="button" class="btn-ghost small" id="expBtn">ファイルに書き出す</button>
+      <label class="btn-ghost small file-btn">ファイルを読み込む<input type="file" id="impFile" accept="application/json,.json"></label>
+    </div>
+    <p class="msg" id="moveMsg" role="status"></p>
+  </details>
+
+  <footer class="foot">
+    <p>冷凍庫の記録は、この端末にだけ保存されます。</p>
+    <p>開発：App World Lab（App World 運営）</p>
+    <p><a href="../">App World Lab</a></p>
+  </footer>
+</main>
+
+<dialog id="use" class="dlg" aria-labelledby="uH">
+  <div class="d-in">
+    <h2 id="uH"></h2>
+    <p class="d-sub" id="uSub"></p>
+    <button type="button" class="btn-in" id="uAll">全部使った</button>
+    <div class="part" id="uPart">
+      <p class="part-h">一部だけ使った</p>
+      <div class="stepper" id="uStep">
+        <button type="button" class="st-b" id="uMinus" aria-label="使った量を減らす">−</button>
+        <div class="st-v" aria-live="polite"><small>使った量</small><b id="uVal"></b></div>
+        <button type="button" class="st-b" id="uPlus" aria-label="使った量を増やす">＋</button>
+      </div>
+      <label class="field" id="uLeftF"><span>残りの量</span><input id="uLeft" type="text" maxlength="12" autocomplete="off" placeholder="半分くらい"></label>
+      <p class="err" id="uErr" role="alert"></p>
+      <button type="button" class="btn-ghost wide" id="uSome">残りを冷凍庫に戻す</button>
+    </div>
+    <div class="d-acts">
+      <button type="button" class="link" id="uEdit">記録を直す</button>
+      <button type="button" class="btn-ghost" id="uClose">閉じる</button>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="edit" class="dlg" aria-labelledby="eH">
+  <form class="d-in" id="eForm" novalidate>
+    <h2 id="eH">記録を直す</h2>
+    <label class="field"><span>品名</span><input id="eName" type="text" maxlength="30" autocomplete="off"></label>
+    <div class="two">
+      <label class="field"><span>量</span><input id="eAmt" type="text" maxlength="12" autocomplete="off"></label>
+      <label class="field"><span>場所</span><select id="ePlace"><option value="">場所なし</option><option>上段</option><option>下段</option><option>引き出し</option></select></label>
+    </div>
+    <div class="two">
+      <label class="field"><span>種類</span><select id="eType"></select></label>
+      <label class="field"><span>冷凍した日</span><input id="eDate" type="date"></label>
+    </div>
+    <label class="field" id="eExpF"><span>袋に書いてある期限</span><input id="eExp" type="date"></label>
+    <p class="err" id="eErr" role="alert"></p>
+    <div class="d-acts">
+      <button type="submit" class="btn-in">保存</button>
+      <button type="button" class="btn-ghost" id="eCancel">キャンセル</button>
+    </div>
+    <button type="button" class="link danger" id="eDel">この記録を削除</button>
+  </form>
+</dialog>
+
+<div class="toast" id="toast" role="status" hidden><span id="toastMsg"></span><button type="button" id="toastUndo">元に戻す</button></div>
+<script src="app.js"></script>
+</body></html>

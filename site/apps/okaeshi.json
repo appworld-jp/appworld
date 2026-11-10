@@ -1,0 +1,18 @@
+{
+  "id": "okaeshi",
+  "name": "いただきもの帳",
+  "tagline": "いただき物とお返しを記録。内祝いの目安も",
+  "description": "いただいた物と贈った物を、相手、行事（出産祝い、結婚祝い、香典、お中元、お歳暮、お年玉など）、品物、金額、日付で記録します。お返しやお礼がまだの物を、目安の時期が近い順に並べ、内祝いや香典返しは、いただいた額の3分の1〜半分という一般的な目安の金額を表示します。目安は地域や関係で変わります。相手ごとのやりとりの履歴と合計、子どもごと・年ごとのお年玉の表も見られます。データはこの端末にだけ保存され、ファイルに書き出して移せます。",
+  "platform": "web",
+  "category": "lifestyle",
+  "ai_tools": [
+    "Claude Code"
+  ],
+  "maker_name": "App World Lab（運営）",
+  "url": "https://appworld-lab.pages.dev/okaeshi/",
+  "launch_date": "2026-11-10",
+  "beta": false,
+  "operator": true,
+  "color": "#A8323E",
+  "icon": true
+}
