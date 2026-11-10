@@ -1,0 +1,18 @@
+{
+  "id": "moshimo",
+  "name": "もしものメモ",
+  "tagline": "家族の持病・薬・連絡先を、財布のカードとA4に",
+  "description": "家族一人ひとりの名前、生年月日、血液型（任意）、アレルギー、飲んでいる薬、持病、かかりつけ病院と、緊急連絡先、避難場所、家族の集合場所をまとめておく緊急用のメモです。財布に入るカード（切って折るとカードの大きさ）とA4 1枚で印刷でき、救助の人に見せる大きな文字の画面もあります。書いた内容はこの端末のブラウザにだけ保存され、インターネットには送りません。マイナンバーのような12桁の番号を書くと注意が出ます。ファイルに書き出して機種変更先へ移せます。",
+  "platform": "web",
+  "category": "lifestyle",
+  "ai_tools": [
+    "Claude Code"
+  ],
+  "maker_name": "App World Lab（運営）",
+  "url": "https://appworld-lab.pages.dev/moshimo/",
+  "launch_date": "2026-11-10",
+  "beta": false,
+  "operator": true,
+  "color": "#0E7A55",
+  "icon": true
+}

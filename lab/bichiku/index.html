@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>防災備蓄チェック</title>
+<meta name="description" content="家族の人数と日数を入れると、水・食料・簡易トイレ・カセットボンベの必要な量がわかります。家にある備えを賞味期限と一緒に記録すると、足りない分と期限が近いものが一目でわかります。">
+<meta name="theme-color" content="#F2B33D">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="style.css">
+</head><body>
+<header class="top">
+  <div class="top-in">
+    <a class="back" href="../">App World Lab</a>
+    <h1><svg class="h-ic" viewBox="0 0 40 40" aria-hidden="true"><path d="M20 3 37 34H3z" fill="#F2B33D" stroke="#1E2A33" stroke-width="3" stroke-linejoin="round"/><path d="M20 14v10" stroke="#1E2A33" stroke-width="4" stroke-linecap="round"/><circle cx="20" cy="29" r="2.4" fill="#1E2A33"/></svg>防災備蓄チェック</h1>
+    <p class="lead">家族の人数を入れると、何がどれだけ足りないかがわかります。</p>
+  </div>
+  <div class="stripe" aria-hidden="true"></div>
+</header>
+
+<main class="wrap">
+  <section class="fam" aria-labelledby="famH">
+    <h2 id="famH" class="sec">家族</h2>
+    <div class="steppers" id="steppers"></div>
+    <div class="days" role="group" aria-label="何日分そなえるか">
+      <span class="days-l">何日分</span>
+      <button type="button" class="day" data-d="3" aria-pressed="false">3日分<small>最低限</small></button>
+      <button type="button" class="day" data-d="7" aria-pressed="false">7日分<small>できれば</small></button>
+    </div>
+  </section>
+
+  <section class="need" aria-labelledby="needH">
+    <div class="need-h">
+      <h2 id="needH" class="sec">必要な量と、いまの備え</h2>
+      <p class="score" id="score" aria-live="polite"></p>
+    </div>
+    <div class="meters" id="meters"></div>
+    <p class="small">期限が切れたものは数に入れていません。</p>
+  </section>
+
+  <section class="soon" id="soonBox" aria-labelledby="soonH" hidden>
+    <h2 id="soonH" class="sec">期限が近いもの</h2>
+    <p class="small">ふだんの食事で使って、使った分を買い足しましょう（ローリングストック）。</p>
+    <ul class="soon-list" id="soonList"></ul>
+  </section>
+
+  <section class="stock" aria-labelledby="stockH">
+    <h2 id="stockH" class="sec">家にある備え</h2>
+    <form id="addForm" class="add" novalidate>
+      <div class="kinds" id="kinds" role="radiogroup" aria-label="種類"></div>
+      <div class="presets" id="presets" aria-label="よくあるもの"></div>
+      <div class="add-grid">
+        <label class="f f-name"><span>品名</span><input id="aName" type="text" maxlength="30" autocomplete="off" placeholder="2Lの水"></label>
+        <label class="f f-n"><span>数</span><input id="aN" type="number" inputmode="numeric" min="1" max="999" placeholder="6" aria-describedby="addErr"></label>
+        <label class="f f-per"><span id="aPerL">1つあたり（L）</span><input id="aPer" type="number" inputmode="decimal" min="0.1" max="999" step="0.1" placeholder="2"></label>
+        <label class="f f-exp"><span>賞味・使用期限</span><input id="aExp" type="date" min="2000-01-01" max="2100-12-31"></label>
+      </div>
+      <p class="err" id="addErr" aria-live="polite"></p>
+      <button type="submit" class="btn" id="addBtn">備えに追加</button>
+    </form>
+    <div class="empty" id="stockEmpty">
+      <p class="empty-h">まだ何も入っていません。</p>
+      <p>上の「よくあるもの」を押して、数と期限を入れるだけです。</p>
+    </div>
+    <ul class="items" id="items"></ul>
+  </section>
+
+  <section class="other" aria-labelledby="otherH">
+    <h2 id="otherH" class="sec">ほかにあると安心なもの</h2>
+    <p class="small" id="otherCount"></p>
+    <ul class="checks" id="checks"></ul>
+  </section>
+
+  <section class="src" aria-labelledby="srcH">
+    <h2 id="srcH" class="sec">計算の目安</h2>
+    <ul class="src-list">
+      <li>水：1人1日3リットル（飲み水と調理用）。最低3日分、できれば1週間分。</li>
+      <li>食料：主食とおかずを、1人1日3食分。</li>
+      <li>簡易トイレ：1人1日5回分。</li>
+      <li>カセットボンベ：1人1週間で約6本。</li>
+      <li>ペットのフードと水：少なくとも5日分、できれば7日分以上。</li>
+      <li>紙おむつ：1日8枚ほど（月齢で変わります）。</li>
+    </ul>
+    <p class="small">出典：農林水産省「災害時に備えた食品ストックガイド」「要配慮者のための災害時に備えた食品ストックガイド」、内閣府「防災情報のページ」、首相官邸「災害に対するご家庭での備え」、環境省「人とペットの災害対策ガイドライン」をもとにした目安です。家族の体調や季節に合わせて増やしてください。</p>
+  </section>
+
+  <section class="move" aria-labelledby="moveH">
+    <h2 id="moveH" class="sec">機種変更のときは</h2>
+    <p class="small">備えの記録は、この端末にだけ保存されています。ファイルに書き出して、新しい端末で読み込めます。</p>
+    <div class="row">
+      <button type="button" class="btn ghost" id="expBtn">ファイルに書き出す</button>
+      <label class="btn ghost file">ファイルを読み込む<input type="file" id="impFile" accept="application/json,.json"></label>
+    </div>
+    <p class="small" id="moveMsg" aria-live="polite"></p>
+  </section>
+
+  <footer class="foot">
+    <p>備えの記録は、この端末にだけ保存されます。</p>
+    <p>開発：App World Lab（App World 運営）</p>
+    <p><a href="../">App World Lab</a></p>
+  </footer>
+</main>
+
+<div class="toast" id="toast" role="status" hidden><span id="toastMsg"></span><button type="button" id="toastUndo">元に戻す</button></div>
+<script src="app.js"></script>
+</body></html>

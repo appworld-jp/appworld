@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>引っ越し段取り</title>
+<meta name="description" content="引っ越し日を入れると、転出届・転入届、郵便の転送、電気・ガス・水道、転校や車の手続きまで、いつ何をすればいいかが順番に並ぶチェックリストです。">
+<meta name="theme-color" content="#B9773C">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="style.css">
+</head><body>
+<header class="top">
+  <div class="top-in">
+    <a class="back" href="../">App World Lab</a>
+    <h1><span class="tape" aria-hidden="true"></span>引っ越し段取り</h1>
+    <p class="lead">引っ越し日を入れると、いつ何をするかが順番に並びます。</p>
+  </div>
+</header>
+
+<main class="wrap">
+  <section id="viewSetup" class="setup" aria-labelledby="setupH" hidden>
+    <h2 id="setupH">いつ引っ越しますか？</h2>
+    <form id="setupForm" novalidate>
+      <label class="date-f" for="moveDate"><span>引っ越し日</span>
+        <input type="date" id="moveDate" required aria-describedby="dateErr">
+      </label>
+      <p class="err" id="dateErr" aria-live="polite"></p>
+      <fieldset class="opts">
+        <legend>当てはまるものを選んでください</legend>
+        <label class="opt"><input type="checkbox" id="oCross" checked><span><b>ほかの市区町村へ</b><small>転出届と転入届が要ります</small></span></label>
+        <label class="opt"><input type="checkbox" id="oFromRent"><span><b>今の家は賃貸</b><small>解約の連絡と退去の立ち会い</small></span></label>
+        <label class="opt"><input type="checkbox" id="oToRent"><span><b>新居は賃貸</b><small>契約と入居前の確認</small></span></label>
+        <label class="opt"><input type="checkbox" id="oSchool"><span><b>子どもが転校する</b><small>学校の書類と児童手当</small></span></label>
+        <label class="opt"><input type="checkbox" id="oCar"><span><b>車がある</b><small>車庫証明と車検証</small></span></label>
+        <label class="opt"><input type="checkbox" id="oPet"><span><b>ペットがいる</b><small>犬の登録とマイクロチップ</small></span></label>
+      </fieldset>
+      <div class="row">
+        <button type="submit" class="btn" id="setupGo">リストを作る</button>
+        <button type="button" class="btn ghost" id="setupCancel" hidden>やめる</button>
+      </div>
+    </form>
+  </section>
+
+  <section id="viewMain" aria-label="引っ越しのやること" hidden>
+    <div class="label-card">
+      <p class="lc-date" id="lcDate"></p>
+      <p class="lc-left" id="lcLeft" aria-live="polite"></p>
+      <div class="lc-prog">
+        <div class="bar" aria-hidden="true"><i id="barFill"></i></div>
+        <p class="lc-count" id="lcCount" aria-live="polite"></p>
+      </div>
+      <p class="lc-next" id="lcNext"></p>
+      <div class="lc-acts">
+        <button type="button" class="link" id="editBtn">日付と条件を変える</button>
+        <label class="hide-sw"><input type="checkbox" id="hideDone"><span>済んだものを隠す</span></label>
+      </div>
+    </div>
+
+    <ol class="line" id="line"></ol>
+
+    <section class="addbox" aria-labelledby="addH">
+      <h2 id="addH">自分のやることを足す</h2>
+      <form id="addForm" class="add" novalidate>
+        <label class="sr" for="addText">やること</label>
+        <input id="addText" type="text" maxlength="60" autocomplete="off" placeholder="エアコンの取り外しを頼む" aria-describedby="addErr">
+        <label class="sr" for="addG">いつ</label>
+        <select id="addG"></select>
+        <button type="submit" class="btn">追加</button>
+      </form>
+      <p class="err" id="addErr" aria-live="polite"></p>
+    </section>
+
+    <section class="move" aria-labelledby="moveH">
+      <h2 id="moveH">機種変更のときは</h2>
+      <p class="small">リストは、この端末にだけ保存されています。ファイルに書き出して、新しい端末で読み込めます。</p>
+      <div class="row">
+        <button type="button" class="btn ghost" id="expBtn">ファイルに書き出す</button>
+        <label class="btn ghost file">ファイルを読み込む<input type="file" id="impFile" accept="application/json,.json"></label>
+        <button type="button" class="btn ghost danger" id="resetBtn">最初から作り直す</button>
+      </div>
+      <p class="small" id="moveMsg" aria-live="polite"></p>
+    </section>
+  </section>
+
+  <p class="note">手続きの期限や持ち物は、市区町村や会社によって違うことがあります。くわしくは各窓口で確かめてください。</p>
+
+  <footer class="foot">
+    <p>引っ越しのリストは、この端末にだけ保存されます。</p>
+    <p>開発：App World Lab（App World 運営）</p>
+    <p><a href="../">App World Lab</a></p>
+  </footer>
+</main>
+
+<div class="toast" id="toast" role="status" hidden><span id="toastMsg"></span><button type="button" id="toastUndo">元に戻す</button></div>
+<script src="tasks.js"></script>
+<script src="app.js"></script>
+</body></html>

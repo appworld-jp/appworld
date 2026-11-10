@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>もしものメモ</title>
+<meta name="description" content="家族の持病、飲んでいる薬、アレルギー、かかりつけ病院、緊急連絡先、避難場所を1枚にまとめるメモです。財布に入るカードやA4で印刷でき、救助の人に見せる大きな文字の画面もあります。">
+<meta name="theme-color" content="#0E7A55">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="style.css">
+</head><body>
+<div class="app" id="app">
+<header class="top">
+  <div class="top-in">
+    <a class="back" href="../">App World Lab</a>
+    <div class="brand">
+      <svg class="logo" viewBox="0 0 48 48" aria-hidden="true"><rect x="3" y="9" width="42" height="30" rx="6" fill="#fff"/><rect x="3" y="9" width="42" height="9" rx="3" fill="#F06A3C"/><circle cx="15" cy="28" r="5" fill="#0E7A55"/><path d="M25 25h14M25 31h10" stroke="#0E7A55" stroke-width="3" stroke-linecap="round"/></svg>
+      <div>
+        <h1>もしものメモ</h1>
+        <p class="lead">家族の持病や薬、連絡先を1枚に。印刷も、画面で見せることもできます。</p>
+      </div>
+    </div>
+  </div>
+  <nav class="tabs" aria-label="画面の切りかえ">
+    <button type="button" class="tab" id="tabEdit" aria-pressed="true">書く</button>
+    <button type="button" class="tab" id="tabShow" aria-pressed="false">見せる</button>
+    <button type="button" class="tab" id="tabPrint" aria-pressed="false">印刷</button>
+  </nav>
+</header>
+
+<main class="wrap">
+  <aside class="privacy" aria-labelledby="pvH">
+    <h2 id="pvH"><svg class="pv-ic" viewBox="0 0 16 18" aria-hidden="true"><path d="M4 8V5a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2"/><rect x="1" y="8" width="14" height="10" rx="2" fill="currentColor"/></svg>このメモの保存先</h2>
+    <ul>
+      <li>書いた内容は、<b>この端末のブラウザの中だけ</b>に保存されます。インターネットには送りません。</li>
+      <li>この端末をさわれる人は、だれでも見られます。共用のパソコンでは使わないでください。</li>
+      <li><b>マイナンバー、口座番号、暗証番号は書かないでください。</b>印刷したカードは、なくさないように持ち歩いてください。</li>
+    </ul>
+  </aside>
+
+  <!-- 書く -->
+  <section id="viewEdit" aria-label="メモを書く">
+    <div class="people" id="people" role="group" aria-label="だれのメモ"></div>
+
+    <div class="empty" id="noPeople">
+      <p class="empty-h">まず、家族を1人追加しましょう。</p>
+      <p>名前と、救助の人に伝えたいこと（アレルギー、薬、持病）を書いておきます。</p>
+      <button type="button" class="btn" id="firstAdd">家族を追加</button>
+    </div>
+
+    <form class="sheet" id="personForm" novalidate hidden>
+      <div class="sheet-h">
+        <h2 id="pfH">本人</h2>
+        <span class="saved" id="savedMark" aria-live="polite"></span>
+      </div>
+      <div class="grid2">
+        <label class="f"><span>名前</span><input id="fName" data-k="name" maxlength="20" autocomplete="off" placeholder="山田 花子"></label>
+        <label class="f"><span>ふりがな</span><input id="fKana" data-k="kana" maxlength="30" autocomplete="off" placeholder="やまだ はなこ"></label>
+        <label class="f"><span>生年月日</span><input id="fBirth" data-k="birth" type="date" min="1900-01-01" max="2100-12-31"></label>
+        <div class="f">
+          <span id="bloodL">血液型（わかれば）</span>
+          <div class="blood">
+            <select id="fBlood" data-k="blood" aria-labelledby="bloodL"><option value="">書かない</option><option>A型</option><option>B型</option><option>O型</option><option>AB型</option></select>
+            <label class="rh"><input type="checkbox" id="fRh" data-k="rh"><span>Rh−</span></label>
+          </div>
+        </div>
+      </div>
+      <label class="f alert-f"><span>アレルギー（食べ物・薬）</span><textarea id="fAllergy" data-k="allergy" maxlength="200" rows="2" placeholder="卵、ペニシリン系の薬"></textarea></label>
+      <label class="f"><span>飲んでいる薬</span><textarea id="fMeds" data-k="meds" maxlength="200" rows="2" placeholder="血圧の薬（アムロジピン）を朝1錠"></textarea></label>
+      <label class="f"><span>持病・これまでの大きな病気</span><textarea id="fIll" data-k="illness" maxlength="200" rows="2" placeholder="高血圧、ぜんそく"></textarea></label>
+      <div class="grid2">
+        <label class="f"><span>かかりつけ病院</span><input id="fHosp" data-k="hosp" maxlength="40" autocomplete="off" placeholder="さくら内科クリニック"></label>
+        <label class="f"><span>病院の電話</span><input id="fHospTel" data-k="hospTel" type="tel" maxlength="20" autocomplete="off" placeholder="03-1234-5678"></label>
+      </div>
+      <label class="f"><span>伝えたいこと</span><textarea id="fNote" data-k="note" maxlength="200" rows="2" placeholder="耳が聞こえにくいので、紙に書いて伝えてください"></textarea></label>
+      <p class="warn" id="numWarn" role="alert" hidden>12桁の番号のようです。マイナンバーなどの番号は書かないでください。</p>
+      <div class="row end">
+        <button type="button" class="btn ghost danger" id="delPerson">この人を削除</button>
+      </div>
+    </form>
+
+    <section class="sheet family" aria-labelledby="famH">
+      <div class="sheet-h"><h2 id="famH">家族みんなの情報</h2><span class="saved" id="savedMark2" aria-live="polite"></span></div>
+      <h3 class="sub-h">緊急連絡先</h3>
+      <ul class="contacts" id="contacts"></ul>
+      <button type="button" class="btn ghost small-btn" id="addContact">連絡先を追加</button>
+      <div class="grid2 places">
+        <label class="f"><span>避難場所</span><input id="fHinan" data-pk="hinan" maxlength="60" autocomplete="off" placeholder="さくら小学校 体育館"></label>
+        <label class="f"><span>家族の集合場所</span><input id="fShugo" data-pk="shugo" maxlength="60" autocomplete="off" placeholder="駅前公園の時計の下"></label>
+      </div>
+      <label class="f"><span>家族の決めごと</span><textarea id="fMemo" data-pk="memo" maxlength="200" rows="2" placeholder="つながらないときは、災害用伝言ダイヤル171に録音する"></textarea></label>
+      <p class="warn" id="numWarn2" role="alert" hidden>12桁の番号のようです。マイナンバーなどの番号は書かないでください。</p>
+    </section>
+
+    <section class="move" aria-labelledby="moveH">
+      <h2 id="moveH">機種変更のときは</h2>
+      <p class="small">メモは、この端末にだけ保存されています。ファイルに書き出して、新しい端末で読み込めます。書き出したファイルにも個人の情報が入っているので、送ったあとは消してください。</p>
+      <div class="row">
+        <button type="button" class="btn ghost" id="expBtn">ファイルに書き出す</button>
+        <label class="btn ghost file">ファイルを読み込む<input type="file" id="impFile" accept="application/json,.json"></label>
+        <button type="button" class="btn ghost danger" id="wipeBtn">すべて消す</button>
+      </div>
+      <p class="small" id="moveMsg" aria-live="polite"></p>
+    </section>
+  </section>
+
+  <!-- 見せる -->
+  <section id="viewShow" aria-label="救助の人に見せる" hidden>
+    <div class="show-bar">
+      <div class="show-who" id="showWho" role="group" aria-label="だれの情報"></div>
+      <button type="button" class="btn ghost" id="bigger" aria-pressed="false">文字を大きく</button>
+    </div>
+    <div class="empty" id="showEmpty" hidden>
+      <p class="empty-h">まだメモがありません。</p>
+      <p>「書く」で家族を追加すると、ここに大きな文字で出ます。</p>
+    </div>
+    <article class="show" id="show" aria-live="polite"></article>
+  </section>
+
+  <!-- 印刷 -->
+  <section id="viewPrint" aria-labelledby="prH" hidden>
+    <h2 id="prH" class="sr">印刷</h2>
+    <div class="pr-opts" role="radiogroup" aria-label="印刷の形">
+      <label class="pr-opt"><input type="radio" name="layout" value="card" checked><span><b>財布に入るカード</b><small>1人1枚。切り取って真ん中で折ると、カードの大きさになります。</small></span></label>
+      <label class="pr-opt"><input type="radio" name="layout" value="a4"><span><b>A4 1枚</b><small>家族みんなの情報を1枚に。冷蔵庫や非常持ち出し袋に。</small></span></label>
+    </div>
+    <div class="row">
+      <button type="button" class="btn" id="printBtn">印刷する</button>
+    </div>
+    <p class="small" id="printMsg">印刷の画面で「PDFに保存」を選ぶと、ファイルにもできます。</p>
+    <div class="preview-wrap"><p class="pv-l">印刷のイメージ</p><div class="paper" id="paper"></div></div>
+  </section>
+
+  <footer class="foot">
+    <p>もしものメモは、この端末にだけ保存されます。</p>
+    <p>開発：App World Lab（App World 運営）</p>
+    <p><a href="../">App World Lab</a></p>
+  </footer>
+</main>
+</div>
+<div class="print-root" id="printRoot" aria-hidden="true"></div>
+
+<div class="toast" id="toast" role="status" hidden><span id="toastMsg"></span><button type="button" id="toastUndo">元に戻す</button></div>
+<script src="app.js"></script>
+</body></html>

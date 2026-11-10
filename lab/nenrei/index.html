@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>学年・年齢早見</title>
+<meta name="description" content="誕生日を入れると、いまの年齢と学年、小学校から大学までの入学・卒業の年、和暦、干支、星座、還暦や古希の年がわかります。家族の分を保存でき、年度ごとの早見表も見られます。">
+<meta name="theme-color" content="#B8382A">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="style.css">
+</head><body>
+<header class="top">
+  <a class="back" href="../">App World Lab</a>
+  <div class="title">
+    <span class="seal" aria-hidden="true">暦</span>
+    <div>
+      <h1>学年・年齢早見</h1>
+      <p class="lead">誕生日を入れると、学年も和暦も年祝いも、すぐにわかります。</p>
+    </div>
+  </div>
+  <nav class="tabs" aria-label="画面の切りかえ">
+    <button type="button" class="tab" id="tabLook" aria-pressed="true">調べる</button>
+    <button type="button" class="tab" id="tabFam" aria-pressed="false">家族<span class="badge" id="famCount" hidden></span></button>
+    <button type="button" class="tab" id="tabTable" aria-pressed="false">早見表</button>
+  </nav>
+</header>
+
+<main class="wrap">
+  <section id="viewLook" aria-label="誕生日から調べる">
+    <form class="ask" id="askForm" novalidate>
+      <div class="ask-h">
+        <h2 id="askH">誕生日</h2>
+        <div class="mode" role="group" aria-label="入力のしかた">
+          <button type="button" class="mode-b" id="modeSeireki" aria-pressed="true">西暦</button>
+          <button type="button" class="mode-b" id="modeWareki" aria-pressed="false">和暦</button>
+        </div>
+      </div>
+      <div id="inSeireki">
+        <input type="date" id="birth" min="1873-01-01" max="2200-12-31" aria-labelledby="askH" aria-describedby="birthErr">
+      </div>
+      <div id="inWareki" class="wa" hidden>
+        <label class="sr" for="wEra">元号</label>
+        <select id="wEra"><option>令和</option><option selected>平成</option><option>昭和</option><option>大正</option><option>明治</option></select>
+        <label class="wa-f"><input id="wY" type="number" inputmode="numeric" min="1" max="99" placeholder="8"><span>年</span></label>
+        <label class="wa-f"><input id="wM" type="number" inputmode="numeric" min="1" max="12" placeholder="4"><span>月</span></label>
+        <label class="wa-f"><input id="wD" type="number" inputmode="numeric" min="1" max="31" placeholder="2"><span>日</span></label>
+      </div>
+      <p class="err" id="birthErr" aria-live="polite"></p>
+      <details class="asof" id="asofBox">
+        <summary>基準日：<span id="asofTxt">今日</span></summary>
+        <div class="asof-in">
+          <label for="asof">この日の時点で計算します</label>
+          <input type="date" id="asof" min="1873-01-01" max="2200-12-31">
+          <div class="asof-q">
+            <button type="button" class="chip" id="asofToday">今日</button>
+            <button type="button" class="chip" id="asofApril">次の4月1日</button>
+          </div>
+        </div>
+      </details>
+      <div class="samples" id="samples">
+        <span>例：</span>
+        <button type="button" class="chip" data-d="2020-04-01">2020年4月1日</button>
+        <button type="button" class="chip" data-d="2019-05-01">令和元年5月1日</button>
+        <button type="button" class="chip" data-d="1966-08-15">1966年8月15日</button>
+      </div>
+    </form>
+
+    <div class="empty" id="lookEmpty">
+      <p class="empty-h">ここに、年齢と学年が出ます。</p>
+      <p>出産予定日を入れると、何年に入学するかもわかります。</p>
+    </div>
+
+    <div id="result" hidden aria-live="polite">
+      <article class="fuda" aria-labelledby="rAge">
+        <p class="f-date" id="rDate"></p>
+        <div class="f-main">
+          <p class="f-age"><span class="lbl">満</span><b id="rAge"></b></p>
+          <p class="f-grade" id="rGrade"></p>
+        </div>
+        <p class="f-note" id="rGradeNote"></p>
+        <dl class="f-facts">
+          <div><dt>和暦</dt><dd id="rWareki"></dd></div>
+          <div><dt>干支</dt><dd id="rEto"></dd></div>
+          <div><dt>星座</dt><dd id="rSign"></dd></div>
+          <div><dt>数え年</dt><dd id="rKazoe"></dd></div>
+        </dl>
+        <p class="f-next" id="rNext"></p>
+      </article>
+
+      <form class="save" id="saveForm" novalidate>
+        <label for="saveName" class="sr">名前</label>
+        <input id="saveName" type="text" maxlength="12" autocomplete="off" placeholder="名前（ひなた、母 など）">
+        <button type="submit" class="btn" id="saveBtn">家族に保存</button>
+      </form>
+      <p class="err" id="saveErr" aria-live="polite"></p>
+
+      <section class="block" aria-labelledby="schH">
+        <h3 id="schH">入学と卒業</h3>
+        <ol class="road" id="rSchools"></ol>
+        <p class="small">公立の学校に、浪人・留年なしで進んだ場合の年です。大学は4年制で計算しています。</p>
+      </section>
+
+      <details class="block iwai-d" id="iwBox">
+        <summary><h3 id="iwH">年祝い<span class="iw-hint" id="iwHint"></span></h3></summary>
+        <p class="small">年祝いは、もとは数え年で祝うものでした。いまは満年齢で祝う家も多いので、両方の年を出しています。</p>
+        <ul class="iwai" id="rIwai"></ul>
+      </details>
+    </div>
+  </section>
+
+  <section id="viewFam" aria-labelledby="famH" hidden>
+    <div class="sec-h">
+      <h2 id="famH">家族</h2>
+      <p class="sub" id="famAsof"></p>
+    </div>
+    <div class="empty" id="famEmpty">
+      <p class="empty-h">まだだれも保存していません。</p>
+      <p>「調べる」で誕生日を入れて、「家族に保存」を押すと、ここに並びます。</p>
+      <button type="button" class="btn" id="famGo">誕生日を入れる</button>
+    </div>
+    <ul class="fam" id="famList"></ul>
+
+    <section class="move" aria-labelledby="moveH">
+      <h3 id="moveH">機種変更のときは</h3>
+      <p class="small">家族の誕生日は、この端末にだけ保存されています。ファイルに書き出して、新しい端末で読み込めます。</p>
+      <div class="row">
+        <button type="button" class="btn ghost" id="expBtn">ファイルに書き出す</button>
+        <label class="btn ghost file">ファイルを読み込む<input type="file" id="impFile" accept="application/json,.json"></label>
+      </div>
+      <p class="small" id="moveMsg" aria-live="polite"></p>
+    </section>
+  </section>
+
+  <section id="viewTable" aria-labelledby="tblH" hidden>
+    <div class="sec-h">
+      <h2 id="tblH">早見表</h2>
+      <div class="mode" role="group" aria-label="表の種類">
+        <button type="button" class="mode-b" id="tGrade" aria-pressed="true">学年</button>
+        <button type="button" class="mode-b" id="tYear" aria-pressed="false">生まれ年</button>
+      </div>
+    </div>
+    <div class="ystep">
+      <button type="button" class="step" id="yPrev" aria-label="前の年">‹</button>
+      <label class="sr" for="yIn">年</label>
+      <p class="ycur"><input id="yIn" type="number" inputmode="numeric" min="1900" max="2150"><span id="yUnit">年度</span></p>
+      <button type="button" class="step" id="yNext" aria-label="次の年">›</button>
+    </div>
+    <p class="small center" id="tblNote"></p>
+    <div class="tbl-wrap">
+      <table class="tbl" id="tbl"><thead id="tblHead"></thead><tbody id="tblBody"></tbody></table>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <p>家族の誕生日は、この端末にだけ保存されます。</p>
+    <p>開発：App World Lab（App World 運営）</p>
+    <p><a href="../">App World Lab</a></p>
+  </footer>
+</main>
+
+<div class="toast" id="toast" role="status" hidden><span id="toastMsg"></span><button type="button" id="toastUndo">元に戻す</button></div>
+<script src="calc.js"></script>
+<script src="app.js"></script>
+</body></html>
