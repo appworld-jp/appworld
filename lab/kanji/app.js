@@ -33,7 +33,7 @@
 
   function renderWord(w) {
     const box = $("word"); box.replaceChildren();
-    [...w[0]].forEach(ch => { const s = document.createElement("span"); s.textContent = ch; box.append(s); });
+    [...w[0]].forEach(ch => { const s = document.createElement("span"), g = document.createElement("b"); g.textContent = ch; s.append(g); box.append(s); });
     box.setAttribute("aria-label", w[0]);
     box.classList.toggle("long", [...w[0]].length > 4);
   }
