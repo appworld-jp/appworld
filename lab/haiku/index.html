@@ -18,7 +18,7 @@
     <li class="step">
       <h2><span class="no">一</span>写真を選ぶ</h2>
       <label class="pick" id="pickLabel">
-        <input type="file" id="file" accept="image/*">
+        <input type="file" id="file" accept="image/*" title="">
         <span class="pick-t" id="pickT">写真を選ぶ</span>
         <span class="pick-s">写真はこの端末の中だけで読みとります。</span>
       </label>
@@ -70,8 +70,7 @@
       <div class="card-photo" id="cardPhoto"><span class="card-empty">写真</span></div>
       <div class="card-paper">
         <p class="card-haiku" id="cardHaiku"></p>
-        <p class="card-meta" id="cardMeta"></p>
-        <span class="card-seal" aria-hidden="true">句</span>
+        <div class="card-foot"><p class="card-meta" id="cardMeta"></p><span class="card-seal" aria-hidden="true">句</span></div>
       </div>
     </div>
     <div class="acts">

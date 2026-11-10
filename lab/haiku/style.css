@@ -102,15 +102,16 @@ br.sp{display:none}
 .card-photo{background:#2B3150;display:grid;place-items:center;border-right:3px solid #B08D4A;overflow:hidden;min-width:0}
 .card-photo img{width:100%;height:100%;object-fit:cover;display:block}
 .card-empty{color:#7A7F99;letter-spacing:.4em;writing-mode:vertical-rl}
-.card-paper{position:relative;color:var(--sumi);min-width:0;overflow:hidden;
+.card-paper{position:relative;color:var(--sumi);min-width:0;overflow:hidden;display:grid;padding:10% 9% 32%;container-type:size;
   background:repeating-linear-gradient(90deg,transparent 0 13px,rgba(120,100,60,.07) 13px 14px)}
-.card-haiku{writing-mode:vertical-rl;position:absolute;top:22px;bottom:24%;left:34px;right:10px;margin:0;justify-content:center;font-size:clamp(17px,4.4vw,24px);line-height:1.6;letter-spacing:.06em;display:flex;flex-direction:column;gap:.35em}
+.card-haiku{writing-mode:vertical-rl;place-self:center;margin:0;max-height:100%;font-size:clamp(17px,4.4vw,24px);font-size:min(15cqw,7.4cqh);line-height:1.65;letter-spacing:.08em;white-space:nowrap}
 .hl{display:block}
-.hl1{padding-top:1.2em}.hl2{padding-top:2.4em}
-.hl.ghost{color:#A39A82;font-size:.8em}
-.card-meta{writing-mode:vertical-rl;position:absolute;left:8px;bottom:14px;margin:0;font-size:11px;line-height:1.6;color:#6B5F48;letter-spacing:.05em;height:40%;display:flex;flex-direction:column;justify-content:flex-end}
+.hl.ghost{color:#A39A82;font-size:.7em;white-space:normal}
+.card-foot{position:absolute;left:9%;right:9%;bottom:6%;height:24%;}
+.card-meta{writing-mode:vertical-rl;margin:0;position:absolute;left:0;bottom:0;height:100%;text-align:end;font-size:11px;line-height:1.7;color:#6B5F48;letter-spacing:.08em}
 .card-meta span{display:block}
-.card-seal{position:absolute;right:12px;bottom:14px;width:28px;height:28px;background:var(--shu);color:var(--paper);display:grid;place-items:center;font-size:17px;font-weight:700}
+.card-meta:empty{display:none}
+.card-seal{position:absolute;right:0;bottom:0;width:28px;height:28px;flex:0 0 auto;background:var(--shu);color:var(--paper);display:grid;place-items:center;font-size:17px;font-weight:700}
 .acts{display:flex;justify-content:center;margin-top:18px}
 .btn{font:inherit;font-size:16px;letter-spacing:.2em;min-height:54px;padding:12px 30px;border:1px solid var(--gold);background:linear-gradient(180deg,var(--gold2),var(--gold));color:var(--night);border-radius:2px;cursor:pointer;font-weight:700}
 .btn:active{transform:translateY(1px)}

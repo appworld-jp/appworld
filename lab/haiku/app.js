@@ -274,12 +274,14 @@
     for (let x = pw + 40; x < W; x += 24) { g.beginPath(); g.moveTo(x, 0); g.lineTo(x, H); g.stroke(); }
     const lines = st.lines.map(L => L.t.trim()).filter(Boolean);
     const area = W - pw, longest = Math.max(1, ...lines.map(l => [...l].length));
-    const top = 140, bottom = H - 430;
+    const top = 150, bottom = H - 300;
     const size = Math.min(photo ? 84 : 110, Math.floor((bottom - top) / (longest * 1.08 + 2.4)));
     const gap = size * 1.6, total = gap * (lines.length - 1);
-    let x = pw + area / 2 + 30 + total / 2;
+    // all lines start at the same height; the block sits in the middle of the paper
+    let x = pw + area / 2 + total / 2;
+    const startY = top + Math.max(0, (bottom - top - longest * size * 1.08) / 2);
     g.fillStyle = "#1B1F33";
-    lines.forEach((l, i) => { vtext(g, l, x, top + i * size * 1.2, size); x -= gap; });
+    lines.forEach(l => { vtext(g, l, x, startY, size); x -= gap; });
     const text = st.lines.map(L => L.t).join(""), reading = st.lines.map(L => L.r || L.t).join("");
     const kigoOk = st.kigo && (text.includes(st.kigo[0]) || reading.includes(st.kigo[1]));
     const meta = [st.author ? `${st.author}　詠` : "", kigoOk ? `季語　${st.kigo[0]}` : ""].filter(Boolean);
