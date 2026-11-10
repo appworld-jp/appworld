@@ -1,0 +1,22 @@
+# Rebuilds the site every night just after midnight JST, so listings queued for
+# today appear without anyone pushing. Does nothing until the owner creates a
+# Cloudflare Pages deploy hook and saves its URL as the CF_DEPLOY_HOOK secret
+# (Cloudflare: the Pages project > Settings > Builds > Deploy hooks).
+name: daily-rebuild
+on:
+  schedule:
+    - cron: "1 15 * * *"   # 00:01 JST every day
+  workflow_dispatch: {}
+permissions: {}            # needs no access to the repository
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Trigger the Cloudflare Pages build
+        env:
+          HOOK: ${{ secrets.CF_DEPLOY_HOOK }}
+        run: |
+          if [ -z "$HOOK" ]; then echo "CF_DEPLOY_HOOK is not set; skipping."; exit 0; fi
+          curl -fsS -X POST "$HOOK" > /dev/null
+          echo "Rebuild requested."

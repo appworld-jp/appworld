@@ -40,3 +40,9 @@ python3 site/build.py --production --site-url https://appworld-1ug.pages.dev \
 (cd site && python3 -m unittest)
 (cd automation && PYTHONPATH=../site python3 -m unittest)
 ```
+
+## ライセンス
+オープンソースではありません。アプリをブラウザで使うのは無料です。コードを複製・改変して使う、公開・配布する、自分のアプリに組み込むには、有料の利用許諾が必要です。詳しくは [LICENSE.md](LICENSE.md) をご覧ください。
+
+## 毎朝の作り直し
+`.github/workflows/daily-rebuild.yml` が毎日 0:01（日本時間）に Cloudflare Pages の作り直しを頼みます。公開日が来た掲載は、こうして push なしでもトップに並びます。Cloudflare のデプロイフックの URL を、GitHub の秘密情報 `CF_DEPLOY_HOOK` に保存するまでは何もしません。
