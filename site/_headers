@@ -7,3 +7,9 @@
   Cross-Origin-Opener-Policy: same-origin
   X-Frame-Options: DENY
   ! Access-Control-Allow-Origin
+
+# Design preview only: its own first-party script and self-hosted fonts. Nothing from other origins.
+/preview/*
+  ! Content-Security-Policy
+  Content-Security-Policy: default-src 'none'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data:; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
+  X-Robots-Tag: noindex

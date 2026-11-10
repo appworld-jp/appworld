@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ja" data-page="すべてのアプリ"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>App World | すべてのアプリ</title>
+<link rel="stylesheet" href="fonts.css">
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="apps.css">
+</head><body>
+
+
+<header class="nav g"><div class="in">
+  <a class="logo js-name" href="index.html">App World</a>
+  <nav aria-label="メイン"><a href="index.html">ホーム</a><a href="index.html#shelf">今日の新着</a><a class="on" href="apps.html">すべてのアプリ</a><a class="keep" href="submit.html">アプリを掲載する</a></nav>
+</div></header>
+
+<main class="g">
+  <div class="in list">
+    <div class="list-head">
+      <h1>すべてのアプリ</h1>
+    </div>
+
+    <form class="finder glass" id="finder" role="search" aria-label="アプリを探す">
+      <label class="search">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="6" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M13 13l5 5" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+        <span class="vh">キーワード</span>
+        <input id="q" type="search" placeholder="アプリ名や説明で探す" autocomplete="off">
+      </label>
+      <div class="filters">
+        <fieldset><legend class="cap">対応</legend><div class="chips" id="f-p"></div></fieldset>
+        <fieldset><legend class="cap">ジャンル</legend><div class="chips" id="f-g"></div></fieldset>
+        <fieldset><legend class="cap">使ったAI</legend><div class="chips" id="f-a"></div></fieldset>
+        <fieldset><legend class="cap">開発の段階</legend><div class="chips" id="f-s"></div></fieldset>
+      </div>
+    </form>
+
+    <div class="bar">
+      <p class="count" id="count" aria-live="polite"></p>
+      <div class="bar-r">
+        <button type="button" class="clear" id="clear">条件をクリア</button>
+        <label class="sort"><span class="vh">並び順</span>
+          <select id="sort"><option value="new">新しい順</option><option value="old">古い順</option><option value="name">名前順</option></select>
+        </label>
+      </div>
+    </div>
+
+    <ol class="grid" id="grid"></ol>
+    <div class="none glass" id="none" hidden>
+      <p>条件に合うアプリは見つかりませんでした。</p>
+      <button type="button" class="link" id="clear2">条件をクリアする</button>
+    </div>
+  </div>
+</main>
+
+<footer class="g"><div class="in"><span><span class="js-name">App World</span>　AIで作られたアプリが集まる場所</span><nav aria-label="サイトの情報"><a href="#">このサイトについて</a><a href="#">掲載規約</a><a href="#">プライバシーポリシー</a><a href="#">RSS</a></nav></div></footer>
+
+<script src="data.js"></script>
+<script src="apps.js"></script>
+</body></html>

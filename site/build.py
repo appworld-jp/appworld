@@ -168,6 +168,8 @@ def build(today: date, artifact: bool, site_url: str | None = None, *, productio
     out.mkdir()
     shutil.copy(HERE / "static" / "style.css", out / "style.css")
     shutil.copy(HERE / "_headers", out / "_headers")
+    if (HERE / "preview").is_dir():  # design preview (preview branches only)
+        shutil.copytree(HERE / "preview", out / "preview")
 
     this_week = week_id(today)
     featured = [a for a in live if a.get("featured_week") == this_week]
