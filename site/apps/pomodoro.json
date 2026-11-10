@@ -1,0 +1,18 @@
+{
+  "id": "pomodoro",
+  "name": "ポモドーロ箱",
+  "tagline": "スタートひとつで、集中と休憩を交互に計るタイマー",
+  "description": "キッチンタイマーのような集中タイマー。集中と休憩を交互に計り、終わるたびにやったことを一言残せます。今日の記録と今週の合計も見られます。",
+  "platform": "web",
+  "category": "productivity",
+  "ai_tools": [
+    "Claude Code"
+  ],
+  "maker_name": "App World Lab（運営）",
+  "url": "https://appworld-lab.pages.dev/pomodoro/",
+  "launch_date": "2026-11-10",
+  "beta": false,
+  "operator": true,
+  "color": "#C2553F",
+  "icon": true
+}

@@ -1,0 +1,18 @@
+{
+  "id": "shift",
+  "name": "シフト交換板",
+  "tagline": "日時を入れるだけで、シフト交代の依頼文とリンク",
+  "description": "シフトを代わってほしいとき、日にちと時間を入れるだけでグループに貼れる依頼文とリンクができます。リンクを開いた人は、名前を入れるだけで返事を作れます。",
+  "platform": "web",
+  "category": "productivity",
+  "ai_tools": [
+    "Claude Code"
+  ],
+  "maker_name": "App World Lab（運営）",
+  "url": "https://appworld-lab.pages.dev/shift/",
+  "launch_date": "2026-11-10",
+  "beta": false,
+  "operator": true,
+  "color": "#8A64C8",
+  "icon": true
+}

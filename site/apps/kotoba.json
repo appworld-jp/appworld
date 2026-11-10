@@ -1,0 +1,18 @@
+{
+  "id": "kotoba",
+  "name": "ことばカード",
+  "tagline": "忘れかけたころに出る、自分の単語カード",
+  "description": "覚えたい言葉をカードにすると、忘れかけたころにもう一度出てきます。答えの手ごたえで次の日が決まります。ビジネス敬語30枚入り。",
+  "platform": "web",
+  "category": "learning",
+  "ai_tools": [
+    "Claude Code"
+  ],
+  "maker_name": "App World Lab（運営）",
+  "url": "https://appworld-lab.pages.dev/kotoba/",
+  "launch_date": "2026-11-10",
+  "beta": false,
+  "operator": true,
+  "color": "#7A6BC4",
+  "icon": true
+}

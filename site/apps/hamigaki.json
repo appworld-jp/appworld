@@ -1,0 +1,18 @@
+{
+  "id": "hamigaki",
+  "name": "おはなしタイマー",
+  "tagline": "3分みがくと、お話が1つ聞ける歯みがきタイマー",
+  "description": "子どもと使う3分の歯みがきタイマー。30秒ごとにみがく場所を図で教え、オリジナルのお話がひと場面ずつ進みます。読み上げもできます。",
+  "platform": "web",
+  "category": "lifestyle",
+  "ai_tools": [
+    "Claude Code"
+  ],
+  "maker_name": "App World Lab（運営）",
+  "url": "https://appworld-lab.pages.dev/hamigaki/",
+  "launch_date": "2026-11-10",
+  "beta": false,
+  "operator": true,
+  "color": "#D48FA3",
+  "icon": true
+}

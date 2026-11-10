@@ -1,0 +1,18 @@
+{
+  "id": "nemu",
+  "name": "ねむログ",
+  "tagline": "寝る・起きたを押すだけで眠りが見える",
+  "description": "寝るときと起きたときに押すだけの睡眠記録。1週間の眠りを帯グラフで見られて、記録が3日分になると傾向に合わせたヒントが出ます。",
+  "platform": "web",
+  "category": "health",
+  "ai_tools": [
+    "Claude Code"
+  ],
+  "maker_name": "App World Lab（運営）",
+  "url": "https://appworld-lab.pages.dev/nemu/",
+  "launch_date": "2026-11-10",
+  "beta": false,
+  "operator": true,
+  "color": "#6C5BB0",
+  "icon": true
+}

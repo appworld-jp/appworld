@@ -1,0 +1,18 @@
+{
+  "id": "commit",
+  "name": "コミット短歌",
+  "tagline": "コミットメッセージが、五七五七七の短歌になる",
+  "description": "コミットメッセージを貼るだけで、五・七・五・七・七の短歌になります。用意した言葉の型にメッセージの単語をはめて詠む遊びで、音の数とよみがなも表示します。",
+  "platform": "web",
+  "category": "dev",
+  "ai_tools": [
+    "Claude Code"
+  ],
+  "maker_name": "App World Lab（運営）",
+  "url": "https://appworld-lab.pages.dev/commit/",
+  "launch_date": "2026-11-10",
+  "beta": false,
+  "operator": true,
+  "color": "#55606E",
+  "icon": true
+}

@@ -1,0 +1,18 @@
+{
+  "id": "kanji",
+  "name": "ひとこと漢字",
+  "tagline": "読み間違えやすい漢字を、一日一問",
+  "description": "大人が読み間違えやすい漢字を、一日一問。四択で答えて、意味もいっしょに覚えられます。間違えた言葉は復習できます。",
+  "platform": "web",
+  "category": "fun",
+  "ai_tools": [
+    "Claude Code"
+  ],
+  "maker_name": "App World Lab（運営）",
+  "url": "https://appworld-lab.pages.dev/kanji/",
+  "launch_date": "2026-11-10",
+  "beta": false,
+  "operator": true,
+  "color": "#C9A13A",
+  "icon": true
+}

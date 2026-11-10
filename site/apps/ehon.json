@@ -1,0 +1,18 @@
+{
+  "id": "ehon",
+  "name": "えほんメーカー",
+  "tagline": "3つ選ぶと、寝る前に読む絵本ができる",
+  "description": "主人公と場所と好きなものを選ぶだけで、人が書いたお話の型から、寝る前に読む6ページの絵本ができます。読み上げもできます。",
+  "platform": "web",
+  "category": "creative",
+  "ai_tools": [
+    "Claude Code"
+  ],
+  "maker_name": "App World Lab（運営）",
+  "url": "https://appworld-lab.pages.dev/ehon/",
+  "launch_date": "2026-11-10",
+  "beta": false,
+  "operator": true,
+  "color": "#B9567E",
+  "icon": true
+}

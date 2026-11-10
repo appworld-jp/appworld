@@ -1,0 +1,18 @@
+{
+  "id": "bug",
+  "name": "バグ探し練習帳",
+  "tagline": "1日1問、バグのある行を当てる練習帳",
+  "description": "1日1問、JavaScriptかPythonの短いコードからバグのある行を当てる練習帳。答えると、原因と直し方、実際に起きる事故がわかります。全41問。",
+  "platform": "web",
+  "category": "dev",
+  "ai_tools": [
+    "Claude Code"
+  ],
+  "maker_name": "App World Lab（運営）",
+  "url": "https://appworld-lab.pages.dev/bug/",
+  "launch_date": "2026-11-10",
+  "beta": false,
+  "operator": true,
+  "color": "#6B7480",
+  "icon": true
+}

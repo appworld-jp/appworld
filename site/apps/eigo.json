@@ -1,0 +1,18 @@
+{
+  "id": "eigo",
+  "name": "英語ひとこと日記",
+  "tagline": "フレーズを見ながら、英語で一文日記",
+  "description": "毎日ひとつのテーマで、英語の日記を一文だけ。使えるフレーズ付きなので書き出しに迷いません。添削はしません。",
+  "platform": "web",
+  "category": "learning",
+  "ai_tools": [
+    "Claude Code"
+  ],
+  "maker_name": "App World Lab（運営）",
+  "url": "https://appworld-lab.pages.dev/eigo/",
+  "launch_date": "2026-11-10",
+  "beta": false,
+  "operator": true,
+  "color": "#C46B4E",
+  "icon": true
+}

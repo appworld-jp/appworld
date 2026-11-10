@@ -1,0 +1,18 @@
+{
+  "id": "quiz",
+  "name": "クイズ横丁",
+  "tagline": "毎日1問の早押し4択、秒数を友だちと比べる",
+  "description": "毎日1問の早押し4択クイズ。今日の問題はみんな同じなので、答えた秒数を友だちと比べられます。練習問題もあります。",
+  "platform": "web",
+  "category": "fun",
+  "ai_tools": [
+    "Claude Code"
+  ],
+  "maker_name": "App World Lab（運営）",
+  "url": "https://appworld-lab.pages.dev/quiz/",
+  "launch_date": "2026-11-10",
+  "beta": false,
+  "operator": true,
+  "color": "#B8892E",
+  "icon": true
+}

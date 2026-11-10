@@ -1,0 +1,18 @@
+{
+  "id": "kondate",
+  "name": "こんだて帖",
+  "tagline": "冷蔵庫の食材から、今夜の3品が決まる",
+  "description": "家にある食材を選ぶと、手持ちをいちばん使える晩ごはんを3品選びます。足りない食材は買い物リストにまとめて、コピーもできます。",
+  "platform": "web",
+  "category": "lifestyle",
+  "ai_tools": [
+    "Claude Code"
+  ],
+  "maker_name": "App World Lab（運営）",
+  "url": "https://appworld-lab.pages.dev/kondate/",
+  "launch_date": "2026-11-10",
+  "beta": false,
+  "operator": true,
+  "color": "#D9775A",
+  "icon": true
+}

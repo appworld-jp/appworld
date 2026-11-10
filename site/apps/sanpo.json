@@ -1,0 +1,18 @@
+{
+  "id": "sanpo",
+  "name": "さんぽログ",
+  "tagline": "歩いた日にスタンプ、見つけたものを日記に",
+  "description": "散歩の時間を計って、見たものと気分をひとことと一緒に残す日記。歩いた日はカレンダーにスタンプが押され、続けるほど緑が濃くなります。位置情報は使いません。",
+  "platform": "web",
+  "category": "health",
+  "ai_tools": [
+    "Claude Code"
+  ],
+  "maker_name": "App World Lab（運営）",
+  "url": "https://appworld-lab.pages.dev/sanpo/",
+  "launch_date": "2026-11-10",
+  "beta": false,
+  "operator": true,
+  "color": "#4E9A7B",
+  "icon": true
+}

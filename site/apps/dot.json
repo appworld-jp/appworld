@@ -1,0 +1,18 @@
+{
+  "id": "dot",
+  "name": "ドット絵メーカー",
+  "tagline": "写真を昔のゲーム風ドット絵に",
+  "description": "写真を選ぶだけで、昔のゲーム風のドット絵になります。細かさや色づかい、網目やふちどりを選んで、画像で保存できます。",
+  "platform": "web",
+  "category": "creative",
+  "ai_tools": [
+    "Claude Code"
+  ],
+  "maker_name": "App World Lab（運営）",
+  "url": "https://appworld-lab.pages.dev/dot/",
+  "launch_date": "2026-11-10",
+  "beta": false,
+  "operator": true,
+  "color": "#3F8FB5",
+  "icon": true
+}

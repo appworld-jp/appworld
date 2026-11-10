@@ -1,0 +1,18 @@
+{
+  "id": "gym",
+  "name": "ジムメモ",
+  "tagline": "前回の数字が入っていて、押すだけで記録",
+  "description": "前回の重さと回数が最初から入るので、ジムではボタンを押すだけ。記録すると休憩タイマーが動き、種目ごとのベストもわかります。",
+  "platform": "web",
+  "category": "health",
+  "ai_tools": [
+    "Claude Code"
+  ],
+  "maker_name": "App World Lab（運営）",
+  "url": "https://appworld-lab.pages.dev/gym/",
+  "launch_date": "2026-11-10",
+  "beta": false,
+  "operator": true,
+  "color": "#4C6FD1",
+  "icon": true
+}

@@ -1,0 +1,18 @@
+{
+  "id": "tsundoku",
+  "name": "積読ゼロ",
+  "tagline": "積んだ本を、1日10分ずつ読み切れる",
+  "description": "積んだままの本を、1日10分ずつ読み切る。今日読むページがひと目でわかり、読み終えた本は本棚に並びます。",
+  "platform": "web",
+  "category": "learning",
+  "ai_tools": [
+    "Claude Code"
+  ],
+  "maker_name": "App World Lab（運営）",
+  "url": "https://appworld-lab.pages.dev/tsundoku/",
+  "launch_date": "2026-11-10",
+  "beta": false,
+  "operator": true,
+  "color": "#3E8C84",
+  "icon": true
+}

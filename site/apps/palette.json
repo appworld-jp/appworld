@@ -1,0 +1,18 @@
+{
+  "id": "palette",
+  "name": "おえかき色見本",
+  "tagline": "写真の色が、そのまま色見本カードに",
+  "description": "写真を選ぶだけで、その写真の色が3〜8色の色見本になります。気に入った色を固定して作り直したり、色コードのコピーやカード画像の保存もできます。",
+  "platform": "web",
+  "category": "creative",
+  "ai_tools": [
+    "Claude Code"
+  ],
+  "maker_name": "App World Lab（運営）",
+  "url": "https://appworld-lab.pages.dev/palette/",
+  "launch_date": "2026-11-10",
+  "beta": false,
+  "operator": true,
+  "color": "#C9894A",
+  "icon": true
+}

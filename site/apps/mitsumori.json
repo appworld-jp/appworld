@@ -1,0 +1,18 @@
+{
+  "id": "mitsumori",
+  "name": "見積もりくん",
+  "tagline": "作業を並べるだけで、忘れがちな作業込みの見積もり",
+  "description": "作業をS・M・Lで並べるだけで、テストや打ち合わせなど忘れがちな作業と予備の時間を足し、税込の金額まで出します。文章・Markdown・表計算用でコピーできます。",
+  "platform": "web",
+  "category": "productivity",
+  "ai_tools": [
+    "Claude Code"
+  ],
+  "maker_name": "App World Lab（運営）",
+  "url": "https://appworld-lab.pages.dev/mitsumori/",
+  "launch_date": "2026-11-10",
+  "beta": false,
+  "operator": true,
+  "color": "#3F6E9E",
+  "icon": true
+}

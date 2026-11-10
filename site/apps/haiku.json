@@ -1,0 +1,18 @@
+{
+  "id": "haiku",
+  "name": "俳句カメラ",
+  "tagline": "写真に一句添えて、縦書きの俳句カードに",
+  "description": "写真に自分で詠んだ一句を添えて、縦書きの俳句カードに。音の数を数えながら詠めて、画像で保存できます。句は自動では作りません。",
+  "platform": "web",
+  "category": "creative",
+  "ai_tools": [
+    "Claude Code"
+  ],
+  "maker_name": "App World Lab（運営）",
+  "url": "https://appworld-lab.pages.dev/haiku/",
+  "launch_date": "2026-11-10",
+  "beta": false,
+  "operator": true,
+  "color": "#8E6B9E",
+  "icon": true
+}

@@ -1,0 +1,18 @@
+{
+  "id": "mizu",
+  "name": "みずのむ",
+  "tagline": "タップで記録、ボトルが満ちていく水分記録",
+  "description": "飲んだ量をコップのボタンで記録すると、ボトルに水がたまっていきます。1日の目標までの残りと、7日間の記録がわかります。",
+  "platform": "web",
+  "category": "health",
+  "ai_tools": [
+    "Claude Code"
+  ],
+  "maker_name": "App World Lab（運営）",
+  "url": "https://appworld-lab.pages.dev/mizu/",
+  "launch_date": "2026-11-10",
+  "beta": false,
+  "operator": true,
+  "color": "#3E9AB8",
+  "icon": true
+}

@@ -1,0 +1,18 @@
+{
+  "id": "kakei",
+  "name": "家計ひとめ",
+  "tagline": "金額と項目を押すだけの家計簿",
+  "description": "金額を入れて項目を押すだけの家計簿。今月いくら使ったか、予算の残りと1日に使える額がすぐわかります。",
+  "platform": "web",
+  "category": "lifestyle",
+  "ai_tools": [
+    "Claude Code"
+  ],
+  "maker_name": "App World Lab（運営）",
+  "url": "https://appworld-lab.pages.dev/kakei/",
+  "launch_date": "2026-11-10",
+  "beta": false,
+  "operator": true,
+  "color": "#4E9A6B",
+  "icon": true
+}

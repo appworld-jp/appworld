@@ -1,0 +1,18 @@
+{
+  "id": "gijiroku",
+  "name": "議事録まとめ",
+  "tagline": "会議メモを貼るだけで、決定・宿題・持ち越しに分類",
+  "description": "会議のメモを貼るだけで、決まったこと・宿題（担当・期限）・持ち越しに分けて、チャットに貼れるまとめを作ります。AIは使わず、言葉の決まりで分けます。",
+  "platform": "web",
+  "category": "productivity",
+  "ai_tools": [
+    "Claude Code"
+  ],
+  "maker_name": "App World Lab（運営）",
+  "url": "https://appworld-lab.pages.dev/gijiroku/",
+  "launch_date": "2026-11-10",
+  "beta": false,
+  "operator": true,
+  "color": "#5A7FA0",
+  "icon": true
+}
