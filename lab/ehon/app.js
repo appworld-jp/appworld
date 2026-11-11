@@ -39,7 +39,7 @@
     const short = name.startsWith(base.label + "の") ? name.slice(base.label.length + 1) || name : name;
     return Object.assign({}, base, { id: base.id, label: name, H: name.startsWith(base.label) ? name : `${base.label}の${name}`, h: short });
   }
-  const heroAdd = FC.adder({ label: "＋ なまえを つける", aria: "しゅじんこうの なまえ", placeholder: "れい：ポンタ", max: 10, ok: "つける", btnClass: "face add",
+  const heroAdd = FC.adder({ label: "＋ なまえを つける", aria: "しゅじんこうの なまえ", placeholder: "ポンタ", max: 10, ok: "つける", btnClass: "face add",
     empty: "なまえを いれてから「つける」を おしてね。",
     submit: v => {
       const cur = heroOf(sel.hero);

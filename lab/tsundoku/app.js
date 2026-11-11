@@ -65,11 +65,11 @@
     });
     doneToday.forEach(b => {
       const card = el("article", justRead === b.id ? "portion fin bump" : "portion fin"); card.style.setProperty("--c", b.color);
-      card.append(el("p", "fin-t", `『${b.title}』読了！`), el("p", "p-meta", `${b.pages}ページ、おつかれさまでした。`));
+      card.append(el("p", "fin-t", `『${b.title}』読了！`), el("p", "p-meta", `${b.pages}ページ、お疲れさまでした。`));
       box.append(card);
     });
     if (st.books.length && !active.length) {
-      box.append(el("p", "none", doneToday.length ? "次の1冊を積みましょう。" : "今日読む本はありません。次の1冊を積みましょう。"));
+      box.append(el("p", "none", doneToday.length ? "次の1冊をどうぞ。" : "今日読む本はありません。次の1冊をどうぞ。"));
     }
   }
 

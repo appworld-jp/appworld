@@ -41,7 +41,7 @@
   }
 
   const free = window.FreeChoice({
-    key: KEY + ".custom", set: "cat", label: "項目", max: 12, placeholder: "子ども、趣味、医療費",
+    key: KEY + ".custom", set: "cat", label: "項目", max: 12, placeholder: "医療費",
     builtins: () => CATS.map((c, i) => ({ value: i, label: c.n })),
     onChange: () => renderCats(),
     onPick: v => add(v)
@@ -109,7 +109,7 @@
     $("total").textContent = Math.round(total).toLocaleString("ja-JP");
     const B = st.budget;
     $("budget-v").textContent = B ? yen(B) : "未設定";
-    $("edit-budget").textContent = B ? "予算を変える" : "予算を決める";
+    $("edit-budget").textContent = B ? "予算を変更" : "予算を決める";
     $("total-l").textContent = cur ? "今月使ったお金" : `${m}月に使ったお金`;
     const left = B - total;
     $("left-l").textContent = B && left < 0 ? "予算オーバー" : "残り";
@@ -132,7 +132,7 @@
     const sums = rows.map(g => g.v);
     const max = Math.max(1, ...sums);
     const bars = $("bars"); bars.textContent = "";
-    if (!total) { bars.append(el("li", "empty", "記録すると、食費・日用品などの合計がここに出ます。")); }
+    if (!total) { bars.append(el("li", "empty", "記録すると、食費・日用品など項目ごとの合計がここに出ます。")); }
     else
     sums.forEach((v, i) => {
       const li = el("li"), tr = el("span", "track"), fill = el("i");
@@ -181,7 +181,7 @@
     ev.preventDefault();
     const raw = $("budget-in").value.trim();
     const v = raw ? parseAmount(raw) : 0;
-    if (raw && !v) { $("budget-help").textContent = "数字だけで入れてください（例：60000）。"; $("budget-help").className = "help err"; $("budget-in").focus(); return; }
+    if (raw && !v) { $("budget-help").textContent = "予算は数字だけで入れてください（例：60000）。"; $("budget-help").className = "help err"; $("budget-in").focus(); return; }
     $("budget-help").textContent = "空にして保存すると、予算なしに戻ります。"; $("budget-help").className = "help";
     st.budget = v; save();
     $("budget-form").hidden = true; render();

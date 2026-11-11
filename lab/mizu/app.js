@@ -56,7 +56,7 @@
       const b = el("button", "mine-b"); b.type = "button"; b.setAttribute("aria-label", `${fmt(ml)}mlを記録`);
       b.append(el("span", "drop"), el("b", null, fmt(ml) + "ml"));
       b.addEventListener("click", () => add(ml));
-      w.append(b, FC.remover(fmt(ml) + "ml", () => { mine.remove(ml); renderMine(); toast(`${fmt(ml)}mlのボタンを外しました。きょうの記録は残っています。`); }));
+      w.append(b, FC.remover(fmt(ml) + "ml", () => { mine.remove(ml); renderMine(); toast(`${fmt(ml)}mlのボタンを外しました。今日の記録はそのまま残ります。`); }));
       box.append(w);
     });
     box.hidden = !list.length;
@@ -70,7 +70,7 @@
     st.days[k] = list(k).concat(item); save(); lastAdded = item;
     render();
     const reached = sum(k) >= st.goal && sum(k) - ml < st.goal;
-    toast(reached ? "きょうの目標に届きました！" : `${fmt(ml)}mlを記録しました。`, false, true);
+    toast(reached ? "今日の目標に届きました！" : `${fmt(ml)}mlを記録しました。`, false, true);
     if (reached) celebrate();
     else splash();
   }
@@ -100,11 +100,11 @@
     const left = g - total;
     const L = $("left"); L.textContent = "";
     if (left > 0) { L.append(el("span", null, `あと${fmt(left)}ml`), el("span", null, `（コップ${Math.ceil(left / 200)}杯ほど）`)); }
-    else L.append(el("span", null, "きょうの目標を達成しました！"));
+    else L.append(el("span", null, "今日の目標を達成しました！"));
     document.body.classList.toggle("reached", left <= 0);
     $("left").className = "left" + (left > 0 ? "" : " ok");
     $("water").style.transform = `translateY(${212 - frac * 200}px)`;
-    $("amount").setAttribute("aria-label", `きょうは${fmt(total)}ml。目標${fmt(g)}mlの${Math.round(total / g * 100)}%です`);
+    $("amount").setAttribute("aria-label", `今日は${fmt(total)}ml。目標${fmt(g)}mlの${Math.round(total / g * 100)}%です`);
 
     const log = $("log"); log.textContent = "";
     const items = list(k);
@@ -131,7 +131,7 @@
     days.forEach((d, i) => {
       const v = vals[i], col = el("div", "day" + (i === 6 ? " today" : ""));
       const bar = el("div", "bar" + (v >= g ? " hit" : "")); bar.style.height = Math.round(v / max * H) + "px";
-      col.append(el("span", "v", v ? (v >= 1000 ? (v / 1000).toFixed(1) + "L" : v + "") : ""), bar, el("small", null, i === 6 ? "きょう" : "日月火水木金土"[d.getDay()]));
+      col.append(el("span", "v", v ? (v >= 1000 ? (v / 1000).toFixed(1) + "L" : v + "") : ""), bar, el("small", null, i === 6 ? "今日" : "日月火水木金土"[d.getDay()]));
       w.append(col);
       desc.push(`${d.getMonth() + 1}月${d.getDate()}日 ${v}ml`);
     });

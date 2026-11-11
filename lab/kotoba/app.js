@@ -14,7 +14,7 @@
   let st;
   try { st = JSON.parse(localStorage.getItem(KEY) || "null"); } catch (e) { st = null; }
   if (!st || !Array.isArray(st.decks)) {
-    const S = window.STARTER || { name: "はじめのデッキ", cards: [] };
+    const S = window.STARTER || { name: "最初のデッキ", cards: [] };
     st = { decks: [{ id: uid(), name: S.name, cards: S.cards.map(c => newCard(c[0], c[1], c[2])) }] };
   }
   const save = () => { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {} };
@@ -70,8 +70,8 @@
   function renderHome() {
     const n = totalDue();
     $("studyAll").disabled = !n;
-    $("studyAll").textContent = n ? `復習をはじめる（${n}枚）` : "今日の復習は完了";
-    $("heroNote").textContent = n ? "" : st.decks.some(d => d.cards.length) ? "また明日、続きをどうぞ。" : "デッキを開いて、カードを追加しましょう。";
+    $("studyAll").textContent = n ? `復習を始める（${n}枚）` : "今日の復習は完了";
+    $("heroNote").textContent = n ? "" : st.decks.some(d => d.cards.length) ? "また明日、続きをどうぞ。" : "デッキを開いて、カードを追加してください。";
     const ul = $("decks"); ul.replaceChildren();
     st.decks.forEach((d, i) => {
       const li = el("li"); const b = el("button", "deck c" + (i % 5)); b.type = "button";
@@ -82,7 +82,7 @@
       b.addEventListener("click", () => openDeck(d));
       li.append(b); ul.append(li);
     });
-    if (!st.decks.length) ul.append(el("li", "none", "デッキはまだありません。下に名前を入れて作成しましょう。"));
+    if (!st.decks.length) ul.append(el("li", "none", "デッキはまだありません。下に名前を入れて作成してください。"));
     show("home");
   }
 
@@ -102,7 +102,7 @@
       del.addEventListener("click", () => { if (!confirm(`「${c.f}」のカードを削除しますか？`)) return; d.cards = d.cards.filter(x => x !== c); save(); openDeck(d); });
       li.append(t, due, del); ul.append(li);
     });
-    if (!d.cards.length) ul.append(el("li", "none", "カードはまだありません。上に表と裏を入れて追加しましょう。"));
+    if (!d.cards.length) ul.append(el("li", "none", "カードはまだありません。上に表と裏を入れて追加してください。"));
     show("deck");
   }
 
@@ -163,7 +163,7 @@
     $("liveBack").textContent = "";
     if (isMc) renderMc(); else renderFlip();
     $("gradeHint").textContent = isMc
-      ? "正解したカードは、次に出る日がだんだん先になります。まちがえたカードは、この回のうちにもう一度出ます。"
+      ? "正解したカードは、次に出る日がだんだん先になります。間違えたカードは、この回のうちにもう一度出ます。"
       : "思い出せたか選ぶと、次に進みます。ボタンの下は、そのカードがまた出る日です。";
     $("gradeHint").hidden = helpSeen || !isMc;
   }
@@ -205,7 +205,7 @@
     });
     $("unsureRow").hidden = true;
     const fb = $("fb"); fb.hidden = false; fb.className = "fb " + (ok ? "ok" : "ng");
-    $("fbT").textContent = ok ? "正解！" : "ざんねん";
+    $("fbT").textContent = ok ? "正解！" : "不正解";
     $("fbS").textContent = ok
       ? (unsure ? `自信がなかったので、${when(n.iv) === "明日" ? "明日" : when(n.iv) + "に"}また出ます。` : nextText(n.iv))
       : `正解は「${cur.c.b}」です。${nextText(n.iv)}`;

@@ -30,7 +30,7 @@
     ["It was ~.", "〜だった。"],
     ["I'm looking forward to ~.", "〜が楽しみだ。"]
   ];
-  const myTheme = ja => ({ id: "my:" + ja, ja, mine: true, q: "Write one sentence about it.", qja: `「${ja}」について、英語で一文書いてみましょう。`, p: GENERIC });
+  const myTheme = ja => ({ id: "my:" + ja, ja, mine: true, q: "Write one sentence about it.", qja: `「${ja}」について、英語で一文書いてください。`, p: GENERIC });
   const byId = id => (typeof id === "string" && id.startsWith("my:") && id.length > 3 ? myTheme(id.slice(3)) : T.find(t => t.id === id));
   let theme = (st.entries[today] && byId(st.entries[today].theme)) || (st.pick && byId(st.pick.id)) || dailyTheme;
 
@@ -98,7 +98,7 @@
     $("saveBtn").textContent = e ? "上書き保存" : "保存";
     $("other").hidden = !!e;
     renderMine(!!e);
-    $("saved").textContent = e ? "今日の日記は保存済みです。書き直して上書きもできます。" : "";
+    $("saved").textContent = e ? "今日の日記は保存済みです。書き直して上書き保存もできます。" : "";
   }
 
   function renderMine(locked) {
@@ -158,8 +158,8 @@
   $("writeForm").addEventListener("submit", e => {
     e.preventDefault();
     const text = $("line").value.trim().replace(/\s+/g, " ");
-    if (!text) { $("saved").textContent = "英語で一文書いてから保存しましょう。"; $("line").focus(); return; }
-    if (text.includes("…")) { $("saved").textContent = "「…」を自分の言葉に置き換えてから保存しましょう。"; $("line").focus(); const i = $("line").value.indexOf("…"); $("line").setSelectionRange(i, i + 1); return; }
+    if (!text) { $("saved").textContent = "英語で一文書いてから保存してください。"; $("line").focus(); return; }
+    if (text.includes("…")) { $("saved").textContent = "「…」を自分の言葉に置き換えてから保存してください。"; $("line").focus(); const i = $("line").value.indexOf("…"); $("line").setSelectionRange(i, i + 1); return; }
     st.entries[today] = { theme: theme.id, text };
     save(); renderToday(); renderDiary();
     $("saved").textContent = `保存しました。これで${Object.keys(st.entries).length}日分です。`;

@@ -26,20 +26,20 @@
     <section class="hero">
       <h1>ことばカード</h1>
       <p>忘れかけたころにもう一度出てくるから、無理なく覚えられます。</p>
-      <button class="btn big" type="button" id="studyAll">復習をはじめる</button>
+      <button class="btn big" type="button" id="studyAll">復習を始める</button>
       <p class="hero-note" id="heroNote"></p>
     </section>
     <h2 class="sec">デッキ</h2>
     <ul class="decks" id="decks"></ul>
     <form class="newdeck" id="newDeck">
       <label for="deckName" class="sr">新しいデッキの名前</label>
-      <input id="deckName" type="text" maxlength="40" placeholder="例：TOEIC英単語" autocomplete="off">
+      <input id="deckName" type="text" maxlength="40" placeholder="TOEIC英単語" autocomplete="off">
       <button class="btn" type="submit">デッキを作成</button>
     </form>
     <p class="err" id="deckErr" role="alert"></p>
     <details class="how">
       <summary>次に出る日は、どう決まる？</summary>
-      <p>4択で正解したカードや「わかった」を押したカードは、明日、3日後と、だんだん間をあけて出ます。「自信がない」「あやしい」は早めにまた出ます。まちがえたカードや「わからない」は、その回の最後にもう一度出ます。</p>
+      <p>4択で正解したカードや「分かった」を押したカードは、明日、3日後と、だんだん間を空けて出ます。「自信がない」「あやしい」は早めにまた出ます。間違えたカードや「分からない」は、その回の最後にもう一度出ます。</p>
     </details>
   </main>
 
@@ -81,9 +81,9 @@
     </div>
     <p class="sr" id="liveBack" aria-live="polite"></p>
     <div class="grades" id="grades" hidden>
-      <button type="button" class="g g-ng" data-q="1"><b>わからない</b><small id="nNg"></small></button>
+      <button type="button" class="g g-ng" data-q="1"><b>分からない</b><small id="nNg"></small></button>
       <button type="button" class="g g-mid" data-q="3"><b>あやしい</b><small id="nMid"></small></button>
-      <button type="button" class="g g-ok" data-q="5"><b>わかった</b><small id="nOk"></small></button>
+      <button type="button" class="g g-ok" data-q="5"><b>分かった</b><small id="nOk"></small></button>
     </div>
     <section class="mc" id="mc" hidden aria-label="4択">
       <div class="q-card"><span class="lbl">表</span><p class="q-txt" id="qFront"></p></div>
@@ -104,7 +104,7 @@
     <p class="keys" id="keys"></p>
     <section class="done" id="done" hidden aria-live="polite">
       <p class="done-mark" aria-hidden="true">✿</p>
-      <h1>今日の復習、完了！</h1>
+      <h1>今日の復習は完了です</h1>
       <p id="doneT"></p>
       <button class="btn" type="button" id="doneBack">ホームに戻る</button>
     </section>

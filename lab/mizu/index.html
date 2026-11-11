@@ -2,7 +2,7 @@
 <html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>みずのむ</title>
-<meta name="description" content="飲んだ量をタップするだけの水分記録。ボトルが満ちていく様子で、きょうの目標まであとどれくらいかがわかります。">
+<meta name="description" content="飲んだ量をタップするだけの水分記録。ボトルが満ちていく様子で、今日の目標まであとどれくらいかが分かります。">
 <meta name="theme-color" content="#f2fbff" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#08202e" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
@@ -43,7 +43,7 @@
     <div class="readout">
       <h2 class="amount" id="amount" aria-live="polite">0<small>ml</small></h2>
       <p class="left" id="left"></p>
-      <p class="goal-line">1日の目標 <b id="goal-v">1,500ml</b><button type="button" class="link" id="goal-edit" aria-expanded="false">変える</button></p>
+      <p class="goal-line">1日の目標 <b id="goal-v">1,500ml</b><button type="button" class="link" id="goal-edit" aria-expanded="false">変更</button></p>
     </div>
     <form class="goal-form" id="goal-form" hidden novalidate>
       <label for="goal-in">1日の目標</label>
@@ -54,7 +54,7 @@
   </section>
 
   <section class="add" aria-labelledby="h-add">
-    <h2 id="h-add" class="sec">飲んだら、押す</h2>
+    <h2 id="h-add" class="sec">飲んだ量</h2>
     <div class="cups" id="cups"></div>
     <div class="mine" id="mine" role="group" aria-label="自分で入れた量" hidden></div>
     <form class="custom" id="custom" novalidate>
@@ -69,7 +69,7 @@
   </section>
 
   <section aria-labelledby="h-log">
-    <h2 id="h-log" class="sec">きょうの記録</h2>
+    <h2 id="h-log" class="sec">今日の記録</h2>
     <ul class="log" id="log"></ul>
   </section>
 

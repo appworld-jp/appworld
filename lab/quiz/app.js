@@ -97,7 +97,7 @@
         document.body.append(ta); ta.select(); ok = document.execCommand("copy"); ta.remove();
       } catch (e) { ok = false; }
     }
-    $("copied").textContent = ok ? "コピーしました。友だちに送って、秒数を比べてみましょう。" : "コピーできませんでした。上の文字を長押しして選んでください。";
+    $("copied").textContent = ok ? "コピーしました。友だちに送れば、秒数を比べられます。" : "コピーできませんでした。上の文字を長押しして選んでください。";
   }
 
   function renderBoard() {

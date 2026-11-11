@@ -184,7 +184,7 @@
         li.append(el("span", "o-name", o.f.name));
         const viaTxt = o.via === o.f.nameKey || o.via === norm(o.f.yomi) ? "" : o.f.raw.find(x => norm(x) === o.via);
         if (viaTxt) li.append(el("span", "o-via", viaTxt));
-        li.append(el("span", "o-cat", have.has(o.f.id) ? "追加ずみ" : o.f.cat));
+        li.append(el("span", "o-cat", have.has(o.f.id) ? "追加済み" : o.f.cat));
       } else if (o.kind === "season") {
         li.classList.add("o-season");
         li.append(el("span", "o-name", `「${o.text}」は調味料です`), el("span", "o-cat", "選ばなくて大丈夫"));
@@ -234,7 +234,7 @@
     if (have.has(id)) { say(`${f.name}は、もう入っています。`); return; }
     have.add(id); save(); syncAll(true);
     const n = USES[id] || RECIPES.filter(r => r.sKey.includes(f.nameKey)).length;
-    say(n ? `${f.name}を追加しました。` : `${f.name}を追加しました。ただ、${bare(f.name)}を使う料理はまだ入っていません。`);
+    say(n ? `${f.name}を追加しました。` : `${f.name}を追加しました。${bare(f.name)}を使う料理は、まだ収録していません。`);
   }
   function addFree(text) {
     const w = text.slice(0, 30);
@@ -243,8 +243,8 @@
     if (free.some(x => norm(x) === k)) { say(`「${w}」は、もう入っています。`); return; }
     free.push(w); myFoods.add(w); save(); syncAll(true);
     const n = RECIPES.filter(r => r.nKey.includes(k) || r.sKey.includes(k) || r.ing.some(x => x.key.includes(k))).length;
-    say(n ? `「${w}」は食材の一覧にないので、料理名と材料名から探します。${n}品に入っています。`
-          : `「${w}」は食材の一覧になく、使う料理もまだ入っていません。ほかの食材で探してみてください。`);
+    say(n ? `「${w}」は食材の一覧にないので、料理名と材料名から探します。${n}品で見つかりました。`
+          : `「${w}」は食材の一覧になく、使う料理も見つかりませんでした。別の食材で探してください。`);
   }
   function removeFood(id) { have.delete(id); save(); syncAll(true); say(`${FOOD[id].name}を外しました。`); }
   function removeFree(w) { free = free.filter(x => x !== w); save(); syncAll(true); say(`「${w}」を外しました。`); }
@@ -400,8 +400,8 @@
     if (!cur.length) {
       const e = el("div", "empty");
       e.append(el("p", null, prefs.quick || prefs.genre
-        ? "条件に合う料理がありませんでした。絞り込みを外すか、食材を増やしてみてください。"
-        : "合う料理がありませんでした。食材をもう少し入れてみてください。"));
+        ? "条件に合う料理がありませんでした。絞り込みを外すか、食材を増やしてください。"
+        : "合う料理がありませんでした。食材をもう少し増やしてください。"));
       out.append(e); $("shop").hidden = true; $("more").hidden = true; $("cands").hidden = true; return;
     }
     cur.forEach(x => out.append(card(x)));
@@ -414,7 +414,7 @@
     const tabs = $("ltabs"); tabs.textContent = "";
     ["", "主菜", "副菜", "汁物", "主食"].forEach(t => {
       const n = ranked.filter(x => !t || x.r.t === t).length;
-      const b = el("button", "ltab", `${t || "すべて"} ${n}`); b.type = "button";
+      const b = el("button", "ltab", `${t || "全て"} ${n}`); b.type = "button";
       b.setAttribute("aria-pressed", String(listType === t));
       b.disabled = n === 0 && t !== "";
       b.addEventListener("click", () => { listType = t; listShown = 20; renderList(); });
@@ -476,7 +476,7 @@
   function doneCheck() {
     const all = [...$("memo").querySelectorAll("input")];
     const done = all.length && all.every(c => c.checked);
-    $("copy-msg").textContent = done ? "買い物完了です。いただきます！" : "";
+    $("copy-msg").textContent = done ? "全部そろいました。いただきます！" : "";
     $("memo").classList.toggle("all-done", !!done);
   }
 
@@ -498,7 +498,7 @@
   $("quick").addEventListener("click", () => { prefs.quick = !prefs.quick; savePrefs(); renderFilters(); if (shownOnce) run(false); });
   const gbox = $("genres");
   ["", ...GENRE_LIST].forEach(g => {
-    const b = el("button", "fchip", g || "すべて"); b.type = "button"; b.dataset.g = g;
+    const b = el("button", "fchip", g || "全て"); b.type = "button"; b.dataset.g = g;
     b.addEventListener("click", () => { prefs.genre = g; savePrefs(); renderFilters(); if (shownOnce) run(false); });
     gbox.append(b);
   });
@@ -520,8 +520,8 @@
   $("lmore").addEventListener("click", () => { listShown += 20; renderList(); });
   $("clear").addEventListener("click", () => {
     if (!count()) return;
-    if (!confirm("選んだ食材をすべて外しますか？")) return;
-    have.clear(); free = []; save(); syncAll(false); run(false); say("すべて外しました。");
+    if (!confirm("選んだ食材を全て外しますか？")) return;
+    have.clear(); free = []; save(); syncAll(false); run(false); say("全て外しました。");
   });
   $("sample").addEventListener("click", () => {
     ["tamanegi", "ninjin", "jagaimo", "buta", "tamago"].forEach(id => have.add(id)); save(); syncAll(false); run(true);
@@ -529,7 +529,7 @@
   $("copy").addEventListener("click", async () => {
     const items = [...$("memo").querySelectorAll(".nm")].map(n => "・" + n.textContent);
     const dishes = cur.map(x => x.r.n).join("、");
-    const text = items.length ? `買い物リスト（${dishes}）\n` + items.join("\n") : "買い足すものはありません";
+    const text = items.length ? `買い物リスト（${dishes}）\n` + items.join("\n") : "買い足すものはありません。";
     try { await navigator.clipboard.writeText(text); $("copy-msg").textContent = "コピーしました。"; }
     catch (e) { $("copy-msg").textContent = "コピーできませんでした。リストを長押しして選んでください。"; }
   });

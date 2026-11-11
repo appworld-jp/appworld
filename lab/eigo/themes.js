@@ -138,12 +138,12 @@ window.THEMES = [
   { id: "sleep", ja: "睡眠", q: "How did you sleep last night?", qja: "昨夜はよく眠れましたか？", p: [
     ["I slept like a log.", "ぐっすり眠った。"],
     ["I couldn't fall asleep.", "なかなか寝つけなかった。"],
-    ["I stayed up too late.", "夜ふかししすぎた。"],
+    ["I stayed up too late.", "夜更かししすぎた。"],
     ["I overslept this morning.", "今朝は寝坊した。"],
     ["I took a short nap.", "少し昼寝をした。"]
   ]},
   { id: "music", ja: "音楽", q: "What have you been listening to lately?", qja: "最近どんな音楽を聞いていますか？", p: [
-    ["I've had ~ on repeat.", "〜をずっとくり返し聞いている。"],
+    ["I've had ~ on repeat.", "〜をずっと繰り返し聞いている。"],
     ["This song always cheers me up.", "この曲を聞くといつも元気が出る。"],
     ["I listen to music while I ~.", "〜しながら音楽を聞く。"],
     ["I can't get this song out of my head.", "この曲が頭から離れない。"],
@@ -160,8 +160,8 @@ window.THEMES = [
     ["I learned that ~.", "〜ということを知った。"],
     ["I studied English for ~ minutes.", "英語を〜分勉強した。"],
     ["I'm trying to memorize ~.", "〜を覚えようとしている。"],
-    ["It finally clicked.", "ようやくわかった。"],
-    ["I'm still not sure about ~.", "〜はまだよくわからない。"]
+    ["It finally clicked.", "ようやく分かった。"],
+    ["I'm still not sure about ~.", "〜はまだよく分からない。"]
   ]},
   { id: "phone", ja: "スマホ", q: "How much time did you spend on your phone today?", qja: "今日はスマホをどのくらい使いましたか？", p: [
     ["I spent too much time on my phone.", "スマホを使いすぎた。"],

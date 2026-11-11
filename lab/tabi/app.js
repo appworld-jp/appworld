@@ -15,9 +15,9 @@
   const go = c => c.plane ? "飛行機で出発" : c.car ? "車で出発" : "電車で出発";
   const T = {
     relax: {
-      first: [["12:00", "現地で昼ごはん"], ["13:30", "まちをのんびり散策"], ["15:00", "宿にチェックイン"], ["18:30", "宿で夕ごはん"]],
+      first: [["12:00", "現地で昼ごはん"], ["13:30", "町をのんびり散策"], ["15:00", "宿にチェックイン"], ["18:30", "宿で夕ごはん"]],
       mid: [["8:00", "朝ごはん"], ["10:00", "近くをゆっくり散歩"], ["12:00", "昼ごはん"], ["14:00", "宿で自由時間"], ["18:30", "夕ごはん"]],
-      trip: [["11:00", "まちをのんびり散策"], ["13:30", "カフェでひと休み"]]
+      trip: [["11:00", "町をのんびり散策"], ["13:30", "カフェでひと休み"]]
     },
     sight: {
       first: [["11:00", "到着、観光スタート"], ["12:00", "昼ごはん"], ["13:30", "名所めぐり"], ["16:30", "宿にチェックイン"], ["18:30", "夕ごはん"]],
@@ -56,11 +56,11 @@
       return arr;
     };
     if (n === 1) {
-      out.push(extra([["8:00", go(c)], ["10:30", `${c.dest}に到着`], ...st.trip, ["12:00", "昼ごはん"], ["15:30", "おみやげを買う"], ["17:00", "帰路へ"], ["19:00", "帰宅"]], "trip"));
+      out.push(extra([["8:00", go(c)], ["10:30", `${c.dest}に到着`], ...st.trip, ["12:00", "昼ごはん"], ["15:30", "お土産を買う"], ["17:00", "帰路へ"], ["19:00", "帰宅"]], "trip"));
     } else {
       for (let i = 0; i < n; i++) {
         if (i === 0) out.push(extra([[c.style === "nature" ? "7:00" : "8:30", go(c)], ...st.first], "first"));
-        else if (i === n - 1) out.push(extra([["8:00", "朝ごはん"], ["10:00", "チェックアウト"], ["10:30", "最後にもう一か所"], ["12:00", "昼ごはん"], ["13:30", "おみやげを買う"], ["15:00", "帰路へ"], ["18:00", "帰宅"]], "last"));
+        else if (i === n - 1) out.push(extra([["8:00", "朝ごはん"], ["10:00", "チェックアウト"], ["10:30", "最後にもう一か所"], ["12:00", "昼ごはん"], ["13:30", "お土産を買う"], ["15:00", "帰路へ"], ["18:00", "帰宅"]], "last"));
         else out.push(extra(st.mid.slice(), "mid"));
       }
     }
@@ -83,11 +83,11 @@
     if (c.car) add("貴重品", ["運転免許証"], "車");
     if (c.plane) add("貴重品", ["搭乗券（スマホでも可）", "本人確認書類"], "飛行機");
     if (nights > 0) add("貴重品", ["宿の予約の控え"]);
-    add("身のまわり", ["ハンカチ・ティッシュ", "常備薬", "折りたたみ傘", "エコバッグ", "ビニール袋（ぬれた物・ごみ用）"]);
+    add("身の回り", ["ハンカチ・ティッシュ", "常備薬", "折りたたみ傘", "エコバッグ", "ビニール袋（ぬれた物・ごみ用）"]);
     add("電子機器", ["スマホの充電器・ケーブル", "モバイルバッテリー"]);
     if (nights > 0) {
       add("衣類", [`下着・靴下（${nights}泊分）`, `着替えの服（${nights}日分）`, "寝間着（宿にあれば不要）"]);
-      add("洗面・身じたく", ["歯ブラシ", "洗顔料・スキンケア", "ヘアブラシ", "コンタクト用品・眼鏡"]);
+      add("洗面・身支度", ["歯ブラシ", "洗顔料・スキンケア", "ヘアブラシ", "コンタクト用品・眼鏡"]);
     }
     const s = season(c);
     if (s === "summer") add("季節", ["帽子", "日焼け止め", "汗ふきシート", "水筒・飲み物", "虫よけ"], m === 6 ? "梅雨・夏" : "夏");
@@ -106,7 +106,7 @@
       add("子ども", ["子どもの着替え（多め）", "子どもの保険証・医療証", "おやつ", "おもちゃ・絵本", "ウェットティッシュ"], "子ども");
       if (c.plane) add("子ども", ["耳抜き用の飲み物・あめ"], "飛行機");
     }
-    if (c.plane) add("飛行機", ["イヤホン", "機内に持ちこむ液体の確認（国際線は100ml以下）"], "飛行機");
+    if (c.plane) add("飛行機", ["イヤホン", "機内に持ち込む液体の確認（国際線は100ml以下）"], "飛行機");
     if (c.car) add("車", ["ETCカード", "車用の充電ケーブル", "ごみ袋"], "車");
     return L;
   }
@@ -182,7 +182,7 @@
   function count() {
     const done = S.pack.filter(p => p.done).length;
     const all = S.pack.length > 0 && done === S.pack.length;
-    $("pack-count").textContent = all ? `${S.pack.length}点すべて準備できました。いってらっしゃい！` : `準備済み：${done}／${S.pack.length}点。カバンに入れたら印をつけましょう。`;
+    $("pack-count").textContent = all ? `${S.pack.length}点、全て準備できました。いってらっしゃい！` : `準備済み：${done}／${S.pack.length}点。カバンに入れたものに印を付けます。`;
     $("ready").classList.toggle("on", all);
   }
 
@@ -215,7 +215,7 @@
     $("start-err").textContent = c.start ? "" : "出発日を選んでください。";
     if (!c.dest) { $("dest").focus(); return; }
     if (!c.start) { $("start").focus(); return; }
-    if (S && !confirm("つくり直すと、書きかえた予定と持ち物のチェックが元に戻ります。つくり直しますか？")) return;
+    if (S && !confirm("作り直すと、書き換えた予定と持ち物のチェックは元に戻ります。作り直しますか？")) return;
     S = { cfg: c, days: buildDays(c), pack: buildPack(c), memo: S ? S.memo : "" };
     save(); renderAll();
     $("cover-title").scrollIntoView({ block: "start" });
@@ -224,7 +224,7 @@
     fillForm(S.cfg); $("setup").hidden = false; $("plan").hidden = true; $("cancel").hidden = false; $("dest").focus();
   });
   $("reset").addEventListener("click", () => {
-    if (!confirm("いまのしおりを消して、新しくつくりますか？")) return;
+    if (!confirm("今のしおりを消して、新しく作りますか？")) return;
     S = null; try { localStorage.removeItem(KEY); } catch (e) {}
     $("setup").reset(); setDefaultDate(); document.title = "旅のしおり"; renderAll(); $("dest").focus();
   });
@@ -277,8 +277,8 @@
         myStyles.add(v); renderMine(MY + v, cur.mine);
       } });
     $("style").append(sa.btn); $("style-add").append(sa.form);
-    const oa = FC.adder({ label: "＋ 自分で入力", aria: "あてはまるものを入力", placeholder: "例：釣りをする", max: 16, ok: "追加", btnClass: "chip-add",
-      empty: "あてはまるものを入れてから「追加」を押してください。",
+    const oa = FC.adder({ label: "＋ 自分で入力", aria: "当てはまるものを入力", placeholder: "例：釣りをする", max: 16, ok: "追加", btnClass: "chip-add",
+      empty: "当てはまるものを入れてから「追加」を押してください。",
       submit: v => {
         const cur = readForm();
         if (BUILT_OPTS[v]) { $("o-" + BUILT_OPTS[v]).checked = true; return; }

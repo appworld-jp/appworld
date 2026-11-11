@@ -106,7 +106,7 @@
     document.title = ticking ? `${$("clock").textContent} ${modeName(mode)}｜ポモドーロ箱` : "ポモドーロ箱";
   }
   const say = t => { $("status").textContent = t; };
-  const idleMsg = () => `スタートを押すと、${st.len}分の集中がはじまります。`;
+  const idleMsg = () => `スタートを押すと、${st.len}分の集中が始まります。`;
   // a little shake of the whole box when the bell rings
   const calm = matchMedia("(prefers-reduced-motion: reduce)");
   function ring() {
@@ -118,7 +118,7 @@
     audio();
     st.run = { mode, min: minutes, start: Date.now(), end: Date.now() + minutes * 60000, paused: null };
     save(); draw();
-    say(mode === "focus" ? `${minutes}分、集中しましょう。終わるとベルが鳴ります。` : `${minutes}分の休憩です。立って、体を伸ばしましょう。`);
+    say(mode === "focus" ? `${minutes}分の集中を始めました。終わるとベルが鳴ります。` : `${minutes}分の休憩です。立って体を伸ばすのがおすすめです。`);
   }
   function finish() {
     const run = st.run; if (!run) return;
@@ -127,14 +127,14 @@
       const entry = { id: run.start, s: run.start, e: run.end, m: run.min, note: "" };
       st.log.push(entry); st.streak++; pendingId = entry.id;
       save(); chime("focus"); ring(); draw(); renderLog();
-      say(`${run.min}分の集中、おつかれさまでした。`);
-      $("ask-h").textContent = `${run.min}分、おつかれさまでした`;
+      say(`${run.min}分の集中、お疲れさまでした。`);
+      $("ask-h").textContent = `${run.min}分、お疲れさまでした`;
       $("ask").hidden = false; $("rest").hidden = true;
       $("what").value = ""; $("what").focus();
     } else {
       if (run.mode === "long") st.streak = 0;
       save(); chime("rest"); ring(); draw();
-      say("休憩おわり。スタートで次の集中をはじめます。");
+      say("休憩が終わりました。スタートで次の集中を始めます。");
       $("start").focus();
     }
   }
@@ -185,7 +185,7 @@
     $("ask").hidden = true; $("rest").hidden = false;
     const longNext = st.streak > 0 && st.streak % LONG_EVERY === 0;
     $("short").classList.toggle("rec", !longNext); $("long").classList.toggle("rec", longNext);
-    $("rest-hint").textContent = longNext ? `${LONG_EVERY}回続きました。今回は長めに休みましょう。` : `あと${LONG_EVERY - (st.streak % LONG_EVERY)}回集中すると、長休憩です。`;
+    $("rest-hint").textContent = longNext ? `${LONG_EVERY}回続きました。今回は長めの休憩がおすすめです。` : `あと${LONG_EVERY - (st.streak % LONG_EVERY)}回集中すると、長休憩です。`;
     (longNext ? $("long") : $("short")).focus();
   }
   $("ask").addEventListener("submit", ev => {
@@ -197,7 +197,7 @@
   $("skip-note").addEventListener("click", () => { pendingId = null; showRest(); });
   $("short").addEventListener("click", () => { $("rest").hidden = true; begin("short", SHORT); });
   $("long").addEventListener("click", () => { $("rest").hidden = true; begin("long", LONG); });
-  $("norest").addEventListener("click", () => { $("rest").hidden = true; say("スタートで、次の集中をはじめます。"); $("start").focus(); });
+  $("norest").addEventListener("click", () => { $("rest").hidden = true; say("スタートで、次の集中を始めます。"); $("start").focus(); });
 
   // press feedback for keyboard users
   document.querySelectorAll(".key").forEach(k => {
@@ -271,7 +271,7 @@
       .concat(items.map(e => `${hm(e.s)}〜${hm(e.e)}（${e.m}分）${e.note || "（メモなし）"}`))
       .concat([`合計：${items.length}回・${fmtMin(total)}`]);
     const ok = await copyText(lines.join("\n"));
-    $("copied").textContent = ok ? "コピーしました" : "コピーできませんでした。もう一度押してください。";
+    $("copied").textContent = ok ? "コピーしました。" : "コピーできませんでした。もう一度押してください。";
     setTimeout(() => { $("copied").textContent = ""; }, 2500);
   });
 

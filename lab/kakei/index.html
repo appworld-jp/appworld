@@ -2,7 +2,7 @@
 <html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>家計ひとめ</title>
-<meta name="description" content="金額を入れて項目を押すだけの家計簿。今月いくら使ったか、予算があといくら残っているかがすぐわかります。">
+<meta name="description" content="金額を入れて項目を押すだけの家計簿。今月いくら使ったか、予算があといくら残っているかがすぐ分かります。">
 <meta name="theme-color" content="#eef2f1" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#111917" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
@@ -34,7 +34,7 @@
     </div>
     <button type="button" class="ghost" id="edit-budget">予算を決める</button>
     <form class="budget-form" id="budget-form" hidden novalidate>
-      <label for="budget-in">ひと月の予算</label>
+      <label for="budget-in">1か月の予算</label>
       <div class="inline"><span class="pre" aria-hidden="true">¥</span><input id="budget-in" type="text" inputmode="numeric" autocomplete="off" placeholder="60,000" aria-describedby="budget-help"><button type="submit" class="solid">保存</button></div>
       <p class="help" id="budget-help">空にして保存すると、予算なしに戻ります。</p>
     </form>
@@ -50,7 +50,7 @@
     <p class="field-err" id="amount-err" aria-live="assertive"></p>
     <div class="sub-row">
       <label for="date">日付</label><input id="date" type="date">
-      <label for="memo">メモ</label><input id="memo" type="text" maxlength="30" placeholder="スーパー、ランチなど">
+      <label for="memo">メモ</label><input id="memo" type="text" maxlength="30" placeholder="スーパーで夕飯の材料">
     </div>
     <p class="hint">金額を入れたら、項目を押して記録します。</p>
     <div class="cats" id="cats"></div>
@@ -58,7 +58,7 @@
   </section>
 
   <section class="breakdown" aria-labelledby="h-cat">
-    <h2 id="h-cat">使いみち</h2>
+    <h2 id="h-cat">項目別の合計</h2>
     <ul class="bars" id="bars"></ul>
   </section>
 

@@ -98,7 +98,7 @@
         const b = el("button", "ins", `${NAMES[i]}に入れる`); b.type = "button";
         b.addEventListener("click", () => insertKigo(i)); now.append(b);
       });
-    } else now.textContent = "季語をひとつ選ぶと、句に入れられます。";
+    } else now.textContent = "季語を一つ選ぶと、句に入れられます。";
   }
   // 自分の季語（季節ごと）。この端末に覚えて、次から候補に並べる
   const owns = {};
@@ -110,7 +110,7 @@
     owns[season] = window.OwnChoices({
       key: KEY + ".custom", name: "kigo-" + season, host: $("kigo"), max: 10,
       builtins: (K[season] || []).map(([w, r]) => ({ value: `${w}\t${r}`, label: w })),
-      addClass: "kg", addLabel: "＋ 自分の季語", placeholder: "季語（例：初雪）", inputLabel: "季語",
+      addClass: "kg", addLabel: "＋ 自分の季語", placeholder: "季語（初雪）", inputLabel: "季語",
       second: { label: "よみ（ひらがな）", placeholder: "よみ（はつゆき）", max: 20 },
       label: v => v.split("\t")[0], emptyMsg: "季語を入れてから「追加」を押してください。",
       parse: (w, r) => {

@@ -9,12 +9,12 @@
   // じぶんで つくる おはなし：なまえを いれると、6ばめんの おはなしに なる
   const FC = window.FreeChips, mine = FC.store("hamigaki.stories.custom", { limit: 8 });
   const myStory = n => ({ mine: n, title: `${n}と、ぴかぴかのほし`, parts: [
-    `あるひ、${n}は、そらに ひかる ちいさな ほしを みつけました。「どうして そんなに ぴかぴかなの？」`,
-    `ほしは いいました。「まいにち、ていねいに みがいているからだよ。${n}も いっしょに やってみる？」`,
-    `${n}は ほしと いっしょに、しゃか、しゃか、しゃか。1ぽんずつ、ていねいに みがきます。`,
-    `すると、どこからか むしばきんが やってきました。「おくちの なかに すみたいなあ」`,
-    `でも、${n}の はは もう ぴかぴか。むしばきんは「まぶしくて すめないよ」と、にげていきました。`,
-    `ほしは にっこり。「${n}の はも、わたしと おなじくらい ひかってるね」。おしまい。`
+    `あるひ、${n}は、そらにひかるちいさなほしをみつけました。「どうしてそんなにぴかぴかなの？」`,
+    `ほしはいいました。「まいにち、ていねいにみがいているからだよ。${n}もいっしょにやってみる？」`,
+    `${n}はほしといっしょに、しゃか、しゃか、しゃか。1ぽんずつ、ていねいにみがきます。`,
+    `すると、どこからかむしばきんがやってきました。「おくちのなかにすみたいなあ」`,
+    `でも、${n}のはは、もうぴかぴか。むしばきんは「まぶしくてすめないよ」と、にげていきました。`,
+    `ほしはにっこり。「${n}のはも、わたしとおなじくらいひかってるね」。おしまい。`
   ] });
   let S = BASE.concat(mine.all().map(myStory));
   let pick = new Date().getDate() % BASE.length;
@@ -35,8 +35,8 @@
     ["#ffe39a", "M12 12m-2.5 0a2.5 2.5 0 1 0 5 0a2.5 2.5 0 1 0-5 0M12 9.5V5M14.5 12H19M12 14.5V19M9.5 12H5"]
   ];
   const MY_COVER = ["#ffd6a5", "M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.5 6.7 19.4l1.2-6L3.4 9.3l6-.7z"];
-  const adder = FC.adder({ label: "＋ じぶんで つくる", aria: "おはなしの しゅじんこうの なまえ", placeholder: "れい：ねこのタマ", max: 10, ok: "つくる", btnClass: "book add",
-    empty: "なまえを いれてから「つくる」を おしてね。",
+  const adder = FC.adder({ label: "＋ じぶんでつくる", aria: "おはなしのしゅじんこうのなまえ", placeholder: "ねこのタマ", max: 10, ok: "つくる", btnClass: "book add",
+    empty: "なまえをいれてから「つくる」をおしてね。",
     submit: v => {
       if (!mine.has(v)) mine.add(v);
       buildBooks();
@@ -66,7 +66,7 @@
         pick = Math.max(0, S.indexOf(S.find(y => y === cur || (cur.mine && y.mine === cur.mine)) || S[0]));
         saved.pick = pick; store(); syncBooks(); preview();
       });
-      x.setAttribute("aria-label", `「${s.title}」を けす`);
+      x.setAttribute("aria-label", `「${s.title}」をけす`);
       w.append(b, x); $("books").append(w);
     });
     $("books").append(adder.btn);

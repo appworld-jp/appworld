@@ -17,7 +17,7 @@
   <header class="bar">
     <h1>ポモドーロ箱</h1>
     <a class="home" href="../">App World Lab</a>
-    <p class="lead">スタートひとつで、集中と休憩を交互に計ります。</p>
+    <p class="lead">スタートを押すだけで、集中と休憩を交互に計ります。</p>
   </header>
 
   <main>
@@ -47,11 +47,11 @@
         <button type="button" class="key big go" id="start">スタート</button>
         <button type="button" class="key small" id="reset">リセット</button>
       </div>
-      <p class="status" id="status" aria-live="polite">スタートを押すと、25分の集中がはじまります。</p>
+      <p class="status" id="status" aria-live="polite">スタートを押すと、25分の集中が始まります。</p>
     </section>
 
     <form class="ticket" id="ask" hidden>
-      <h2 id="ask-h">おつかれさまでした</h2>
+      <h2 id="ask-h">お疲れさまでした</h2>
       <label for="what">何をしましたか？ 一言でどうぞ。</label>
       <input type="text" id="what" maxlength="60" placeholder="企画書の見出しを決めた" autocomplete="off" enterkeyhint="done">
       <button class="key wide" type="submit" id="save-note">記録する</button>
@@ -59,7 +59,7 @@
     </form>
 
     <section class="ticket" id="rest" hidden aria-labelledby="rest-h">
-      <h2 id="rest-h">休憩しましょう</h2>
+      <h2 id="rest-h">休憩の時間です</h2>
       <p class="hint" id="rest-hint"></p>
       <div class="rest-keys">
         <button type="button" class="key" id="short">小休憩<small>5分</small></button>
