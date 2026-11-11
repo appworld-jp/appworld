@@ -126,7 +126,7 @@
         need.append("あと");
         need.append(el("b", null, `${left}枚`));
         need.append(selfM ? "。" : `。はがきは予備を入れて${left + Math.max(2, Math.ceil(left * 0.1))}枚あると安心です。`);
-      } else if (planned.length) need.append("出す人には、ぜんぶ出しました。");
+      } else if (planned.length) need.append("出す人全員に出しました。");
     }
 
     $("first").hidden = ps.length > 0;
@@ -329,7 +329,7 @@
       save(); closeSheet("sheetBg"); render();
       toast(`「${name}」を保存しました。`);
     } else {
-      if (dup && !confirm(`「${name}」はもう入っています。同じ名前でもう1人追加しますか？`)) return;
+      if (dup && !confirm(`「${name}」は登録済みです。同じ名前でもう1人追加しますか？`)) return;
       st.people.push(Object.assign({ id: uid(), stop: false, y: {} }, data));
       save(); closeSheet("sheetBg"); render();
       toast(`「${name}」を追加しました。`);
@@ -362,7 +362,7 @@
     add.forEach(n => st.people.push({ id: uid(), name: n, group: bulkGroup, memo: "", addr: "", stop: false, y: {} }));
     save(); closeSheet("bulkBg"); render();
     const skip = names.length - add.length;
-    toast(`${add.length}人を追加しました。` + (skip ? `（${skip}人は入っていたので省きました）` : ""), () => restore(snap));
+    toast(`${add.length}人を追加しました。` + (skip ? `（${skip}人は登録済みのため省きました）` : ""), () => restore(snap));
   });
 
   // 例
@@ -382,7 +382,7 @@
     st.people[5].y[y - 2] = { s: 1, r: true, m: false };
     st.sample = true;
     save(); render();
-    toast("例を入れました。試したら「全員」から削除できます。", () => { st.people = []; st.sample = false; save(); render(); });
+    toast("例を追加しました。不要なら「全員」から削除できます。", () => { st.people = []; st.sample = false; save(); render(); });
   });
 
   // ---------- 印刷 ----------
@@ -458,7 +458,7 @@
       if (j && j.app === "nenga") { data = clean(j.data); if (Array.isArray(j.groups)) groups = j.groups.filter(g => typeof g === "string").map(g => tidy(g).slice(0, 20)).filter(Boolean); }
     } catch (e) { data = null; }
     if (!data) { $("moveMsg").textContent = "読み込めませんでした。このアプリで書き出したファイルを選んでください。"; return; }
-    if (st.people.length && !confirm(`今の${st.people.length}人を、ファイルの${data.people.length}人と置きかえますか？`)) return;
+    if (st.people.length && !confirm(`今の${st.people.length}人を、ファイルの${data.people.length}人と置き換えますか？`)) return;
     const snap = snapshot();
     data.year = defaultYear();
     st = data; groups.forEach(g => { if (!GROUPS.includes(g)) groupStore.add(g); });

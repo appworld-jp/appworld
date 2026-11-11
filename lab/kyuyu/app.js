@@ -163,7 +163,7 @@
     const fullN = c.rows.filter(r => r.f.full).length;
     $("gNote").textContent = lastWin ? `前回の満タンから ${f1(lastWin.econ)} km/L（${km(lastWin.win.dist)}・${f1(lastWin.win.lit)}L）` :
       !c.rows.length ? "給油を記録すると、ここに燃費が出ます。" :
-      fullN < 2 ? `満タンの記録があと${2 - fullN}回で、燃費が出ます。` : "距離がぬけている記録があり、燃費を出せません。履歴を確かめてください。";
+      fullN < 2 ? `満タンの記録があと${2 - fullN}回で、燃費が出ます。` : "距離が抜けている記録があるため、燃費を出せません。履歴を確認してください。";
   }
   function renderFills(c) {
     const rows = c.rows.slice().reverse();
@@ -190,7 +190,7 @@
         right.append(e);
       }
       b.append(left, right);
-      b.setAttribute("aria-label", `${full(f.date)}の給油、${f2(f.liters)}リットル、${yen(cost(f))}${r.econ != null ? `、燃費${f1(r.econ)}キロメートル毎リットル` : ""}。押すと直せます`);
+      b.setAttribute("aria-label", `${full(f.date)}の給油、${f2(f.liters)}リットル、${yen(cost(f))}${r.econ != null ? `、燃費${f1(r.econ)}キロメートル毎リットル` : ""}。押すと編集できます`);
       b.addEventListener("click", () => openFill(f.id));
       li.append(b); return li;
     }));
@@ -238,7 +238,7 @@
     $("mtAlerts").replaceChildren(...al.map(({ m, s }) => {
       const d = el("div", "mt " + s.cls);
       d.append(el("span", null, `${m.k}：${s.text}`));
-      const b = el("button", "btn small", "済んだ"); b.type = "button"; b.addEventListener("click", () => maintDone(m, c)); d.append(b); return d;
+      const b = el("button", "btn small", "済み"); b.type = "button"; b.addEventListener("click", () => maintDone(m, c)); d.append(b); return d;
     }));
     if (onlyAlerts) return;
     $("mNone").hidden = !!ms.length;
@@ -253,7 +253,7 @@
       meta.push(ev ? `${ev}ごと（目安）` : "間隔なし");
       info.append(el("small", null, meta.join("・")));
       info.addEventListener("click", () => openMaint(m.id));
-      const b = el("button", "btn small", "済んだ"); b.type = "button"; b.setAttribute("aria-label", `${m.k}が今日済んだ`);
+      const b = el("button", "btn small", "済み"); b.type = "button"; b.setAttribute("aria-label", `${m.k}を今日済みにする`);
       b.addEventListener("click", () => maintDone(m, c));
       li.append(info, b); return li;
     }));
@@ -261,7 +261,7 @@
   function maintDone(m, c) {
     const snap = snapshot();
     m.last = today; m.lastOdo = c.curPos; save(); render();
-    toast(c.curPos != null ? `${m.k}：今日、${km(c.curPos)}で済んだと記録しました。` : `${m.k}：今日済んだと記録しました。`, () => { restore(snap); render(); });
+    toast(c.curPos != null ? `${m.k}：今日、${km(c.curPos)}で済みにしました。` : `${m.k}：今日済みにしました。`, () => { restore(snap); render(); });
   }
   function render() {
     const cr = car();
@@ -320,7 +320,7 @@
     fEdit = id || null;
     const f = id ? st.fills.find(x => x.id === id) : null;
     const cr = car();
-    $("fH").textContent = f ? "給油の記録を直す" : `給油を記録（${cr.name}）`;
+    $("fH").textContent = f ? "給油の記録を編集" : `給油を記録（${cr.name}）`;
     $("fDate").value = f ? f.date : today; $("fDate").max = today;
     const mode = f ? (f.trip != null ? "trip" : f.odo != null ? "odo" : cr.mode) : cr.mode;
     document.querySelector(`input[name=dm][value=${mode}]`).checked = true;
@@ -342,7 +342,7 @@
   $("fillForm").addEventListener("submit", e => {
     e.preventDefault();
     const date = $("fDate").value;
-    if (!isYmd(date) || date > today) return fail("fDate", "給油した日を、今日までの日付で入れてください。");
+    if (!isYmd(date) || date > today) return fail("fDate", "給油した日を、今日以前の日付で入れてください。");
     const mode = dm(), dRaw = $("fDist").value.trim(), dv = num(dRaw);
     const p = prevOf(date, fEdit);
     let odo = null, trip = null;
@@ -350,11 +350,11 @@
       if (dv == null || !okNum(dv, 0, 3e6)) return fail("fDist", "メーターの総距離を数字で入れてください（例：45210）。");
       if (p.pos != null && dv <= p.pos) return fail("fDist", `前回（${full(p.last.f.date)}）の ${km(p.pos)} より大きい数字を入れてください。`);
       const later = compute(st.cur).rows.filter(r => r.f.id !== fEdit && r.f.date > date && r.f.odo != null)[0];
-      if (later && dv >= later.f.odo) return fail("fDist", `${full(later.f.date)}の ${km(later.f.odo)} より小さい数字のはずです。日付を確かめてください。`);
+      if (later && dv >= later.f.odo) return fail("fDist", `${full(later.f.date)}の ${km(later.f.odo)} より小さい数字のはずです。日付を確認してください。`);
       odo = dv;
     } else {
       if (dRaw && (dv == null || !okNum(dv, 0, 1e4))) return fail("fDist", "前回から走った距離を数字で入れてください（例：412.5）。");
-      if (!dRaw && p.last) return fail("fDist", "前回の給油から走った距離を入れてください。わからないときは「メーターの総距離」で入れます。");
+      if (!dRaw && p.last) return fail("fDist", "前回の給油から走った距離を入れてください。分からないときは「メーターの総距離」で入れてください。");
       trip = dRaw ? dv : null;
     }
     const lit = num($("fLit").value);
@@ -372,7 +372,7 @@
     tab = "log"; document.querySelectorAll(".tab").forEach(x => x.setAttribute("aria-pressed", String(x.dataset.tab === "log")));
     render();
     const r = compute(st.cur).rows.find(x => x.f.id === rec.id);
-    toast(r && r.econ != null ? `記録しました。今回の燃費は ${f1(r.econ)} km/L です。` : old ? "直しました。" : rec.full ? "記録しました。次の満タンで燃費が出ます。" : "記録しました。", () => { restore(snap); render(); });
+    toast(r && r.econ != null ? `記録しました。今回の燃費は ${f1(r.econ)} km/L です。` : old ? "更新しました。" : rec.full ? "記録しました。次の満タンで燃費が出ます。" : "記録しました。", () => { restore(snap); render(); });
   });
   $("fDel").addEventListener("click", () => {
     const f = st.fills.find(x => x.id === fEdit); if (!f) return;
@@ -412,7 +412,7 @@
   });
   $("cDel").addEventListener("click", () => {
     const c = st.cars.find(x => x.id === cEdit); if (!c) return;
-    if (!confirm(`${c.name}と、その給油・整備の記録をすべて消しますか？`)) return;
+    if (!confirm(`${c.name}と、その給油・整備の記録を全て消しますか？`)) return;
     const snap = snapshot();
     st.cars = st.cars.filter(x => x !== c); st.fills = st.fills.filter(f => f.car !== c.id); st.maint = st.maint.filter(m => m.car !== c.id);
     st.cur = st.cars[0] ? st.cars[0].id : ""; save(); $("carDlg").close(); render();
@@ -443,8 +443,8 @@
   function syncMHint() {
     $("mErr").textContent = "";
     $("mHint").textContent = mKind === "車検" ? "自家用の乗用車は2年ごと。新車の最初の車検だけは3年後です。" :
-      mKind === "オイル交換" ? "距離と期間の、どちらか早いほうで知らせます。乗り方や車種で目安は変わります。" :
-      "距離と期間の、どちらか早いほうで知らせます。片方だけでもかまいません。";
+      mKind === "オイル交換" ? "距離と期間の、どちらか早い方で知らせます。乗り方や車種で目安は変わります。" :
+      "距離と期間の、どちらか早い方で知らせます。片方だけでもかまいません。";
   }
   function openMaint(id) {
     mEdit = id || null;
@@ -469,8 +469,8 @@
   $("mForm").addEventListener("submit", e => {
     e.preventDefault();
     const err = (id, msg) => { $("mErr").textContent = msg; if (id) $(id).focus(); };
-    if (!mKind) return err(null, "なにの整備かを選ぶか、「＋ 自分で入力」で入れてください。");
-    if (!mEdit && st.maint.some(m => m.car === st.cur && m.k === mKind)) return err(null, `「${mKind}」はもうあります。一覧から押して直してください。`);
+    if (!mKind) return err(null, "何の整備かを選ぶか、「＋ 自分で入力」で入れてください。");
+    if (!mEdit && st.maint.some(m => m.car === st.cur && m.k === mKind)) return err(null, `「${mKind}」はもうあります。一覧から選んで編集してください。`);
     const opt = (id, hi) => { const raw = $(id).value.trim(); if (!raw) return 0; const v = num(raw); return Number.isInteger(v) && v > 0 && v <= hi ? v : NaN; };
     const kmv = opt("mKm", 1e6), mon = opt("mMon", 240);
     if (isNaN(kmv)) return err("mKm", "何kmごとかを、数字で入れてください（例：5000）。");
@@ -478,12 +478,12 @@
     const oRaw = $("mOdo").value.trim(), ov = oRaw ? num(oRaw) : null;
     if (oRaw && !okNum(ov, -1, 3e6)) return err("mOdo", "前回のメーターを数字で入れてください（例：40210）。");
     const last = $("mLast").value;
-    if (last && last > today) return err("mLast", "前回の日は、今日までの日付にしてください。");
+    if (last && last > today) return err("mLast", "前回の日は、今日以前の日付にしてください。");
     const snap = snapshot();
     const data = { k: mKind, last: isYmd(last) ? last : "", lastOdo: oRaw ? ov : null, km: kmv, mon };
     if (mEdit) Object.assign(st.maint.find(x => x.id === mEdit), data); else st.maint.push({ id: uid(), car: st.cur, ...data });
     save(); $("mDlg").close(); render();
-    toast(mEdit ? "整備の予定を直しました。" : `「${mKind}」を追加しました。`, () => { restore(snap); render(); });
+    toast(mEdit ? "整備の予定を更新しました。" : `「${mKind}」を追加しました。`, () => { restore(snap); render(); });
   });
 
   // ---------- 例 ----------
@@ -501,7 +501,7 @@
     st.maint.push({ id: uid(), car: c.id, k: "タイヤのローテーション", last: back(90), lastOdo: 41300, km: 5000, mon: 0 });
     tab = "log"; document.querySelectorAll(".tab").forEach(x => x.setAttribute("aria-pressed", String(x.dataset.tab === "log")));
     save(); render();
-    toast("例を入れました。満タンと満タンのあいだで燃費を計算しています。", () => { restore(snap); render(); });
+    toast("例を追加しました。満タンから次の満タンまでで燃費を計算しています。", () => { restore(snap); render(); });
   });
   $("clearSample").addEventListener("click", () => {
     const snap = snapshot();
@@ -537,7 +537,7 @@
     let data = null, custom = null;
     try { if (f.size > 5e6) throw 0; const j = JSON.parse(await f.text()); if (j && j.app === "kyuyu") { data = clean(j.data); custom = j.custom; } } catch (e) { data = null; }
     if (!data || !data.cars.length) { $("moveMsg").textContent = "読み込めませんでした。このアプリで書き出したファイルを選んでください。"; return; }
-    if (st.cars.length && !confirm(`いまの記録を、ファイルの車${data.cars.length}台・給油${data.fills.length}回と置きかえますか？`)) return;
+    if (st.cars.length && !confirm(`今の記録を、ファイルの車${data.cars.length}台・給油${data.fills.length}回と置き換えますか？`)) return;
     const snap = snapshot(), csnap = JSON.stringify(readCustom());
     st = data; save();
     if (custom && Array.isArray(custom.maint)) { try { localStorage.setItem(CK, JSON.stringify({ maint: custom.maint.filter(v => typeof v === "string").slice(0, 60) })); } catch (e) {} }

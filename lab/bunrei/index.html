@@ -2,7 +2,7 @@
 <html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>メール文例帳</title>
-<meta name="description" content="お礼、お詫び、催促、日程調整、断り、退職のあいさつなど、ていねいなメールを空欄を埋めるだけで作れます。ていねい・ふつう・社内向けの言い回しを選べ、件名の案も出ます。">
+<meta name="description" content="お礼、お詫び、催促、日程調整、断り、退職のあいさつなど、丁寧なメールを空欄を埋めるだけで作れます。丁寧・普通・社内向けの言い回しを選べ、件名の案も出ます。">
 <meta name="theme-color" content="#1F3A5F">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="manifest" href="manifest.webmanifest">
@@ -37,8 +37,8 @@
       <div class="tone" id="toneSeg" role="group" aria-label="言い回し"></div>
       <p class="tone-d" id="toneDesc"></p>
       <div class="to" id="toBox">
-        <label class="fld" id="toCoF"><span>相手の会社名（なくてもOK）</span><input id="toCompany" type="text" maxlength="40" autocomplete="off" placeholder="株式会社みなと商事"></label>
-        <label class="fld" id="toDeptF"><span>相手の部署・役職（なくてもOK）</span><input id="toDept" type="text" maxlength="30" autocomplete="off" placeholder="営業部 部長"></label>
+        <label class="fld" id="toCoF"><span>相手の会社名（任意）</span><input id="toCompany" type="text" maxlength="40" autocomplete="off" placeholder="株式会社みなと商事"></label>
+        <label class="fld" id="toDeptF"><span>相手の部署・役職（任意）</span><input id="toDept" type="text" maxlength="30" autocomplete="off" placeholder="営業部 部長"></label>
         <label class="fld" id="toNameF"><span id="toNameL">相手の名前</span><input id="toName" type="text" maxlength="20" autocomplete="off" placeholder="山田"></label>
       </div>
       <div class="fields" id="fields"></div>
@@ -65,7 +65,7 @@
         <textarea id="body" class="body" rows="18" spellcheck="false"></textarea>
         <p class="blanks" id="blanks" aria-live="polite"></p>
         <div class="edited" id="editedBar" hidden>
-          <span>本文を手で直しています。項目を変えても本文は変わりません。</span>
+          <span>本文を手で書き換えています。項目を変えても本文は変わりません。</span>
           <button type="button" class="btn ghost small" id="regen">項目から作り直す</button>
         </div>
       </div>
@@ -91,7 +91,7 @@
 
   <details class="card fold">
     <summary>データの引っ越し</summary>
-    <p class="hint">差出人の情報と自分の文例は、この端末だけに残ります。機種変更のときは、ファイルに書き出して、新しい端末で読み込んでください。</p>
+    <p class="hint">差出人の情報と自分の文例は、この端末にだけ残ります。機種変更のときは、ファイルに書き出して、新しい端末で読み込んでください。</p>
     <div class="row">
       <button type="button" class="btn ghost small" id="expBtn">ファイルに書き出す</button>
       <label class="btn ghost small file-btn">ファイルを読み込む<input type="file" id="impFile" accept="application/json,.json"></label>

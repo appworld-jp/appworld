@@ -2,7 +2,7 @@
 <html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>文字数ものさし</title>
-<meta name="description" content="文章を貼り付けると、文字数・原稿用紙の枚数・行数・バイト数と、X やメルカリ、履歴書の欄などにあと何字入るかがひと目でわかります。">
+<meta name="description" content="文章を貼り付けると、文字数・原稿用紙の枚数・行数・バイト数と、X やメルカリ、履歴書の欄などにあと何字入るかがひと目で分かります。">
 <meta name="theme-color" content="#E9B949">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="manifest" href="manifest.webmanifest">
@@ -17,7 +17,7 @@
   <div class="top-in">
     <a class="back" href="../">App World Lab</a>
     <h1>文字数ものさし</h1>
-    <p class="lead">貼り付けると、文字数とあと何字入るかがわかります。</p>
+    <p class="lead">貼り付けると、文字数とあと何字入るかが分かります。</p>
   </div>
 </header>
 
@@ -43,7 +43,7 @@
         <div class="big-main" aria-live="polite" aria-atomic="true">
           <span class="big-n" id="nAll">0</span><span class="big-u">字</span>
         </div>
-        <p class="big-sub"><span>空白・改行をのぞくと</span> <b id="nNoSp">0</b><span>字</span></p>
+        <p class="big-sub"><span>空白・改行を除くと</span> <b id="nNoSp">0</b><span>字</span></p>
         <dl class="stats">
           <div><dt>原稿用紙<small>400字詰め・目安</small></dt><dd id="genko">0枚</dd></div>
           <div><dt>行数</dt><dd id="lines">0行</dd></div>
@@ -60,7 +60,7 @@
         <details class="pick" id="pick">
           <summary>書く場所を選ぶ</summary>
           <div class="chips" id="placeChips" role="group" aria-label="書く場所"></div>
-          <p class="note">字数は2026年11月時点で確かめた目安です。サービスの上限は変わることがあるので、最後は投稿画面で確かめてください。自分で入れるときは「社内報 800」のように名前と字数を入れます。</p>
+          <p class="note">字数は2026年11月時点で確認した目安です。サービスの上限は変わることがあるので、最後は投稿画面で確認してください。自分で入れるときは「社内報 800」のように名前と字数を入れます。</p>
         </details>
       </section>
     </div>
@@ -71,14 +71,14 @@
     <ul class="how">
       <li>文字数は、見た目の1文字を1字として数えます。絵文字や「が」のような組み合わせの文字も1字です。</li>
       <li>X は、ひらがな・漢字・絵文字などを2、英数字を1として280まで数えます（全角なら140字）。URL は長さにかかわらず23として数えます。有料プランでは長く書けます。</li>
-      <li>原稿用紙は、20字×20行で、段落ごとに行を改め、行の頭に来る「、」「。」や閉じかっこは前の行の下に入れて数えます。半角の英数字は2字で1ます。書き方によって変わるので目安です。</li>
+      <li>原稿用紙は、20字×20行で、段落ごとに行を改め、行の頭に来る「、」「。」や閉じかっこは前の行の下に入れて数えます。半角の英数字は2字で1マスです。書き方によって変わるので目安です。</li>
       <li>読む時間は、1分に500〜600字として計算しています。</li>
     </ul>
   </details>
 
   <details class="fold">
     <summary>データの引っ越し</summary>
-    <p class="note">自分で入れた書く場所と設定（残すようにした文章も）を、ファイルに書き出して新しい端末で読み込めます。</p>
+    <p class="note">自分で追加した書く場所と設定（残すようにした文章も）を、ファイルに書き出して新しい端末で読み込めます。</p>
     <div class="row-btns">
       <button type="button" class="btn" id="expBtn">ファイルに書き出す</button>
       <label class="btn file-btn">ファイルを読み込む<input type="file" id="impFile" accept="application/json,.json"></label>

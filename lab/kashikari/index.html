@@ -2,7 +2,7 @@
 <html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>貸し借り帳</title>
-<meta name="description" content="貸した本や傘、立て替えたお金を、相手と日付といっしょに記録。返ってくる目安を過ぎたものが先に並び、角の立たない「返してね」の文もコピーできます。">
+<meta name="description" content="貸した本や傘、立て替えたお金を、相手と日付と一緒に記録。返ってくる目安を過ぎたものが先に並び、角の立たない「返してね」の文もコピーできます。">
 <meta name="theme-color" content="#F7F1E3">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="manifest" href="manifest.webmanifest">
@@ -33,15 +33,15 @@
     <div class="s borrow"><small>借りている</small><b id="sBorrow"></b><span id="sBorrowM"></span></div>
   </section>
 
-  <nav class="tabs" id="tabs" aria-label="表示の切りかえ" hidden>
-    <button type="button" class="tab" data-tab="open" aria-pressed="true">まだのもの</button>
+  <nav class="tabs" id="tabs" aria-label="表示の切り替え" hidden>
+    <button type="button" class="tab" data-tab="open" aria-pressed="true">返却待ち</button>
     <button type="button" class="tab" data-tab="people" aria-pressed="false">人ごと</button>
-    <button type="button" class="tab" data-tab="done" aria-pressed="false">返ったもの</button>
+    <button type="button" class="tab" data-tab="done" aria-pressed="false">返却済み</button>
   </nav>
 
   <section id="openView">
     <ol class="ledger" id="openList"></ol>
-    <p class="none" id="openNone" hidden>いま貸し借りしているものはありません。</p>
+    <p class="none" id="openNone" hidden>今、貸し借りしているものはありません。</p>
   </section>
   <section id="peopleView" hidden>
     <p class="note">お金は、まだ返っていない分だけを差し引きしています。</p>
@@ -61,7 +61,7 @@
       <circle cx="112" cy="70" r="20" fill="none" stroke="#C2412D" stroke-width="3.5"/>
       <text x="112" y="77" text-anchor="middle" font-size="19" font-weight="700" fill="#C2412D">済</text>
     </svg>
-    <p class="empty-h">貸したものを1つ書いてみましょう。</p>
+    <p class="empty-h">まず、貸したものを1つ記録してください。</p>
     <p>返ってきたら「返った」を押すだけ。返す目安を過ぎたものは先頭に出ます。</p>
     <div class="row-btns center"><button type="button" class="btn ghost" id="sampleBtn">例を見る</button></div>
   </section>
@@ -99,7 +99,7 @@
     <label class="field"><span id="whoL">誰に<em>必須</em></span><input id="fWho" type="text" maxlength="20" autocomplete="off" placeholder="佐藤さん"></label>
     <div class="quick" id="whoChips"></div>
     <fieldset class="chips-f">
-      <legend>なにを</legend>
+      <legend>何を</legend>
       <div class="chips" id="kindChips"></div>
     </fieldset>
     <label class="field" id="whatF"><span>品名<em id="whatReq">必須</em></span><input id="fWhat" type="text" maxlength="30" autocomplete="off" placeholder="『三体』の1巻"></label>
@@ -134,7 +134,7 @@
       <button type="button" class="btn ghost" id="vMsg">伝える文を作る</button>
     </div>
     <div class="dlg-acts">
-      <button type="button" class="btn ghost" id="vEdit">直す</button>
+      <button type="button" class="btn ghost" id="vEdit">編集</button>
       <button type="button" class="btn ghost" id="vClose">閉じる</button>
     </div>
     <button type="button" class="link-danger" id="vDel">この記録を消す</button>
@@ -146,12 +146,12 @@
   <div class="dlg-in">
     <h2 id="mH">やんわり伝える文</h2>
     <div class="seg tone" role="radiogroup" aria-label="言い方">
-      <label><input type="radio" name="tone" value="polite" checked><span>ていねい</span></label>
-      <label><input type="radio" name="tone" value="plain"><span>ふつう</span></label>
+      <label><input type="radio" name="tone" value="polite" checked><span>丁寧</span></label>
+      <label><input type="radio" name="tone" value="plain"><span>普通</span></label>
       <label><input type="radio" name="tone" value="casual"><span>気軽</span></label>
     </div>
     <p class="hint" id="toneHint"></p>
-    <label class="field"><span>文（直してから送れます）</span><textarea id="mText" rows="6"></textarea></label>
+    <label class="field"><span>文（書き換えてから送れます）</span><textarea id="mText" rows="6"></textarea></label>
     <p class="msg-ok" id="mOk" role="status"></p>
     <div class="dlg-acts">
       <button type="button" class="btn" id="mCopy">コピー</button>

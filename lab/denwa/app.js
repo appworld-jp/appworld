@@ -89,10 +89,10 @@
       const li = el("li", "td");
       const di = dueInfo(it);
       if (di && di.days < 0) li.classList.add("late"); else if (di && di.days <= 2) li.classList.add("soon");
-      const ck = el("button", "ck"); ck.type = "button"; ck.setAttribute("aria-label", `「${it.next}」を済んだにする`);
+      const ck = el("button", "ck"); ck.type = "button"; ck.setAttribute("aria-label", `「${it.next}」を済みにする`);
       ck.addEventListener("click", () => {
         it.done = true; save(); renderHome();
-        toast("済んだにしました。", () => { it.done = false; save(); renderHome(); });
+        toast("済みにしました。", () => { it.done = false; save(); renderHome(); });
       });
       const body = el("button", "td-b"); body.type = "button";
       body.append(el("span", "td-next", it.next), el("span", "td-who", who(it)));
@@ -113,7 +113,7 @@
     });
     $("q").hidden = st.items.length < 2;
     $("empty").hidden = st.items.length > 0;
-    $("found").textContent = words.length ? (hits.length ? `${hits.length}件見つかりました。` : "見つかりませんでした。ほかの言葉でも探してみてください。") : "";
+    $("found").textContent = words.length ? (hits.length ? `${hits.length}件見つかりました。` : "見つかりませんでした。別の言葉で探してみてください。") : "";
     const ul = $("list"); ul.replaceChildren();
     let lastMonth = "";
     hits.forEach(it => {
@@ -142,7 +142,7 @@
   let savedTimer = 0;
   function touched() {
     save();
-    $("savedMark").textContent = saveOk ? "保存しました" : "保存できませんでした。空き容量を確かめてください。";
+    $("savedMark").textContent = saveOk ? "保存しました" : "保存できませんでした。空き容量を確認してください。";
     clearTimeout(savedTimer); savedTimer = setTimeout(() => { $("savedMark").textContent = ""; }, 1500);
     updateCall();
   }
@@ -169,7 +169,7 @@
     onPick: v => { setKind(v); touched(); }
   });
   const ownQuick = window.OwnChoices({
-    key: OWN, name: "quick", host: $("quickBox"), max: 40, addLabel: "＋ 定型文を追加", okLabel: "追加",
+    key: OWN, name: "quick", host: $("quickBox"), max: 40, addLabel: "＋ よく使う言葉を追加", okLabel: "追加",
     builtins: [...document.querySelectorAll("#quickBox .qb")].filter(b => b.dataset.q !== "said").map(b => ({ value: b.dataset.q, label: b.textContent })),
     placeholder: "メールで案内が届くことになった", inputLabel: "よく使う言葉", emptyMsg: "よく使う言葉を入れてから「追加」を押してください。",
     chip: v => {
@@ -214,7 +214,7 @@
   document.querySelectorAll("#quickBox > .qb").forEach(b => b.addEventListener("click", () => {
     if (b.dataset.q === "said") {
       const v = $("sayIn").value.trim();
-      if (!v) { $("sayIn").focus(); $("sayIn").placeholder = "言われたことを書いてから押してください"; return; }
+      if (!v) { $("sayIn").focus(); $("sayIn").placeholder = "言われたことを入れてから押してください。"; return; }
       addLine(/と言われた$/.test(v) ? v : `「${v.replace(/[。.]$/, "")}」と言われた`);
       $("sayIn").value = ""; $("sayIn").placeholder = "来週中に書類を郵送します";
     } else addLine(b.dataset.q);
@@ -235,7 +235,7 @@
   $("copyBtn").addEventListener("click", async () => {
     if (!cur) return;
     const text = asText(cur);
-    try { await navigator.clipboard.writeText(text); $("copyMsg").textContent = "コピーしました。メールやLINEに貼りつけられます。"; $("copyArea").hidden = true; }
+    try { await navigator.clipboard.writeText(text); $("copyMsg").textContent = "コピーしました。メールやLINEに貼り付けられます。"; $("copyArea").hidden = true; }
     catch (e) {
       const a = $("copyArea"); a.value = text; a.hidden = false; a.focus(); a.select();
       $("copyMsg").textContent = "コピーできませんでした。下の文章を長押しして選んでください。";
@@ -253,10 +253,10 @@
     const now = new Date(); const t = m => new Date(now.getTime() - m * 60000).toISOString();
     const due = new Date(now); due.setDate(due.getDate() + 4);
     const it = cleanItem({ at: t(18), kind: "tel", org: "〇〇市役所", dept: "国民健康保険課", person: "山田さん", phone: "03-0000-0000", ref: "A-20481",
-      topic: "引っ越しにともなう保険証の住所変更", lines: [{ t: t(16), s: "保留で待った" }, { t: t(14), s: "「転入届のあとでないと手続きできない」と言われた" }, { t: t(12), s: "「窓口に来るときは本人確認書類が要る」と言われた" }],
+      topic: "引っ越しに伴う保険証の住所変更", lines: [{ t: t(16), s: "保留で待った" }, { t: t(14), s: "「転入届のあとでないと手続きできない」と言われた" }, { t: t(12), s: "「窓口に来るときは本人確認書類が要る」と言われた" }],
       next: "転入届を出してから、保険課の窓口へ行く", due: ymd(due), note: "窓口は2階の12番。平日8:30〜17:15。" });
     st.items.unshift(it); save(); renderHome();
-    toast("例を1件入れました。いらなければ開いて削除できます。");
+    toast("例を1件追加しました。開いて削除できます。");
   });
 
   // ---------- お知らせ ----------
@@ -284,7 +284,7 @@
     let data = null;
     try { if (f.size > 10e6) throw 0; const j = JSON.parse(await f.text()); if (j && j.app === "denwa") data = clean(j.data); } catch (e) { data = null; }
     if (!data || !data.items.length) { $("moveMsg").textContent = "読み込めませんでした。このアプリで書き出したファイルを選んでください。"; return; }
-    if (st.items.length && !confirm(`いまのメモを、ファイルの${data.items.length}件と置きかえますか？`)) return;
+    if (st.items.length && !confirm(`今のメモを、ファイルの${data.items.length}件と置き換えますか？`)) return;
     const prev = JSON.stringify(st);
     st = data; save(); renderHome();
     $("moveMsg").textContent = `${data.items.length}件を読み込みました。`;

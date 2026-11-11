@@ -42,7 +42,7 @@
   }
   let st = { plants: [] };
   try { const v = clean(JSON.parse(localStorage.getItem(KEY) || "null")); if (v) st = v; } catch (e) { /* 空で始める */ }
-  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) { toast("この端末に保存できませんでした。ブラウザの設定を確かめてください。"); } };
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) { toast("保存できませんでした。ブラウザの設定を確認してください。"); } };
   const snapshot = () => JSON.stringify(st);
   const restore = s => { st = clean(JSON.parse(s)) || { plants: [] }; save(); };
 
@@ -103,7 +103,7 @@
   // ---------- 一覧 ----------
   function render() {
     const m = today.getMonth() + 1;
-    $("season").textContent = (isSS(today) ? "いまは春夏（4〜9月）" : "いまは秋冬（10〜3月）") + "の目安で数えています";
+    $("season").textContent = (isSS(today) ? "今は春夏（4〜9月）" : "今は秋冬（10〜3月）") + "の目安で数えています";
     const ps = st.plants.map(p => ({ p, w: waterState(p), f: fertState(p), r: repotState(p) }));
     ps.sort((a, b) => a.w.left - b.w.left || label(a.p).localeCompare(label(b.p), "ja"));
     const need = ps.filter(x => x.w.left <= 0 && x.w.last && keyOf(x.w.last) !== todayKey || !x.w.last).length;
@@ -115,7 +115,7 @@
       if (need) $("todayBig").append(el("span", "", "今日の水やり"), el("b", "", String(need)), el("span", "", "鉢"));
       else $("todayBig").append(el("span", "", "今日の水やりは"), el("b", "ok", "なし"));
       const next = ps.find(x => x.w.left > 0);
-      $("todaySub").textContent = "全部で" + ps.length + "鉢" + (done ? "・今日やった" + done + "鉢" : "") + (!need && next ? "・次は" + md(next.w.due) + "の" + label(next.p) : "");
+      $("todaySub").textContent = "全部で" + ps.length + "鉢" + (done ? "・今日は" + done + "鉢に水やり済み" : "") + (!need && next ? "・次は" + md(next.w.due) + "の" + label(next.p) : "");
     }
     $("pots").replaceChildren(...ps.map(potItem));
     void m;
@@ -134,16 +134,16 @@
     tx.append(gauge);
     const tags = el("span", "tags");
     if (f.iv && f.left != null && f.left <= 0) tags.append(el("span", "tag t-fert", "肥料の日"));
-    if (r && r.due) tags.append(el("span", "tag t-repot", "植え替えどき"));
+    if (r && r.due) tags.append(el("span", "tag t-repot", "植え替え時期"));
     if (tags.children.length) tx.append(tags);
     open.append(tx);
-    open.setAttribute("aria-label", label(p) + "、" + (wateredToday ? "今日やった" : "水やり" + leftText(w)) + "。くわしく見る");
+    open.setAttribute("aria-label", label(p) + "、" + (wateredToday ? "今日は水やり済み" : "水やり" + leftText(w)) + "。詳しく見る");
     open.addEventListener("click", () => showInfo(p.id));
-    const st2 = el("span", "pot-left", wateredToday ? "今日やった" : leftText(w));
+    const st2 = el("span", "pot-left", wateredToday ? "今日は水やり済み" : leftText(w));
     const btn = el("button", "water"); btn.type = "button";
     btn.setAttribute("aria-pressed", wateredToday ? "true" : "false");
-    btn.setAttribute("aria-label", wateredToday ? label(p) + "の今日の水やりを取り消す" : label(p) + "に水やった");
-    btn.append(sv("svg", { viewBox: "0 0 24 24", "aria-hidden": "true" }), el("span", "w-t", wateredToday ? "やった" : "水やった"));
+    btn.setAttribute("aria-label", wateredToday ? label(p) + "の今日の水やりを取り消す" : label(p) + "の水やりを記録");
+    btn.append(sv("svg", { viewBox: "0 0 24 24", "aria-hidden": "true" }), el("span", "w-t", wateredToday ? "済み" : "水やり"));
     btn.firstChild.append(sv("path", { d: wateredToday ? "M5 12.5l4.5 4.5L19 7.5" : "M12 3c4 5.5 6 8.6 6 11.2A6 6 0 0 1 6 14.2C6 11.6 8 8.5 12 3z", fill: wateredToday ? "none" : "currentColor", stroke: "currentColor", "stroke-width": wateredToday ? 3 : 0, "stroke-linecap": "round", "stroke-linejoin": "round" }));
     btn.addEventListener("click", () => water(p.id, btn));
     const side = el("div", "pot-side"); side.append(st2, btn);
@@ -194,24 +194,24 @@
       if (act) s.append(act);
       b.append(s);
     };
-    sec("水やり", [w.last ? "最後は" + md(w.last) + "。次は" + md(w.due) + "ごろ（" + leftText(w) + "）。" : "まだ記録がありません。", "めやす：" + g.water]);
+    sec("水やり", [w.last ? "最後は" + md(w.last) + "。次は" + md(w.due) + "ごろ（" + leftText(w) + "）。" : "まだ記録がありません。", "目安：" + g.water]);
     const hist = el("ul", "hist");
     p.water.slice(-8).reverse().forEach(d => hist.append(el("li", "", md(parse(d)))));
     if (p.water.length) { const s = b.lastChild; s.append(el("p", "i-small", "これまでの水やり（新しい順）"), hist); }
 
     const fedToday = p.fert[p.fert.length - 1] === todayKey;
-    const fb = el("button", "btn small ghost", fedToday ? "今日の肥料を取り消す" : "肥料やった"); fb.type = "button";
+    const fb = el("button", "btn small ghost", fedToday ? "今日の肥料を取り消す" : "肥料をやった"); fb.type = "button";
     fb.addEventListener("click", () => {
       if (fedToday) p.fert.pop(); else { p.fert.push(todayKey); p.fert = p.fert.slice(-80); }
       save(); render(); showInfo(p.id);
       $("infoMsg").textContent = fedToday ? "今日の肥料の記録を取り消しました。" : "肥料の記録をつけました。";
     });
     const fl = [];
-    if (!f.iv) fl.push("いまの季節（" + (isSS(today) ? "春夏" : "秋冬") + "）は肥料を休みます。");
+    if (!f.iv) fl.push("今の季節（" + (isSS(today) ? "春夏" : "秋冬") + "）は肥料を休みます。");
     else if (!f.last) fl.push((isSS(today) ? "春夏" : "秋冬") + "は" + f.iv + "日ごと。まだ記録がありません。");
     else fl.push("最後は" + md(f.last) + "。次は" + md(f.due) + "ごろ。");
     if (f.last && !f.iv) fl.push("最後は" + md(f.last) + "でした。");
-    if (g.fert) fl.push("めやす：" + g.fert);
+    if (g.fert) fl.push("目安：" + g.fert);
     sec("肥料", fl, fb);
 
     const thisMonth = todayKey.slice(0, 7);
@@ -225,9 +225,9 @@
       $("infoMsg").textContent = undoable ? "植え替えの記録を取り消しました。" : "植え替えの記録をつけました。";
     });
     const rl = [];
-    if (r) rl.push("最後は" + p.repot.replace("-", "年").replace(/^(\d+年)0?(\d+)$/, "$1$2月") + "。" + (r.due ? "そろそろ植え替えどきです。" : "次は" + r.next.getFullYear() + "年" + (r.next.getMonth() + 1) + "月ごろ。"));
-    else rl.push("最後に植え替えた月を入れると、次の時期がわかります。");
-    rl.push("めやす：" + p.rp + "年に1回、" + g.rpm + "ごろ。根が鉢底から出てきたら合図です。");
+    if (r) rl.push("最後は" + p.repot.replace("-", "年").replace(/^(\d+年)0?(\d+)$/, "$1$2月") + "。" + (r.due ? "そろそろ植え替えの時期です。" : "次は" + r.next.getFullYear() + "年" + (r.next.getMonth() + 1) + "月ごろ。"));
+    else rl.push("最後に植え替えた月を入れると、次の時期が分かります。");
+    rl.push("目安：" + p.rp + "年に1回、" + g.rpm + "ごろ。根が鉢底から出てきたら合図です。");
     sec("植え替え", rl, rb);
 
     const tip = el("section", "i-tip"); tip.append(el("h3", "", PRESET[p.kind] ? p.kind + "の育て方のコツ" : "育て方"), el("p", "", g.tip));
@@ -294,7 +294,7 @@
   function openEdit(id) {
     editId = id || null;
     const p = id ? st.plants.find(z => z.id === id) : null;
-    $("editH").textContent = p ? "「" + label(p) + "」を直す" : "鉢を足す";
+    $("editH").textContent = p ? "「" + label(p) + "」を編集" : "鉢を追加";
     fKind = p ? p.kind : ""; fPlace = p ? p.place : "";
     $("fName").value = p ? p.name : "";
     const g = guideOf(fKind);
@@ -324,7 +324,7 @@
     if (!Number.isInteger(ss) || ss < 1 || ss > 90) return err("numErr", $("fSS"), "春夏の日数を1〜90で入れてください。");
     if (!Number.isInteger(aw) || aw < 1 || aw > 90) return err("numErr", $("fAW"), "秋冬の日数を1〜90で入れてください。");
     const last = $("fLast").value;
-    if (last && (!parse(last) || last > todayKey)) return err("editErr", $("fLast"), "最後に水をやった日は、今日までの日付にしてください。");
+    if (last && (!parse(last) || last > todayKey)) return err("editErr", $("fLast"), "最後に水をやった日は、今日以前の日付にしてください。");
     const fs = Number($("fFS").value || 0), fa = Number($("fFA").value || 0), rp = Number($("fRP").value || 2);
     if (!Number.isInteger(fs) || fs < 0 || fs > 180 || !Number.isInteger(fa) || fa < 0 || fa > 180) return err("editErr", $("fFS"), "肥料の日数は0〜180で入れてください。");
     if (!Number.isInteger(rp) || rp < 1 || rp > 10) return err("editErr", $("fRP"), "植え替えの間隔は1〜10年で入れてください。");
@@ -337,7 +337,7 @@
     if (!last && isNew) p.water = [];
     Object.assign(p, cleanPlant(p));
     save(); $("editDlg").close(); render();
-    toast(isNew ? "「" + label(p) + "」を足しました。" : "「" + label(p) + "」を直しました。", () => { restore(snap); render(); });
+    toast(isNew ? "「" + label(p) + "」を追加しました。" : "「" + label(p) + "」を更新しました。", () => { restore(snap); render(); });
   });
 
   $("sample").addEventListener("click", () => {
@@ -345,7 +345,7 @@
     const mk = (kind, name, place, ago) => { const g = guideOf(kind); return cleanPlant({ id: rid(), kind, name, place, ss: g.ss, aw: g.aw, fs: g.fs, fa: g.fa, rp: g.rp, water: [keyOf(addD(today, -ago))], fert: [] }); };
     st.plants.push(mk("ポトス", "棚のポトス", "リビング", 11), mk("モンステラ", "", "窓辺", 4), mk("サボテン", "", "窓辺", 30));
     save(); render();
-    toast("例を3鉢入れました。いらなければ消してください。", () => { restore(snap); render(); });
+    toast("例を3鉢追加しました。不要なら消してください。", () => { restore(snap); render(); });
   });
 
   // ---------- お知らせ ----------
@@ -373,7 +373,7 @@
     let data = null, cus = null;
     try { if (f.size > 5e6) throw 0; const j = JSON.parse(await f.text()); if (j && j.app === "mizuyari") { data = clean(j.data); cus = j.custom; } } catch (e) { data = null; }
     if (!data || !data.plants.length) { $("moveMsg").textContent = "読み込めませんでした。水やり帳で書き出したファイルを選んでください。"; return; }
-    if (st.plants.length && !confirm("いまの" + st.plants.length + "鉢を、ファイルの" + data.plants.length + "鉢と置きかえますか？")) return;
+    if (st.plants.length && !confirm("今の" + st.plants.length + "鉢を、ファイルの" + data.plants.length + "鉢と置き換えますか？")) return;
     const snap = snapshot();
     st = data; save();
     if (cus && typeof cus === "object") {

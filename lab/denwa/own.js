@@ -67,12 +67,12 @@
       }
       const hit = (opt.builtins || []).find(b => b.value === value || b.label === value);
       showForm(false);
-      if (hit) { opt.onPick(hit.value); render(); flash("「" + hit.label + "」は、はじめからある候補です。"); focusValue(hit.value); return; }
+      if (hit) { opt.onPick(hit.value); render(); flash("「" + hit.label + "」は、最初からある候補です。"); focusValue(hit.value); return; }
       const a = list();
       if (!a.includes(value)) {
         a.push(value);
         if (a.length > limit) a.shift();
-        if (!setList(a)) flash("候補に覚えられませんでした。今回だけ使います。");
+        if (!setList(a)) flash("候補に保存できませんでした。今回だけ使います。");
       }
       render(); opt.onPick(value); focusValue(value);
     }

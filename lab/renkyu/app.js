@@ -67,7 +67,7 @@
     const h = el("div", "g-h");
     h.append(el("h3", "g-name", g.name || "連休"));
     const a = g.anchor, alen = a.e - a.s + 1;
-    h.append(el("span", "g-now", alen >= 2 ? "このままで" + range(ds[a.s].date, ds[a.e].date) + "の" + alen + "連休" : jd(ds[a.s].date) + "が休み"));
+    h.append(el("span", "g-now", alen >= 2 ? "このままでも" + range(ds[a.s].date, ds[a.e].date) + "の" + alen + "連休" : jd(ds[a.s].date) + "が休み"));
     li.append(h);
     const rows = el("div", "g-rows");
     g.rows.forEach(r => rows.append(rowButton(g, r)));
@@ -87,7 +87,7 @@
     $("pastBox").hidden = !past.length;
     $("pastN").textContent = past.length ? "（" + past.length + "件）" : "";
     $("plansEmpty").hidden = !!(live.length || past.length);
-    $("plansHint").textContent = live.length ? "有給を" + st.maxPaid + "日までで、ふつうの週末に足すより長くなる連休だけを並べています。押すとカレンダーに出ます。" : "";
+    $("plansHint").textContent = live.length ? "有給を" + st.maxPaid + "日まで使って、いつもの週末より長く休める連休だけを並べています。押すとカレンダーに表示します。" : "";
     renderHero(live);
     renderCal();
     renderSetup();
@@ -107,7 +107,7 @@
       $("heroShow").hidden = true;
       return;
     }
-    $("heroK").textContent = "いちばん長いのは " + (best.g.name || "");
+    $("heroK").textContent = "一番長いのは " + (best.g.name || "");
     $("heroBig").replaceChildren(el("span", "hb-s", best.r.k + "日休むと"), el("span", "hb-n", String(best.r.len)), el("span", "hb-u", "連休"));
     $("heroD").textContent = range(ds[best.r.s].date, ds[best.r.e].date) + "　有給：" + best.r.take.map(i => md(ds[i].date)).join("・");
     $("heroShow").hidden = false;
@@ -246,7 +246,7 @@
   $("editBtn").addEventListener("click", () => {
     editing = !editing;
     $("editBtn").setAttribute("aria-pressed", editing ? "true" : "false");
-    $("editBtn").textContent = editing ? "入れ終わった" : "休みを入れる";
+    $("editBtn").textContent = editing ? "完了" : "休みを入れる";
     $("editHint").hidden = !editing;
     document.querySelector(".cal").classList.toggle("editing", editing);
   });
@@ -296,10 +296,10 @@
   $("mAdd").addEventListener("click", () => {
     const f = $("mFrom").value, t = $("mTo").value || f;
     const bad = (id, msg) => { mErr(msg); $(id).setAttribute("aria-invalid", "true"); $(id).focus(); };
-    if (!isDate(f)) return bad("mFrom", "はじめの日を選んでください。");
-    if (!isDate(t)) return bad("mTo", "おわりの日を選び直してください。");
+    if (!isDate(f)) return bad("mFrom", "開始日を選んでください。");
+    if (!isDate(t)) return bad("mTo", "終了日を選び直してください。");
     if (f < MINY + "-01-01" || t > MAXY + "-12-31") return bad("mFrom", MINY + "年から" + MAXY + "年までの日付を選んでください。");
-    if (t < f) return bad("mTo", "おわりの日は、はじめの日より後にしてください。");
+    if (t < f) return bad("mTo", "終了日は、開始日より後にしてください。");
     if ((Plan.parse(t) - Plan.parse(f)) / Plan.DAY > 92) return bad("mTo", "一度に入れられるのは3か月までです。分けて入れてください。");
     const ok = addMark({ id: rid(), from: f, to: t, type: mType, name: mName }, mErr);
     if (ok) { $("mFrom").value = ""; $("mTo").value = ""; const y = +f.slice(0, 4); if (y !== year && y >= MINY && y <= MAXY) { year = y; render(); } }
@@ -338,7 +338,7 @@
     let data = null, cus = [];
     try { if (f.size > 2e6) throw 0; const j = JSON.parse(await f.text()); if (j && j.app === "renkyu") { data = clean(j.data); if (Array.isArray(j.custom)) cus = j.custom; } } catch (e) { data = null; }
     if (!data) { $("moveMsg").textContent = "読み込めませんでした。連休メーカーで書き出したファイルを選んでください。"; return; }
-    if (st.marks.length && !confirm("いまの設定を、ファイルの内容（会社の休み・出勤日" + data.marks.length + "件）と置きかえますか？")) return;
+    if (st.marks.length && !confirm("今の設定を、ファイルの内容（会社の休み・出勤日" + data.marks.length + "件）と置き換えますか？")) return;
     const snap = JSON.stringify(st);
     st = data; save();
     cus.forEach(c => { if (c && (c.t === "off" || c.t === "work") && typeof c.n === "string" && c.n.trim()) custom.add({ t: c.t, n: FreeChips.tidy(c.n).slice(0, 20) }); });

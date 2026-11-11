@@ -144,7 +144,7 @@
     inp.value = ""; updateHint(); save(); renderList();
     if (added.length === 1) flashItem(added[0].id);
     if (!added.length) toast("もうリストに入っています。");
-    else if (added.length > 1) toast(`${added.length}品を入れました。`, () => restore(snap));
+    else if (added.length > 1) toast(`${added.length}品を追加しました。`, () => restore(snap));
     inp.focus();
   }
   $("addBtn").addEventListener("click", submitAdd);
@@ -156,7 +156,7 @@
       const snap = snapshot();
       const added = addItems(t.split(/\n/).map(s => tidy(s.replace(/^[・\-*•□☐✓]\s*/, ""))).filter(Boolean));
       save(); renderList();
-      toast(`${added.length}品を入れました。`, () => restore(snap));
+      toast(`${added.length}品を追加しました。`, () => restore(snap));
     }
   });
   function updateHint() {
@@ -165,7 +165,7 @@
     if (!v) { $("addHint").textContent = "まとめて貼り付けると、1行ずつ入ります。"; return; }
     const { name } = splitQty(v);
     const s = guess(name);
-    $("addHint").textContent = s === "sonota" && !st.learn[norm(name)] ? `「${name}」→ その他（入れたあと「⋯」で売り場を選べます）` : `「${name}」→ ${secName(s)}`;
+    $("addHint").textContent = s === "sonota" && !st.learn[norm(name)] ? `「${name}」→ その他（追加後に「⋯」で売り場を選べます）` : `「${name}」→ ${secName(s)}`;
   }
   inp.addEventListener("input", updateHint);
 
@@ -174,7 +174,7 @@
     const list = $("list"); list.textContent = "";
     const items = st.items;
     const left = items.filter(i => !i.done).length;
-    $("left").textContent = items.length ? (left ? `残り${left}品／${items.length}品` : `ぜんぶ買いました（${items.length}品）`) : "";
+    $("left").textContent = items.length ? (left ? `残り${left}品／${items.length}品` : `全て買いました（${items.length}品）`) : "";
     $("first").hidden = items.length > 0;
     $("listActs").hidden = !items.length;
     $("clearDone").hidden = !items.some(i => i.done);
@@ -203,7 +203,7 @@
         cb.addEventListener("click", () => {
           i.done = !i.done; save(); renderList();
           const nb = document.querySelector(`.item[data-id="${i.id}"] .check`); if (nb) nb.focus({ preventScroll: true });
-          if (st.items.length && st.items.every(x => x.done)) toast("ぜんぶ買いました。おつかれさまでした。");
+          if (st.items.length && st.items.every(x => x.done)) toast("全て買いました。お疲れさまでした。");
         });
         const more = el("button", "more", "⋯"); more.type = "button";
         more.setAttribute("aria-label", `${i.name}の売り場を変える・消す`);
@@ -232,7 +232,7 @@
     const snap = snapshot();
     addItems(["牛乳 1本", "キャベツ", "豚こま 300g", "食パン", "卵", "トイレットペーパー", "バナナ", "納豆 2パック", "冷凍うどん", "生鮭 2切れ", "醤油"]);
     save(); renderList();
-    toast("例を入れました。", () => restore(snap));
+    toast("例を追加しました。", () => restore(snap));
   });
 
   // ---------- いつもの ----------
@@ -292,7 +292,7 @@
       ol.append(li);
     });
     const box = $("ownSec"); box.textContent = "";
-    const ad = sectionAdder(id => { renderOrder(); renderList(); toast(`「${secName(id)}」を売り場に足しました。`); });
+    const ad = sectionAdder(id => { renderOrder(); renderList(); toast(`「${secName(id)}」を売り場に追加しました。`); });
     box.append(ad.btn, ad.form);
   }
   // 売り場の「自分で入力」。同じ名前の売り場があれば、それを使う。
@@ -310,7 +310,7 @@
   }
   $("resetOrder").addEventListener("click", () => {
     const snap = snapshot(); store().order = DEFAULT_ORDER.slice(); save(); renderOrder(); renderList();
-    toast("はじめの順番に戻しました。", () => restore(snap));
+    toast("最初の順番に戻しました。", () => restore(snap));
   });
 
   // ---------- 品物の編集 ----------
@@ -380,7 +380,7 @@
     const text = listText();
     if (navigator.share) { try { await navigator.share({ text }); return; } catch (e) { if (e && e.name === "AbortError") return; } }
     try { await navigator.clipboard.writeText(text); toast("リストをコピーしました。LINE やメールに貼り付けられます。"); }
-    catch (e) { toast("コピーできませんでした。お使いのブラウザでは共有できないようです。"); }
+    catch (e) { toast("共有もコピーもできませんでした。別のブラウザで試してください。"); }
   });
 
   // ---------- トースト ----------
@@ -415,7 +415,7 @@
       if (j && j.app === "uriba") { data = clean(j.data); if (Array.isArray(j.sections)) secs = j.sections.filter(x => typeof x === "string").map(x => tidy(x).slice(0, 20)).filter(Boolean); }
     } catch (e) { data = null; }
     if (!data) { $("moveMsg").textContent = "読み込めませんでした。このアプリで書き出したファイルを選んでください。"; return; }
-    if ((st.items.length || st.stores.length > 1) && !confirm("今のリストとお店の設定を、ファイルの内容と置きかえますか？")) return;
+    if ((st.items.length || st.stores.length > 1) && !confirm("今のリストとお店の設定を、ファイルの内容と置き換えますか？")) return;
     const snap = snapshot();
     secs.forEach(n => secStore.add(n));
     st = data; save(); renderAll();

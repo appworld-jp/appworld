@@ -17,7 +17,7 @@
     <a class="back" href="../">App World Lab</a>
     <div class="rings" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
     <h1>連休メーカー</h1>
-    <p class="lead">有給をどこで取ると長く休めるか、<span class="nb">1年分まとめてわかります。</span></p>
+    <p class="lead">有給をどこで取ると長く休めるか、<span class="nb">1年分まとめて分かります。</span></p>
   </div>
 </header>
 
@@ -71,7 +71,7 @@
   </div>
 
   <section class="card setup" aria-labelledby="hSet">
-    <h2 id="hSet">あなたの休み</h2>
+    <h2 id="hSet">休みの設定</h2>
     <div class="row-f">
       <span class="lab" id="wkL">休みの曜日</span>
       <div class="week" id="weekSeg" role="group" aria-labelledby="wkL"></div>
@@ -101,8 +101,8 @@
           <div class="chips" id="nameChips" role="group" aria-labelledby="nameL"></div>
         </div>
         <div class="dates">
-          <label class="fld"><span>はじめ</span><input type="date" id="mFrom" min="2020-01-01" max="2099-12-31"></label>
-          <label class="fld"><span>おわり（1日だけなら空けたまま）</span><input type="date" id="mTo" min="2020-01-01" max="2099-12-31"></label>
+          <label class="fld"><span>開始日</span><input type="date" id="mFrom" min="2020-01-01" max="2099-12-31"></label>
+          <label class="fld"><span>終了日（1日だけなら空欄）</span><input type="date" id="mTo" min="2020-01-01" max="2099-12-31"></label>
         </div>
         <p class="err" id="mErr" role="alert"></p>
         <button type="button" class="btn" id="mAdd">入れる</button>
@@ -118,7 +118,7 @@
 
   <details class="card fold">
     <summary>データの引っ越し</summary>
-    <p class="hint">休みの設定はこの端末だけに残ります。機種変更のときは、ファイルに書き出して、新しい端末で読み込んでください。</p>
+    <p class="hint">休みの設定はこの端末にだけ残ります。機種変更のときは、ファイルに書き出して、新しい端末で読み込んでください。</p>
     <div class="row-btns">
       <button type="button" class="btn ghost small" id="expBtn">ファイルに書き出す</button>
       <label class="btn ghost small file-btn">ファイルを読み込む<input type="file" id="impFile" accept="application/json,.json"></label>

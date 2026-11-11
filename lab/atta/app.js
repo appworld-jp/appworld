@@ -42,7 +42,7 @@
   let st = null;
   try { st = clean(JSON.parse(localStorage.getItem(KEY) || "null")); } catch (e) { st = null; }
   if (!st) st = { v: 1, people: [], event: null };
-  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) { toast("保存できませんでした。端末の空き容量を確かめてください。"); } };
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) { toast("保存できませんでした。端末の空き容量を確認してください。"); } };
   const lastMet = p => p.meets.reduce((a, m) => m.date > a ? m.date : a, "") || p.created;
   const lastPlace = p => { const m = p.meets.slice().sort((a, b) => a.date < b.date ? 1 : -1)[0]; return m ? m.place : ""; };
 
@@ -64,7 +64,7 @@
   function rowOf(p) {
     const c = norm(p.kana || p.name).replace(/[ぁぃぅぇぉ]/g, ch => String.fromCharCode(ch.charCodeAt(0) + 1))[0] || "";
     const r = ROWS.find(r => r[1].includes(c));
-    return r ? r[0] : "よみなし";
+    return r ? r[0] : "その他";
   }
   function hay(p) { return norm([p.name, p.kana, p.feat, p.talk, p.next, p.tags.join(" "), p.meets.map(m => m.place).join(" ")].join(" ")); }
   function personCard(p, cls) {
@@ -92,7 +92,7 @@
     const words = norm($("q").value.trim()).split(/\s+/).filter(Boolean);
     const filtering = words.length || tagSel;
     const hits = st.people.filter(p => (!tagSel || p.tags.includes(tagSel)) && words.every(w => hay(p).includes(w)));
-    $("found").textContent = filtering ? (hits.length ? `${hits.length}人見つかりました。` : "見つかりませんでした。ほかの言葉でも探してみてください。") : "";
+    $("found").textContent = filtering ? (hits.length ? `${hits.length}人見つかりました。` : "見つかりませんでした。別の言葉で探してみてください。") : "";
     // 最近会った人
     const recent = filtering ? [] : st.people.slice().sort((a, b) => lastMet(a) < lastMet(b) ? 1 : -1).slice(0, 4);
     $("recentSec").hidden = !recent.length || n < 3;
@@ -103,7 +103,7 @@
     const groups = {};
     hits.slice().sort((a, b) => norm(a.kana || a.name).localeCompare(norm(b.kana || b.name), "ja")).forEach(p => { const r = rowOf(p); (groups[r] = groups[r] || []).push(p); });
     const all = $("all"); all.replaceChildren();
-    ROWS.map(r => r[0]).concat("よみなし").forEach(r => {
+    ROWS.map(r => r[0]).concat("その他").forEach(r => {
       if (!groups[r]) return;
       const g = el("div", "grp"); g.append(el("h3", "grp-h", r));
       const list = el("div", "cards list"); groups[r].forEach(p => list.append(personCard(p))); g.append(list); all.append(g);
@@ -180,7 +180,7 @@
   let editing = null;
   function openEdit(p) {
     editing = p;
-    $("eH").textContent = p ? "編集" : "ひとり追加";
+    $("eH").textContent = p ? "編集" : "人を追加";
     $("fName").value = p ? p.name : ""; $("fKana").value = p ? p.kana : "";
     const m0 = p && p.meets.length ? p.meets.slice().sort((a, b) => a.date < b.date ? -1 : 1)[0] : null;
     $("fDate").value = m0 ? m0.date : today(); $("fPlace").value = m0 ? m0.place : (st.event ? st.event.name : "");
@@ -294,12 +294,12 @@
   $("sample").addEventListener("click", () => {
     const d = n => { const x = new Date(); x.setDate(x.getDate() - n); return ymd(x); };
     [
-      { name: "田中 ゆかり", kana: "たなか ゆかり", meets: [{ date: d(3), place: "保育園の運動会" }], feat: "背が高い。ショートカットで、よく笑う。", talk: "上の子が同じクラス。最近、山登りをはじめた。", tags: ["ママ友", "山"], next: "登った山の写真を見せてもらう" },
-      { name: "佐々木さん", kana: "ささき", meets: [{ date: d(10), place: "ジム（火曜の夜）" }], feat: "白髪まじりで、いつも青いタオル。", talk: "元は高校の体育の先生。", tags: ["ジム"], next: "" },
+      { name: "田中 ゆかり", kana: "たなか ゆかり", meets: [{ date: d(3), place: "保育園の運動会" }], feat: "背が高い。ショートカットで、よく笑う。", talk: "上の子が同じクラス。最近、山登りを始めた。", tags: ["ママ友", "山"], next: "登った山の写真を見せてもらう" },
+      { name: "佐々木さん", kana: "ささき", meets: [{ date: d(10), place: "ジム（火曜の夜）" }], feat: "白髪交じりで、いつも青いタオル。", talk: "元は高校の体育の先生。", tags: ["ジム"], next: "" },
       { name: "Mark Lee", kana: "まーく りー", meets: [{ date: d(40), place: "取引先との打ち合わせ" }], feat: "メガネ。日本語がとても上手。", talk: "大阪に5年住んでいた。たこ焼きが好き。", tags: ["仕事"], next: "大阪のおすすめの店を聞く" }
     ].forEach(x => st.people.push(cleanP(x)));
     save(); render();
-    toast("例を3人入れました。開いて削除できます。");
+    toast("例を3人追加しました。開いて削除できます。");
   });
 
   // ---------- お知らせ ----------
@@ -327,7 +327,7 @@
     let data = null;
     try { if (f.size > 10e6) throw 0; const j = JSON.parse(await f.text()); if (j && j.app === "atta") data = clean(j.data); } catch (e) { data = null; }
     if (!data || !data.people.length) { $("moveMsg").textContent = "読み込めませんでした。このアプリで書き出したファイルを選んでください。"; return; }
-    if (st.people.length && !confirm(`いまのメモを、ファイルの${data.people.length}人と置きかえますか？`)) return;
+    if (st.people.length && !confirm(`今のメモを、ファイルの${data.people.length}人と置き換えますか？`)) return;
     const prev = JSON.stringify(st);
     st = data; save(); render();
     $("moveMsg").textContent = `${data.people.length}人を読み込みました。`;

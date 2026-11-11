@@ -36,7 +36,7 @@
       const c = customOcc.all().find(x => x.n === n);
       const k = KINDS[(c && c.k) || st.ck || "cho"] || KINDS.cho;
       const om = k.id === "kokubyaku" ? ["御霊前", "御供"] : k.id === "none" ? ["御花料", "御礼"] : ["御祝", "御礼"];
-      return { id: st.occ, name: n, custom: true, mz: k.mz, omote: om, omoteNote: "場面に合うことばがなければ「＋ 自分で入力」で書けます。", when: "", who: "贈る人のフルネーム。", amounts: [], taboo: ["4（死）と9（苦）がつく金額や品数は避けるのが一般的です。"], ink: k.id === "kokubyaku" ? "お悔やみは薄墨、法要などは濃い墨" : "濃い墨" };
+      return { id: st.occ, name: n, custom: true, mz: k.mz, omote: om, omoteNote: "場面に合う言葉がなければ、「＋ 自分で入力」で書けます。", when: "", who: "贈る人のフルネーム。", amounts: [], taboo: ["4（死）と9（苦）がつく金額や品数は避けるのが一般的です。"], ink: k.id === "kokubyaku" ? "お悔やみは薄墨、法要などは濃い墨" : "濃い墨" };
     }
     return BYID[st.occ] || null;
   }

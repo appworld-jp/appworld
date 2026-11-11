@@ -83,7 +83,7 @@
     let open;
     if (t.open && tone in t.open) open = t.open[tone];
     else if (tone === "polite") open = t.first ? "突然のご連絡失礼いたします。\n" + co + myName + "と申します。" : "いつも大変お世話になっております。\n" + co + myName + "でございます。";
-    else if (tone === "normal") open = t.first ? "はじめてご連絡いたします。\n" + co + myName + "と申します。" : "お世話になっております。\n" + co + myName + "です。";
+    else if (tone === "normal") open = t.first ? "初めてご連絡いたします。\n" + co + myName + "と申します。" : "お世話になっております。\n" + co + myName + "です。";
     else if (tone === "internal") open = "お疲れさまです。\n" + (me.myDept.trim() ? me.myDept.trim() + "の" : "") + myName + "です。";
     else open = "";
     // 結び
@@ -139,7 +139,7 @@
     $("mineNone").hidden = st.mine.length > 0;
   }
   function choose(id, mineId) {
-    if (edited && !confirm("手で直した本文は消えます。ほかの文例に切り替えますか？")) return;
+    if (edited && !confirm("手で書き換えた本文は消えます。別の文例に切り替えますか？")) return;
     st.tpl = id; st.cur = mineId || ""; save();
     edited = false; subjEdited = false; subjIdx = 0;
     renderIndex(); renderForm(); render();
@@ -153,7 +153,7 @@
     document.body.classList.toggle("is-mine", !!mine);
     if (mine) {
       $("tplName").textContent = "自分の文例：" + mine.title;
-      $("toneSeg").replaceChildren(); $("toneDesc").textContent = "保存した文面です。下で書きかえると、そのまま保存されます。";
+      $("toneSeg").replaceChildren(); $("toneDesc").textContent = "保存した文面です。下で書き換えると、そのまま保存されます。";
       $("fields").replaceChildren(); $("toBox").hidden = true;
       return;
     }
@@ -163,7 +163,7 @@
       const b = el("button", "", TONES[k].name); b.type = "button";
       b.setAttribute("aria-pressed", k === tone ? "true" : "false");
       b.addEventListener("click", () => {
-        if (edited && !confirm("手で直した本文は消えます。言い回しを変えますか？")) return;
+        if (edited && !confirm("手で書き換えた本文は消えます。言い回しを変えますか？")) return;
         st.tone[t.id] = k; save(); edited = false; subjEdited = false; subjIdx = 0; renderForm(); render();
       });
       return b;
@@ -172,7 +172,7 @@
     const fixedTo = t.to && t.to[tone];
     const simple = tone === "internal" || tone === "casual";
     $("toCoF").hidden = simple || !!fixedTo; $("toDeptF").hidden = simple || !!fixedTo; $("toNameF").hidden = !!fixedTo;
-    $("toNameL").textContent = simple ? "相手の名前（「さん」が付きます）" : (t.toDefault ? "相手の名前（わからなければ空けたまま）" : "相手の名前（「様」が付きます）");
+    $("toNameL").textContent = simple ? "相手の名前（「さん」が付きます）" : (t.toDefault ? "相手の名前（分からなければ空欄）" : "相手の名前（「様」が付きます）");
     ["toCompany", "toDept", "toName"].forEach(k => { if (document.activeElement !== $(k)) $(k).value = st.to[k]; });
     const vals = st.vals[t.id] || (st.vals[t.id] = {});
     $("fields").replaceChildren(...t.fields.filter(f => !f.tones || f.tones.indexOf(tone) >= 0).map(f => {
@@ -191,7 +191,7 @@
           b.addEventListener("click", () => { inp.value = c; vals[f.k] = c; save(); render(); inp.focus(); });
           cs.append(b);
         });
-        const hint = el("span", "fc-hint", "ほかの言葉も、そのまま入力できます");
+        const hint = el("span", "fc-hint", "候補にない言葉も入力できます");
         cs.append(hint);
         wrap.append(cs);
       }
@@ -229,7 +229,7 @@
     $("subjChips").hidden = subjects.length < 2;
     $("editedBar").hidden = !edited || !!mine;
     const n = countBlanks($("subject").value + "\n" + $("body").value, !!mine);
-    $("blanks").textContent = n ? "【 】の空欄があと" + n + "か所あります。項目を入れるか、本文を直接書きかえてください。" : "空欄はありません。送る前に、もう一度読み返してください。";
+    $("blanks").textContent = n ? "【 】の空欄があと" + n + "か所あります。項目を入れるか、本文を直接書き換えてください。" : "空欄はありません。送る前に、もう一度読み返してください。";
     $("blanks").classList.toggle("ok", !n);
     $("saveOpen").textContent = mine ? "＋ 別の名前で保存" : "＋ 自分の文例として保存";
   }
@@ -319,7 +319,7 @@
     let data = null;
     try { if (f.size > 3e6) throw 0; const j = JSON.parse(await f.text()); if (j && j.app === "bunrei" && j.data && typeof j.data === "object") data = clean(j.data); } catch (e) { data = null; }
     if (!data) { $("moveMsg").textContent = "読み込めませんでした。メール文例帳で書き出したファイルを選んでください。"; return; }
-    if (st.mine.length && !confirm("いまの内容（自分の文例" + st.mine.length + "件）を、ファイルの内容（" + data.mine.length + "件）と置きかえますか？")) return;
+    if (st.mine.length && !confirm("今の内容（自分の文例" + st.mine.length + "件）を、ファイルの内容（" + data.mine.length + "件）と置き換えますか？")) return;
     const snap = JSON.stringify(st);
     st = data; save(); edited = false; subjEdited = false;
     renderIndex(); renderForm(); render();

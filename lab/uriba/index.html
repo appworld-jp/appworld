@@ -2,7 +2,7 @@
 <html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>売り場順の買い物メモ</title>
-<meta name="description" content="買うものを入れると、自分の店の売り場の順に並べかえる買い物メモです。店ごとに売り場の順番を決められ、いつも買うものもすぐ入れられます。">
+<meta name="description" content="買うものを入れると、自分の店の売り場の順に並べ替える買い物メモです。店ごとに売り場の順番を決められ、いつも買うものもすぐ入れられます。">
 <meta name="theme-color" content="#1F7A4D">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="manifest" href="manifest.webmanifest">
@@ -48,12 +48,12 @@
     </div>
     <div class="first" id="first" hidden>
       <p>「牛乳」「豚こま」「キャベツ」のように入れると、売り場ごとに分かれて、お店を回る順に並びます。</p>
-      <button type="button" class="btn" id="sampleBtn">例を入れて見てみる</button>
+      <button type="button" class="btn" id="sampleBtn">例で試す</button>
     </div>
     <div id="list" class="list"></div>
     <div class="list-acts" id="listActs" hidden>
       <button type="button" class="btn ghost" id="clearDone">買ったものを消す</button>
-      <button type="button" class="btn ghost" id="clearAll">すべて消す</button>
+      <button type="button" class="btn ghost" id="clearAll">全て消す</button>
     </div>
   </section>
 
@@ -62,7 +62,7 @@
     <p class="note">入口から回る順に並べます。お店ごとに覚えます。</p>
     <ol class="order" id="order"></ol>
     <div class="own-sec" id="ownSec"></div>
-    <button type="button" class="btn ghost small" id="resetOrder">はじめの順番に戻す</button>
+    <button type="button" class="btn ghost small" id="resetOrder">最初の順番に戻す</button>
   </details>
 
   <details class="fold" id="stapleBox">

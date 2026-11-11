@@ -66,7 +66,7 @@
   }
   function fillPlaceSelect(sel, value, opts = {}) {
     const list = [];
-    if (opts.root) { const o = el("option", null, "家の中（いちばん外側）"); o.value = ""; list.push(o); }
+    if (opts.root) { const o = el("option", null, "家の中（一番外側）"); o.value = ""; list.push(o); }
     else if (!st.places.length) { const o = el("option", null, "まだ場所がありません"); o.value = ""; list.push(o); }
     sortedTree().forEach(({ p, d }) => {
       if (opts.exclude && opts.exclude.includes(p.id)) return;
@@ -129,7 +129,7 @@
       $("found").textContent = st.items.length ? `${st.items.length}点を記録しています。新しく記録した順に並んでいます。` : "";
       const list = st.items.slice().reverse();
       $("results").replaceChildren(...list.map(it => itemCard(it, false)));
-      if (!st.items.length) { $("noHit").hidden = false; $("noHit").textContent = "場所はできています。下の「しまった物を記録」から、物を1つ入れてみましょう。"; }
+      if (!st.items.length) { $("noHit").hidden = false; $("noHit").textContent = "場所はできています。下の「しまった物を記録」から、物を1つ記録してみてください。"; }
       return;
     }
     $("recentBox").hidden = true;
@@ -183,7 +183,7 @@
   $("vMove").addEventListener("click", () => {
     const it = st.items.find(i => i.id === curItem); if (!it) return;
     $("view").close();
-    $("mFrom").textContent = `いまの場所：${pathNames(it.place).join(" › ")}`;
+    $("mFrom").textContent = `今の場所：${pathNames(it.place).join(" › ")}`;
     fillPlaceSelect($("mPlace"), it.place, { allowNew: true }); mPrev = it.place;
     $("mErr").textContent = "";
     $("moveDlg").showModal();
@@ -199,7 +199,7 @@
     const it = st.items.find(i => i.id === curItem); if (!it) return;
     const to = $("mPlace").value;
     if (!P(to)) { $("mErr").textContent = "移した先の場所を選んでください。"; return; }
-    if (to === it.place) { $("mErr").textContent = "いまと同じ場所です。別の場所を選んでください。"; return; }
+    if (to === it.place) { $("mErr").textContent = "今と同じ場所です。別の場所を選んでください。"; return; }
     const snap = snapshot();
     it.place = to; it.moved = today; it.checked = today; save(); flashId = it.id;
     $("moveDlg").close(); render();
@@ -211,7 +211,7 @@
   function openEdit(id, placeId) {
     editId = id || null;
     const it = id ? st.items.find(i => i.id === id) : null;
-    $("eH").textContent = it ? "記録を直す" : "しまった物を記録";
+    $("eH").textContent = it ? "記録を編集" : "しまった物を記録";
     $("fName").value = it ? it.name : "";
     $("fNote").value = it ? it.note : "";
     $("fChecked").value = it ? it.checked : today; $("fChecked").max = today;
@@ -236,14 +236,14 @@
     const place = $("fPlace").value;
     if (!P(place)) { $("fErr").textContent = st.places.length ? "しまった場所を選んでください。" : "先に場所を作ってください。「しまった場所」で「＋ 新しい場所を作る…」を選びます。"; $("fPlace").setAttribute("aria-invalid", "true"); $("fPlace").focus(); return; }
     const ck = $("fChecked").value;
-    if (ck && (!isYmd(ck) || ck > today)) { $("fErr").textContent = "確かめた日は、今日までの日付にしてください。"; $("fChecked").focus(); return; }
+    if (ck && (!isYmd(ck) || ck > today)) { $("fErr").textContent = "確認した日は、今日以前の日付にしてください。"; $("fChecked").focus(); return; }
     const snap = snapshot();
     let it;
     if (editId) { it = st.items.find(i => i.id === editId); if (it.place !== place) it.moved = today; Object.assign(it, { name, place, note: str($("fNote").value, 60), checked: ck || today }); }
     else { it = { id: uid(), name, note: str($("fNote").value, 60), place, checked: ck || today, moved: "", sample: false }; st.items.push(it); }
     save(); flashId = it.id;
     $("edit").close(); render();
-    toast(editId ? `「${it.name}」を直しました。` : `「${it.name}」は ${pathNames(place).join(" › ")}。記録しました。`, () => { restore(snap); render(); });
+    toast(editId ? `「${it.name}」を更新しました。` : `「${it.name}」は ${pathNames(place).join(" › ")}。記録しました。`, () => { restore(snap); render(); });
   });
   $("addBtn").addEventListener("click", () => openEdit());
   $("firstItem").addEventListener("click", () => openEdit());
@@ -331,7 +331,7 @@
     const all = here ? under(here) : null;
     const inside = st.items.filter(i => !all || all.includes(i.place));
     const children = kids(here);
-    $("hereSub").textContent = here ? `${SETS[setFor(depth(here) - 1)]}・中に${inside.length}点` : st.places.length ? `部屋${children.length}つ・ぜんぶで${inside.length}点` : "";
+    $("hereSub").textContent = here ? `${SETS[setFor(depth(here) - 1)]}・中に${inside.length}点` : st.places.length ? `部屋${children.length}つ・全部で${inside.length}点` : "";
     const d = depth(here);
     const boxes = children.map(p => {
       const b = el("button", "box"); b.type = "button";
@@ -355,10 +355,10 @@
 
     $("insideBox").hidden = !inside.length || !here;
     $("placeEmpty").hidden = true;
-    if (!here && !st.places.length) { $("placeEmpty").hidden = false; $("placeEmpty").textContent = "まだ場所がありません。「＋ 部屋を作る」から、寝室やリビングを作りましょう。"; }
+    if (!here && !st.places.length) { $("placeEmpty").hidden = false; $("placeEmpty").textContent = "まだ場所がありません。「＋ 部屋を作る」から、寝室やリビングを作ってください。"; }
     else if (here && !inside.length) { $("placeEmpty").hidden = false; $("placeEmpty").textContent = "ここにしまった物はまだありません。「ここに物を記録」で入れられます。"; }
     if (!here || !inside.length) return;
-    $("insideH").textContent = `この中にあるもの（${inside.length}点）`;
+    $("insideH").textContent = `この中にある物（${inside.length}点）`;
     // 中の場所ごとにまとめる
     const groups = new Map();
     all.forEach(pid => { const its = inside.filter(i => i.place === pid); if (its.length) groups.set(pid, its); });
@@ -366,7 +366,7 @@
     $("insideList").replaceChildren(...[...groups].map(([pid, its]) => {
       const g = el("div", "grp");
       const rel = pathNames(pid).slice(base);
-      g.append(el("h4", "grp-h", rel.length ? rel.join(" › ") : `${P(here).name}（じか置き）`));
+      g.append(el("h4", "grp-h", rel.length ? rel.join(" › ") : `${P(here).name}（直置き）`));
       const ul = el("ul");
       its.forEach(it => {
         const li = el("li"); const b = el("button", "row-item"); b.type = "button";
@@ -423,7 +423,7 @@
     it("工具セット", shoeLow, "ドライバー、メジャー、六角レンチ", 30);
     it("ひな人形", ten, "箱は2つ。小さい箱が道具", 250);
     save(); render();
-    toast("例を入れました。上の欄に「ぱすぽ」と入れて、さがしてみてください。", () => { restore(snap); render(); });
+    toast("例を追加しました。上の欄に「ぱすぽ」と入れて、探してみてください。", () => { restore(snap); render(); });
   });
   $("clearSample").addEventListener("click", () => {
     const snap = snapshot();
@@ -472,7 +472,7 @@
     let data = null, custom = null;
     try { if (f.size > 5e6) throw 0; const j = JSON.parse(await f.text()); if (j && j.app === "shimatta") { data = clean(j.data); custom = j.custom; } } catch (e) { data = null; }
     if (!data || (!data.places.length && !data.items.length)) { $("moveMsg").textContent = "読み込めませんでした。このアプリで書き出したファイルを選んでください。"; return; }
-    if ((st.items.length || st.places.length) && !confirm(`いまの記録を、ファイルの場所${data.places.length}か所・物${data.items.length}点と置きかえますか？`)) return;
+    if ((st.items.length || st.places.length) && !confirm(`今の記録を、ファイルの場所${data.places.length}か所・物${data.items.length}点と置き換えますか？`)) return;
     const snap = snapshot(), csnap = JSON.stringify(readCustom());
     st = data; save();
     if (custom && typeof custom === "object" && !Array.isArray(custom)) { const c = {}; Object.keys(SETS).forEach(k => { if (Array.isArray(custom[k])) c[k] = custom[k].filter(v => typeof v === "string").slice(0, 60); }); try { localStorage.setItem(CK, JSON.stringify(c)); } catch (e) {} }

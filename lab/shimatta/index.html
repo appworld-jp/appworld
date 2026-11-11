@@ -2,7 +2,7 @@
 <html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>しまった場所メモ</title>
-<meta name="description" content="パスポートは寝室のクローゼットの上段の青い箱。家の中のどこに何をしまったかを、部屋・収納・箱の順に記録して、ひと言でさがせます。">
+<meta name="description" content="パスポートは寝室のクローゼットの上段の青い箱。家の中のどこに何をしまったかを、部屋・収納・箱の順に記録して、一言で探せます。">
 <meta name="theme-color" content="#B9874E">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="manifest" href="manifest.webmanifest">
@@ -18,21 +18,21 @@
     <h1>しまった場所メモ</h1>
     <p class="lead">しまった場所を書いておけば、次は探さずに出せます。</p>
     <form class="search" id="searchForm" role="search">
-      <label class="sr" for="q">しまった物や場所をさがす</label>
+      <label class="sr" for="q">しまった物や場所を探す</label>
       <svg class="s-ic" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.6"/><path d="M15.5 15.5 21 21" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/></svg>
       <input id="q" type="search" placeholder="パスポート、電池、青い箱" autocomplete="off" enterkeyhint="search">
     </form>
   </div>
 </header>
 
-<nav class="tabs" aria-label="表示の切りかえ">
-  <button type="button" class="tab" id="tabFind" aria-pressed="true">さがす</button>
+<nav class="tabs" aria-label="表示の切り替え">
+  <button type="button" class="tab" id="tabFind" aria-pressed="true">探す</button>
   <button type="button" class="tab" id="tabPlace" aria-pressed="false">場所ごとに見る</button>
 </nav>
 
 <main class="wrap">
   <!-- さがす -->
-  <section id="findView" aria-label="さがす">
+  <section id="findView" aria-label="探す">
     <p class="count" id="found" aria-live="polite"></p>
     <div id="recentBox" class="recent" hidden>
       <h2 class="mini-h">最近探したもの</h2>
@@ -49,11 +49,11 @@
         <rect x="40" y="66" width="30" height="16" rx="2" fill="#FFF8E8" stroke="#6B4A26" stroke-width="2" transform="rotate(4 55 74)"/>
         <path d="M45 73h20" stroke="#2F7F7A" stroke-width="3" stroke-linecap="round" transform="rotate(4 55 74)"/>
       </svg>
-      <p class="empty-h">「どこにしまったっけ」をなくしましょう。</p>
+      <p class="empty-h">「どこにしまったっけ？」がなくなります。</p>
       <p>まず部屋と収納を作って、しまった物を1つ記録します。</p>
       <div class="row-btns center">
         <button type="button" class="btn" id="firstItem">しまった物を記録</button>
-        <button type="button" class="btn ghost" id="sampleBtn">例を入れて試す</button>
+        <button type="button" class="btn ghost" id="sampleBtn">例で試す</button>
       </div>
     </section>
     <p class="none" id="noHit" hidden></p>
@@ -61,7 +61,7 @@
 
   <!-- 場所ごと -->
   <section id="placeView" aria-label="場所ごとに見る" hidden>
-    <nav class="crumbs" id="crumbs" aria-label="いまいる場所"></nav>
+    <nav class="crumbs" id="crumbs" aria-label="今いる場所"></nav>
     <div class="here">
       <h2 id="hereName">家の中</h2>
       <p class="here-sub" id="hereSub"></p>
@@ -70,8 +70,8 @@
     <div class="row-btns" id="placeActs"></div>
     <section class="inside" id="insideBox" hidden>
       <div class="inside-h">
-        <h3 id="insideH">この中にあるもの</h3>
-        <button type="button" class="btn ghost small" id="allChecked">ぜんぶ確認した</button>
+        <h3 id="insideH">この中にある物</h3>
+        <button type="button" class="btn ghost small" id="allChecked">全部確認した</button>
       </div>
       <div id="insideList"></div>
     </section>
@@ -114,7 +114,7 @@
       <button type="button" class="btn ghost" id="vMove">別の場所へ移す</button>
     </div>
     <div class="dlg-acts">
-      <button type="button" class="btn ghost" id="vEdit">直す</button>
+      <button type="button" class="btn ghost" id="vEdit">編集</button>
       <button type="button" class="btn ghost" id="vClose">閉じる</button>
     </div>
     <button type="button" class="link-danger" id="vDel">この記録を消す</button>
@@ -128,8 +128,8 @@
     <label class="field"><span>しまった物<em>必須</em></span><input id="fName" type="text" maxlength="30" autocomplete="off" placeholder="パスポート"></label>
     <label class="field"><span>しまった場所<em>必須</em></span><select id="fPlace"></select></label>
     <p class="hint" id="fPlaceHint"></p>
-    <label class="field"><span>ひと言メモ</span><input id="fNote" type="text" maxlength="60" autocomplete="off" placeholder="家族4人分。母子手帳も同じ箱"></label>
-    <label class="field"><span>最後に確かめた日</span><input id="fChecked" type="date"></label>
+    <label class="field"><span>一言メモ</span><input id="fNote" type="text" maxlength="60" autocomplete="off" placeholder="家族4人分。母子手帳も同じ箱"></label>
+    <label class="field"><span>最後に確認した日</span><input id="fChecked" type="date"></label>
     <p class="err" id="fErr" role="alert"></p>
     <div class="dlg-acts">
       <button class="btn" type="submit">保存</button>

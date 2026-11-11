@@ -128,7 +128,7 @@
       const net = el("p", "net");
       if (p.net > 0) { net.classList.add("plus"); net.textContent = `差し引き ${yen(p.net)} 返してもらう`; }
       else if (p.net < 0) { net.classList.add("minus"); net.textContent = `差し引き ${yen(-p.net)} 返す`; }
-      else { net.classList.add("even"); net.textContent = p.lendM ? "お金の貸し借りは差し引き0円" : p.open.length ? "お金の貸し借りはありません" : "ぜんぶ返し終わっています"; }
+      else { net.classList.add("even"); net.textContent = p.lendM ? "お金の貸し借りは差し引き0円" : p.open.length ? "お金の貸し借りはありません" : "全て返し終わっています"; }
       c.append(net);
       const line = el("div", "p-line");
       const thingsL = p.open.filter(r => r.dir === "lend" && r.kind !== MONEY).length, thingsB = p.open.filter(r => r.dir === "borrow" && r.kind !== MONEY).length;
@@ -179,7 +179,7 @@
   const dirNow = () => document.querySelector("input[name=dir]:checked").value;
   function syncDir() {
     const lend = dirNow() === "lend";
-    $("eH").textContent = editId ? "記録を直す" : lend ? "貸したものを記録" : "借りたものを記録";
+    $("eH").textContent = editId ? "記録を編集" : lend ? "貸したものを記録" : "借りたものを記録";
     $("whoL").firstChild.data = lend ? "誰に" : "誰から";
     $("dateL").textContent = lend ? "貸した日" : "借りた日";
     $("dueL").textContent = lend ? "返してもらう目安" : "返す目安";
@@ -189,7 +189,7 @@
     const money = kindSel === MONEY;
     $("amtF").hidden = !money;
     $("whatReq").hidden = money;
-    $("whatF").firstChild.firstChild.data = money ? "なんのお金" : "品名";
+    $("whatF").firstChild.firstChild.data = money ? "何のお金" : "品名";
     $("fWhat").placeholder = money ? "ランチ代" : kindSel === "傘" ? "紺の長傘" : kindSel === "DVD・ゲーム" ? "スプラトゥーン3" : kindSel && kindSel !== "本" && kindSel !== "マンガ" ? "電動ドライバー" : "『三体』の1巻";
     clearErr();
   }
@@ -232,7 +232,7 @@
     const what = str($("fWhat").value, 30);
     if (!money && !what) return fail("fWhat", lend ? "貸したものの名前を入れてください（例：『三体』の1巻）。" : "借りたものの名前を入れてください（例：紺の長傘）。");
     const date = isYmd($("fDate").value) ? $("fDate").value : today;
-    if (date > today) return fail("fDate", "日付は今日までにしてください。");
+    if (date > today) return fail("fDate", "日付は今日以前にしてください。");
     const due = $("fDue").value;
     if (due && isYmd(due) && due < date) return fail("fDue", "返す目安は、貸し借りした日より後にしてください。");
     const snap = snapshot();
@@ -242,7 +242,7 @@
     $("edit").close();
     if (!rec.ret && tab === "done") { tab = "open"; document.querySelectorAll(".tab").forEach(x => x.setAttribute("aria-pressed", String(x.dataset.tab === "open"))); }
     render();
-    toast(editId ? "直しました。" : lend ? `${san(who)}に「${label(rec)}」を貸した、と書きました。` : `${san(who)}から「${label(rec)}」を借りた、と書きました。`, () => { restore(snap); render(); });
+    toast(editId ? "更新しました。" : lend ? `${san(who)}に「${label(rec)}」を貸した、と記録しました。` : `${san(who)}から「${label(rec)}」を借りた、と記録しました。`, () => { restore(snap); render(); });
   });
 
   // ---------- 詳細 ----------
@@ -291,20 +291,20 @@
   });
 
   // ---------- 伝える文 ----------
-  const HINTS = { polite: "職場の人や目上の人に。", plain: "知り合いや同僚に。", casual: "友だちや家族に。" };
+  const HINTS = { polite: "職場の人や目上の人に。", plain: "知り合いや同僚に。", casual: "友達や家族に。" };
   function message(r, tone) {
     const money = r.kind === MONEY, nm = tone === "casual" ? r.who : san(r.who);
     const thing = money ? (r.what ? `${r.what}の${yen(r.amt)}` : yen(r.amt)) : r.what;
     const old = days(r.date, today) > 14;
     if (r.dir === "lend") {
       if (money) {
-        if (tone === "polite") return `${nm}、${r.what ? `${old ? md(r.date) : "先日"}の${thing}` : `${old ? md(r.date) + "に" : "先日"}お貸しした${thing}`}の件でご連絡しました。お手すきのときで大丈夫ですので、ご都合のよいときにお願いできればと思います。細かいことで恐縮ですが、よろしくお願いします。`;
-        if (tone === "plain") return `${nm}、この前の${thing}、余裕があるときでいいので、お願いできると助かります。急ぎではないので、都合のいいときで大丈夫です！`;
+        if (tone === "polite") return `${nm}、${r.what ? `${old ? md(r.date) : "先日"}の${thing}` : `${old ? md(r.date) + "に" : "先日"}お貸しした${thing}`}の件でご連絡しました。急ぎではありませんので、ご都合のよいときにお願いできればと思います。細かいことで恐縮ですが、よろしくお願いいたします。`;
+        if (tone === "plain") return `${nm}、この前の${thing}、余裕があるときに返してもらえると助かります。急ぎではないので、都合のいいときで大丈夫です。`;
         return `${nm}、この前の${thing}、今度会うときでいいからよろしくね！`;
       }
       const v = verbFor(r.kind);
-      if (tone === "polite") return `${nm}、${old ? md(r.date) + "に" : "先日"}お貸しした${thing}の件でご連絡しました。お手すきのときで大丈夫ですので、次にお会いするときにでもお返しいただけるとうれしいです。急ぎではありませんので、どうぞよろしくお願いします。`;
-      if (tone === "plain") return `${nm}、この前貸した${thing}、${v}でいいので、次に会うときに返してもらえると助かります。急ぎではないので、都合のいいときで大丈夫です！`;
+      if (tone === "polite") return `${nm}、${old ? md(r.date) + "に" : "先日"}お貸しした${thing}の件でご連絡しました。次にお会いするときにでもお返しいただけると助かります。急ぎではありませんので、どうぞよろしくお願いいたします。`;
+      if (tone === "plain") return `${nm}、この前貸した${thing}、${v}でいいので、次に会うときに返してもらえると助かります。急ぎではないので、都合のいいときで大丈夫です。`;
       return `${nm}、前に貸した${thing}、${v}でいいから、今度会うとき持ってきてくれるとうれしい！急がないからね。`;
     }
     if (money) {
@@ -336,7 +336,7 @@
     try { await navigator.clipboard.writeText(t); done = true; } catch (e) {
       try { $("mText").select(); done = document.execCommand("copy"); } catch (e2) { done = false; }
     }
-    $("mOk").textContent = done ? "コピーしました。LINEやメールに貼りつけて送れます。" : "コピーできませんでした。文を長押しして選んでください。";
+    $("mOk").textContent = done ? "コピーしました。LINEやメールに貼り付けて送れます。" : "コピーできませんでした。文を長押しして選んでください。";
   });
 
   // ---------- 例 ----------
@@ -352,7 +352,7 @@
       { dir: "lend", who: "佐藤さん", kind: "DVD・ゲーム", what: "スプラトゥーン3", date: b(60), ret: b(30) }
     ].forEach(x => st.recs.push(cleanRec({ ...x, id: uid(), sample: true })));
     save(); render();
-    toast("例を入れました。先頭の記録を開いて「やんわり伝える文」を見てみてください。", () => { restore(snap); render(); });
+    toast("例を追加しました。先頭の記録を開いて「やんわり伝える文」を見てみてください。", () => { restore(snap); render(); });
   });
   $("clearSample").addEventListener("click", () => {
     const snap = snapshot(); st.recs = st.recs.filter(r => !r.sample); save(); render();
@@ -384,7 +384,7 @@
     let data = null, custom = null;
     try { if (f.size > 5e6) throw 0; const j = JSON.parse(await f.text()); if (j && j.app === "kashikari") { data = clean(j.data); custom = j.custom; } } catch (e) { data = null; }
     if (!data || !data.recs.length) { $("moveMsg").textContent = "読み込めませんでした。このアプリで書き出したファイルを選んでください。"; return; }
-    if (st.recs.length && !confirm(`いまの記録を、ファイルの${data.recs.length}件と置きかえますか？`)) return;
+    if (st.recs.length && !confirm(`今の記録を、ファイルの${data.recs.length}件と置き換えますか？`)) return;
     const snap = snapshot(), csnap = JSON.stringify(readCustom());
     st = data; save();
     if (custom && Array.isArray(custom.kind)) { try { localStorage.setItem(CK, JSON.stringify({ kind: custom.kind.filter(v => typeof v === "string").slice(0, 60) })); } catch (e) {} }

@@ -2,7 +2,7 @@
 <html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>ペット手帳</title>
-<meta name="description" content="ごはん・散歩・トイレ・薬をワンタップで記録。体重のグラフ、ワクチンやフィラリア・ノミダニ予防の次の日もわかる、ペットのための手帳です。何匹でも。">
+<meta name="description" content="ごはん・散歩・トイレ・薬をワンタップで記録。体重のグラフ、ワクチンやフィラリア・ノミダニ予防の次の予定日も分かる、ペットのための手帳です。何匹でも。">
 <meta name="theme-color" content="#2E6B57">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="manifest" href="manifest.webmanifest">
@@ -16,7 +16,7 @@
   <div class="top-in">
     <a class="back" href="../">App World Lab</a>
     <h1><svg class="paw" viewBox="0 0 32 32" width="30" height="30" aria-hidden="true"><ellipse cx="16" cy="21" rx="7.5" ry="6.5" fill="currentColor"/><ellipse cx="7" cy="13" rx="3" ry="3.8" fill="currentColor"/><ellipse cx="12.5" cy="7.5" rx="3" ry="3.8" fill="currentColor"/><ellipse cx="19.5" cy="7.5" rx="3" ry="3.8" fill="currentColor"/><ellipse cx="25" cy="13" rx="3" ry="3.8" fill="currentColor"/></svg>ペット手帳</h1>
-    <p class="lead">お世話した時間も、次の予防の日も、ここを見ればわかります。</p>
+    <p class="lead">お世話した時間も、次の予防の日も、ここを見れば分かります。</p>
   </div>
   <nav class="pets" id="pets" aria-label="ペットを選ぶ"></nav>
 </header>
@@ -30,7 +30,7 @@
       <ellipse cx="90" cy="34" rx="8" ry="10" fill="#2E6B57"/><ellipse cx="104" cy="50" rx="8" ry="10" fill="#2E6B57"/>
       <path d="M118 22l4 8 8 1-6 6 2 8-8-4-7 4 1-8-6-6 8-1Z" fill="#F27A5E"/>
     </svg>
-    <p class="empty-h">まず、いっしょに暮らす子を登録しましょう。</p>
+    <p class="empty-h">まず、一緒に暮らすペットを登録してください。</p>
     <p>名前と種類を入れると、今日のお世話のチェックと予防の予定ができます。</p>
     <div class="row-btns center">
       <button type="button" class="btn" id="firstPet">ペットを登録</button>
@@ -47,7 +47,7 @@
       <button type="button" class="btn ghost small" id="petEdit">ペットの設定</button>
     </div>
 
-    <nav class="tabs" aria-label="表示の切りかえ">
+    <nav class="tabs" aria-label="表示の切り替え">
       <button type="button" class="tab" data-tab="today" aria-pressed="true">今日</button>
       <button type="button" class="tab" data-tab="health" aria-pressed="false">予防・通院</button>
       <button type="button" class="tab" data-tab="weight" aria-pressed="false">体重</button>
@@ -70,7 +70,7 @@
       </form>
       <h3 class="sec-h">今日の記録</h3>
       <ol class="timeline" id="timeline"></ol>
-      <p class="none" id="tlNone">上のボタンを押すと、時刻といっしょに記録されます。</p>
+      <p class="none" id="tlNone">上のボタンを押すと、時刻付きで記録されます。</p>
       <button type="button" class="link" id="careEdit">今日のチェックを変える</button>
     </section>
 
@@ -130,7 +130,7 @@
       <div class="chips" id="spChips"></div>
     </fieldset>
     <div class="two">
-      <label class="field"><span>誕生日（わかれば）</span><input id="pBirth" type="date"></label>
+      <label class="field"><span>誕生日（分かれば）</span><input id="pBirth" type="date"></label>
       <label class="field"><span>体重の単位</span><select id="pUnit"><option value="kg">kg</option><option value="g">g</option></select></label>
     </div>
     <p class="hint" id="pHint"></p>
@@ -147,10 +147,10 @@
 <dialog id="careDlg" class="dlg" aria-labelledby="cH">
   <div class="dlg-in">
     <h2 id="cH">今日のチェック</h2>
-    <p class="hint">1日に何回するかを決めると、足りないものがわかります。「記録だけ」は回数を数えません。</p>
+    <p class="hint">1日に何回するかを決めると、足りないものが分かります。「記録だけ」は回数を数えません。</p>
     <ul class="clist" id="clist"></ul>
     <fieldset class="chips-f">
-      <legend>お世話を足す</legend>
+      <legend>お世話を追加</legend>
       <div class="chips" id="careChips"></div>
     </fieldset>
     <div class="dlg-acts"><button type="button" class="btn" id="cDone">閉じる</button></div>
@@ -162,7 +162,7 @@
   <form id="hForm" class="dlg-in" novalidate>
     <h2 id="hH">予定を追加</h2>
     <fieldset class="chips-f" id="hKindF">
-      <legend>なにの予定</legend>
+      <legend>何の予定</legend>
       <div class="chips" id="hChips"></div>
     </fieldset>
     <label class="field"><span>前回の日</span><input id="hLast" type="date"></label>

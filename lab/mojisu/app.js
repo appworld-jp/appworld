@@ -286,13 +286,13 @@
       }
     } catch (e) { data = null; }
     if (!data) { $("moveMsg").textContent = "読み込めませんでした。このアプリで書き出したファイルを選んでください。"; return; }
-    if (ta.value && data.text && !confirm("今の文章を、ファイルの文章と置きかえますか？")) return;
+    if (ta.value && data.text && !confirm("今の文章を、ファイルの文章と置き換えますか？")) return;
     const snap = { st: JSON.stringify(st), text: ta.value, custom: custom.all() };
     cs.forEach(c => { custom.remove(c); custom.add(c); });
     st = data; if (data.text) ta.value = data.text;
     $("keep").checked = st.keep; $("keep").dispatchEvent(new Event("change"));
     save(); renderChips(); render();
-    $("moveMsg").textContent = `読み込みました（自分で入れた場所${cs.length}件）。`;
+    $("moveMsg").textContent = `読み込みました（自分で追加した書く場所${cs.length}件）。`;
     toast("読み込みました。", () => {
       st = JSON.parse(snap.st); ta.value = snap.text;
       custom.all().forEach(c => custom.remove(c)); snap.custom.forEach(c => custom.add(c));

@@ -2,7 +2,7 @@
 <html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>年賀状リスト</title>
-<meta name="description" content="年賀状を出した人・来た人・喪中の人を年ごとに記録して、去年のやりとりから今年出す人と枚数がわかるリストです。印刷もできます。">
+<meta name="description" content="年賀状を出した人・来た人・喪中の人を年ごとに記録して、去年のやりとりから今年出す人と枚数が分かるリストです。印刷もできます。">
 <meta name="theme-color" content="#B8322A">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="manifest" href="manifest.webmanifest">
@@ -19,7 +19,7 @@
       <h1>年賀状リスト</h1>
       <span class="hanko" aria-hidden="true">賀</span>
     </div>
-    <p class="lead">去年のやりとりから、今年出す人がわかります。</p>
+    <p class="lead">去年のやりとりから、今年出す人が分かります。</p>
   </div>
 </header>
 
@@ -52,7 +52,7 @@
     <button type="button" class="btn" id="printBtn">印刷する</button>
   </div>
 
-  <div class="filters" role="group" aria-label="しぼりこみ" id="filters">
+  <div class="filters" role="group" aria-label="絞り込み" id="filters">
     <button type="button" data-f="plan" aria-pressed="true">出す人</button>
     <button type="button" data-f="todo" aria-pressed="false">まだ出していない</button>
     <button type="button" data-f="reply" aria-pressed="false">来たのに未返信</button>
@@ -61,7 +61,7 @@
   </div>
 
   <section class="first" id="first" hidden>
-    <h2>はじめに</h2>
+    <h2>使い方</h2>
     <ol>
       <li>年賀状をやりとりする人を追加します。住所はなくても使えます。</li>
       <li>「‹」で去年に戻り、出した人・来た人に印を付けます。</li>
@@ -105,8 +105,8 @@
       <span id="gLbl">グループ</span>
       <div class="chips" id="groupChips"></div>
     </div>
-    <label class="field"><span>メモ（なくてもOK）</span><input id="fMemo" type="text" maxlength="40" autocomplete="off" placeholder="大学のゼミ、子ども2人"></label>
-    <label class="field"><span>住所（なくてもOK）</span><textarea id="fAddr" rows="3" maxlength="200" placeholder="〒123-4567&#10;東京都〇〇区〇〇1-2-3"></textarea></label>
+    <label class="field"><span>メモ（任意）</span><input id="fMemo" type="text" maxlength="40" autocomplete="off" placeholder="大学のゼミ、子ども2人"></label>
+    <label class="field"><span>住所（任意）</span><textarea id="fAddr" rows="3" maxlength="200" placeholder="〒123-4567&#10;東京都〇〇区〇〇1-2-3"></textarea></label>
     <p class="note">住所はこの端末にだけ保存されます。印刷のときに入れるかどうか選べます。</p>
     <div id="editOnly" hidden>
       <div class="field" role="group" aria-labelledby="pLbl">

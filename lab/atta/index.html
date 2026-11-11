@@ -24,18 +24,18 @@
   <section class="event" id="eventBox" aria-labelledby="evH">
     <div class="ev-off" id="evOff">
       <h2 id="evH">集まりの途中ですか？</h2>
-      <p>会の名前を入れておくと、名前とひとことだけで、次々に追加できます。</p>
+      <p>会の名前を入れておくと、名前と一言だけで次々に追加できます。</p>
       <form class="ev-start" id="evStart" novalidate>
         <input id="evName" type="text" maxlength="40" autocomplete="off" placeholder="駅前のヨガ教室" aria-label="集まりの名前">
-        <button class="btn" type="submit">はじめる</button>
+        <button class="btn" type="submit">始める</button>
       </form>
       <p class="err" id="evErr" role="alert"></p>
     </div>
     <div class="ev-on" id="evOn" hidden>
-      <div class="ev-top"><p><small>いまの集まり</small><b id="evTitle"></b></p><button type="button" class="link" id="evEnd">終える</button></div>
+      <div class="ev-top"><p><small>今の集まり</small><b id="evTitle"></b></p><button type="button" class="link" id="evEnd">終える</button></div>
       <form class="quick" id="quickForm" novalidate>
         <input id="qName" type="text" maxlength="30" autocomplete="off" placeholder="名前（田中さん）" aria-label="名前">
-        <input id="qFeat" type="text" maxlength="80" autocomplete="off" placeholder="ひとこと（赤いメガネ、犬を飼っている）" aria-label="特徴や話したこと">
+        <input id="qFeat" type="text" maxlength="80" autocomplete="off" placeholder="一言（赤いメガネ、犬を飼っている）" aria-label="特徴や話したこと">
         <button class="btn" type="submit">追加</button>
       </form>
       <p class="err" id="qErr" role="alert"></p>
@@ -45,7 +45,7 @@
 
   <div class="search" id="searchBox" hidden>
     <input id="q" type="search" placeholder="名前、場所、特徴、話したこと" aria-label="会った人を探す" autocomplete="off">
-    <div class="tags" id="tagFilter" role="group" aria-label="タグでしぼる"></div>
+    <div class="tags" id="tagFilter" role="group" aria-label="タグで絞り込む"></div>
   </div>
   <p class="found" id="found" aria-live="polite"></p>
 
@@ -61,16 +61,16 @@
   <section class="empty" id="empty" hidden>
     <svg viewBox="0 0 140 90" width="140" height="90" aria-hidden="true"><rect x="10" y="18" width="84" height="54" rx="6" fill="#FFF4EC" stroke="#5B2A63" stroke-width="3" transform="rotate(-6 52 45)"/><rect x="44" y="14" width="84" height="54" rx="6" fill="#FFFFFF" stroke="#5B2A63" stroke-width="3" transform="rotate(5 86 41)"/><circle cx="66" cy="38" r="9" fill="#F28C6B"/><path d="M80 34h34M80 44h26M60 58h50" stroke="#C9A9CF" stroke-width="3" stroke-linecap="round" transform="rotate(5 86 41)"/></svg>
     <p class="empty-h">まだ誰もいません。</p>
-    <p>今日会った人を、ひとり書いてみましょう。顔の写真はいりません。特徴を言葉で残します。</p>
+    <p>今日会った人を1人、書いてみてください。写真は要りません。特徴を言葉で残します。</p>
     <div class="row center">
-      <button type="button" class="btn" id="firstAdd">ひとり追加</button>
+      <button type="button" class="btn" id="firstAdd">人を追加</button>
       <button type="button" class="btn ghost" id="sample">例を見る</button>
     </div>
   </section>
 
   <details class="move">
     <summary>データの引っ越し</summary>
-    <p>メモはこの端末だけに残ります。機種変更のときは、ファイルに書き出して、新しい端末で読み込んでください。</p>
+    <p>メモはこの端末にだけ残ります。機種変更のときは、ファイルに書き出して、新しい端末で読み込んでください。</p>
     <div class="row">
       <button type="button" class="btn ghost small" id="expBtn">ファイルに書き出す</button>
       <label class="btn ghost small file-btn">ファイルを読み込む<input type="file" id="impFile" accept="application/json,.json"></label>
@@ -90,7 +90,7 @@
     <h2>名前を思い出す練習</h2>
     <p>特徴と会った場所を見て、名前を思い出してからカードをめくります。忘れていた人ほど、よく出てきます。</p>
     <div class="tags" id="qzTags" role="group" aria-label="練習する人"></div>
-    <button type="button" class="btn big" id="qzGo">はじめる</button>
+    <button type="button" class="btn big" id="qzGo">始める</button>
     <p class="err" id="qzErr" role="alert"></p>
   </section>
   <section class="quiz" id="qz" hidden aria-live="polite">
@@ -101,8 +101,8 @@
     </button>
     <p class="qz-hint" id="qzHint">名前を思い出したら、カードをタップしてめくります。</p>
     <div class="qz-acts" id="qzActs" hidden>
-      <button type="button" class="btn ghost" id="qzNg">忘れてた</button>
-      <button type="button" class="btn" id="qzOk">覚えてた</button>
+      <button type="button" class="btn ghost" id="qzNg">忘れていた</button>
+      <button type="button" class="btn" id="qzOk">覚えていた</button>
     </div>
   </section>
   <section class="quiz-end" id="qzEnd" hidden>
@@ -114,7 +114,7 @@
 
 <nav class="tabbar" aria-label="画面">
   <button type="button" class="tb" id="tPeople" aria-pressed="true"><svg class="tb-i" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><circle cx="9" cy="8" r="3.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M2.5 20c0-4 3-6 6.5-6s6.5 2 6.5 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="17" cy="9" r="2.6" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M17.5 14c2.5.3 4 2 4 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>人</button>
-  <button type="button" class="tb add" id="tAdd" aria-label="ひとり追加"><span aria-hidden="true">＋</span></button>
+  <button type="button" class="tb add" id="tAdd" aria-label="人を追加"><span aria-hidden="true">＋</span></button>
   <button type="button" class="tb" id="tQuiz" aria-pressed="false"><svg class="tb-i" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><rect x="3" y="6" width="14" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M7 3h12a2 2 0 0 1 2 2v12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M8 12.5l2 2 4-4.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>覚える</button>
 </nav>
 
@@ -126,7 +126,7 @@
     <dl class="v-dl" id="vDl"></dl>
     <div class="v-meets"><b>会った記録</b><ul id="vMeets"></ul></div>
     <form class="again" id="againForm" novalidate>
-      <input id="againPlace" type="text" maxlength="40" autocomplete="off" placeholder="どこで（なくてもOK）" aria-label="今日会った場所">
+      <input id="againPlace" type="text" maxlength="40" autocomplete="off" placeholder="会った場所（任意）" aria-label="今日会った場所">
       <button type="submit" class="btn small">今日また会った</button>
     </form>
     <div class="dlg-acts">
@@ -139,7 +139,7 @@
 
 <dialog id="edit" class="dlg" aria-labelledby="eH">
   <form id="form" novalidate>
-    <h2 id="eH">ひとり追加</h2>
+    <h2 id="eH">人を追加</h2>
     <div class="two">
       <label class="field"><span>名前<em>必須</em></span><input id="fName" type="text" maxlength="30" autocomplete="off" placeholder="田中 ゆかり"></label>
       <label class="field"><span>よみがな</span><input id="fKana" type="text" maxlength="40" autocomplete="off" placeholder="たなか ゆかり"></label>
@@ -149,7 +149,7 @@
       <label class="field"><span>どこで・何の集まり</span><input id="fPlace" type="text" maxlength="40" autocomplete="off" placeholder="保育園の運動会"></label>
     </div>
     <label class="field"><span>特徴（見た目・雰囲気）</span><textarea id="fFeat" rows="2" maxlength="300" placeholder="背が高い。ショートカットで、よく笑う。"></textarea></label>
-    <label class="field"><span>話したこと</span><textarea id="fTalk" rows="2" maxlength="400" placeholder="上の子が同じクラス。最近、山登りをはじめた。"></textarea></label>
+    <label class="field"><span>話したこと</span><textarea id="fTalk" rows="2" maxlength="400" placeholder="上の子が同じクラス。最近、山登りを始めた。"></textarea></label>
     <label class="field"><span>タグ</span><input id="fTags" type="text" maxlength="80" autocomplete="off" placeholder="ママ友、山"></label>
     <div class="tags small" id="tagSuggest" aria-label="これまでのタグ"></div>
     <label class="field"><span>次に話したいこと</span><input id="fNext" type="text" maxlength="100" autocomplete="off" placeholder="登った山の写真を見せてもらう"></label>

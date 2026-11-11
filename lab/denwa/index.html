@@ -38,14 +38,14 @@
     <div class="empty" id="empty" hidden>
       <svg viewBox="0 0 120 80" width="120" height="80" aria-hidden="true"><rect x="22" y="8" width="76" height="66" rx="3" fill="#FFFEF7" stroke="#1F6F4F" stroke-width="3"/><path d="M30 26h60M30 38h60M30 50h40M30 62h50" stroke="#A9CDB9" stroke-width="2"/><rect x="22" y="8" width="76" height="12" fill="#1F6F4F"/><path d="M6 46c0-8 8-12 12-8l3 3c2 2 1 4-1 6l-2 2c2 5 5 8 10 10l2-2c2-2 4-3 6-1l3 3c4 4 0 12-8 12C17 71 6 60 6 46z" fill="#E0662C"/></svg>
       <p class="empty-h">メモはまだありません。</p>
-      <p>電話をかける前に「新しいメモ」を押しておくと、名乗られた担当者名や受付番号を聞きのがしません。</p>
+      <p>電話をかける前に「新しいメモ」を押しておくと、名乗られた担当者名や受付番号を聞き逃しません。</p>
       <button type="button" class="btn ghost small" id="sample">例を見る</button>
     </div>
   </section>
 
   <details class="move">
     <summary>データの引っ越し</summary>
-    <p>メモはこの端末だけに残ります。機種変更のときは、ファイルに書き出して、新しい端末で読み込んでください。</p>
+    <p>メモはこの端末にだけ残ります。機種変更のときは、ファイルに書き出して、新しい端末で読み込んでください。</p>
     <div class="row">
       <button type="button" class="btn ghost small" id="expBtn">ファイルに書き出す</button>
       <label class="btn ghost small file-btn">ファイルを読み込む<input type="file" id="impFile" accept="application/json,.json"></label>
@@ -79,17 +79,17 @@
       <label class="fld"><span>電話番号</span><input id="fPhone" type="tel" maxlength="20" autocomplete="off" placeholder="0120-123-456"></label>
       <label class="fld"><span>受付番号</span><input id="fRef" class="mono" type="text" maxlength="30" autocomplete="off" spellcheck="false" placeholder="A-20481"></label>
     </div>
-    <label class="fld"><span>用件</span><input id="fTopic" type="text" maxlength="60" autocomplete="off" placeholder="引っ越しにともなう保険証の住所変更"></label>
+    <label class="fld"><span>用件</span><input id="fTopic" type="text" maxlength="60" autocomplete="off" placeholder="引っ越しに伴う保険証の住所変更"></label>
 
     <section class="said" aria-labelledby="saidH">
       <h2 id="saidH">言われたこと</h2>
       <ol class="lines" id="lines"></ol>
-      <p class="lines-empty" id="linesEmpty">聞いたそばから書いていくと、時刻つきで残ります。</p>
+      <p class="lines-empty" id="linesEmpty">聞きながら書いていくと、時刻付きで残ります。</p>
       <form class="say" id="sayForm" novalidate>
         <input id="sayIn" type="text" maxlength="120" autocomplete="off" placeholder="来週中に書類を郵送します" aria-label="言われたこと">
         <button class="btn" type="submit">書く</button>
       </form>
-      <div class="quick" id="quickBox" role="group" aria-label="ワンタップで書く">
+      <div class="quick" id="quickBox" role="group" aria-label="よく使う言葉">
         <button type="button" class="qb" data-q="said">「〜と言われた」</button>
         <button type="button" class="qb" data-q="折り返し電話をもらうことになった">折り返し待ち</button>
         <button type="button" class="qb" data-q="保留で待った">保留</button>
@@ -104,7 +104,7 @@
       <label class="fld"><span class="sr">次にやること</span><input id="fNext" type="text" maxlength="80" autocomplete="off" placeholder="住民票を取って、窓口に持っていく"></label>
       <div class="next-row">
         <label class="fld due"><span>期限</span><input id="fDue" type="date"></label>
-        <label class="done"><input id="fDone" type="checkbox"><span>済んだ</span></label>
+        <label class="done"><input id="fDone" type="checkbox"><span>済み</span></label>
       </div>
     </section>
 

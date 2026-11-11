@@ -2,7 +2,7 @@
 <html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>水やり帳</title>
-<meta name="description" content="観葉植物の水やりを、季節ごとの目安の日数で覚えておく帳面。今日水が要る鉢から並び、ワンタップで記録。肥料と植え替えの時期もわかります。">
+<meta name="description" content="観葉植物の水やりを、季節ごとの目安の日数で覚えておく帳面。今日水が要る鉢から並び、ワンタップで記録。肥料と植え替えの時期も分かります。">
 <meta name="theme-color" content="#1F6F6B">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="manifest" href="manifest.webmanifest">
@@ -16,7 +16,7 @@
   <div class="hd-in">
     <a class="back" href="../">App World Lab</a>
     <h1><span class="drop" aria-hidden="true"></span>水やり帳</h1>
-    <p class="lead">水をやった日を覚えておくので、<span class="nb">今日どの鉢に要るかがすぐわかります。</span></p>
+    <p class="lead">水をやった日を覚えておくので、<span class="nb">今日どの鉢に要るかがすぐ分かります。</span></p>
   </div>
 </header>
 
@@ -30,16 +30,16 @@
   <section aria-labelledby="hList">
     <div class="list-h">
       <h2 id="hList">鉢の一覧</h2>
-      <button type="button" class="btn add" id="addBtn"><span aria-hidden="true">＋</span> 鉢を足す</button>
+      <button type="button" class="btn add" id="addBtn"><span aria-hidden="true">＋</span> 鉢を追加</button>
     </div>
     <ul class="pots" id="pots"></ul>
     <div class="empty" id="empty" hidden>
       <svg class="empty-art" viewBox="0 0 120 100" aria-hidden="true"><path d="M60 52c-14-2-24-12-26-28 16 0 26 10 26 28zm0 0c2-18 12-30 30-30-2 18-14 28-30 30z" fill="#5BA35A"/><path d="M60 52v14" stroke="#3F7D3E" stroke-width="4"/><path d="M34 64h52l-6 30H40z" fill="#C8683F"/><rect x="30" y="60" width="60" height="9" rx="3" fill="#B25530"/><path d="M98 18c4 6 6 9 6 12a6 6 0 0 1-12 0c0-3 2-6 6-12z" fill="#3E9BD8"/></svg>
       <p class="empty-h">まだ鉢がありません</p>
-      <p>「鉢を足す」で植物を選ぶと、季節に合った水やりの目安が入ります。</p>
+      <p>「鉢を追加」で植物を選ぶと、季節に合った水やりの目安が入ります。</p>
       <div class="row center">
-        <button type="button" class="btn" id="firstAdd">はじめての鉢を足す</button>
-        <button type="button" class="btn ghost" id="sample">例を入れてみる</button>
+        <button type="button" class="btn" id="firstAdd">最初の鉢を追加</button>
+        <button type="button" class="btn ghost" id="sample">例で試す</button>
       </div>
     </div>
   </section>
@@ -52,7 +52,7 @@
 
   <details class="card fold">
     <summary>データの引っ越し</summary>
-    <p class="hint">記録はこの端末だけに残ります。機種変更のときは、ファイルに書き出して、新しい端末で読み込んでください。</p>
+    <p class="hint">記録はこの端末にだけ残ります。機種変更のときは、ファイルに書き出して、新しい端末で読み込んでください。</p>
     <div class="row">
       <button type="button" class="btn ghost small" id="expBtn">ファイルに書き出す</button>
       <label class="btn ghost small file-btn">ファイルを読み込む<input type="file" id="impFile" accept="application/json,.json"></label>
@@ -70,15 +70,15 @@
 <!-- 鉢を足す・直す -->
 <dialog class="sheet" id="editDlg" aria-labelledby="editH">
   <div class="sheet-in">
-    <div class="sheet-h"><h2 id="editH">鉢を足す</h2><button type="button" class="x" id="editClose" aria-label="閉じる">×</button></div>
+    <div class="sheet-h"><h2 id="editH">鉢を追加</h2><button type="button" class="x" id="editClose" aria-label="閉じる">×</button></div>
     <div class="fgroup">
       <span class="lab" id="kindL">植物</span>
       <div class="chips" id="kindChips" role="group" aria-labelledby="kindL"></div>
       <p class="guide" id="kindGuide"></p>
     </div>
-    <label class="fld"><span>名前（なくてもOK）</span><input id="fName" type="text" maxlength="20" autocomplete="off" placeholder="リビングのポトス"></label>
+    <label class="fld"><span>名前（任意）</span><input id="fName" type="text" maxlength="20" autocomplete="off" placeholder="リビングのポトス"></label>
     <div class="fgroup">
-      <span class="lab" id="placeL">置き場所（なくてもOK）</span>
+      <span class="lab" id="placeL">置き場所（任意）</span>
       <div class="chips" id="placeChips" role="group" aria-labelledby="placeL"></div>
     </div>
     <fieldset class="nums">
@@ -114,7 +114,7 @@
     <p class="msg" id="infoMsg" role="status"></p>
     <div class="row between">
       <button type="button" class="btn ghost small danger" id="infoDel">この鉢を消す</button>
-      <button type="button" class="btn small" id="infoEdit">直す</button>
+      <button type="button" class="btn small" id="infoEdit">編集</button>
     </div>
   </div>
 </dialog>

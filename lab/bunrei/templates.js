@@ -1,10 +1,10 @@
 // メールの文例。{key} は入力した値（空なら【項目名】）、{{#key}}…{{/key}} は入力があるときだけ、{{^key}}…{{/key}} は空のときだけ入る。
 // tones: polite（ていねい）/ normal（ふつう）/ internal（社内向け）/ casual（親しい人へ）
 window.TONES = {
-  polite: { name: "ていねい", desc: "社外の方・目上の方へ" },
-  normal: { name: "ふつう", desc: "やりとりの多い取引先・知人へ" },
+  polite: { name: "丁寧", desc: "社外の方・目上の方へ" },
+  normal: { name: "普通", desc: "やりとりの多い取引先・知人へ" },
   internal: { name: "社内向け", desc: "同じ会社の人へ" },
-  casual: { name: "親しい人へ", desc: "家族・友だちへ" }
+  casual: { name: "親しい人へ", desc: "家族・友達へ" }
 };
 
 window.TEMPLATES = [
@@ -12,8 +12,8 @@ window.TEMPLATES = [
     fields: [
       { k: "date", label: "いつ", ph: "本日", chips: ["本日", "昨日", "先日"] },
       { k: "topic", label: "何の打ち合わせ", ph: "新サービスのご提案" },
-      { k: "extra", label: "ひとこと（なくてもOK）", ph: "具体的なお話をうかがえて、進め方がはっきりしました。", type: "area", opt: true },
-      { k: "next", label: "今後の予定（なくてもOK）", ph: "来週中にお見積もりをお送りいたします。", type: "area", opt: true }
+      { k: "extra", label: "一言（任意）", ph: "具体的なお話をうかがえて、進め方がはっきりしました。", type: "area", opt: true },
+      { k: "next", label: "今後の予定（任意）", ph: "来週中にお見積もりをお送りいたします。", type: "area", opt: true }
     ],
     subject: {
       polite: ["{date}のお打ち合わせのお礼", "【お礼】{topic}のお打ち合わせについて"],
@@ -30,9 +30,9 @@ window.TEMPLATES = [
   { id: "owabi", name: "お詫び（ミス・遅れ）", group: "お礼・お詫び", tones: ["polite", "normal", "internal"],
     fields: [
       { k: "what", label: "何についてのお詫び", ph: "請求書の金額の誤り", chips: ["納品の遅れ", "ご連絡の遅れ", "請求書の金額の誤り"] },
-      { k: "cause", label: "原因（なくてもOK）", ph: "確認不足", opt: true },
+      { k: "cause", label: "原因（任意）", ph: "確認不足", opt: true },
       { k: "fix", label: "どう対応するか", ph: "正しい請求書を、本日あらためてお送りいたします。", type: "area" },
-      { k: "prevent", label: "今後の対策（なくてもOK）", ph: "送る前に二人で確認する", opt: true }
+      { k: "prevent", label: "今後の対策（任意）", ph: "送る前に二人で確認する", opt: true }
     ],
     subject: {
       polite: ["{what}についてのお詫び", "【お詫び】{what}について"],
@@ -41,7 +41,7 @@ window.TEMPLATES = [
     },
     body: {
       polite: "このたびは{what}により、ご迷惑をおかけしましたことを深くお詫び申し上げます。\n{{#cause}}原因は、私どもの{cause}によるものです。\n{{/cause}}{fix}\n{{#prevent}}今後は{prevent}など、再発防止に努めてまいります。\n{{/prevent}}",
-      normal: "このたびは{what}により、ご迷惑をおかけして申し訳ございません。\n{{#cause}}原因は、こちらの{cause}です。\n{{/cause}}{fix}\n{{#prevent}}今後は{prevent}など、同じことが起きないよう気をつけてまいります。\n{{/prevent}}",
+      normal: "このたびは{what}により、ご迷惑をおかけして申し訳ございません。\n{{#cause}}原因は、こちらの{cause}です。\n{{/cause}}{fix}\n{{#prevent}}今後は{prevent}など、同じことが起きないよう気を付けてまいります。\n{{/prevent}}",
       internal: "{what}の件で、ご迷惑をおかけして申し訳ありません。\n{{#cause}}原因は、私の{cause}です。\n{{/cause}}{fix}\n{{#prevent}}今後は{prevent}ようにします。\n{{/prevent}}"
     },
     close: {
@@ -54,7 +54,7 @@ window.TEMPLATES = [
     fields: [
       { k: "occasion", label: "何として", ph: "お歳暮", chips: ["お歳暮", "お中元", "お祝い", "お土産"] },
       { k: "gift", label: "いただいた物", ph: "みかん" },
-      { k: "impression", label: "感想（なくてもOK）", ph: "甘くてみずみずしく、家族みんなでおいしくいただいています。", type: "area", opt: true }
+      { k: "impression", label: "感想（任意）", ph: "甘くてみずみずしく、家族みんなでおいしくいただいています。", type: "area", opt: true }
     ],
     subject: {
       polite: ["{occasion}の御礼"],
@@ -63,17 +63,17 @@ window.TEMPLATES = [
     },
     body: {
       polite: "このたびは{occasion}に{gift}をお送りいただき、誠にありがとうございました。\n{{#impression}}{impression}\n{{/impression}}いつもお心にかけていただき、心より感謝申し上げます。\n{seasonP}",
-      normal: "このたびは{occasion}に{gift}を送っていただき、ありがとうございました。\n{{#impression}}{impression}\n{{/impression}}いつもお気づかいいただき、本当にうれしいです。\n{seasonN}",
-      casual: "{gift}、届いたよ！ 本当にありがとう。\n{{#impression}}{impression}\n{{/impression}}気をつかってくれてありがとうね。\n{seasonC}"
+      normal: "このたびは{occasion}に{gift}を送っていただき、ありがとうございました。\n{{#impression}}{impression}\n{{/impression}}いつもお気遣いいただき、本当にうれしいです。\n{seasonN}",
+      casual: "{gift}、届いたよ！ 本当にありがとう。\n{{#impression}}{impression}\n{{/impression}}気を遣ってくれてありがとうね。\n{seasonC}"
     },
     close: { polite: "略儀ながら、メールにて御礼申し上げます。", normal: "取り急ぎ、お礼まで。", casual: "" } },
 
   { id: "irai", name: "お願い（依頼）", group: "お願い・確認", tones: ["polite", "normal", "internal"],
     fields: [
       { k: "what", label: "お願いしたいこと", ph: "先日の会議資料の送付", chips: ["資料の送付", "内容のご確認", "お見積もりの作成"] },
-      { k: "why", label: "理由（なくてもOK）", ph: "社内で共有したい", opt: true },
-      { k: "deadline", label: "期限（なくてもOK）", ph: "11月20日（木）", opt: true },
-      { k: "detail", label: "補足（なくてもOK）", ph: "PDFでお送りいただけますと助かります。", type: "area", opt: true }
+      { k: "why", label: "理由（任意）", ph: "社内で共有したい", opt: true },
+      { k: "deadline", label: "期限（任意）", ph: "11月20日（木）", opt: true },
+      { k: "detail", label: "補足（任意）", ph: "PDFでお送りいただけますと助かります。", type: "area", opt: true }
     ],
     subject: {
       polite: ["{what}のお願い"],
@@ -82,7 +82,7 @@ window.TEMPLATES = [
     },
     body: {
       polite: "{what}をお願いしたく、ご連絡いたしました。\n{{#why}}{why}ため、{{/why}}お忙しいところ恐縮ですが、{{#deadline}}{deadline}までに{{/deadline}}ご対応いただけますでしょうか。\n{{#detail}}{detail}\n{{/detail}}\nご不明な点がございましたら、お気軽にお問い合わせください。",
-      normal: "{what}をお願いしたく、ご連絡しました。\n{{#why}}{why}ので、{{/why}}{{#deadline}}{deadline}までに{{/deadline}}ご対応いただけると助かります。\n{{#detail}}{detail}\n{{/detail}}\nわからない点があれば、お気軽にお聞きください。",
+      normal: "{what}をお願いしたく、ご連絡しました。\n{{#why}}{why}ので、{{/why}}{{#deadline}}{deadline}までに{{/deadline}}ご対応いただけると助かります。\n{{#detail}}{detail}\n{{/detail}}\n分からない点があれば、お気軽にお聞きください。",
       internal: "{what}をお願いできますか。\n{{#why}}{why}ので、{{/why}}{{#deadline}}{deadline}までに{{/deadline}}対応していただけると助かります。\n{{#detail}}{detail}\n{{/detail}}"
     } },
 
@@ -90,8 +90,8 @@ window.TEMPLATES = [
     fields: [
       { k: "sentDate", label: "いつお願いしたか", ph: "11月5日" },
       { k: "thing", label: "何を", ph: "お見積書の送付", chips: ["お見積書の送付", "資料のご確認", "日程のご回答"] },
-      { k: "deadline", label: "いつまでに欲しいか（なくてもOK）", ph: "11月14日（金）", opt: true },
-      { k: "reason", label: "急ぐ理由（なくてもOK）", ph: "社内の会議で使う", opt: true }
+      { k: "deadline", label: "いつまでに欲しいか（任意）", ph: "11月14日（金）", opt: true },
+      { k: "reason", label: "急ぐ理由（任意）", ph: "社内の会議で使う", opt: true }
     ],
     subject: {
       polite: ["【ご確認】{thing}の件", "{sentDate}にお願いした{thing}について"],
@@ -107,7 +107,7 @@ window.TEMPLATES = [
   { id: "nyukin", name: "入金の確認", group: "お願い・確認", tones: ["polite", "normal"],
     fields: [
       { k: "invDate", label: "請求書を送った日", ph: "10月31日" },
-      { k: "invNo", label: "請求書の番号（なくてもOK）", ph: "No.2026-118", opt: true },
+      { k: "invNo", label: "請求書の番号（任意）", ph: "No.2026-118", opt: true },
       { k: "amount", label: "請求金額", ph: "55,000円（税込）" },
       { k: "due", label: "支払い期限", ph: "11月10日" }
     ],
@@ -124,9 +124,9 @@ window.TEMPLATES = [
     fields: [
       { k: "purpose", label: "何の打ち合わせ", ph: "新サービスのご説明" },
       { k: "cands", label: "候補日（1行に1つ）", ph: "11月18日（火）10:00〜12:00\n11月19日（水）14:00〜17:00\n11月21日（金）終日", type: "lines" },
-      { k: "duration", label: "所要時間（なくてもOK）", ph: "1時間ほど", opt: true },
-      { k: "place", label: "場所・方法（なくてもOK）", ph: "オンライン（Zoom）", opt: true, chips: ["オンライン", "貴社に伺います", "弊社にお越しください"] },
-      { k: "replyBy", label: "いつまでに返事が欲しいか（なくてもOK）", ph: "11月14日（金）", opt: true }
+      { k: "duration", label: "所要時間（任意）", ph: "1時間ほど", opt: true },
+      { k: "place", label: "場所・方法（任意）", ph: "オンライン（Zoom）", opt: true, chips: ["オンライン", "貴社に伺います", "弊社にお越しください"] },
+      { k: "replyBy", label: "いつまでに返事が欲しいか（任意）", ph: "11月14日（金）", opt: true }
     ],
     subject: {
       polite: ["{purpose}のお打ち合わせ日程のご相談", "【日程調整】{purpose}の件"],
@@ -142,9 +142,9 @@ window.TEMPLATES = [
   { id: "toiawase", name: "問い合わせ", group: "お願い・確認", tones: ["polite", "normal", "internal"], first: true, toDefault: "ご担当者",
     fields: [
       { k: "about", label: "何について", ph: "法人向けプラン" },
-      { k: "how", label: "知ったきっかけ（なくてもOK）", ph: "貴社のホームページ", opt: true, tones: ["polite", "normal"] },
+      { k: "how", label: "知ったきっかけ（任意）", ph: "貴社のホームページ", opt: true, tones: ["polite", "normal"] },
       { k: "qs", label: "聞きたいこと（1行に1つ）", ph: "10名で使う場合の料金\n請求書払いができるか\n申し込みから使えるまでの期間", type: "lines" },
-      { k: "replyBy", label: "いつまでに返事が欲しいか（なくてもOK）", ph: "11月20日", opt: true }
+      { k: "replyBy", label: "いつまでに返事が欲しいか（任意）", ph: "11月20日", opt: true }
     ],
     subject: {
       polite: ["{about}についてのお問い合わせ"],
@@ -160,8 +160,8 @@ window.TEMPLATES = [
   { id: "kotowari", name: "お断り", group: "お返事", tones: ["polite", "normal", "internal"],
     fields: [
       { k: "what", label: "何を断るか", ph: "展示会への出展のご案内", chips: ["お見積もり", "ご提案", "お誘い"] },
-      { k: "reason", label: "理由（「〜ため」「〜ず」で。なくてもOK）", ph: "今期は予算の都合がつかず", opt: true },
-      { k: "alt", label: "代わりのひとこと（なくてもOK）", ph: "来年度にあらためてご相談させてください。", type: "area", opt: true }
+      { k: "reason", label: "理由（「〜ため」「〜ず」で。任意）", ph: "今期は予算の都合がつかず", opt: true },
+      { k: "alt", label: "代わりの一言（任意）", ph: "来年度にあらためてご相談させてください。", type: "area", opt: true }
     ],
     subject: {
       polite: ["{what}について（お返事）", "{what}の件"],
@@ -178,8 +178,8 @@ window.TEMPLATES = [
   { id: "taishoku", name: "退職のあいさつ", group: "あいさつ", tones: ["polite", "normal", "internal"], to: { internal: "皆さま" },
     fields: [
       { k: "lastDay", label: "最終出社日", ph: "11月28日" },
-      { k: "successor", label: "後任（なくてもOK）", ph: "同じ部署の佐藤", opt: true },
-      { k: "memory", label: "ひとこと（なくてもOK）", ph: "入社以来、温かくご指導いただいたことは忘れません。", type: "area", opt: true }
+      { k: "successor", label: "後任（任意）", ph: "同じ部署の佐藤", opt: true },
+      { k: "memory", label: "一言（任意）", ph: "入社以来、温かくご指導いただいたことは忘れません。", type: "area", opt: true }
     ],
     subject: {
       polite: ["退職のごあいさつ（{{#myCompany}}{myCompany} {{/myCompany}}{myName}）"],
@@ -198,10 +198,10 @@ window.TEMPLATES = [
       { k: "reason", label: "変わる理由", ph: "社内の人事異動", chips: ["人事異動", "退職", "担当地域の変更"], tones: ["polite", "normal"] },
       { k: "date", label: "いつから", ph: "12月1日" },
       { k: "successor", label: "後任の名前", ph: "佐藤 花子" },
-      { k: "contact", label: "後任の連絡先（なくてもOK）", ph: "電話：03-1234-5678\nメール：sato@example.co.jp", type: "area", opt: true, tones: ["polite", "normal"] },
+      { k: "contact", label: "後任の連絡先（任意）", ph: "電話：03-1234-5678\nメール：sato@example.co.jp", type: "area", opt: true, tones: ["polite", "normal"] },
       { k: "task", label: "引き継ぐ業務", ph: "A社の請求処理", tones: ["internal"] },
       { k: "notes", label: "引き継ぎ事項（1行に1つ）", ph: "毎月25日までに請求書を送る\n先方の窓口は経理部の田中さん\n過去のやりとりは共有フォルダにあります", type: "lines", tones: ["internal"] },
-      { k: "place", label: "資料の場所（なくてもOK）", ph: "共有フォルダの「A社」", opt: true, tones: ["internal"] }
+      { k: "place", label: "資料の場所（任意）", ph: "共有フォルダの「A社」", opt: true, tones: ["internal"] }
     ],
     subject: {
       polite: ["担当者変更のお知らせ", "【ご案内】{date}からの担当者について"],
@@ -211,16 +211,16 @@ window.TEMPLATES = [
     body: {
       polite: "このたび、{reason}に伴い、{date}より貴社の担当を{successor}に引き継ぐことになりました。\nこれまで格別のご配慮をいただき、心より御礼申し上げます。\n引き継ぎは責任をもって進めてまいりますので、ご安心いただけますと幸いです。\n{{#contact}}\n{successor}の連絡先は次のとおりです。\n{contact}\n{{/contact}}\n後日あらためて、{successor}よりご連絡いたします。",
       normal: "{reason}のため、{date}から貴社の担当が{successor}に代わることになりました。\nこれまで大変お世話になり、ありがとうございました。\nしっかり引き継ぎをしておりますので、ご安心ください。\n{{#contact}}\n{successor}の連絡先は次のとおりです。\n{contact}\n{{/contact}}\n近いうちに{successor}からもご連絡いたします。",
-      internal: "{date}から、{task}を{successor}さんに引き継ぎます。\n主な引き継ぎ事項は次のとおりです。\n\n{notes}\n\n{{#place}}資料は{place}にまとめてあります。\n{{/place}}わからないことがあれば、遠慮なく聞いてください。"
+      internal: "{date}から、{task}を{successor}さんに引き継ぎます。\n主な引き継ぎ事項は次のとおりです。\n\n{notes}\n\n{{#place}}資料は{place}にまとめてあります。\n{{/place}}分からないことがあれば、遠慮なく聞いてください。"
     },
     close: { polite: "今後とも変わらぬご愛顧のほど、よろしくお願い申し上げます。", normal: "今後ともよろしくお願いいたします。" } },
 
   { id: "nenmatsu", name: "年末のあいさつ", group: "あいさつ", tones: ["polite", "normal", "internal"],
     fields: [
-      { k: "thanks", label: "今年のひとこと（なくてもOK）", ph: "今年は新サービスの立ち上げで、大変お世話になりました。", type: "area", opt: true },
-      { k: "offFrom", label: "休みのはじめ", ph: "12月27日（土）" },
-      { k: "offTo", label: "休みのおわり", ph: "1月4日（日）" },
-      { k: "reopen", label: "仕事はじめ（なくてもOK）", ph: "1月5日（月）", opt: true }
+      { k: "thanks", label: "今年の一言（任意）", ph: "今年は新サービスの立ち上げで、大変お世話になりました。", type: "area", opt: true },
+      { k: "offFrom", label: "休みの初日", ph: "12月27日（土）" },
+      { k: "offTo", label: "休みの最終日", ph: "1月4日（日）" },
+      { k: "reopen", label: "仕事始め（任意）", ph: "1月5日（月）", opt: true }
     ],
     subject: {
       polite: ["年末のごあいさつと休業期間のお知らせ", "年末年始休業のお知らせ"],
@@ -237,8 +237,8 @@ window.TEMPLATES = [
   { id: "nenshi", name: "年始のあいさつ", group: "あいさつ", tones: ["polite", "normal", "internal"],
     open: { polite: "", normal: "", internal: "" },
     fields: [
-      { k: "start", label: "営業開始日（なくてもOK）", ph: "1月5日（月）", opt: true, tones: ["polite", "normal"] },
-      { k: "word", label: "今年のひとこと（なくてもOK）", ph: "本年も皆さまのお役に立てるよう努めてまいります。", type: "area", opt: true }
+      { k: "start", label: "営業開始日（任意）", ph: "1月5日（月）", opt: true, tones: ["polite", "normal"] },
+      { k: "word", label: "今年の一言（任意）", ph: "本年も皆さまのお役に立てるよう努めてまいります。", type: "area", opt: true }
     ],
     subject: {
       polite: ["新年のごあいさつ{{#myCompany}}（{myCompany}）{{/myCompany}}"],
@@ -256,8 +256,8 @@ window.TEMPLATES = [
     fields: [
       { k: "day", label: "いつ", ph: "本日", chips: ["本日", "明日"] },
       { k: "reason", label: "理由", ph: "体調不良", chips: ["体調不良", "子どもの発熱", "通院", "私用"] },
-      { k: "urgent", label: "急ぎの仕事の対応（なくてもOK）", ph: "A社への見積もりの送付は、佐藤さんにお願いしてあります。", type: "area", opt: true },
-      { k: "reach", label: "連絡がつくか（なくてもOK）", ph: "午後は電話に出られます。", opt: true }
+      { k: "urgent", label: "急ぎの仕事の対応（任意）", ph: "A社への見積もりの送付は、佐藤さんにお願いしてあります。", type: "area", opt: true },
+      { k: "reach", label: "連絡がつくか（任意）", ph: "午後は電話に出られます。", opt: true }
     ],
     subject: { internal: ["【休みの連絡】{day}（{myName}）", "{day}のお休みについて"] },
     body: { internal: "{reason}のため、{day}はお休みをいただきたく、ご連絡しました。\n{{#urgent}}{urgent}\n{{/urgent}}{{#reach}}{reach}\n{{/reach}}" },
@@ -267,6 +267,6 @@ window.TEMPLATES = [
 // 季節のひとこと（月ごと）
 window.SEASON = {
   P: ["寒い日が続きますので、どうぞご自愛ください。", "寒い日が続きますので、どうぞご自愛ください。", "季節の変わり目ですので、どうぞご自愛ください。", "季節の変わり目ですので、どうぞご自愛ください。", "季節の変わり目ですので、どうぞご自愛ください。", "梅雨の時期ですので、どうぞご自愛ください。", "暑い日が続きますので、どうぞご自愛ください。", "暑い日が続きますので、どうぞご自愛ください。", "まだ暑さが残りますので、どうぞご自愛ください。", "朝晩冷え込むようになりましたので、どうぞご自愛ください。", "朝晩冷え込むようになりましたので、どうぞご自愛ください。", "寒さが厳しくなってまいりましたので、どうぞご自愛ください。"],
-  N: ["寒い日が続きますので、お体に気をつけてお過ごしください。", "寒い日が続きますので、お体に気をつけてお過ごしください。", "季節の変わり目ですので、お体に気をつけてお過ごしください。", "季節の変わり目ですので、お体に気をつけてお過ごしください。", "季節の変わり目ですので、お体に気をつけてお過ごしください。", "じめじめした日が続きますので、お体に気をつけてお過ごしください。", "暑い日が続きますので、お体に気をつけてお過ごしください。", "暑い日が続きますので、お体に気をつけてお過ごしください。", "まだ暑い日もありますので、お体に気をつけてお過ごしください。", "朝晩冷えるようになりましたので、お体に気をつけてお過ごしください。", "朝晩冷えるようになりましたので、お体に気をつけてお過ごしください。", "寒くなってきましたので、お体に気をつけてお過ごしください。"],
-  C: ["寒いから、体に気をつけてね。", "寒いから、体に気をつけてね。", "季節の変わり目だから、体に気をつけてね。", "季節の変わり目だから、体に気をつけてね。", "季節の変わり目だから、体に気をつけてね。", "じめじめするけど、体に気をつけてね。", "暑いから、体に気をつけてね。", "暑いから、体に気をつけてね。", "まだ暑いから、体に気をつけてね。", "朝晩冷えるから、体に気をつけてね。", "朝晩冷えるから、体に気をつけてね。", "寒くなってきたから、体に気をつけてね。"]
+  N: ["寒い日が続きますので、お体に気を付けてお過ごしください。", "寒い日が続きますので、お体に気を付けてお過ごしください。", "季節の変わり目ですので、お体に気を付けてお過ごしください。", "季節の変わり目ですので、お体に気を付けてお過ごしください。", "季節の変わり目ですので、お体に気を付けてお過ごしください。", "じめじめした日が続きますので、お体に気を付けてお過ごしください。", "暑い日が続きますので、お体に気を付けてお過ごしください。", "暑い日が続きますので、お体に気を付けてお過ごしください。", "まだ暑い日もありますので、お体に気を付けてお過ごしください。", "朝晩冷えるようになりましたので、お体に気を付けてお過ごしください。", "朝晩冷えるようになりましたので、お体に気を付けてお過ごしください。", "寒くなってきましたので、お体に気を付けてお過ごしください。"],
+  C: ["寒いから、体に気を付けてね。", "寒いから、体に気を付けてね。", "季節の変わり目だから、体に気を付けてね。", "季節の変わり目だから、体に気を付けてね。", "季節の変わり目だから、体に気を付けてね。", "じめじめするけど、体に気を付けてね。", "暑いから、体に気を付けてね。", "暑いから、体に気を付けてね。", "まだ暑いから、体に気を付けてね。", "朝晩冷えるから、体に気を付けてね。", "朝晩冷えるから、体に気を付けてね。", "寒くなってきたから、体に気を付けてね。"]
 };

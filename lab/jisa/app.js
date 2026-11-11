@@ -97,7 +97,7 @@
       info.append(nm, el("span", "c-sub", `${p.country}・${utcLabel(off)}`));
       const diff = (off - baseOff) / 60;
       const dTxt = i === 0 ? "" : diff === 0 ? "時差なし" : `${diff > 0 ? "+" : "−"}${Math.abs(diff)}時間`;
-      const tm = el("div", "c-time"); tm.append(el("b", null, hm(pt)), el("span", null, dTxt || "いま"));
+      const tm = el("div", "c-time"); tm.append(el("b", null, hm(pt)), el("span", null, dTxt || "今"));
       const btns = el("div", "c-btns");
       if (i > 0) {
         const up = el("button", "mini", "基準に"); up.type = "button";
@@ -118,7 +118,7 @@
       li.append(info, tm, btns);
       ul.append(li);
     });
-    $("nowLine").textContent = ps[0] ? `いまの時刻（${ps.length}都市）` : "";
+    $("nowLine").textContent = ps[0] ? `今の時刻（${ps.length}都市）` : "";
   }
 
   // ---------- 探す ----------
@@ -274,7 +274,7 @@
       s.append(`${ps[0].name}で ` + ranges.map(x => x.from === x.to ? `${x.from}:00` : `${x.from}:00〜${x.to}:00`).join("、") + " に始めるとき");
     } else {
       s.append(el("b", null, "全員がそろう時間はありません。"));
-      s.append(ps.length > 2 ? "△は、1都市だけ時間外の行です。" : "色の薄い時間なら、起きている時間です。");
+      s.append(ps.length > 2 ? "△は、1都市だけ時間外の行です。" : "色の薄い行は、起きている時間です。");
     }
   }
   function pick(h) {

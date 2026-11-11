@@ -157,7 +157,7 @@
     $("alerts").replaceChildren(...al.map(({ h, s }) => {
       const d = el("div", "alert " + s.cls);
       d.append(el("span", null, `${h.k}：${s.text}`));
-      const b = el("button", "btn small", "済んだ"); b.type = "button";
+      const b = el("button", "btn small", "済み"); b.type = "button";
       b.addEventListener("click", () => markDone(p, h));
       d.append(b); return d;
     }));
@@ -184,12 +184,12 @@
     });
     const wt = el("button", "tile weight"); wt.type = "button";
     const lastW = st.logs.filter(l => l.pet === p.id && l.k === "体重").slice(-1)[0];
-    wt.append(icon("体重"), el("b", null, "体重"), el("span", "cnt", lastW ? fmtW(lastW.v, p.unit) : "未記録"), el("small", null, lastW ? `${full(lastW.t.slice(0, 10))}` : "はかったら入れる"));
+    wt.append(icon("体重"), el("b", null, "体重"), el("span", "cnt", lastW ? fmtW(lastW.v, p.unit) : "未記録"), el("small", null, lastW ? `${full(lastW.t.slice(0, 10))}` : "量ったら入れる"));
     wt.setAttribute("aria-label", "体重を記録");
     wt.addEventListener("click", () => { wOpen = true; renderToday(p); $("wIn").focus(); });
     $("care").replaceChildren(...tiles, wt);
     $("wForm").hidden = !wOpen; $("wUnit").textContent = p.unit; $("wIn").placeholder = p.unit === "g" ? "120" : "4.2";
-    $("doneMsg").textContent = !goal ? "" : met === goal ? `${p.name}の今日のお世話は、ぜんぶ済みました。` : `今日のチェック：${goal}つのうち${met}つ済み`;
+    $("doneMsg").textContent = !goal ? "" : met === goal ? `${p.name}の今日のお世話は、全て済みました。` : `今日のチェック：${goal}つのうち${met}つ済み`;
     $("doneMsg").classList.toggle("all", goal > 0 && met === goal);
     const tl = logs.slice().sort((a, b) => a.t < b.t ? 1 : a.t > b.t ? -1 : 0);
     $("timeline").replaceChildren(...tl.map(l => {
@@ -275,10 +275,10 @@
       meta.push(h.next ? "次の日を指定" : h.n ? `${h.u === "m" && h.n % 12 === 0 ? h.n / 12 + "年" : h.n + (h.u === "m" ? "か月" : "日")}ごと（目安）` : "間隔なし");
       if (h.note) meta.push(h.note);
       info.append(el("small", null, meta.join("・")));
-      info.setAttribute("aria-label", `${h.k}、${s.text}。押すと直せます`);
+      info.setAttribute("aria-label", `${h.k}、${s.text}。押すと編集できます`);
       info.addEventListener("click", () => openHealth(h.id));
-      const b = el("button", "btn small", "済んだ"); b.type = "button";
-      b.setAttribute("aria-label", `${h.k}が今日済んだ`);
+      const b = el("button", "btn small", "済み"); b.type = "button";
+      b.setAttribute("aria-label", `${h.k}を今日済みにする`);
       b.addEventListener("click", () => markDone(p, h));
       li.append(info, b); return li;
     }));
@@ -288,7 +288,7 @@
     if (h.last && h.last !== today) h.hist.push(h.last);
     h.last = today; h.next = ""; save(); render();
     const d = due(h);
-    toast(d ? `${h.k}：済み。次は${full(d)}ごろです。` : `${h.k}：今日済んだと記録しました。`, () => { restore(snap); render(); });
+    toast(d ? `${h.k}：済み。次は${full(d)}ごろです。` : `${h.k}：今日済みにしました。`, () => { restore(snap); render(); });
   }
   let hEdit = null, hKind = "";
   const hFc = window.FreeChoice({
@@ -316,7 +316,7 @@
     if (!h.u) h.n = 0;
     $("hN").disabled = !$("hU").value;
     const d = due(h);
-    let t = d ? `次は ${full(d)}ごろです。` : "前回の日か次の日を入れると、次の日がわかります。";
+    let t = d ? `次は ${full(d)}ごろです。` : "前回の日か次の日を入れると、次の予定日が分かります。";
     if (hKind === "フィラリア予防") t += " フィラリア予防は、蚊のいる季節（地域によりおよそ5〜12月）に毎月飲ませるのが一般的です。";
     if (hKind === "狂犬病の予防注射") t += " 犬の狂犬病の予防注射は、法律で年1回と決められています。";
     $("hHint").textContent = t;
@@ -345,18 +345,18 @@
   $("hForm").addEventListener("submit", e => {
     e.preventDefault();
     const p = pet();
-    if (!hKind) { $("hErr").textContent = "なにの予定かを選ぶか、「＋ 自分で入力」で入れてください。"; return; }
-    if (!hEdit && p.health.some(h => h.k === hKind)) { $("hErr").textContent = `「${hKind}」はもうあります。一覧から押して直してください。`; return; }
+    if (!hKind) { $("hErr").textContent = "何の予定かを選ぶか、「＋ 自分で入力」で入れてください。"; return; }
+    if (!hEdit && p.health.some(h => h.k === hKind)) { $("hErr").textContent = `「${hKind}」はもうあります。一覧から選んで編集してください。`; return; }
     const u = $("hU").value; let n = 0;
     if (u && $("hN").value.trim()) { n = num($("hN").value); if (!Number.isInteger(n) || n < 1 || n > 999) { $("hErr").textContent = "間隔を1以上の数字で入れるか、「決めない」を選んでください。"; $("hN").focus(); return; } }
     const last = $("hLast").value;
-    if (last && last > today) { $("hErr").textContent = "前回の日は、今日までの日付にしてください。"; $("hLast").focus(); return; }
+    if (last && last > today) { $("hErr").textContent = "前回の日は、今日以前の日付にしてください。"; $("hLast").focus(); return; }
     const snap = snapshot();
     const data = { k: hKind, last: isYmd(last) ? last : "", n, u: n ? u : "", next: isYmd($("hNext").value) ? $("hNext").value : "", note: str($("hNote").value, 40) };
     if (hEdit) Object.assign(p.health.find(x => x.id === hEdit), data);
     else p.health.push({ id: uid(), hist: [], ...data });
     save(); $("hDlg").close(); render();
-    toast(hEdit ? "予定を直しました。" : `「${hKind}」を追加しました。`, () => { restore(snap); render(); });
+    toast(hEdit ? "予定を更新しました。" : `「${hKind}」を追加しました。`, () => { restore(snap); render(); });
   });
 
   // ---------- 体重 ----------
@@ -372,7 +372,7 @@
     if (!ws.length) return;
     const last = ws[ws.length - 1], prev = ws[ws.length - 2];
     const box = (k, v, cls) => { const d = el("div", "ws " + (cls || "")); d.append(el("small", null, k), el("b", null, v)); return d; };
-    sum.append(box("いま", fmtW(last.v, p.unit)));
+    sum.append(box("今", fmtW(last.v, p.unit)));
     if (prev) { const diff = last.v - prev.v; sum.append(box("前回から", (diff > 0 ? "+" : diff < 0 ? "−" : "±") + fmtW(Math.abs(diff), p.unit), diff > 0 ? "up" : diff < 0 ? "down" : "")); }
     const old = ws.find(l => days(l.t.slice(0, 10), last.t.slice(0, 10)) <= 183) || ws[0];
     if (old !== last) { const d = last.v - old.v; sum.append(box(`${full(old.t.slice(0, 10))}から`, (d > 0 ? "+" : d < 0 ? "−" : "±") + fmtW(Math.abs(d), p.unit))); }
@@ -442,7 +442,7 @@
     if (!pEdit) $("pUnit").value = defFor(spSel).unit;
     if (pEdit) { $("pHint").textContent = ""; return; }
     const d = defFor(spSel);
-    $("pHint").textContent = spSel ? `今日のチェック：${d.care.filter(c => c[1]).map(c => `${c[0]}${c[1]}回`).join("、") || "ごはん"}。` + (d.health.length ? `予定：${d.health.join("、")}。あとで変えられます。` : "あとで変えられます。") : "";
+    $("pHint").textContent = spSel ? `今日のチェック：${d.care.filter(c => c[1]).map(c => `${c[0]}${c[1]}回`).join("、") || "ごはん"}。` + (d.health.length ? `予定：${d.health.join("、")}。後で変えられます。` : "後で変えられます。") : "";
     $("pErr").textContent = "";
   }
   function openPet(id) {
@@ -465,7 +465,7 @@
     const name = str($("pName").value, 16);
     if (!name) { $("pErr").textContent = "名前を入れてください（例：こむぎ）。"; $("pName").setAttribute("aria-invalid", "true"); $("pName").focus(); return; }
     const birth = $("pBirth").value;
-    if (birth && birth > today) { $("pErr").textContent = "誕生日は今日までの日付にしてください。"; $("pBirth").focus(); return; }
+    if (birth && birth > today) { $("pErr").textContent = "誕生日は今日以前の日付にしてください。"; $("pBirth").focus(); return; }
     const snap = snapshot();
     if (pEdit) {
       const p = st.pets.find(x => x.id === pEdit);
@@ -483,7 +483,7 @@
   });
   $("pDel").addEventListener("click", () => {
     const p = st.pets.find(x => x.id === pEdit); if (!p) return;
-    if (!confirm(`${p.name}と、${p.name}の記録をすべて消しますか？`)) return;
+    if (!confirm(`${p.name}と、${p.name}の記録を全て消しますか？`)) return;
     const snap = snapshot();
     st.pets = st.pets.filter(x => x !== p); st.logs = st.logs.filter(l => l.pet !== p.id);
     st.cur = st.pets[0] ? st.pets[0].id : ""; save(); $("petDlg").close(); render();
@@ -516,7 +516,7 @@
     st.logs.sort((a, b) => a.t < b.t ? -1 : 1);
     tab = "today"; document.querySelectorAll(".tab").forEach(x => x.setAttribute("aria-pressed", String(x.dataset.tab === "today")));
     save(); render();
-    toast("例を入れました。ボタンを押すと、その時刻で記録されます。", () => { restore(snap); render(); });
+    toast("例を追加しました。ボタンを押すと、その時刻で記録されます。", () => { restore(snap); render(); });
   });
   $("clearSample").addEventListener("click", () => {
     const snap = snapshot();
@@ -566,7 +566,7 @@
     let data = null, custom = null;
     try { if (f.size > 8e6) throw 0; const j = JSON.parse(await f.text()); if (j && j.app === "pet") { data = clean(j.data); custom = j.custom; } } catch (e) { data = null; }
     if (!data || !data.pets.length) { $("moveMsg").textContent = "読み込めませんでした。このアプリで書き出したファイルを選んでください。"; return; }
-    if (st.pets.length && !confirm(`いまの記録を、ファイルの${data.pets.length}匹分と置きかえますか？`)) return;
+    if (st.pets.length && !confirm(`今の記録を、ファイルの${data.pets.length}匹分と置き換えますか？`)) return;
     const snap = snapshot(), csnap = JSON.stringify(readCustom());
     st = data; save();
     if (custom && typeof custom === "object" && !Array.isArray(custom)) { const c = {}; ["species", "care", "health"].forEach(k => { if (Array.isArray(custom[k])) c[k] = custom[k].filter(v => typeof v === "string").slice(0, 60); }); try { localStorage.setItem(CK, JSON.stringify(c)); } catch (e) {} }
