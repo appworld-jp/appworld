@@ -1,34 +1,117 @@
-# ライセンス（利用の条件）
+# 本ソフトウェア利用許諾条件
+
+制定日：2026年11月11日
 
 Copyright © 2026 App World 運営. All rights reserved.
 
-このリポジトリのソースコード、文章、画像、データ（以下「本ソフトウェア」）の権利は、App World 運営が持っています。オープンソースではありません。
+本条件は、App World 運営（以下「運営者」といいます。）が本リポジトリにおいて公開する本ソフトウェアの取扱いについて定めるものです。本ソフトウェアを閲覧し、または利用しようとする者（以下「利用者」といいます。）は、本条件に従う場合に限り、本条件に定める範囲で本ソフトウェアを利用することができます。本条件に定めのない利用は、著作権法その他の法令により禁止されます。
 
-## してよいこと（無料）
+## 第1条（定義）
 
-- App World（https://appworld-1ug.pages.dev ）と App World Lab（https://appworld-lab.pages.dev ）のアプリを、ブラウザで使うこと。個人でも仕事でも使えます。
-- このリポジトリのコードを GitHub 上で見ること。GitHub の利用規約で認められている範囲での閲覧とフォークを含みます。
-- App World への掲載を申し込むこと、不具合を知らせること。
+本条件において使用する用語の意義は、次の各号に定めるとおりとします。
 
-## 有料の利用許諾が必要なこと
+1. 「本リポジトリ」とは、GitHub 上のリポジトリ appworld-jp/appworld（その過去の版、分岐、複製を含みます。）をいいます。
+2. 「本ソフトウェア」とは、本リポジトリに含まれる一切のソースコード、オブジェクトコード、設定ファイル、文章、画像、アイコン、データ、デザイン、画面構成、およびこれらに付随する文書をいい、その全部または一部を問いません。ただし、第9条に定める第三者ソフトウェアを除きます。
+3. 「本サービス」とは、運営者が本ソフトウェアを用いて提供する Web サイト App World（https://appworld-1ug.pages.dev ）、App World Lab（https://appworld-lab.pages.dev ）、およびこれらの後継となる運営者の Web サイトをいいます。
+4. 「二次的著作物等」とは、本ソフトウェアを改変、翻案、翻訳、移植、抽出、要約し、または他のソフトウェアと結合して作成された一切のものをいい、本ソフトウェアに依拠して作成された実質的に同一または類似のものを含みます。
+5. 「有償利用許諾」とは、第5条に基づき、運営者が利用者との間で別途締結する有償の利用許諾契約をいいます。
 
-次のことをするには、App World 運営から有料の利用許諾を受ける必要があります。
+## 第2条（権利の帰属）
 
-- 本ソフトウェアの全部または一部を、複製・改変して使うこと（自分の端末やサーバーで動かすことを含みます）
-- 改変したものを含めて、公開・配布・販売すること
-- 自分のアプリやサービスの一部として組み込むこと
+1. 本ソフトウェアに関する著作権、商標権、その他一切の知的財産権および権利（以下「知的財産権等」といいます。）は、運営者または正当な権利者に帰属します。
+2. 本ソフトウェアの閲覧、取得、利用その他いかなる行為によっても、本条件または有償利用許諾に明示的に定めるものを除き、利用者に対して知的財産権等が移転し、または許諾されることはありません。
+3. 本ソフトウェアは、オープンソースソフトウェアではありません。本リポジトリが公開されていること、または本ソフトウェアを技術的に取得できることは、本ソフトウェアの利用を許諾するものではありません。
 
-利用許諾の購入窓口は準備中です。それまでのお問い合わせは、このリポジトリの issue からお願いします。
+## 第3条（無償で認める行為）
 
-## 保証しないこと
+運営者は、利用者に対し、次の各号に掲げる行為に限り、無償、非独占的、かつ譲渡および再許諾不能の条件で認めます。
 
-本ソフトウェアは現状のまま提供します。動作、正確さ、特定の目的に合うことを保証しません。本ソフトウェアを使って生じた損害について、法律で認められる範囲で責任を負いません。
+1. 本サービスにおいて、Web ブラウザを通じて本ソフトウェアを利用すること（個人的利用か業務上の利用かを問いません。）。ただし、本サービスに対する通常の閲覧および操作の範囲に限ります。
+2. GitHub 上で本リポジトリを閲覧すること、および GitHub 利用規約により GitHub 上で認められる範囲で本リポジトリを分岐（フォーク）すること。ただし、分岐したリポジトリに含まれる本ソフトウェアについても本条件が適用され、GitHub 外での利用その他第4条に定める行為は認められません。
+3. 本サービスへの掲載の申請、不具合の報告、その他運営者が本リポジトリにおいて受け付ける手続を行うこと。
+
+## 第4条（禁止事項）
+
+利用者は、有償利用許諾により個別に認められた範囲を除き、次の各号に掲げる行為をしてはなりません。
+
+1. 本ソフトウェアの全部または一部を複製すること（自己の端末、サーバー、記録媒体への保存を含みます。ただし、Web ブラウザが本サービスの表示のために一時的に行う保存を除きます。）。
+2. 本ソフトウェアを改変し、または二次的著作物等を作成すること。
+3. 本ソフトウェアまたは二次的著作物等を、自己または第三者のために実行、運用、公開、配布、販売、貸与、送信可能化、公衆送信し、または第三者に使用させること。
+4. 本ソフトウェアまたは二次的著作物等を、自己または第三者のアプリケーション、Web サイト、サービス、製品の全部または一部として組み込むこと。
+5. 本ソフトウェアを、ひな形、素材、教材、ソースコードその他の形態で、有償または無償で再頒布し、または再許諾すること。
+6. 本ソフトウェアを、機械学習、人工知能その他の自動処理のための学習用データ、評価用データ、またはデータセットの作成に利用すること、およびそのために本リポジトリまたは本サービスから情報を自動的に収集すること。
+7. 本ソフトウェアに付された著作権表示、本条件への参照その他の権利表示を削除し、または改変すること。
+8. 本サービスの名称、ロゴその他運営者を示す表示を、運営者の許可なく使用し、または運営者もしくは本サービスが関与、提携、推奨していると誤認させるおそれのある態様で使用すること。
+9. 本サービスを、フレームその他の方法で自己の Web サイト等に埋め込み、または本サービスと誤認させる態様で表示すること。
+10. 本サービスに過度の負荷をかける行為、本サービスのセキュリティ上の措置を回避する行為、その他本サービスの運営を妨げる行為。
+11. 前各号に掲げる行為を第三者に行わせ、またはこれを助長すること。
+12. 前各号に掲げる行為と実質的に同一の結果をもたらす行為、または本条件の趣旨を潜脱する行為。
+
+## 第5条（有償利用許諾）
+
+1. 前条各号に掲げる行為を希望する者は、運営者が定める方法により、有償利用許諾を締結する必要があります。
+2. 有償利用許諾の対象、範囲、期間、対価その他の条件は、当該有償利用許諾の定めによるものとし、本条件と有償利用許諾の内容が異なる場合は、当該有償利用許諾の対象となる本ソフトウェアの範囲において、有償利用許諾の定めが優先します。
+3. 有償利用許諾の申込窓口は、運営者が本サービスまたは本リポジトリにおいて告知します。告知までの間の問合せは、本リポジトリの issue により受け付けます。
+
+## 第6条（投稿内容の取扱い）
+
+1. 利用者が本リポジトリに投稿した issue、コメント、プルリクエストその他の内容（以下「投稿内容」といいます。）について、利用者は、運営者に対し、本サービスおよび本ソフトウェアの運営、改善、紹介のために、無償、無期限、地域の限定なく、利用（複製、改変、公開、再許諾を含みます。）することを許諾し、運営者およびその承継人に対して著作者人格権を行使しないものとします。
+2. 利用者は、投稿内容が第三者の権利を侵害しないことを保証します。
+3. 運営者は、プルリクエストを受け入れる義務を負いません。
+
+## 第7条（無保証）
+
+本ソフトウェアおよび本サービスは現状有姿で提供されるものであり、運営者は、本ソフトウェアおよび本サービスについて、動作、正確性（料理、法令上の手続、防災、健康、洗濯、日付計算その他本ソフトウェアに含まれる情報の正確性を含みます。）、完全性、有用性、特定目的への適合性、第三者の権利の非侵害、不具合が生じないこと、および継続的に提供されることを含め、明示または黙示を問わず、いかなる保証も行いません。
+
+## 第8条（責任の制限）
+
+1. 運営者は、本ソフトウェアまたは本サービスに関連して利用者に生じた損害について、運営者の故意または重大な過失による場合を除き、責任を負いません。
+2. 前項の規定にかかわらず、消費者契約法その他の法令により運営者の責任を免除する定めが無効となる場合、運営者は、運営者の故意または重大な過失による場合を除き、利用者に現実に生じた直接かつ通常の損害に限り責任を負います。
+3. 利用者が本条件に違反して本ソフトウェアを利用したことにより生じた損害について、運営者は一切の責任を負いません。
+
+## 第9条（第三者ソフトウェア）
+
+本リポジトリには、運営者以外の者が権利を有する次のソフトウェアが含まれます。これらには、本条件に代えて、それぞれの権利者が定める条件が適用されます。
+
+| 名称 | 場所 | 条件 |
+| --- | --- | --- |
+| three.js | `site/static/three.min.js` | MIT License（Copyright 2010-2021 Three.js Authors。ファイル冒頭の表示による） |
+| Zen Kaku Gothic New（フォント） | `site/static/fonts/` | SIL Open Font License 1.1（同じ場所の `OFL-LICENSE.txt`） |
+
+## 第10条（違反に対する措置）
+
+1. 利用者が本条件に違反した場合、本条件または有償利用許諾により利用者に認められた一切の権利は、運営者の通知を要することなく直ちに消滅します。
+2. 前項の場合、利用者は、直ちに本ソフトウェアおよび二次的著作物等の利用を中止し、その複製物（公開または配布したものを含みます。）を削除し、または回収するものとします。
+3. 運営者は、本条件の違反に対し、差止め、損害賠償の請求その他法令に基づく一切の措置をとることができます。
+4. 運営者が本条件に基づく権利を行使しないことは、当該権利を放棄するものではありません。
+
+## 第11条（本条件の変更）
+
+1. 運営者は、民法第548条の4の規定その他の法令に従い、本条件を変更することができます。
+2. 運営者は、本条件を変更する場合、変更後の内容および効力発生日を、本リポジトリまたは本サービスにおいて、効力発生日の相当期間前までに告知します。
+3. 変更後の本条件は、効力発生日以降の本ソフトウェアの閲覧および利用に適用されます。
+
+## 第12条（分離可能性）
+
+本条件のいずれかの条項またはその一部が、法令等により無効または執行不能と判断された場合であっても、本条件の残りの規定および一部が無効または執行不能と判断された規定の残りの部分は、継続して完全に効力を有するものとします。
+
+## 第13条（準拠法および管轄）
+
+1. 本条件の解釈および適用は、日本法に準拠します。
+2. 本条件または本ソフトウェアに関して生じた一切の紛争については、運営者の所在地を管轄する地方裁判所を第一審の専属的合意管轄裁判所とします。
+
+## 第14条（言語）
+
+本条件は日本語を正文とします。本条件の他の言語による要約または翻訳は参考のためのものであり、日本語の正文と内容が異なる場合は、日本語の正文が優先します。
 
 ---
 
-## Summary in English
+## Summary in English (for reference only; the Japanese text prevails)
 
-Copyright © 2026 App World operator. All rights reserved. This is not open source.
-- Free: using the apps on App World and App World Lab in a browser; viewing (and forking on GitHub as permitted by GitHub's Terms of Service); submitting listings and reporting issues.
-- A paid license is required to copy, modify, run your own copy, publish, distribute, sell, or include any part of this software in your own app or service. Contact: an issue in this repository until the store opens.
-- Provided "as is", without warranty of any kind.
+Copyright © 2026 App World operator. All rights reserved. This software is **not** open source.
+
+- **Permitted free of charge:** using the hosted services (App World and App World Lab) through a web browser; viewing this repository and forking it on GitHub only to the extent the GitHub Terms of Service allow (forks remain subject to these terms); submitting listings and reporting issues.
+- **Prohibited without a separate paid license:** copying (other than ordinary browser caching), modifying or creating derivative works; running, hosting, publishing, distributing, selling, lending or transmitting the software or derivatives; incorporating any part into your own app, site, service or product; redistributing or sublicensing it as templates, materials or source code; using it to train or evaluate machine learning or AI systems or to build datasets, including automated collection for that purpose; removing notices; using the operator's names or logos or implying endorsement; framing the services; interfering with the services; or circumventing these terms by any equivalent means.
+- **Contributions:** content you post to this repository may be used by the operator free of charge.
+- **Third-party components** (three.js under MIT; Zen Kaku Gothic New under SIL OFL 1.1) are governed by their own licenses.
+- **No warranty; limitation of liability; termination on breach; Japanese law; exclusive jurisdiction of the district court for the operator's location.**
