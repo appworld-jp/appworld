@@ -121,7 +121,7 @@
         const h = el("h2", null, r.name);
         h.append(el("span", "n", `${r.spots.length}か所`));
         const more = el("button", "icon-btn", "編集"); more.type = "button";
-        more.setAttribute("aria-label", `${r.name}の名前を変える・削除`);
+        more.setAttribute("aria-label", `${r.name}の名前の変更・削除`);
         more.addEventListener("click", () => { editingRoom = r.id; renderList(); });
         head.append(h, more);
       }
@@ -293,13 +293,13 @@
     const spots = st.rooms.flatMap(r => r.spots.map(s => ({ r, s }))).filter(x => x.s.w || x.s.h || x.s.d);
     if (!spots.length) {
       const e = el("div", "fit-empty");
-      e.append(el("p", null, "まだ比べる場所がありません。"), el("p", null, "「寸法」のタブで、置きたい場所の寸法をメモしてから使います。"));
+      e.append(el("p", null, "まだ比べる場所がありません。"), el("p", null, "「寸法」タブで、置きたい場所の寸法を先にメモしてください。"));
       const b = el("button", "btn small", "寸法をメモする"); b.type = "button";
       b.addEventListener("click", () => setTab("list"));
       e.append(b); box.append(e); return;
     }
     if (!f.w && !f.h && !f.d) {
-      box.append(el("p", "fit-empty", `幅・高さ・奥行きを入れると、メモした${spots.length}か所に入るかどうかがここに出ます。`));
+      box.append(el("p", "fit-empty", `幅・高さ・奥行きを入れると、メモした${spots.length}か所に入るかどうかをここに表示します。`));
       return;
     }
     const groups = { ok: [], rot: [], ng: [] };
@@ -310,7 +310,7 @@
     groups.ok.sort((a, b) => b.c.minSlack - a.c.minSlack);
     const what = f.name ? `「${f.name}」` : "この大きさ";
     const nOk = groups.ok.length + groups.rot.length;
-    sum.textContent = nOk ? `${what}は、${nOk}か所に入ります。` : `${what}が入る場所は、ありませんでした。`;
+    sum.textContent = nOk ? `${what}は、${nOk}か所に入ります。` : `${what}が入る場所はありませんでした。`;
     sum.classList.add(nOk ? "yes" : "no");
     const sec = (key, title, items) => {
       if (!items.length) return;
@@ -369,7 +369,7 @@
     try { if (f.size > 2e6) throw 0; const j = JSON.parse(await f.text()); if (j && j.app === "sunpo") data = clean(j.data); } catch (e) { data = null; }
     if (!data || !data.rooms.length) { $("moveMsg").textContent = "読み込めませんでした。このアプリで書き出したファイルを選んでください。"; return; }
     const n = data.rooms.reduce((k, r) => k + r.spots.length, 0);
-    if (st.rooms.length && !confirm(`いまのメモを、ファイルの${n}か所分と置きかえますか？`)) return;
+    if (st.rooms.length && !confirm(`今のメモを、ファイルの${n}か所分に置き換えますか？`)) return;
     const snap = snapshot();
     st = data; save(); setUnit(st.unit);
     $("moveMsg").textContent = `${data.rooms.length}部屋・${n}か所の寸法を読み込みました。`;

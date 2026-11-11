@@ -2,7 +2,7 @@
 <html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>持ち物チェック</title>
-<meta name="description" content="曜日ごとの持ち物を家族の分まで登録しておくと、今日と明日の持ち物がひと目でわかります。前の晩にタップでそろえられます。">
+<meta name="description" content="曜日ごとの持ち物を家族の分まで登録できます。今日と明日の持ち物がひと目で分かり、前の晩にチェックしながらそろえられます。">
 <meta name="theme-color" content="#D23B4B">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="manifest" href="manifest.webmanifest">
@@ -26,9 +26,9 @@
       <button type="button" class="day" id="dayT" aria-pressed="false"><b>今日</b><small id="dayTd"></small></button>
       <button type="button" class="day" id="dayN" aria-pressed="false"><b>明日</b><small id="dayNd"></small></button>
     </div>
-    <p class="hint" id="nightHint" hidden>夕方からは、明日の分を出しています。</p>
+    <p class="hint" id="nightHint" hidden>夕方からは明日の分を表示しています。</p>
 
-    <div class="people" id="people" role="group" aria-label="だれの持ち物"></div>
+    <div class="people" id="people" role="group" aria-label="誰の持ち物"></div>
 
     <section class="sheet" id="sheet" aria-labelledby="sheetH">
       <div class="sheet-h">
@@ -41,8 +41,8 @@
         <span class="stamp">全部<br>そろった！</span>
       </div>
       <div class="nothing" id="nothing" hidden>
-        <p class="nothing-h">この日の持ち物は、まだありません。</p>
-        <p>「持ち物を編集」から、曜日ごとの持ち物を入れられます。</p>
+        <p class="nothing-h">この日の持ち物はまだありません。</p>
+        <p>「持ち物を編集」から曜日ごとに登録できます。</p>
       </div>
     </section>
 
@@ -53,19 +53,19 @@
   </section>
 
   <section id="viewSetup" class="panel" aria-labelledby="setupH" hidden>
-    <h2 id="setupH">だれの持ち物ですか？</h2>
-    <p class="sub" id="setupSub">ひな形を選ぶと、よくある持ち物が入ります。あとで自由に直せます。</p>
+    <h2 id="setupH">誰の持ち物ですか？</h2>
+    <p class="sub" id="setupSub">ひな形を選ぶと、よくある持ち物が入ります。後から自由に直せます。</p>
     <form id="setupForm" novalidate>
-      <label class="field"><span>名前</span><input id="pName" type="text" maxlength="12" autocomplete="off" placeholder="自分、ひなた など"></label>
+      <label class="field"><span>名前</span><input id="pName" type="text" maxlength="12" autocomplete="off" placeholder="ひなた"></label>
       <fieldset class="presets">
         <legend>持ち物のひな形</legend>
         <label class="preset"><input type="radio" name="preset" value="elem" checked><span class="p-card"><b>小学生</b><small>連絡帳・筆箱・体操服・習字道具</small></span></label>
         <label class="preset"><input type="radio" name="preset" value="junior"><span class="p-card"><b>中学生</b><small>生徒手帳・弁当・体操服・部活の着替え</small></span></label>
         <label class="preset"><input type="radio" name="preset" value="work"><span class="p-card"><b>会社員</b><small>鍵・財布・スマホ・社員証</small></span></label>
-        <label class="preset"><input type="radio" name="preset" value="none"><span class="p-card"><b>あとで入れる</b><small>空っぽから始めます</small></span></label>
+        <label class="preset"><input type="radio" name="preset" value="none"><span class="p-card"><b>後で入れる</b><small>何も入れずに始めます</small></span></label>
       </fieldset>
       <div class="row-btns">
-        <button class="btn" type="submit" id="pAdd">はじめる</button>
+        <button class="btn" type="submit" id="pAdd">始める</button>
         <button class="btn ghost" type="button" id="pCancel">やめる</button>
       </div>
     </form>
@@ -81,7 +81,7 @@
 
     <section class="block" aria-labelledby="bDaily">
       <h3 id="bDaily">毎日</h3>
-      <label class="switch"><input type="checkbox" id="edWeekend"><span>土日も出す</span></label>
+      <label class="switch"><input type="checkbox" id="edWeekend"><span>土日も表示する</span></label>
       <ul class="chips" id="edDaily"></ul>
       <form class="add" data-k="daily" novalidate>
         <input type="text" maxlength="60" autocomplete="off" placeholder="鍵、財布、ハンカチ" aria-label="毎日の持ち物を追加">
@@ -116,7 +116,7 @@
 
   <details class="move">
     <summary>データの引っ越し</summary>
-    <p>機種変更のときは、ファイルに書き出して、新しい端末で読み込みます。</p>
+    <p>機種変更のときは、ファイルに書き出して新しい端末で読み込んでください。</p>
     <div class="row-btns">
       <button type="button" class="btn ghost small" id="expBtn">ファイルに書き出す</button>
       <label class="btn ghost small file-btn">ファイルを読み込む<input type="file" id="impFile" accept="application/json,.json"></label>

@@ -2,7 +2,7 @@
 <html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>冷凍ストック帳</title>
-<meta name="description" content="冷凍庫に何が、いつから入っているかを記録。古い順に並ぶので、奥で眠っている物を先に使えます。食品ごとの保存の目安つき。">
+<meta name="description" content="冷凍庫に何が、いつから入っているかを記録できます。古い順に並ぶので、奥で眠っている物から先に使えます。食品ごとの保存の目安付き。">
 <meta name="theme-color" content="#1C6E9E">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="manifest" href="manifest.webmanifest">
@@ -16,14 +16,14 @@
   <div class="top-in">
     <a class="back" href="../">App World Lab</a>
     <h1><svg class="flake" viewBox="0 0 40 40" width="34" height="34" aria-hidden="true"><path d="M20 3v34M5.3 11.5l29.4 17M5.3 28.5l29.4-17M15 5l5 5 5-5M15 35l5-5 5 5M4 17l7 1-2 6M36 23l-7-1 2-6M4 23l7-1-2-6M36 17l-7 1 2 6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>冷凍ストック帳</h1>
-    <p class="lead">冷凍庫の中身と入れた日がわかるので、古い物から使えます。</p>
+    <p class="lead">冷凍庫の中身と入れた日が分かるので、古い物から使えます。</p>
   </div>
 </header>
 
 <main class="wrap">
   <form class="add" id="addForm" novalidate aria-label="冷凍庫に入れた物を記録">
     <div class="add-row">
-      <label class="f-name"><span class="sr">品名</span><input id="aName" type="text" maxlength="30" autocomplete="off" placeholder="豚こま（下味つき）" enterkeyhint="done"></label>
+      <label class="f-name"><span class="sr">品名</span><input id="aName" type="text" maxlength="30" autocomplete="off" placeholder="豚こま（下味付き）" enterkeyhint="done"></label>
       <label class="f-amt"><span class="sr">量</span><input id="aAmt" type="text" maxlength="12" autocomplete="off" placeholder="2袋"></label>
     </div>
     <div class="add-opts">
@@ -73,22 +73,22 @@
         <rect x="48" y="56" width="40" height="18" rx="4" fill="#D7EEDB"/><rect x="50" y="90" width="58" height="16" rx="4" fill="#BFE0F0"/>
         <path d="M118 12l6 6M124 12l-6 6" stroke="#7BBBD9" stroke-width="2.5" stroke-linecap="round"/>
       </svg>
-      <p class="empty-h">冷凍庫に入れた物を、上の欄から記録します。</p>
-      <p>入れた日から何日たったかと、おいしく食べられる目安がわかります。</p>
+      <p class="empty-h">上の欄から、冷凍庫に入れた物を記録してください。</p>
+      <p>入れた日から何日たったかと、おいしく食べられる目安が分かります。</p>
       <button type="button" class="btn-ghost" id="sample">例を入れてみる</button>
     </div>
   </section>
 
   <details class="about">
     <summary>保存の目安について</summary>
-    <p>目安は、家庭の冷凍庫で、空気を抜いてしっかり包んだ場合の、おいしく食べられる期間のおおよそです。安全を保証するものではありません。</p>
-    <p>霜がたくさん付いた物や、色やにおいがおかしい物は、食べないでください。市販の冷凍食品は、袋に書いてある期限に従ってください。</p>
+    <p>目安は、家庭の冷凍庫で空気を抜いてしっかり包んだ場合に、おいしく食べられるおおよその期間です。安全を保証するものではありません。</p>
+    <p>霜がたくさん付いた物や、色やにおいがおかしい物は食べないでください。市販の冷凍食品は、袋に書いてある期限に従ってください。</p>
     <ul class="tbl" id="guideList"></ul>
   </details>
 
   <details class="about" id="move">
     <summary>データの引っ越し</summary>
-    <p>記録はこの端末の中にだけあります。機種変更のときは、ファイルに書き出して、新しい端末で読み込みます。</p>
+    <p>機種変更のときは、ファイルに書き出して新しい端末で読み込んでください。</p>
     <div class="row">
       <button type="button" class="btn-ghost small" id="expBtn">ファイルに書き出す</button>
       <label class="btn-ghost small file-btn">ファイルを読み込む<input type="file" id="impFile" accept="application/json,.json"></label>

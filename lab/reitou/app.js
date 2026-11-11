@@ -98,7 +98,7 @@
     if (t.lo == null) return { key: "none", age, text: "目安なし" };
     const frac = Math.min(1, age / t.hi);
     if (age > t.hi) return { key: "over", age, frac, t, text: `目安の${t.text}を過ぎました` };
-    if (age >= t.lo) return { key: "soon", age, frac, t, text: `早めに使いましょう（目安${t.text}）` };
+    if (age >= t.lo) return { key: "soon", age, frac, t, text: `早めに使ってください（目安${t.text}）` };
     return { key: "ok", age, frac, t, text: `あと${t.lo - age}日は余裕（目安${t.text}）` };
   }
   const ageText = a => a === 0 ? "今日入れた" : `${a}日目`;
@@ -150,9 +150,9 @@
     $("aExpF").hidden = !t.exp;
     const g = $("aGuide"); g.replaceChildren();
     if (!$("aName").value.trim()) return;
-    if (t.exp) g.append("市販の冷凍食品は、袋の期限で知らせます。");
+    if (t.exp) g.append("市販の冷凍食品は、袋の期限をもとに表示します。");
     else if (tv.typeL) g.append(`「${tv.typeL}」には保存の目安がありません。入れた日から何日たったかを表示します。`);
-    else if (t.lo == null) g.append("種類を選ぶと、保存の目安がわかります（「その他」は目安なし）。");
+    else if (t.lo == null) g.append("種類を選ぶと、保存の目安が分かります（「その他」は目安なし）。");
     else { g.append(`${t.label}の目安は `); g.append(el("b", null, t.text)); g.append(" です。"); }
   }
   $("aName").addEventListener("input", () => { if (!typeTouched) $("aType").value = guessType($("aName").value); syncAdd(); $("aErr").textContent = ""; $("aName").removeAttribute("aria-invalid"); });
@@ -169,7 +169,7 @@
     const name = $("aName").value.trim();
     if (!name) { $("aErr").textContent = "品名を入れてください（例：ごはん）。"; $("aName").setAttribute("aria-invalid", "true"); $("aName").focus(); return; }
     const date = $("aDate").value;
-    if (date && (!isYmd(date) || date > today)) { $("aErr").textContent = "冷凍した日は、今日より前の日を選んでください。"; $("aDate").focus(); return; }
+    if (date && (!isYmd(date) || date > today)) { $("aErr").textContent = "冷凍した日は、今日までの日にちを選んでください。"; $("aDate").focus(); return; }
     const place = (document.querySelector("input[name=ap]:checked") || {}).value || "";
     if ($("aType").value === "__free") { $("aErr").textContent = "種類を入れて「追加」を押すか、一覧から選んでください。"; return; }
     const it = cleanItem({ name, amt: $("aAmt").value, ...typeOf($("aType").value), place, date: date || today, exp: $("aExp").value });
@@ -207,7 +207,7 @@
   let pf = "";
   function renderPf() {
     const own = [...new Set(st.items.map(i => i.place).filter(p => p && !PLACES.includes(p)))];
-    const opts = [["", "すべて"], ...PLACES.filter(p => st.items.some(i => i.place === p)).map(p => [p, p]), ...own.map(p => [p, p])];
+    const opts = [["", "全て"], ...PLACES.filter(p => st.items.some(i => i.place === p)).map(p => [p, p]), ...own.map(p => [p, p])];
     if (st.items.some(i => !i.place) && opts.length > 1) opts.push(["-", "場所なし"]);
     if (!opts.some(([v]) => v === pf)) pf = "";
     $("pf").hidden = opts.length < 2;
@@ -324,7 +324,7 @@
     const name = $("eName").value.trim();
     if (!name) { $("eErr").textContent = "品名を入れてください。"; $("eName").setAttribute("aria-invalid", "true"); $("eName").focus(); return; }
     const d = $("eDate").value;
-    if (!isYmd(d) || d > today) { $("eErr").textContent = "冷凍した日は、今日より前の日を選んでください。"; $("eDate").focus(); return; }
+    if (!isYmd(d) || d > today) { $("eErr").textContent = "冷凍した日は、今日までの日にちを選んでください。"; $("eDate").focus(); return; }
     if ($("eType").value === "__free" || $("ePlace").value === "__free") { $("eErr").textContent = "入れた言葉の横の「追加」を押すか、一覧から選んでください。"; return; }
     const it = cleanItem({ id: editId, name, amt: $("eAmt").value, place: $("ePlace").value, ...typeOf($("eType").value), date: d, exp: $("eExp").value });
     st.items = st.items.map(x => x.id === editId ? it : x); save(); closeD($("edit")); render();
@@ -375,7 +375,7 @@
     let data = null;
     try { if (f.size > 5e6) throw 0; const j = JSON.parse(await f.text()); if (j && j.app === "reitou") data = clean(j.data); } catch (e) { data = null; }
     if (!data || (!data.items.length && !data.hist.length)) { $("moveMsg").textContent = "読み込めませんでした。このアプリで書き出したファイルを選んでください。"; return; }
-    if (st.items.length && !confirm(`いまの記録を、ファイルの${data.items.length}品と置きかえますか？`)) return;
+    if (st.items.length && !confirm(`今の記録を、ファイルの${data.items.length}品に置き換えますか？`)) return;
     const snap = snapshot();
     st = data; save(); render();
     $("moveMsg").textContent = `${data.items.length}品を読み込みました。`;

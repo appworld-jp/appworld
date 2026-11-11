@@ -536,7 +536,7 @@
     let data = null;
     try { if (f.size > 5e6) throw 0; const j = JSON.parse(await f.text()); if (j && j.app === "bunryo") data = clean(j.data); } catch (e) { data = null; }
     if (!data || (!data.saved.length && !data.cur.text)) { $("moveMsg").textContent = "読み込めませんでした。このアプリで書き出したファイルを選んでください。"; return; }
-    if (st.saved.length && !confirm(`保存したレシピを、ファイルの${data.saved.length}件と置きかえますか？`)) return;
+    if (st.saved.length && !confirm(`保存したレシピを、ファイルの${data.saved.length}件に置き換えますか？`)) return;
     const snap = snapshot();
     st = data; save(); fillInputs(); render(); renderSaved();
     $("moveMsg").textContent = `${data.saved.length}件のレシピを読み込みました。`;

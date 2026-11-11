@@ -93,8 +93,8 @@
       const c = el("article", "card"); c.dataset.id = it.id;
       const head = el("div", "c-head");
       const badge = el("span", "letter", LETTERS[i]); badge.setAttribute("aria-hidden", "true");
-      const name = inp(it.name, ["コーヒー 大袋", "コーヒー 小袋", "詰めかえ用", "まとめ買い", "お徳用", "ほかの店"][i], "text", 30);
-      name.className = "name"; name.setAttribute("aria-label", `${LETTERS[i]}の商品名（なくてもかまいません）`);
+      const name = inp(it.name, ["コーヒー 大袋", "コーヒー 小袋", "詰め替え用", "まとめ買い", "お徳用", "ほかの店"][i], "text", 30);
+      name.className = "name"; name.setAttribute("aria-label", `${LETTERS[i]}の商品名（省略可）`);
       head.append(badge, name);
       if (st.items.length > MIN) {
         const rm = el("button", "rm", "×"); rm.type = "button"; rm.setAttribute("aria-label", `${label(it, i)}を外す`);
@@ -107,7 +107,7 @@
       const price = inp(it.price, ["398", "158", "980", "1280", "498", "348"][i], "decimal", 12);
       const tax = el("button", "tax", it.tax === "out" ? "税抜" : "税込"); tax.type = "button";
       tax.setAttribute("aria-pressed", String(it.tax === "out"));
-      tax.setAttribute("aria-label", "値札が税抜きなら押して切りかえ");
+      tax.setAttribute("aria-label", "税抜きの値札");
       const priceRow = el("div", "row1");
       const pf = field("値段", price, "円", "price"); priceRow.append(pf, tax);
       const qty = inp(it.qty, ["500", "200", "400", "1", "300", "250"][i]);
@@ -161,7 +161,7 @@
         return;
       }
       if (r.fam !== fam) {
-        ref.err.textContent = `単位の種類がほかとちがうので比べられません。${FAM_WORD[fam] || fam}でそろえてください。`;
+        ref.err.textContent = `単位の種類がほかと違うので比べられません。${FAM_WORD[fam] || fam}でそろえてください。`;
         ref.c.classList.add("off");
         return;
       }
@@ -181,7 +181,7 @@
       const m = findMemo(it.name, r.fam);
       if (m) {
         const d = r.unitPrice / m.unitPrice - 1;
-        ref.memoLine.textContent = `底値メモ：${base[0]}あたり${fmt(m.unitPrice * base[1])}円` + (Math.abs(d) < 0.005 ? "（同じ）" : d > 0 ? `（いまは${Math.round(d * 100)}%高い）` : "（いまのほうが安い！）");
+        ref.memoLine.textContent = `底値メモ：${base[0]}あたり${fmt(m.unitPrice * base[1])}円` + (Math.abs(d) < 0.005 ? "（同じ）" : d > 0 ? `（今は${Math.round(d * 100)}%高い）` : "（今のほうが安い！）");
       }
     });
     $("baseBtn").textContent = base ? base[0] + "あたり" : "100gあたり";
@@ -193,7 +193,7 @@
     const t = $("barTxt"); t.replaceChildren();
     $("bar").classList.toggle("has", !!winner);
     $("memoBtn").hidden = !winner;
-    if (valid.length < 2) { t.append(el("p", "bar-sub", "値段と量を2つ以上入れると、ここに答えが出ます。")); return; }
+    if (valid.length < 2) { t.append(el("p", "bar-sub", "2つ以上の商品に値段と量を入れると、ここで比べます。")); return; }
     if (!winner) { t.append(el("p", "bar-main", "どれも同じ値段です"), el("p", "bar-sub", `${base[0]}あたり${fmt(min * base[1])}円`)); return; }
     const second = Math.min(...valid.filter(r => r.unitPrice - min > 1e-9).map(r => r.unitPrice));
     const main = el("p", "bar-main"); main.append(el("b", null, label(winner.it, winner.i)), document.createTextNode("がいちばん安い"));
@@ -288,7 +288,7 @@
     let data = null;
     try { if (f.size > 2e6) throw 0; const j = JSON.parse(await f.text()); if (j && j.app === "tanka" && j.data && Array.isArray(j.data.memos)) data = clean(Object.assign({}, j.data, { items: st.items })); } catch (e) { data = null; }
     if (!data) { $("moveMsg").textContent = "読み込めませんでした。このアプリで書き出したファイルを選んでください。"; return; }
-    if (st.memos.length && !confirm(`いまの底値メモを、ファイルの${data.memos.length}件と置きかえますか？`)) return;
+    if (st.memos.length && !confirm(`今の底値メモを、ファイルの${data.memos.length}件に置き換えますか？`)) return;
     const prev = JSON.stringify(st);
     st = data; save(); setRate(st.rate); renderMemos(); update();
     $("moveMsg").textContent = `底値メモ${data.memos.length}件を読み込みました。`;

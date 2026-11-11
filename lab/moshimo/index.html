@@ -24,7 +24,7 @@
       </div>
     </div>
   </div>
-  <nav class="tabs" aria-label="画面の切りかえ">
+  <nav class="tabs" aria-label="画面の切り替え">
     <button type="button" class="tab" id="tabEdit" aria-pressed="true">書く</button>
     <button type="button" class="tab" id="tabShow" aria-pressed="false">見せる</button>
     <button type="button" class="tab" id="tabPrint" aria-pressed="false">印刷</button>
@@ -36,17 +36,17 @@
     <h2 id="pvH"><svg class="pv-ic" viewBox="0 0 16 18" aria-hidden="true"><path d="M4 8V5a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2"/><rect x="1" y="8" width="14" height="10" rx="2" fill="currentColor"/></svg>このメモの保存先</h2>
     <ul>
       <li>書いた内容は、<b>この端末のブラウザの中だけ</b>に保存されます。インターネットには送りません。</li>
-      <li>この端末をさわれる人は、だれでも見られます。共用のパソコンでは使わないでください。</li>
+      <li>この端末を使える人なら、誰でも見られます。共用のパソコンでは使わないでください。</li>
       <li><b>マイナンバー、口座番号、暗証番号は書かないでください。</b>印刷したカードは、なくさないように持ち歩いてください。</li>
     </ul>
   </aside>
 
   <!-- 書く -->
   <section id="viewEdit" aria-label="メモを書く">
-    <div class="people" id="people" role="group" aria-label="だれのメモ"></div>
+    <div class="people" id="people" role="group" aria-label="誰のメモ"></div>
 
     <div class="empty" id="noPeople">
-      <p class="empty-h">まず、家族を1人追加しましょう。</p>
+      <p class="empty-h">まずは家族を1人追加してください。</p>
       <p>名前と、救助の人に伝えたいこと（アレルギー、薬、持病）を書いておきます。</p>
       <button type="button" class="btn" id="firstAdd">家族を追加</button>
     </div>
@@ -61,7 +61,7 @@
         <label class="f"><span>ふりがな</span><input id="fKana" data-k="kana" maxlength="30" autocomplete="off" placeholder="やまだ はなこ"></label>
         <label class="f"><span>生年月日</span><input id="fBirth" data-k="birth" type="date" min="1900-01-01" max="2100-12-31"></label>
         <div class="f">
-          <span id="bloodL">血液型（わかれば）</span>
+          <span id="bloodL">血液型（分かれば）</span>
           <div class="blood">
             <select id="fBlood" data-k="blood" aria-labelledby="bloodL"><option value="">書かない</option><option>A型</option><option>B型</option><option>O型</option><option>AB型</option></select>
             <label class="rh"><input type="checkbox" id="fRh" data-k="rh"><span>Rh−</span></label>
@@ -97,11 +97,11 @@
 
     <section class="move" aria-labelledby="moveH">
       <h2 id="moveH">機種変更のときは</h2>
-      <p class="small">メモは、この端末にだけ保存されています。ファイルに書き出して、新しい端末で読み込めます。書き出したファイルにも個人の情報が入っているので、送ったあとは消してください。</p>
+      <p class="small">ファイルに書き出して、新しい端末で読み込んでください。書き出したファイルにも個人情報が入っているので、移し終えたら削除してください。</p>
       <div class="row">
         <button type="button" class="btn ghost" id="expBtn">ファイルに書き出す</button>
         <label class="btn ghost file">ファイルを読み込む<input type="file" id="impFile" accept="application/json,.json"></label>
-        <button type="button" class="btn ghost danger" id="wipeBtn">すべて消す</button>
+        <button type="button" class="btn ghost danger" id="wipeBtn">全て消す</button>
       </div>
       <p class="small" id="moveMsg" aria-live="polite"></p>
     </section>
@@ -110,12 +110,12 @@
   <!-- 見せる -->
   <section id="viewShow" aria-label="救助の人に見せる" hidden>
     <div class="show-bar">
-      <div class="show-who" id="showWho" role="group" aria-label="だれの情報"></div>
+      <div class="show-who" id="showWho" role="group" aria-label="誰の情報"></div>
       <button type="button" class="btn ghost" id="bigger" aria-pressed="false">文字を大きく</button>
     </div>
     <div class="empty" id="showEmpty" hidden>
       <p class="empty-h">まだメモがありません。</p>
-      <p>「書く」で家族を追加すると、ここに大きな文字で出ます。</p>
+      <p>「書く」で家族を追加すると、ここに大きな文字で表示します。</p>
     </div>
     <article class="show" id="show" aria-live="polite"></article>
   </section>

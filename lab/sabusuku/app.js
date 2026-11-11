@@ -103,7 +103,7 @@
     const li = el("li"); if (wi && picked.has(it.id)) li.classList.add("cut");
     const b = el("button", "it"); b.type = "button";
     const nm = el("span", "nm"); nm.append(el("span", null, it.name));
-    const stc = el("span", `st s${it.star}`, "★".repeat(it.star)); stc.setAttribute("aria-label", `使っている度${it.star}`); nm.append(stc);
+    const stc = el("span", `st s${it.star}`, "★".repeat(it.star)); stc.setAttribute("aria-label", `使う頻度 ${it.star}／3`); nm.append(stc);
     b.append(nm, el("span", "pm", it.off ? `年${yen(perYear(it))}` : `月${yen(perMonth(it))}`));
     const meta = el("span", "meta");
     const tag = el("span", "tag", catLabel(it)); tag.style.borderColor = C[it.cat].color; tag.style.boxShadow = `inset 4px 0 0 ${C[it.cat].color}`;
@@ -134,7 +134,7 @@
     $("totM").textContent = yen(m); $("totY").textContent = yen(y);
     if (tickTot) { $("totM").classList.remove("tick"); void $("totM").offsetWidth; $("totM").classList.add("tick"); tickTot = false; }
     const offY = off.reduce((s, i) => s + perYear(i), 0);
-    $("totSub").textContent = has ? `${act.length}件。${y >= 12000 ? `1日あたり約${yen(y / 365)}です。` : ""}${off.length ? `やめた${off.length}件で、年${yen(offY)}浮いています。` : ""}` : off.length ? `いま払っている物はありません。やめた${off.length}件で、年${yen(offY)}浮いています。` : "";
+    $("totSub").textContent = has ? `${act.length}件。${y >= 12000 ? `1日あたり約${yen(y / 365)}です。` : ""}${off.length ? `やめた${off.length}件で、年${yen(offY)}浮いています。` : ""}` : off.length ? `支払い中の物はありません。やめた${off.length}件で、年${yen(offY)}浮いています。` : "";
     const bar = $("bar"); bar.replaceChildren(); const lg = $("legend"); lg.replaceChildren();
     const groups = new Map();
     act.forEach(i => { const k = catLabel(i); if (!groups.has(k)) groups.set(k, { c: { label: k, color: C[i.cat].color }, v: 0 }); groups.get(k).v += perMonth(i); });
@@ -190,7 +190,7 @@
   $("candPick").addEventListener("click", () => { wi = true; st.items.filter(i => !i.off && i.star === 1).forEach(i => picked.add(i.id)); render(); });
   $("saveOff").addEventListener("click", () => {
     const ids = [...picked]; if (!ids.length) return;
-    if (!confirm(`選んだ${ids.length}件を「解約した物」にしますか？ 合計から外れます。解約の手続きは、それぞれのサービスで行ってください。`)) return;
+    if (!confirm(`選んだ${ids.length}件を「解約した物」にしますか？ 合計から外れます。解約の手続きは、それぞれのサービスで済ませてください。`)) return;
     const snap = snapshot();
     st.items.forEach(i => { if (ids.includes(i.id)) { i.off = true; i.offDate = today; } });
     save(); wi = false; picked.clear(); tickTot = true; render();
@@ -327,7 +327,7 @@
     let data = null;
     try { if (f.size > 5e6) throw 0; const j = JSON.parse(await f.text()); if (j && j.app === "sabusuku") data = clean(j.data); } catch (e) { data = null; }
     if (!data || !data.items.length) { $("moveMsg").textContent = "読み込めませんでした。このアプリで書き出したファイルを選んでください。"; return; }
-    if (st.items.length && !confirm(`いまの記録を、ファイルの${data.items.length}件と置きかえますか？`)) return;
+    if (st.items.length && !confirm(`今の記録を、ファイルの${data.items.length}件に置き換えますか？`)) return;
     const snap = snapshot();
     st = data; save(); render();
     $("moveMsg").textContent = `${data.items.length}件を読み込みました。`;

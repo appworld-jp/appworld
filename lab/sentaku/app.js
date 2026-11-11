@@ -139,7 +139,7 @@
     SLOTS.forEach(sl => {
       const b = el("button", "slot"); b.type = "button";
       const s = byId[st.cur[sl.id]];
-      if (s) { b.append(draw(s, 44)); b.classList.add("on"); b.setAttribute("aria-label", `${sl.name}：${s.name}（変える）`); }
+      if (s) { b.append(draw(s, 44)); b.classList.add("on"); b.setAttribute("aria-label", `${sl.name}：${s.name}（変更）`); }
       else { b.append(el("span", "plus", "＋")); b.setAttribute("aria-label", `${sl.name}の記号を選ぶ`); }
       b.append(el("span", "slabel", sl.name));
       b.addEventListener("click", () => openPicker(sl));
@@ -167,7 +167,7 @@
     const w = g("wash"), b = g("bleach"), t = g("tumble"), d = g("dry"), i = g("iron"), dc = g("dcl"), wc = g("wcl");
     const steps = [];
     let head;
-    if (!w) head = "洗濯の記号を選ぶと、洗い方がわかります。";
+    if (!w) head = "洗濯の記号を選ぶと、洗い方が分かります。";
     else if (w.id === "wno") head = "家では洗えません。クリーニング店へ。";
     else if (w.id === "whand") head = "手洗いで、40℃まで。";
     else head = `洗濯機の${w.bars === 2 ? "いちばん弱いコース" : w.bars === 1 ? "弱いコース" : "標準コース"}で、${w.t}℃まで。`;
@@ -287,7 +287,7 @@
     let data = null;
     try { if (f.size > 2e6) throw 0; const j = JSON.parse(await f.text()); if (j && j.app === "sentaku") data = clean(j.data); } catch (e) { data = null; }
     if (!data) { $("moveMsg").textContent = "読み込めませんでした。このアプリで書き出したファイルを選んでください。"; return; }
-    if (st.items.length && !confirm(`いま保存している服を、ファイルの${data.items.length}着と置きかえますか？`)) return;
+    if (st.items.length && !confirm(`保存している服を、ファイルの${data.items.length}着に置き換えますか？`)) return;
     const prev = JSON.stringify(st);
     st = data; save(); renderBuild(); renderSaved();
     $("moveMsg").textContent = `${data.items.length}着を読み込みました。`;

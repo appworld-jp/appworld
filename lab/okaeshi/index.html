@@ -2,7 +2,7 @@
 <html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>いただきもの帳</title>
-<meta name="description" content="いただいた物と贈った物を、相手と行事ごとに記録。内祝いや香典返しの金額と時期の目安、お返しがまだの物、お年玉の一覧がすぐわかります。">
+<meta name="description" content="いただいた物と贈った物を、相手と行事ごとに記録できます。内祝いや香典返しの金額と時期の目安、お返しがまだの物、お年玉の一覧がすぐ分かります。">
 <meta name="theme-color" content="#A8323E">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="manifest" href="manifest.webmanifest">
@@ -39,10 +39,10 @@
 
   <!-- 記録 -->
   <section class="pane" id="p-all" aria-labelledby="t-all" hidden>
-    <h2 class="pane-h">すべての記録<span class="cnt" id="allCnt"></span></h2>
+    <h2 class="pane-h">全ての記録<span class="cnt" id="allCnt"></span></h2>
     <div class="filters">
       <div class="seg" id="dirSeg" role="group" aria-label="向きで絞り込む">
-        <button type="button" data-v="" aria-pressed="true">すべて</button>
+        <button type="button" data-v="" aria-pressed="true">全て</button>
         <button type="button" data-v="in" aria-pressed="false">いただいた</button>
         <button type="button" data-v="out" aria-pressed="false">贈った</button>
       </div>
@@ -50,13 +50,13 @@
     </div>
     <p class="found" id="found" aria-live="polite"></p>
     <ul class="list" id="allList"></ul>
-    <p class="none" id="allEmpty" hidden>まだ記録がありません。上の「記録する」から始めましょう。</p>
+    <p class="none" id="allEmpty" hidden>まだ記録がありません。上の「記録する」から入れてください。</p>
   </section>
 
   <!-- 人 -->
   <section class="pane" id="p-people" aria-labelledby="t-people" hidden>
     <h2 class="pane-h">相手ごと<span class="cnt" id="pplCnt"></span></h2>
-    <p class="pane-note">名前を押すと、これまでのやりとりが見られます。</p>
+    <p class="pane-note">名前を押すと、これまでのやり取りを見られます。</p>
     <ul class="people" id="pplList"></ul>
     <p class="none" id="pplEmpty" hidden>記録すると、相手ごとにまとまります。</p>
   </section>
@@ -81,7 +81,7 @@
   </details>
   <details class="box">
     <summary>データの引っ越し</summary>
-    <p>記録はこの端末の中にだけあります。機種変更のときは、ファイルに書き出して、新しい端末で読み込みます。</p>
+    <p>機種変更のときは、ファイルに書き出して新しい端末で読み込んでください。</p>
     <div class="row">
       <button type="button" class="btn ghost small" id="expBtn">ファイルに書き出す</button>
       <label class="btn ghost small file-btn">ファイルを読み込む<input type="file" id="impFile" accept="application/json,.json"></label>
@@ -120,7 +120,7 @@
     <datalist id="kids"></datalist>
     <label class="field"><span>何を</span><input id="fWhat" type="text" maxlength="40" autocomplete="off" placeholder="今治タオルのセット"></label>
     <div class="two">
-      <label class="field"><span>いくらくらい（円）</span><input id="fAmt" type="text" inputmode="numeric" autocomplete="off" placeholder="10000"></label>
+      <label class="field"><span>金額（円）</span><input id="fAmt" type="text" inputmode="numeric" autocomplete="off" placeholder="10000"></label>
       <label class="field"><span>日付</span><input id="fDate" type="date"></label>
     </div>
     <p class="tip" id="fTip" aria-live="polite"></p>
@@ -135,7 +135,7 @@
     <div class="ret" id="retBox" hidden>
       <label class="field"><span>お返しした物</span><input id="fRetWhat" type="text" maxlength="40" autocomplete="off" placeholder="カタログギフト"></label>
       <div class="two">
-        <label class="field"><span>いくらくらい（円）</span><input id="fRetAmt" type="text" inputmode="numeric" autocomplete="off" placeholder="5000"></label>
+        <label class="field"><span>金額（円）</span><input id="fRetAmt" type="text" inputmode="numeric" autocomplete="off" placeholder="5000"></label>
         <label class="field"><span>贈った日</span><input id="fRetDate" type="date"></label>
       </div>
     </div>

@@ -2,7 +2,7 @@
 <html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>防災備蓄チェック</title>
-<meta name="description" content="家族の人数と日数を入れると、水・食料・簡易トイレ・カセットボンベの必要な量がわかります。家にある備えを賞味期限と一緒に記録すると、足りない分と期限が近いものが一目でわかります。">
+<meta name="description" content="家族の人数と日数を入れると、水・食料・簡易トイレ・カセットボンベの必要な量が分かります。家にある備えを期限と一緒に記録すれば、足りない分と期限が近い物がひと目で分かります。">
 <meta name="theme-color" content="#F2B33D">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="manifest" href="manifest.webmanifest">
@@ -16,7 +16,7 @@
   <div class="top-in">
     <a class="back" href="../">App World Lab</a>
     <h1><svg class="h-ic" viewBox="0 0 40 40" aria-hidden="true"><path d="M20 3 37 34H3z" fill="#F2B33D" stroke="#1E2A33" stroke-width="3" stroke-linejoin="round"/><path d="M20 14v10" stroke="#1E2A33" stroke-width="4" stroke-linecap="round"/><circle cx="20" cy="29" r="2.4" fill="#1E2A33"/></svg>防災備蓄チェック</h1>
-    <p class="lead">家族の人数を入れると、何がどれだけ足りないかがわかります。</p>
+    <p class="lead">家族の人数を入れると、何がどれだけ足りないかが分かります。</p>
   </div>
   <div class="stripe" aria-hidden="true"></div>
 </header>
@@ -25,7 +25,7 @@
   <section class="fam" aria-labelledby="famH">
     <h2 id="famH" class="sec">家族</h2>
     <div class="steppers" id="steppers"></div>
-    <div class="days" role="group" aria-label="何日分そなえるか">
+    <div class="days" role="group" aria-label="何日分備えるか">
       <span class="days-l">何日分</span>
       <button type="button" class="day" data-d="3" aria-pressed="false">3日分<small>最低限</small></button>
       <button type="button" class="day" data-d="7" aria-pressed="false">7日分<small>できれば</small></button>
@@ -34,16 +34,16 @@
 
   <section class="need" aria-labelledby="needH">
     <div class="need-h">
-      <h2 id="needH" class="sec">必要な量と、いまの備え</h2>
+      <h2 id="needH" class="sec">必要な量と今の備え</h2>
       <p class="score" id="score" aria-live="polite"></p>
     </div>
     <div class="meters" id="meters"></div>
-    <p class="small">期限が切れたものは数に入れていません。</p>
+    <p class="small">期限が切れた物は数に入れていません。</p>
   </section>
 
   <section class="soon" id="soonBox" aria-labelledby="soonH" hidden>
-    <h2 id="soonH" class="sec">期限が近いもの</h2>
-    <p class="small">ふだんの食事で使って、使った分を買い足しましょう（ローリングストック）。</p>
+    <h2 id="soonH" class="sec">期限が近い物</h2>
+    <p class="small">普段の食事で使い、使った分を買い足します（ローリングストック）。</p>
     <ul class="soon-list" id="soonList"></ul>
   </section>
 
@@ -51,7 +51,7 @@
     <h2 id="stockH" class="sec">家にある備え</h2>
     <form id="addForm" class="add" novalidate>
       <div class="kinds" id="kinds" role="radiogroup" aria-label="種類"></div>
-      <div class="presets" id="presets" aria-label="よくあるもの"></div>
+      <div class="presets" id="presets" aria-label="よくある物"></div>
       <div class="add-grid">
         <label class="f f-name"><span>品名</span><input id="aName" type="text" maxlength="30" autocomplete="off" placeholder="2Lの水"></label>
         <label class="f f-n"><span>数</span><input id="aN" type="number" inputmode="numeric" min="1" max="999" placeholder="6" aria-describedby="addErr"></label>
@@ -63,13 +63,13 @@
     </form>
     <div class="empty" id="stockEmpty">
       <p class="empty-h">まだ何も入っていません。</p>
-      <p>上の「よくあるもの」を押して、数と期限を入れるだけです。</p>
+      <p>上の「よくある物」から選んで、数と期限を入れてください。</p>
     </div>
     <ul class="items" id="items"></ul>
   </section>
 
   <section class="other" aria-labelledby="otherH">
-    <h2 id="otherH" class="sec">ほかにあると安心なもの</h2>
+    <h2 id="otherH" class="sec">ほかにあると安心な物</h2>
     <p class="small" id="otherCount"></p>
     <ul class="checks" id="checks"></ul>
   </section>
@@ -89,7 +89,7 @@
 
   <section class="move" aria-labelledby="moveH">
     <h2 id="moveH" class="sec">機種変更のときは</h2>
-    <p class="small">備えの記録は、この端末にだけ保存されています。ファイルに書き出して、新しい端末で読み込めます。</p>
+    <p class="small">ファイルに書き出して、新しい端末で読み込んでください。</p>
     <div class="row">
       <button type="button" class="btn ghost" id="expBtn">ファイルに書き出す</button>
       <label class="btn ghost file">ファイルを読み込む<input type="file" id="impFile" accept="application/json,.json"></label>

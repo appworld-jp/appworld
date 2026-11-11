@@ -26,9 +26,9 @@
   // 種類。prep は準備を始める日数の初期値、from は「期限の何か月前から手続きできるか」、cycle は更新後の年数の候補。
   const KINDS = [
     { id: "menkyo", label: "運転免許証", dateL: "免許証の有効期限", prep: 60, cycle: [5, 3], from: 2, window: true,
-      info: "免許の更新は、誕生日の前後1か月のあいだにできます。免許証に書いてある有効期限（誕生日の1か月後）を入れると、更新できる期間を出します。" },
+      info: "免許の更新は、誕生日の前後1か月のあいだにできます。免許証に書いてある有効期限（誕生日の1か月後）を入れると、更新できる期間を表示します。" },
     { id: "passport", label: "パスポート", dateL: "有効期間満了日", prep: 180, cycle: [10, 5], from: 12,
-      info: "残りの有効期間が1年を切ると、新しいパスポートに切り替えられます。行き先によっては、入国のときに残り6か月以上などが必要です。" },
+      info: "残りの有効期間が1年を切ると、新しいパスポートに切り替えられます。行き先によっては、入国時に残り6か月以上などの有効期間が必要です。" },
     { id: "mynumber", label: "マイナンバーカード", dateL: "カードの有効期限", prep: 90, cycle: [10, 5], from: 3,
       info: "カードの有効期限は、18歳以上なら発行から10回目の誕生日です。電子証明書（コンビニでの証明書の受け取りや、保険証として使う部分）は5回目の誕生日で切れ、カードとは別に更新します。どちらも期限の3か月前から手続きできます。" },
     { id: "denshi", label: "マイナンバーカードの電子証明書", dateL: "電子証明書の有効期限", prep: 90, cycle: [5], from: 3,
@@ -44,11 +44,11 @@
     { id: "jidosha", label: "自動車保険", dateL: "満期日", prep: 45, cycle: [1],
       info: "ほかの保険会社に乗り換えるなら、見積もりは満期の1か月以上前から始めると落ち着いて比べられます。" },
     { id: "chintai", label: "賃貸の契約", dateL: "契約の満了日", prep: 90, cycle: [2],
-      info: "更新の案内は、1〜3か月前に届くことが多いです。引っ越すなら、解約の予告の期限（1か月前など）を契約書で確かめましょう。" },
+      info: "更新の案内は、1〜3か月前に届くことが多いです。引っ越すなら、解約予告の期限（1か月前など）を契約書で確認してください。" },
     { id: "phone", label: "スマホの契約", dateL: "更新月・契約の期限", prep: 30, cycle: [2, 1],
       info: "違約金なしで解約や乗り換えができる月を入れておくと、見直しの時期を逃しません。" },
     { id: "card", label: "クレジットカード", dateL: "カードの有効期限", prep: 30, cycle: [5],
-      info: "新しいカードは、期限の前の月ごろに届くことが多いです。届いたら、公共料金やサブスクに登録したカードの情報も更新しましょう。" },
+      info: "新しいカードは、期限の前の月ごろに届くことが多いです。届いたら、公共料金やサブスクに登録しているカード情報も更新してください。" },
     { id: "domain", label: "ドメイン", dateL: "有効期限", prep: 30, cycle: [1],
       info: "自動更新にしていても、登録したカードの期限切れで止まることがあります。" },
     { id: "other", label: "その他", dateL: "期限の日", prep: 30, cycle: [1, 2, 3, 5], info: "" }
@@ -116,7 +116,7 @@
   function windowText(it, s) {
     if (s.k.window) return `更新できる期間：${jpShort(s.from)}〜${jpShort(it.date)}`;
     if (s.from && s.from > today) return `${jpShort(s.from)}から手続きできます`;
-    if (s.from && s.key !== "over") return "いま手続きできます";
+    if (s.from && s.key !== "over") return "今、手続きできます";
     return "";
   }
 
@@ -132,7 +132,7 @@
     const end = addDays(addMonths(start, 12), -1);
     const coming = st.items.filter(i => i.date >= today && i.date <= end).sort((a, b) => a.date < b.date ? -1 : 1);
     $("year").hidden = !st.items.length;
-    $("yearH").textContent = coming.length ? `これからの1年で${coming.length}件。いちばん近いのは${jpShort(coming[0].date)}の${coming[0].name}です。` : "これからの1年に、期限はありません。";
+    $("yearH").textContent = coming.length ? `これからの1年で${coming.length}件。いちばん近いのは${jpShort(coming[0].date)}の${coming[0].name}です。` : "これからの1年に期限はありません。";
     const ol = $("months"); ol.replaceChildren();
     for (let i = 0; i < 12; i++) {
       const ms = addMonths(start, i), me = addDays(addMonths(start, i + 1), -1);
@@ -219,7 +219,7 @@
   const prepFree = window.FreeChoice({
     key: KEY + ".custom", set: "prep", label: "時期", max: 10, placeholder: "10日、6週間",
     builtins: () => PREPS.map(([d, label]) => ({ value: d, label })),
-    validate: v => parsePrep(v) ? "" : "「10日」「6週間」「4か月」のように、2年までで入れてください。",
+    validate: v => parsePrep(v) ? "" : "「10日」「6週間」「4か月」のように、2年以内で入れてください。",
     transform: v => { const p = parsePrep(v); const b = PREPS.find(x => x[0] === p.d) || ownPreps().find(x => x[0] === p.d); return b ? b[1] : p.label; },
     onChange: () => buildPrep(Number((document.querySelector("input[name=prep]:checked") || {}).value) || K[editKind].prep),
     onPick: v => buildPrep(typeof v === "number" ? v : parsePrep(v).d)
@@ -338,7 +338,7 @@
     const it = st.items.find(x => x.id === viewId); if (!it) return;
     closeD($("view"));
     $("rH").textContent = `${it.name}を更新しました`;
-    $("rSub").textContent = `いまの期限：${jp(it.date)}。新しい期限を選んでください。`;
+    $("rSub").textContent = `今の期限：${jp(it.date)}。新しい期限を選んでください。`;
     $("rSeg").replaceChildren(...K[it.kind].cycle.map(y => { const b = el("button", null, `${y}年後`); b.type = "button"; b.dataset.y = String(y); b.addEventListener("click", () => setRenew(y)); return b; }));
     setRenew(K[it.kind].cycle[0]);
     $("rErr").textContent = "";
@@ -349,10 +349,10 @@
     e.preventDefault();
     const it = st.items.find(x => x.id === viewId);
     const d = $("rDate").value;
-    if (!isYmd(d) || d <= it.date) { $("rErr").textContent = "いまの期限より後の日を選んでください。"; $("rDate").focus(); return; }
+    if (!isYmd(d) || d <= it.date) { $("rErr").textContent = "今の期限より後の日を選んでください。"; $("rDate").focus(); return; }
     const snap = snapshot();
     it.date = d; save(); flashId = it.id; closeD($("renew")); render();
-    toast(`${it.name}の期限を${jpShort(d)}にしました。おつかれさまでした。`, () => { restore(snap); render(); });
+    toast(`${it.name}の期限を${jpShort(d)}にしました。お疲れさまでした。`, () => { restore(snap); render(); });
   });
   $("rCancel").addEventListener("click", () => closeD($("renew")));
 
@@ -394,7 +394,7 @@
     let data = null;
     try { if (f.size > 5e6) throw 0; const j = JSON.parse(await f.text()); if (j && j.app === "kigen") data = clean(j.data); } catch (e) { data = null; }
     if (!data || !data.items.length) { $("moveMsg").textContent = "読み込めませんでした。このアプリで書き出したファイルを選んでください。"; return; }
-    if (st.items.length && !confirm(`いまの記録を、ファイルの${data.items.length}件と置きかえますか？`)) return;
+    if (st.items.length && !confirm(`今の記録を、ファイルの${data.items.length}件に置き換えますか？`)) return;
     const snap = snapshot();
     st = data; save(); render();
     $("moveMsg").textContent = `${data.items.length}件を読み込みました。`;

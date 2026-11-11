@@ -9,7 +9,7 @@
     { k: "adult", label: "大人", sub: "" },
     { k: "child", label: "子ども", sub: "ごはんを食べる年齢" },
     { k: "infant", label: "赤ちゃん", sub: "ミルク・おむつ" },
-    { k: "elder", label: "高齢の人", sub: "" },
+    { k: "elder", label: "高齢者", sub: "" },
     { k: "pet", label: "ペット", sub: "犬・猫" }
   ];
   // 種類ごとの単位と、よくあるもの
@@ -131,7 +131,7 @@
     const box = $("meters"); box.textContent = "";
     const ks = relevant().filter(k => nd[k.k] > 0);
     let ok = 0;
-    if (!ks.length) { box.append(el("p", "empty-h", "家族の人数を入れると、必要な量が出ます。")); $("score").textContent = ""; return; }
+    if (!ks.length) { box.append(el("p", "empty-h", "家族の人数を入れると、必要な量を計算します。")); $("score").textContent = ""; return; }
     for (const k of ks) {
       const need = nd[k.k], h = have(k.k);
       const pct = Math.min(100, need ? h / need * 100 : 0);
@@ -147,7 +147,7 @@
       m.append(top, bar, st2, el("p", "m-note", NOTE[k.k]()));
       box.append(m);
     }
-    $("score").textContent = ok === ks.length ? `${ks.length}項目すべてそろっています！` : `${ks.length}項目中${ok}項目がそろっています`;
+    $("score").textContent = ok === ks.length ? `${ks.length}項目全てそろっています！` : `${ks.length}項目中${ok}項目がそろっています`;
     $("score").classList.toggle("all", ok === ks.length);
   }
 
@@ -263,7 +263,7 @@
       document.querySelector(".f-n span").textContent = "数";
       return;
     }
-    box.append(el("span", "pre-l", "よくあるもの"));
+    box.append(el("span", "pre-l", "よくある物"));
     for (const [name, per, n] of k.presets) {
       const b = el("button", "pre", name); b.type = "button";
       b.addEventListener("click", () => { $("aName").value = name; $("aPer").value = per; $("aN").value = n; $("aN").focus(); $("aN").select(); });
@@ -299,7 +299,7 @@
   // ---------- ほかの持ち物 ----------
   // 自分で足したものは id を "~名前" にして、チェックの状態を同じ st.checks に持つ
   const checkFree = window.FreeChoice({
-    key: KEY + ".custom", set: "check", label: "備えるもの", max: 20, placeholder: "予備のメガネ",
+    key: KEY + ".custom", set: "check", label: "備える物", max: 20, placeholder: "予備のメガネ",
     builtins: () => OTHER.map(o => ({ value: o.id, label: o.t })),
     onChange: () => renderChecks(),
     onPick: v => { const id = OTHER.some(o => o.id === v) ? v : "~" + v; st.checks[id] = true; save(); renderChecks(); }
@@ -323,7 +323,7 @@
   function renderChecksCount() {
     const list = checkList();
     const n = list.filter(o => st.checks[o.id]).length;
-    $("otherCount").textContent = `家にあるものにチェックを入れてください。${list.length}個中${n}個あります。`;
+    $("otherCount").textContent = `家にある物にチェックを入れてください。${list.length}個中${n}個あります。`;
   }
 
   function renderAll() { renderPeople(); renderMeters(); renderItems(); renderKinds(); renderChecks(); }
@@ -343,7 +343,7 @@
     let data = null;
     try { if (f.size > 2e6) throw 0; const j = JSON.parse(await f.text()); if (j && j.app === "bichiku") data = clean(j.data); } catch (e) { data = null; }
     if (!data) { $("moveMsg").textContent = "読み込めませんでした。このアプリで書き出したファイルを選んでください。"; return; }
-    if (st.items.length && !confirm(`いまの記録（${st.items.length}品）を、ファイルの${data.items.length}品と置きかえますか？`)) return;
+    if (st.items.length && !confirm(`今の記録（${st.items.length}品）を、ファイルの${data.items.length}品に置き換えますか？`)) return;
     const s = snap();
     st = data; save(); renderAll();
     $("moveMsg").textContent = `${data.items.length}品を読み込みました。`;

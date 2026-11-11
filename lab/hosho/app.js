@@ -92,10 +92,10 @@
 
   // ---------- 一覧 ----------
   const GROUPS = [
-    ["soon", "もうすぐ切れる", "保証の期限まで、60日を切った物です。気になる不調は今のうちに。"],
+    ["soon", "もうすぐ切れる", "保証の期限まで60日を切った物です。気になる不調は早めに修理の相談を。"],
     ["ok", "保証中", ""],
     ["over", "保証切れ", ""],
-    ["none", "期限がわからない物", ""]
+    ["none", "期限が分からない物", ""]
   ];
   function render() {
     const q = norm($("q").value).trim();
@@ -126,7 +126,7 @@
         main.append(el("span", "e-name", it.name));
         const meta = [it.maker, it.model].filter(Boolean).join("・");
         if (meta) main.append(el("span", "e-meta", meta));
-        if (s.key === "none") main.append(el("span", "e-meta", s.needDate ? "購入日を入れると、期限がわかります" : "保証の期間が未登録です"));
+        if (s.key === "none") main.append(el("span", "e-meta", s.needDate ? "購入日を入れると、期限が分かります" : "保証の期間が未登録です"));
         else main.append(el("span", "e-meta", `${jp(s.end)}まで`));
         if (s.frac != null && s.key !== "over") { const bar = el("span", "e-bar"); const i = el("i"); i.style.width = `${(1 - s.frac) * 100}%`; bar.append(i); main.append(bar); }
         b.append(main);
@@ -263,7 +263,7 @@
     else if (xr === "end") { if (!isYmd($("xEnd").value)) return fail("xEnd", "延長保証の終了日を選んでください。"); x = { type: "end", end: $("xEnd").value }; }
     else if (xr === "m") { const n = parseInt(norm($("xMonths").value), 10); if (!(n > 0 && n <= 600)) return fail("xMonths", "延長保証の月数を数字で入れてください（例：96）。"); x = { type: "m", months: n }; }
     else x = { type: "m", months: Number(xr) };
-    if ((w.type === "m" || x.type === "m") && !date) return fail("fDate", "保証の期限を出すには、購入日が要ります。");
+    if ((w.type === "m" || x.type === "m") && !date) return fail("fDate", "保証の期限を計算するには、購入日を入れてください。");
     const urlRaw = $("fUrl").value.trim();
     const url = urlRaw ? safeUrl(urlRaw) : "";
     if (urlRaw && !url) return fail("fUrl", "サポートのページは「https://」で始まるアドレスを入れてください。");
@@ -316,7 +316,7 @@
     let data = null;
     try { if (f.size > 5e6) throw 0; const j = JSON.parse(await f.text()); if (j && j.app === "hosho") data = clean(j.data); } catch (e) { data = null; }
     if (!data || !data.items.length) { $("moveMsg").textContent = "読み込めませんでした。このアプリで書き出したファイルを選んでください。"; return; }
-    if (st.items.length && !confirm(`いまの台帳を、ファイルの${data.items.length}件と置きかえますか？`)) return;
+    if (st.items.length && !confirm(`今の台帳を、ファイルの${data.items.length}件に置き換えますか？`)) return;
     const snap = snapshot();
     st = data; save(); render();
     $("moveMsg").textContent = `${data.items.length}件を読み込みました。`;

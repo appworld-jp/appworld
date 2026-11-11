@@ -2,7 +2,7 @@
 <html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>サブスク棚卸し</title>
-<meta name="description" content="動画や音楽、アプリ、スマホ代、保険などの毎月の支払いを並べて、月と年の合計を計算。あまり使っていない物や、やめたらいくら浮くかがすぐわかります。">
+<meta name="description" content="動画や音楽、アプリ、スマホ代、保険などの毎月の支払いを並べて、月と年の合計を計算します。あまり使っていない物や、やめたらいくら浮くかがすぐ分かります。">
 <meta name="theme-color" content="#F2C230">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="manifest" href="manifest.webmanifest">
@@ -32,8 +32,8 @@
   </section>
 
   <section class="empty" id="empty" hidden>
-    <p class="empty-h">まずは、思いつくものから1つ。</p>
-    <p>動画、音楽、アプリ、スマホ代、保険、ジム。毎月や毎年払っているものを入れると、合計が出ます。</p>
+    <p class="empty-h">まずは、思いつく物を1つ入れてください。</p>
+    <p>動画、音楽、アプリ、スマホ代、保険、ジム。毎月・毎年払っている物を入れると、合計を計算します。</p>
     <div class="row center">
       <button type="button" class="btn" id="firstAdd">追加する</button>
       <button type="button" class="btn ghost" id="sample">例を見る</button>
@@ -49,12 +49,12 @@
     <h2 id="candH">あまり使っていない物</h2>
     <p class="note" id="candNote"></p>
     <ul class="rows" id="candList"></ul>
-    <button type="button" class="btn ghost small" id="candPick" hidden>この全部をやめたら？</button>
+    <button type="button" class="btn ghost small" id="candPick" hidden>全部やめたら？</button>
   </section>
 
   <section class="sec" id="allSec" hidden aria-labelledby="allH">
     <div class="sec-head">
-      <h2 id="allH">すべて<span class="cnt" id="allCnt"></span></h2>
+      <h2 id="allH">全て<span class="cnt" id="allCnt"></span></h2>
       <div class="sort" role="group" aria-label="並べ方" id="sortSeg">
         <button type="button" data-v="price" aria-pressed="true">高い順</button>
         <button type="button" data-v="date" aria-pressed="false">支払日順</button>
@@ -72,7 +72,7 @@
 
   <details class="box">
     <summary>データの引っ越し</summary>
-    <p>記録はこの端末の中にだけあります。機種変更のときは、ファイルに書き出して、新しい端末で読み込みます。</p>
+    <p>機種変更のときは、ファイルに書き出して新しい端末で読み込んでください。</p>
     <div class="row">
       <button type="button" class="btn ghost small" id="expBtn">ファイルに書き出す</button>
       <label class="btn ghost small file-btn">ファイルを読み込む<input type="file" id="impFile" accept="application/json,.json"></label>
@@ -118,11 +118,11 @@
     </fieldset>
     <p class="calc" id="fCalc" aria-live="polite"></p>
     <fieldset class="seg-f">
-      <legend>使っている度</legend>
+      <legend>使う頻度</legend>
       <div class="stars" id="starSeg">
         <label><input type="radio" name="star" value="3" checked><span><b>★★★</b>よく使う</span></label>
         <label><input type="radio" name="star" value="2"><span><b>★★</b>ときどき</span></label>
-        <label><input type="radio" name="star" value="1"><span><b>★</b>あまり</span></label>
+        <label><input type="radio" name="star" value="1"><span><b>★</b>あまり使わない</span></label>
       </div>
     </fieldset>
     <fieldset class="seg-f">

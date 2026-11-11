@@ -305,7 +305,7 @@
   function renderPreview() {
     const paper = $("paper"); paper.textContent = "";
     $("printBtn").disabled = !st.people.length;
-    if (!st.people.length) { paper.append(el("p", "pv-empty", "「書く」で家族を追加すると、ここに印刷のイメージが出ます。")); paper.style.zoom = ""; paper.className = "paper"; return; }
+    if (!st.people.length) { paper.append(el("p", "pv-empty", "「書く」で家族を追加すると、ここに印刷のイメージを表示します。")); paper.style.zoom = ""; paper.className = "paper"; return; }
     paper.className = "paper lay-" + layout();
     paper.append(buildSheet());
     // 画面の幅に合わせて縮小（A4＝210mm、カード＝172mm＋余白）
@@ -325,7 +325,7 @@
 
   // ---------- 書き出し・読み込み・消去 ----------
   $("expBtn").addEventListener("click", () => {
-    if (!st.people.length && !st.contacts.length) { $("moveMsg").textContent = "まだメモがないので、書き出すものがありません。"; return; }
+    if (!st.people.length && !st.contacts.length) { $("moveMsg").textContent = "まだメモがないので、書き出せません。"; return; }
     const blob = new Blob([JSON.stringify({ app: "moshimo", version: 1, exportedAt: new Date().toISOString(), data: st }, null, 1)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = el("a"); a.href = url; a.download = `moshimo-${todayS}.json`;
@@ -339,7 +339,7 @@
     let data = null;
     try { if (f.size > 1e6) throw 0; const j = JSON.parse(await f.text()); if (j && j.app === "moshimo") data = clean(j.data); } catch (e) { data = null; }
     if (!data || (!data.people.length && !data.contacts.length)) { $("moveMsg").textContent = "読み込めませんでした。このアプリで書き出したファイルを選んでください。"; return; }
-    if (st.people.length && !confirm(`いまのメモを、ファイルの内容（${data.people.length}人分）と置きかえますか？`)) return;
+    if (st.people.length && !confirm(`今のメモを、ファイルの内容（${data.people.length}人分）に置き換えますか？`)) return;
     const s = snap();
     st = data; save(); renderEdit();
     $("moveMsg").textContent = `${data.people.length}人分を読み込みました。`;
@@ -347,13 +347,13 @@
   });
   $("wipeBtn").addEventListener("click", () => {
     if (!st.people.length && !st.contacts.length && !st.place.hinan && !st.place.shugo && !st.place.memo) { $("moveMsg").textContent = "消すメモはありません。"; return; }
-    if (!confirm("この端末から、もしものメモをすべて消しますか？")) return;
+    if (!confirm("この端末から、もしものメモを全て消しますか？")) return;
     const s = snap();
     st = { v: 1, people: [], contacts: [], place: { hinan: "", shugo: "", memo: "" }, updated: "", sel: "" };
     try { localStorage.removeItem(KEY); } catch (e) {}
     renderEdit();
     $("moveMsg").textContent = "";
-    toast("すべて消しました。", () => { restore(s); renderEdit(); });
+    toast("全て消しました。", () => { restore(s); renderEdit(); });
   });
 
   // ---------- トースト ----------

@@ -82,7 +82,7 @@
     };
     add("この日だけ", "once", p.once.filter(o => o.date === date).map(o => o.name));
     add(`${WD[wd]}曜日`, "week", p.week[wd] || []);
-    if (p.weekend || (wd !== 0 && wd !== 6)) add(p.weekend ? "毎日" : "平日は毎日", "daily", p.daily);
+    if (p.weekend || (wd !== 0 && wd !== 6)) add(p.weekend ? "毎日" : "毎日（平日）", "daily", p.daily);
     return out;
   }
   const allItems = (p, date) => groupsFor(p, date).flatMap(g => g.items);
@@ -211,7 +211,7 @@
   // ---------- 人の追加 ----------
   function openSetup() {
     const first = st.people.length === 0;
-    $("setupH").textContent = first ? "だれの持ち物ですか？" : "持ち物を確かめる人を追加";
+    $("setupH").textContent = first ? "誰の持ち物ですか？" : "人を追加";
     $("pCancel").hidden = first;
     $("pName").value = "";
     show("setup");
@@ -235,7 +235,7 @@
     st.people.push(p); st.sel = p.id; save();
     if (key === "none") { openEdit(p.id); return; }
     renderMain();
-    toast("例の持ち物を入れました。「持ち物を編集」で時間割に合わせて直せます。");
+    toast("よくある持ち物を入れました。「持ち物を編集」で時間割に合わせて直せます。");
   });
 
   // ---------- 編集 ----------
@@ -336,7 +336,7 @@
     e.preventDefault();
     const p = person(editId), date = $("onceDate").value, name = $("onceName").value.trim().slice(0, 30);
     if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) { $("onceErr").textContent = "日にちを選んでください。"; $("onceDate").focus(); return; }
-    if (date < today) { $("onceErr").textContent = "今日より前の日には追加できません。"; $("onceDate").focus(); return; }
+    if (date < today) { $("onceErr").textContent = "今日以降の日にちを選んでください。"; $("onceDate").focus(); return; }
     if (!name) { $("onceErr").textContent = "持ち物を入れてください。"; $("onceName").focus(); return; }
     $("onceErr").textContent = "";
     splitItems(name).forEach(n => p.once.push({ id: uid(), date, name: n }));
@@ -345,7 +345,7 @@
   $("edDone").addEventListener("click", () => { if (!$("edName").value.trim()) $("edName").value = person(editId).name; renderMain(); window.scrollTo(0, 0); });
   $("edDel").addEventListener("click", () => {
     const p = person(editId);
-    if (!confirm(`${p.name}の持ち物を、すべて削除しますか？`)) return;
+    if (!confirm(`${p.name}の持ち物を、全て削除しますか？`)) return;
     const snap = snapshot();
     st.people = st.people.filter(q => q.id !== p.id);
     for (const d of Object.values(st.checks)) delete d[p.id];
@@ -374,7 +374,7 @@
       if (j && j.app === "mochimono") data = clean(j.data);
     } catch (e) { data = null; }
     if (!data || !data.people.length) { $("moveMsg").textContent = "読み込めませんでした。このアプリで書き出したファイルを選んでください。"; return; }
-    if (st.people.length && !confirm(`いまのリストを、ファイルの${data.people.length}人分と置きかえますか？`)) return;
+    if (st.people.length && !confirm(`今のリストを、ファイルの${data.people.length}人分に置き換えますか？`)) return;
     const snap = snapshot();
     st = data; save(); renderMain();
     $("moveMsg").textContent = `${data.people.length}人分の持ち物を読み込みました。`;

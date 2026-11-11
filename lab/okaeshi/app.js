@@ -40,11 +40,11 @@
     { id: "kouden", label: "香典", act: "香典返し", rate: "half", due: 80, dueL: "四十九日のあと1か月以内",
       guide: "香典返しは、いただいた額の半分〜3分の1が目安です。仏式では、四十九日（忌明け）のあと1か月以内に贈るのが一般的です。葬儀の日にお返しを渡した（即日返し）場合は、高額だった方にだけ、あらためて贈ります。" },
     { id: "iwai", label: "入学・就職祝い", act: "お礼", due: 7, dueL: "なるべく早く",
-      guide: "子どもの入学祝いなどは、お返しはしなくてよいとされています。本人からお礼を伝えましょう。就職祝いは、初任給でちょっとした贈り物をする人もいます。" },
+      guide: "子どもの入学祝いなどは、お返しはしなくてよいとされています。本人からお礼を伝えます。就職祝いは、初任給でちょっとした贈り物をする人もいます。" },
     { id: "chugen", label: "お中元", act: "お礼", due: 3, dueL: "届いてから3日以内",
-      guide: "お返しは要りません。届いたら、なるべく早く（3日以内が目安）お礼の連絡やお礼状を。" },
+      guide: "お返しは要りません。届いたら、なるべく早く（3日以内が目安）お礼の連絡やお礼状を送ります。" },
     { id: "seibo", label: "お歳暮", act: "お礼", due: 3, dueL: "届いてから3日以内",
-      guide: "お返しは要りません。届いたら、なるべく早く（3日以内が目安）お礼の連絡やお礼状を。" },
+      guide: "お返しは要りません。届いたら、なるべく早く（3日以内が目安）お礼の連絡やお礼状を送ります。" },
     { id: "otoshidama", label: "お年玉", act: "お礼", none: true,
       guide: "お返しは要りません。相手にも子どもがいれば、同じくらいの額を渡すことが多いです。" },
     { id: "present", label: "誕生日・プレゼント", act: "お礼", none: true,
@@ -159,8 +159,8 @@
     $("todoEmpty").hidden = !!todo.length;
     const first = !st.items.length;
     $("firstBtns").hidden = !first;
-    $("todoEmptyH").textContent = first ? "いただいた物を記録しましょう。" : "お返しがまだの物はありません。";
-    $("todoEmptyP").textContent = first ? "行事と金額を入れると、お返しの金額と時期の目安がわかります。贈った物も記録できます。" : "新しくいただいたら、上の「記録する」から控えておきましょう。";
+    $("todoEmptyH").textContent = first ? "まずは、いただいた物を記録してください。" : "お返しがまだの物はありません。";
+    $("todoEmptyP").textContent = first ? "行事と金額を入れると、お返しの金額と時期の目安が分かります。贈った物も記録できます。" : "新しくいただいたら、上の「記録する」から控えておけます。";
   }
   function renderAll() {
     const q = norm($("q").value);
@@ -240,7 +240,7 @@
     const years = [...new Set(list.map(i => parseYmd(i.date).getFullYear()))].sort((a, b) => b - a);
     $("nenNote").textContent = nenDir === "out" ? "子どもごと、年ごとにあげた額です。" : "受け取った子ごと、年ごとの合計です。誰からかは「記録」で見られます。";
     $("nenEmpty").hidden = !!list.length; $("nenWrap").hidden = !list.length;
-    $("nenEmpty").textContent = nenDir === "out" ? "あげたお年玉を記録すると、ここに表ができます。去年いくら渡したか、すぐわかります。" : "もらったお年玉を記録すると、子どもごとの表ができます。";
+    $("nenEmpty").textContent = nenDir === "out" ? "あげたお年玉を記録すると、ここに表ができます。去年いくら渡したかがすぐ分かります。" : "もらったお年玉を記録すると、子どもごとの表ができます。";
     const tbl = $("nenTbl"); tbl.replaceChildren();
     if (!list.length) return;
     const sum = (r, y) => list.filter(i => (r == null || rowKey(i) === r) && parseYmd(i.date).getFullYear() === y && i.amt != null).reduce((s, i) => s + i.amt, 0);
@@ -358,7 +358,7 @@
     save(); justId = item.id; closeD($("edit")); render();
     const e2 = E[item.ev];
     let msg = `${item.who}${item.dir === "in" ? "から" : "へ"}の${evLabel(item)}を保存しました。`;
-    if (was && was.state !== "done" && item.state === "done") msg = `${item.who}への${e2.act === "お礼" ? "お礼" : e2.act}、済みにしました。`;
+    if (was && was.state !== "done" && item.state === "done") msg = `${item.who}への${e2.act === "お礼" ? "お礼" : e2.act}を済みにしました。`;
     else if (!was && item.state === "todo") { const d = dueInfo(item); if (d) msg += `${e2.act}は${jp(d.due)}ごろまでが目安です。`; }
     toast(msg, () => { restore(snap); render(); });
   });
@@ -414,7 +414,7 @@
     let data = null;
     try { if (f.size > 5e6) throw 0; const j = JSON.parse(await f.text()); if (j && j.app === "okaeshi") data = clean(j.data); } catch (e) { data = null; }
     if (!data || !data.items.length) { $("moveMsg").textContent = "読み込めませんでした。このアプリで書き出したファイルを選んでください。"; return; }
-    if (st.items.length && !confirm(`いまの記録を、ファイルの${data.items.length}件と置きかえますか？`)) return;
+    if (st.items.length && !confirm(`今の記録を、ファイルの${data.items.length}件に置き換えますか？`)) return;
     const snap = snapshot();
     st = data; save(); render();
     $("moveMsg").textContent = `${data.items.length}件を読み込みました。`;

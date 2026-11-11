@@ -73,7 +73,7 @@
       if (C.cmp(a, next.start) >= 0) {
         const last = new Date(next.start[0], next.start[1] - 1, next.start[2] - 1);
         const la = C.fromDate(last);
-        return { err: `${era}は${la[0] - e.y0 + 1}年${la[1]}月${la[2]}日までです。そのあとは${next.name}です。` };
+        return { err: `${era}は${la[0] - e.y0 + 1}年${la[1]}月${la[2]}日までです。その後は${next.name}です。` };
       }
     }
     return { a };
@@ -131,7 +131,7 @@
   function gradeNote(b) {
     const fy = C.birthFY(b);
     const range = `同じ学年は、${fy}年4月2日〜${fy + 1}年4月1日生まれです。`;
-    if (b[1] === 4 && b[2] === 1) return `4月1日生まれは早生まれです。法律では誕生日の前日に年をとるので、前の学年に入ります。${range}`;
+    if (b[1] === 4 && b[2] === 1) return `4月1日生まれは早生まれです。法律では誕生日の前日に年を取るので、前の学年に入ります。${range}`;
     if (b[1] === 4 && b[2] === 2) return `4月2日生まれは、学年でいちばん早い誕生日です。${range}`;
     if (C.hayaumare(b)) return `早生まれ（1月1日〜4月1日生まれ）です。${range}`;
     return range;
@@ -261,7 +261,7 @@
 
   // 書き出し・読み込み
   $("expBtn").addEventListener("click", () => {
-    if (!st.people.length) { $("moveMsg").textContent = "保存した家族がいないので、書き出すものがありません。"; return; }
+    if (!st.people.length) { $("moveMsg").textContent = "保存した家族がいないので、書き出せません。"; return; }
     const blob = new Blob([JSON.stringify({ app: "nenrei", version: 1, exportedAt: new Date().toISOString(), data: st }, null, 1)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = el("a"); a.href = url; a.download = `nenrei-${C.fmt(todayA)}.json`;
@@ -275,7 +275,7 @@
     let data = null;
     try { if (f.size > 1e6) throw 0; const j = JSON.parse(await f.text()); if (j && j.app === "nenrei") data = clean(j.data); } catch (e) { data = null; }
     if (!data || !data.people.length) { $("moveMsg").textContent = "読み込めませんでした。このアプリで書き出したファイルを選んでください。"; return; }
-    if (st.people.length && !confirm(`いまの家族（${st.people.length}人）を、ファイルの${data.people.length}人と置きかえますか？`)) return;
+    if (st.people.length && !confirm(`今の家族（${st.people.length}人）を、ファイルの${data.people.length}人に置き換えますか？`)) return;
     const snap = JSON.stringify(st.people);
     st.people = data.people; save(); renderFam(); updateCount();
     $("moveMsg").textContent = `${data.people.length}人分を読み込みました。`;
@@ -323,7 +323,7 @@
         body.append(tr);
       }
     } else {
-      $("tblNote").textContent = `${y}年（${wy}）の誕生日を過ぎたあとの年齢です。数え年は1月1日に1つ増えます。`;
+      $("tblNote").textContent = `${y}年（${wy}）の誕生日を過ぎた後の年齢です。数え年は1月1日に1つ増えます。`;
       head.append(row(["生まれ年", "和暦", "干支", "満", "数え"]));
       for (const r of C.yearTable(y, 100)) {
         body.append(row([`${r.by}年`, r.wareki.join("／"), `${r.eto.shi}（${r.eto.yomi}）`, `${r.man}歳`, `${r.kazoe}歳`], r.man % 10 === 0 ? "first" : ""));

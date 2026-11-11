@@ -2,7 +2,7 @@
 <html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>寸法メモ</title>
-<meta name="description" content="窓や冷蔵庫置き場など、測った寸法を部屋ごとにメモ。家具や家電の幅・高さ・奥行きを入れると、どこに入るかがすぐわかります。">
+<meta name="description" content="窓や冷蔵庫置き場など、測った寸法を部屋ごとにメモできます。家具や家電の幅・高さ・奥行きを入れると、どこに入るかがすぐ分かります。">
 <meta name="theme-color" content="#F2B705">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="manifest" href="manifest.webmanifest">
@@ -22,7 +22,7 @@
         <button type="button" id="uMm" aria-pressed="false">mm</button>
       </div>
     </div>
-    <p class="lead">測った寸法を残しておけば、買う前に「入る？」がわかります。</p>
+    <p class="lead">測った寸法を残しておけば、買う前に「入る？」が分かります。</p>
   </div>
   <div class="tape" aria-hidden="true"></div>
 </header>
@@ -48,7 +48,7 @@
         <rect x="150" y="60" width="6" height="22" rx="1" fill="#8A8A86"/>
       </svg>
       <p class="empty-h">測った寸法を、部屋ごとにメモできます。</p>
-      <p>まずは部屋を1つ追加してください。例を見てから決めても大丈夫です。</p>
+      <p>まずは部屋を1つ追加してください。例を入れて試すこともできます。</p>
       <div class="row-btns center">
         <button type="button" class="btn" id="firstRoom">部屋を追加</button>
         <button type="button" class="btn ghost" id="sample">例を入れてみる</button>
@@ -68,7 +68,7 @@
 
     <details class="move">
       <summary>データの引っ越し</summary>
-      <p>機種変更のときは、ファイルに書き出して、新しい端末で読み込みます。</p>
+      <p>機種変更のときは、ファイルに書き出して新しい端末で読み込んでください。</p>
       <div class="row-btns">
         <button type="button" class="btn ghost small" id="expBtn">ファイルに書き出す</button>
         <label class="btn ghost small file-btn">ファイルを読み込む<input type="file" id="impFile" accept="application/json,.json"></label>
@@ -81,7 +81,7 @@
     <h2 id="fitH">買いたい物は、どこに入る？</h2>
     <p class="sub">商品ページの外形寸法を入れると、メモした場所と比べます。</p>
     <form class="fit-form" id="fitForm" novalidate>
-      <label class="field full"><span>商品の名前（なくても大丈夫）</span><input id="fName" type="text" maxlength="30" autocomplete="off" placeholder="冷蔵庫 NR-F45"></label>
+      <label class="field full"><span>商品名（省略可）</span><input id="fName" type="text" maxlength="30" autocomplete="off" placeholder="冷蔵庫 NR-F45"></label>
       <div class="dims">
         <label class="field"><span>幅</span><span class="in-u"><input id="fW" type="text" inputmode="decimal" autocomplete="off" placeholder="65"><i class="u-l"></i></span></label>
         <label class="field"><span>高さ</span><span class="in-u"><input id="fH" type="text" inputmode="decimal" autocomplete="off" placeholder="180"><i class="u-l"></i></span></label>
@@ -90,16 +90,16 @@
       <p class="err" id="fErr" role="alert"></p>
       <p class="fit-sum" id="fitSum" aria-live="polite"></p>
       <fieldset class="margin">
-        <legend>まわりに空けるすき間</legend>
+        <legend>周りに空けるすき間</legend>
         <div class="dims">
           <label class="field"><span>左右それぞれ</span><span class="in-u"><input id="mS" type="text" inputmode="decimal" autocomplete="off" placeholder="0"><i class="u-l"></i></span></label>
           <label class="field"><span>上</span><span class="in-u"><input id="mT" type="text" inputmode="decimal" autocomplete="off" placeholder="0"><i class="u-l"></i></span></label>
-          <label class="field"><span>うしろ</span><span class="in-u"><input id="mB" type="text" inputmode="decimal" autocomplete="off" placeholder="0"><i class="u-l"></i></span></label>
+          <label class="field"><span>後ろ</span><span class="in-u"><input id="mB" type="text" inputmode="decimal" autocomplete="off" placeholder="0"><i class="u-l"></i></span></label>
         </div>
-        <p class="hint">冷蔵庫や洗濯機は、放熱や配管のためのすき間が要ります。説明書の「設置に必要な寸法」を見て入れると確実です。</p>
+        <p class="hint">冷蔵庫や洗濯機は、放熱や配管のためのすき間が必要です。取扱説明書の「設置に必要な寸法」を確認して入れてください。</p>
       </fieldset>
-      <label class="switch"><input type="checkbox" id="rotY" checked><span>横に向きを変えてもいい（幅と奥行きを入れかえる）</span></label>
-      <label class="switch"><input type="checkbox" id="rotAll"><span>寝かせてもいい（収納ケースや箱など）</span></label>
+      <label class="switch"><input type="checkbox" id="rotY" checked><span>横向きにしてもよい（幅と奥行きを入れ替える）</span></label>
+      <label class="switch"><input type="checkbox" id="rotAll"><span>寝かせてもよい（収納ケースや箱など）</span></label>
     </form>
     <div class="result" id="result"></div>
   </section>

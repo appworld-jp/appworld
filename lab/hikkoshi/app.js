@@ -95,7 +95,7 @@
     const gr = g.off === -1 ? "" : "ごろ";
     const nextDue = add(move, nextG.off);
     if (dn > 0) return { due, kind: "later", tag: `${mdw(due)}${gr}` };
-    if (diff(nextDue, today) > 0) return { due, kind: "now", tag: `${mdw(due)}${gr}・いまの時期` };
+    if (diff(nextDue, today) > 0) return { due, kind: "now", tag: `${mdw(due)}${gr}・今の時期` };
     if (diff(today, move) > 0) return { due, kind: "past", tag: `${mdw(due)}${gr}` };
     return { due, kind: "late", tag: `${mdw(due)}${gr}・早めに` };
   }
@@ -114,7 +114,7 @@
     else if (n === 0) left.append(el("b", "word", "今日が引っ越し日"));
     else left.append(el("small", null, "引っ越しから"), el("b", null, String(-n + 1)), el("small", null, "日目"));
     $("barFill").style.width = all.length ? `${Math.round(doneN / all.length * 100)}%` : "0";
-    $("lcCount").textContent = doneN === all.length ? `${all.length}件すべて済みました！` : `${all.length}件中${doneN}件済み・残り${all.length - doneN}件`;
+    $("lcCount").textContent = doneN === all.length ? `${all.length}件全て済みました！` : `${all.length}件中${doneN}件済み・残り${all.length - doneN}件`;
     $("hideDone").checked = st.hide;
 
     // いちばん近い期限
@@ -162,9 +162,9 @@
         lab.append(cb, box, txt); ti.append(lab);
         if (t.w && !done && !active) {
           ti.classList.add("fold");
-          const more = el("button", "t-more", "くわしく"); more.type = "button"; more.setAttribute("aria-expanded", "false");
-          more.setAttribute("aria-label", `「${t.t}」のくわしい説明`);
-          more.addEventListener("click", () => { const o = ti.classList.toggle("open"); more.setAttribute("aria-expanded", String(o)); more.textContent = o ? "閉じる" : "くわしく"; });
+          const more = el("button", "t-more", "詳しく"); more.type = "button"; more.setAttribute("aria-expanded", "false");
+          more.setAttribute("aria-label", `「${t.t}」の詳しい説明`);
+          more.addEventListener("click", () => { const o = ti.classList.toggle("open"); more.setAttribute("aria-expanded", String(o)); more.textContent = o ? "閉じる" : "詳しく"; });
           ti.append(more);
         }
         if (t.own) {
@@ -191,9 +191,9 @@
       const nm = tennyu.id === "tennyu" ? "転入届" : "転居届";
       next = dl >= 0 ? `${nm}の期限は${md(add(move, 14))}です（あと${dl}日）。` : `${nm}の期限（${md(add(move, 14))}）が過ぎています。早めに窓口へ。`;
     } else if (urgent.length) {
-      next = `いまの時期にやることが、あと${urgent.reduce((a, b) => a + b, 0)}件あります。`;
+      next = `今の時期にやることが、あと${urgent.reduce((a, b) => a + b, 0)}件あります。`;
     } else if (doneN < all.length) {
-      next = "いまの時期の分は済んでいます。";
+      next = "今の時期の分は済んでいます。";
     }
     $("lcNext").textContent = next;
     $("lcNext").hidden = !next;
@@ -215,7 +215,7 @@
     if (on && !reduce()) { li.classList.add("stamp"); setTimeout(() => { renderMain(); refocus(t.id); }, 380); }
     else { renderMain(); refocus(t.id); }
     const all = tasks();
-    if (on && all.every(x => st.done[x.id])) toast("すべて済みました。おつかれさまでした！");
+    if (on && all.every(x => st.done[x.id])) toast("全て済みました。お疲れさまでした！");
   }
   $("hideDone").addEventListener("change", () => { st.hide = $("hideDone").checked; save(); renderMain(); });
 
@@ -245,14 +245,14 @@
     let data = null;
     try { if (f.size > 1e6) throw 0; const j = JSON.parse(await f.text()); if (j && j.app === "hikkoshi") data = clean(j.data); } catch (e) { data = null; }
     if (!data) { $("moveMsg").textContent = "読み込めませんでした。このアプリで書き出したファイルを選んでください。"; return; }
-    if (!confirm("いまのリストを、ファイルの内容と置きかえますか？")) return;
+    if (!confirm("今のリストを、ファイルの内容に置き換えますか？")) return;
     const s = snap();
     st = data; save(); renderMain();
     $("moveMsg").textContent = "読み込みました。";
     toast("読み込みました。", () => { restore(s); renderMain(); });
   });
   $("resetBtn").addEventListener("click", () => {
-    if (!confirm("チェックと自分で足したやることを消して、最初から作り直しますか？")) return;
+    if (!confirm("チェックと自分で追加したやることを消して、最初から作り直しますか？")) return;
     const s = snap();
     st = null; try { localStorage.removeItem(KEY); } catch (e) {}
     $("moveDate").value = ""; openSetup();

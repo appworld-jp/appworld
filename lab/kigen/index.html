@@ -2,7 +2,7 @@
 <html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>更新日まとめ帳</title>
-<meta name="description" content="運転免許証、パスポート、マイナンバーカード、車検、保険、スマホの契約。更新や期限の日をまとめて控えて、準備を始める時期がひと目でわかります。">
+<meta name="description" content="運転免許証、パスポート、マイナンバーカード、車検、保険、スマホの契約などの期限をまとめて控えておけます。準備を始める時期がひと目で分かります。">
 <meta name="theme-color" content="#0E6E60">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="manifest" href="manifest.webmanifest">
@@ -32,7 +32,7 @@
   <div id="groups"></div>
 
   <section class="empty" id="empty" hidden>
-    <p class="empty-h">まずは、期限のある物を1つ登録しましょう。</p>
+    <p class="empty-h">まずは、期限のある物を1つ登録してください。</p>
     <p>よくある物から選べます。期限の日と、何日前から準備するかを決めると、ここに並びます。</p>
     <div class="quick" id="quick"></div>
     <button type="button" class="btn ghost" id="sample">例を見る</button>
@@ -40,7 +40,7 @@
 
   <details class="box">
     <summary>データの引っ越し</summary>
-    <p>記録はこの端末の中にだけあります。機種変更のときは、ファイルに書き出して、新しい端末で読み込みます。番号を控えている場合は、ファイルにも入ります。</p>
+    <p>機種変更のときは、ファイルに書き出して新しい端末で読み込んでください。控えた番号もファイルに入ります。</p>
     <div class="row">
       <button type="button" class="btn ghost small" id="expBtn">ファイルに書き出す</button>
       <label class="btn ghost small file-btn">ファイルを読み込む<input type="file" id="impFile" accept="application/json,.json"></label>
@@ -86,8 +86,8 @@
     <label class="field"><span>メモ</span><textarea id="fNote" rows="2" maxlength="300" placeholder="更新は警察署でもできる。写真は持ち込み可。"></textarea></label>
     <details class="num" id="numBox">
       <summary>番号も控える（任意）</summary>
-      <p class="hint">番号は入れなくても使えます。入れた番号はこの端末にだけ保存され、書き出したファイルにも入ります。端末を人に貸すときや、ファイルの扱いに気をつけてください。</p>
-      <label class="field"><span>番号</span><input id="fNum" type="text" maxlength="40" autocomplete="off" spellcheck="false" placeholder="空欄のままで大丈夫です"></label>
+      <p class="hint">番号は入れなくても使えます。入れた番号はこの端末にだけ保存され、書き出したファイルにも入ります。端末を人に貸すときや、ファイルの扱いには気を付けてください。</p>
+      <label class="field"><span>番号</span><input id="fNum" type="text" maxlength="40" autocomplete="off" spellcheck="false" placeholder="123456789012"></label>
     </details>
     <p class="err" id="fErr" role="alert"></p>
     <div class="acts">
