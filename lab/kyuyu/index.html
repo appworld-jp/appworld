@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>給油ノート</title>
+<meta name="description" content="給油した日、走行距離、量、値段を記録。満タンから満タンまでで燃費を正しく計算し、月のガソリン代や1kmあたりの費用、オイル交換などの時期もわかります。車は何台でも。">
+<meta name="theme-color" content="#14171B">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="給油ノート">
+<link rel="stylesheet" href="style.css">
+</head><body>
+<header class="top">
+  <div class="top-in">
+    <a class="back" href="../">App World Lab</a>
+    <h1><svg class="pump" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path d="M4 21V5a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v16Z" fill="currentColor"/><rect x="6.5" y="5.5" width="6" height="4.5" rx="1" fill="#14171B"/><path d="M15 8h2l2 2.5V17a1.5 1.5 0 0 1-3 0v-3h-1" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M2.5 21h14" stroke="currentColor" stroke-width="2"/></svg>給油ノート</h1>
+    <p class="lead">給油のたびに3つの数字を入れるだけで、燃費と出費がわかります。</p>
+  </div>
+  <nav class="cars" id="cars" aria-label="車を選ぶ"></nav>
+</header>
+
+<main class="wrap">
+  <section class="empty" id="empty" hidden>
+    <svg viewBox="0 0 170 100" width="170" height="100" aria-hidden="true">
+      <path d="M20 90a65 65 0 0 1 130 0" fill="none" stroke="#2C333B" stroke-width="12" stroke-linecap="round"/>
+      <path d="M20 90a65 65 0 0 1 95-58" fill="none" stroke="#FFB547" stroke-width="12" stroke-linecap="round"/>
+      <path d="M85 90 118 48" stroke="#E9EDF2" stroke-width="5" stroke-linecap="round"/>
+      <circle cx="85" cy="90" r="8" fill="#E9EDF2"/>
+    </svg>
+    <p class="empty-h">まず車を登録しましょう。</p>
+    <p>給油のたびに、走行距離と入れた量と値段を記録します。2回目の満タンから燃費が出ます。</p>
+    <div class="row-btns center">
+      <button type="button" class="btn" id="firstCar">車を登録</button>
+      <button type="button" class="btn ghost" id="sampleBtn">例を見る</button>
+    </div>
+  </section>
+
+  <div id="main" hidden>
+    <section class="gauge" aria-label="燃費と費用">
+      <div class="g-main">
+        <small id="gLabel">平均燃費</small>
+        <p class="g-big"><b id="gEcon">--</b><span>km/L</span></p>
+        <p class="g-note" id="gNote" aria-live="polite"></p>
+      </div>
+      <dl class="g-grid">
+        <div><dt>今月のガソリン代</dt><dd id="gMonth">--</dd></div>
+        <div><dt>1kmあたり</dt><dd id="gPerKm">--</dd></div>
+        <div><dt>いちばん良い</dt><dd id="gBest">--</dd></div>
+        <div><dt>いちばん悪い</dt><dd id="gWorst">--</dd></div>
+      </dl>
+    </section>
+
+    <button type="button" class="btn big" id="fillBtn"><span aria-hidden="true">＋</span>給油を記録</button>
+
+    <div class="mt-alerts" id="mtAlerts"></div>
+
+    <nav class="tabs" aria-label="表示の切りかえ">
+      <button type="button" class="tab" data-tab="log" aria-pressed="true">履歴</button>
+      <button type="button" class="tab" data-tab="chart" aria-pressed="false">グラフ</button>
+      <button type="button" class="tab" data-tab="maint" aria-pressed="false">整備</button>
+    </nav>
+
+    <section id="logView">
+      <ol class="fills" id="fills"></ol>
+      <p class="none" id="fillNone" hidden>給油の記録はまだありません。「給油を記録」から入れてください。</p>
+    </section>
+
+    <section id="chartView" hidden>
+      <h2 class="sec-h">燃費の移り変わり</h2>
+      <figure class="chart"><svg id="econChart" viewBox="0 0 340 190" role="img" aria-label="燃費のグラフ"></svg></figure>
+      <p class="none" id="econNone" hidden>満タンで2回以上記録すると、燃費のグラフが出ます。</p>
+      <h2 class="sec-h">月ごとのガソリン代</h2>
+      <figure class="chart"><svg id="costChart" viewBox="0 0 340 190" role="img" aria-label="月ごとのガソリン代のグラフ"></svg></figure>
+      <ol class="months" id="months"></ol>
+    </section>
+
+    <section id="maintView" hidden>
+      <p class="caution">距離や期間は一般的な目安です。車の取扱説明書や整備工場の案内に合わせて変えてください。</p>
+      <ul class="mlist" id="mlist"></ul>
+      <p class="none" id="mNone" hidden>整備の予定はまだありません。</p>
+      <button type="button" class="btn ghost" id="mAdd">＋ 整備を追加</button>
+    </section>
+
+    <div class="row-btns end"><button type="button" class="btn ghost small" id="carEdit">車の設定</button></div>
+  </div>
+
+  <div class="sample-bar" id="sampleBar" hidden>
+    <p>例の車と記録が入っています。</p>
+    <button type="button" class="btn ghost small" id="clearSample">例を消す</button>
+  </div>
+
+  <details class="move">
+    <summary>データの引っ越し</summary>
+    <p>機種変更のときは、ファイルに書き出して、新しい端末で読み込みます。</p>
+    <div class="row-btns">
+      <button type="button" class="btn ghost small" id="expBtn">ファイルに書き出す</button>
+      <label class="btn ghost small file-btn">ファイルを読み込む<input type="file" id="impFile" accept="application/json,.json"></label>
+    </div>
+    <p class="msg" id="moveMsg" role="status"></p>
+  </details>
+
+  <footer class="foot">
+    <p>車と給油の記録は、この端末にだけ保存されます。</p>
+    <p>開発：App World Lab（App World 運営）</p>
+    <p><a href="../">App World Lab</a></p>
+  </footer>
+</main>
+
+<!-- 給油 -->
+<dialog id="fillDlg" class="dlg" aria-labelledby="fH">
+  <form id="fillForm" class="dlg-in" novalidate>
+    <h2 id="fH">給油を記録</h2>
+    <label class="field"><span>給油した日</span><input id="fDate" type="date"></label>
+    <div class="seg" role="radiogroup" aria-label="距離の入れ方">
+      <label><input type="radio" name="dm" value="odo" checked><span>メーターの総距離</span></label>
+      <label><input type="radio" name="dm" value="trip"><span>前回からの距離</span></label>
+    </div>
+    <label class="field"><span id="distL">メーターの総距離（km）</span><input id="fDist" type="text" inputmode="decimal" maxlength="10" autocomplete="off" placeholder="45210"></label>
+    <p class="hint" id="distHint"></p>
+    <label class="field"><span>入れた量（L）<em>必須</em></span><input id="fLit" type="text" inputmode="decimal" maxlength="7" autocomplete="off" placeholder="35.2"></label>
+    <div class="seg" role="radiogroup" aria-label="値段の入れ方">
+      <label><input type="radio" name="pm" value="ppl" checked><span>1Lあたり</span></label>
+      <label><input type="radio" name="pm" value="total"><span>合計金額</span></label>
+    </div>
+    <label class="field"><span id="priceL">1Lあたりの値段（円）<em>必須</em></span><input id="fPrice" type="text" inputmode="decimal" maxlength="9" autocomplete="off" placeholder="172"></label>
+    <div class="seg full-seg" role="radiogroup" aria-label="満タンにしたか">
+      <label><input type="radio" name="full" value="1" checked><span>満タンにした</span></label>
+      <label><input type="radio" name="full" value="0"><span>満タンではない</span></label>
+    </div>
+    <p class="preview" id="preview" aria-live="polite"></p>
+    <label class="field"><span>メモ</span><input id="fNote" type="text" maxlength="40" autocomplete="off" placeholder="高速で帰省・エアコン強め"></label>
+    <p class="err" id="fErr" role="alert"></p>
+    <div class="dlg-acts">
+      <button class="btn" type="submit">保存</button>
+      <button class="btn ghost" type="button" id="fCancel">キャンセル</button>
+    </div>
+    <button type="button" class="link-danger" id="fDel" hidden>この記録を消す</button>
+  </form>
+</dialog>
+
+<!-- 車 -->
+<dialog id="carDlg" class="dlg" aria-labelledby="cH">
+  <form id="carForm" class="dlg-in" novalidate>
+    <h2 id="cH">車を登録</h2>
+    <label class="field"><span>車の名前<em>必須</em></span><input id="cName" type="text" maxlength="16" autocomplete="off" placeholder="フィット"></label>
+    <fieldset class="chips-f">
+      <legend>距離はどちらで入れますか？（あとで1回ずつ変えられます）</legend>
+      <div class="seg">
+        <label><input type="radio" name="cm" value="odo" checked><span>メーターの総距離</span></label>
+        <label><input type="radio" name="cm" value="trip"><span>前回からの距離</span></label>
+      </div>
+    </fieldset>
+    <p class="err" id="cErr" role="alert"></p>
+    <div class="dlg-acts">
+      <button class="btn" type="submit">保存</button>
+      <button class="btn ghost" type="button" id="cCancel">キャンセル</button>
+    </div>
+    <button type="button" class="link-danger" id="cDel" hidden>この車を消す</button>
+  </form>
+</dialog>
+
+<!-- 整備 -->
+<dialog id="mDlg" class="dlg" aria-labelledby="mH">
+  <form id="mForm" class="dlg-in" novalidate>
+    <h2 id="mH">整備を追加</h2>
+    <fieldset class="chips-f" id="mKindF">
+      <legend>なにの整備</legend>
+      <div class="chips" id="mChips"></div>
+    </fieldset>
+    <div class="two">
+      <label class="field"><span>前回の日</span><input id="mLast" type="date"></label>
+      <label class="field"><span>前回のメーター（km）</span><input id="mOdo" type="text" inputmode="numeric" maxlength="9" autocomplete="off" placeholder="40210"></label>
+    </div>
+    <div class="two">
+      <label class="field"><span>何kmごと（目安）</span><input id="mKm" type="text" inputmode="numeric" maxlength="7" autocomplete="off" placeholder="5000"></label>
+      <label class="field"><span>何か月ごと（目安）</span><input id="mMon" type="text" inputmode="numeric" maxlength="3" autocomplete="off" placeholder="6"></label>
+    </div>
+    <p class="hint" id="mHint"></p>
+    <p class="err" id="mErr" role="alert"></p>
+    <div class="dlg-acts">
+      <button class="btn" type="submit">保存</button>
+      <button class="btn ghost" type="button" id="mCancel">キャンセル</button>
+    </div>
+    <button type="button" class="link-danger" id="mDel" hidden>この整備を消す</button>
+  </form>
+</dialog>
+
+<div class="toast" id="toast" role="status" hidden><span id="toastMsg"></span><button type="button" id="toastUndo">元に戻す</button></div>
+<script src="free.js"></script>
+<script src="app.js"></script>
+<script src="../pwa.js"></script>
+</body></html>

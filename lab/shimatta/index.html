@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>しまった場所メモ</title>
+<meta name="description" content="パスポートは寝室のクローゼットの上段の青い箱。家の中のどこに何をしまったかを、部屋・収納・箱の順に記録して、ひと言でさがせます。">
+<meta name="theme-color" content="#B9874E">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="しまった場所メモ">
+<link rel="stylesheet" href="style.css">
+</head><body>
+<header class="top">
+  <div class="top-in">
+    <a class="back" href="../">App World Lab</a>
+    <h1>しまった場所メモ</h1>
+    <p class="lead">しまった場所を書いておけば、次は探さずに出せます。</p>
+    <form class="search" id="searchForm" role="search">
+      <label class="sr" for="q">しまった物や場所をさがす</label>
+      <svg class="s-ic" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.6"/><path d="M15.5 15.5 21 21" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/></svg>
+      <input id="q" type="search" placeholder="パスポート、電池、青い箱" autocomplete="off" enterkeyhint="search">
+    </form>
+  </div>
+</header>
+
+<nav class="tabs" aria-label="表示の切りかえ">
+  <button type="button" class="tab" id="tabFind" aria-pressed="true">さがす</button>
+  <button type="button" class="tab" id="tabPlace" aria-pressed="false">場所ごとに見る</button>
+</nav>
+
+<main class="wrap">
+  <!-- さがす -->
+  <section id="findView" aria-label="さがす">
+    <p class="count" id="found" aria-live="polite"></p>
+    <div id="recentBox" class="recent" hidden>
+      <h2 class="mini-h">最近探したもの</h2>
+      <div class="recent-list" id="recent"></div>
+    </div>
+    <div id="placeHits" class="place-hits"></div>
+    <ul class="items" id="results"></ul>
+
+    <section class="empty" id="firstRun" hidden>
+      <svg viewBox="0 0 160 110" width="160" height="110" aria-hidden="true">
+        <path d="M20 44 80 30l60 14v52L80 106 20 96Z" fill="#D9B27A" stroke="#6B4A26" stroke-width="3" stroke-linejoin="round"/>
+        <path d="M20 44 80 58l60-14M80 58v48" fill="none" stroke="#6B4A26" stroke-width="3" stroke-linejoin="round"/>
+        <path d="M38 38 98 24" stroke="#F3E6CF" stroke-width="9" stroke-linecap="round" opacity=".85"/>
+        <rect x="40" y="66" width="30" height="16" rx="2" fill="#FFF8E8" stroke="#6B4A26" stroke-width="2" transform="rotate(4 55 74)"/>
+        <path d="M45 73h20" stroke="#2F7F7A" stroke-width="3" stroke-linecap="round" transform="rotate(4 55 74)"/>
+      </svg>
+      <p class="empty-h">「どこにしまったっけ」をなくしましょう。</p>
+      <p>まず部屋と収納を作って、しまった物を1つ記録します。</p>
+      <div class="row-btns center">
+        <button type="button" class="btn" id="firstItem">しまった物を記録</button>
+        <button type="button" class="btn ghost" id="sampleBtn">例を入れて試す</button>
+      </div>
+    </section>
+    <p class="none" id="noHit" hidden></p>
+  </section>
+
+  <!-- 場所ごと -->
+  <section id="placeView" aria-label="場所ごとに見る" hidden>
+    <nav class="crumbs" id="crumbs" aria-label="いまいる場所"></nav>
+    <div class="here">
+      <h2 id="hereName">家の中</h2>
+      <p class="here-sub" id="hereSub"></p>
+    </div>
+    <div class="boxes" id="boxes"></div>
+    <div class="row-btns" id="placeActs"></div>
+    <section class="inside" id="insideBox" hidden>
+      <div class="inside-h">
+        <h3 id="insideH">この中にあるもの</h3>
+        <button type="button" class="btn ghost small" id="allChecked">ぜんぶ確認した</button>
+      </div>
+      <div id="insideList"></div>
+    </section>
+    <p class="none" id="placeEmpty" hidden></p>
+  </section>
+
+  <div class="sample-bar" id="sampleBar" hidden>
+    <p>例の場所と物が入っています。</p>
+    <button type="button" class="btn ghost small" id="clearSample">例を消す</button>
+  </div>
+
+  <details class="move">
+    <summary>データの引っ越し</summary>
+    <p>機種変更のときは、ファイルに書き出して、新しい端末で読み込みます。</p>
+    <div class="row-btns">
+      <button type="button" class="btn ghost small" id="expBtn">ファイルに書き出す</button>
+      <label class="btn ghost small file-btn">ファイルを読み込む<input type="file" id="impFile" accept="application/json,.json"></label>
+    </div>
+    <p class="msg" id="moveMsg" role="status"></p>
+  </details>
+
+  <footer class="foot">
+    <p>場所と物の記録は、この端末にだけ保存されます。</p>
+    <p>開発：App World Lab（App World 運営）</p>
+    <p><a href="../">App World Lab</a></p>
+  </footer>
+</main>
+
+<button type="button" class="fab" id="addBtn"><span aria-hidden="true">＋</span>しまった物を記録</button>
+
+<!-- 物の詳細 -->
+<dialog id="view" class="dlg" aria-labelledby="vName">
+  <div class="dlg-in">
+    <h2 id="vName" class="v-name"></h2>
+    <ol class="v-path" id="vPath" aria-label="しまった場所"></ol>
+    <p class="v-note" id="vNote"></p>
+    <p class="v-meta" id="vMeta"></p>
+    <div class="v-acts">
+      <button type="button" class="btn" id="vHere">ここにあった</button>
+      <button type="button" class="btn ghost" id="vMove">別の場所へ移す</button>
+    </div>
+    <div class="dlg-acts">
+      <button type="button" class="btn ghost" id="vEdit">直す</button>
+      <button type="button" class="btn ghost" id="vClose">閉じる</button>
+    </div>
+    <button type="button" class="link-danger" id="vDel">この記録を消す</button>
+  </div>
+</dialog>
+
+<!-- 物の記録 -->
+<dialog id="edit" class="dlg" aria-labelledby="eH">
+  <form id="itemForm" class="dlg-in" novalidate>
+    <h2 id="eH">しまった物を記録</h2>
+    <label class="field"><span>しまった物<em>必須</em></span><input id="fName" type="text" maxlength="30" autocomplete="off" placeholder="パスポート"></label>
+    <label class="field"><span>しまった場所<em>必須</em></span><select id="fPlace"></select></label>
+    <p class="hint" id="fPlaceHint"></p>
+    <label class="field"><span>ひと言メモ</span><input id="fNote" type="text" maxlength="60" autocomplete="off" placeholder="家族4人分。母子手帳も同じ箱"></label>
+    <label class="field"><span>最後に確かめた日</span><input id="fChecked" type="date"></label>
+    <p class="err" id="fErr" role="alert"></p>
+    <div class="dlg-acts">
+      <button class="btn" type="submit">保存</button>
+      <button class="btn ghost" type="button" id="eCancel">キャンセル</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- 移す -->
+<dialog id="moveDlg" class="dlg" aria-labelledby="mH">
+  <form id="moveForm" class="dlg-in" novalidate>
+    <h2 id="mH">別の場所へ移す</h2>
+    <p class="hint" id="mFrom"></p>
+    <label class="field"><span>移した先</span><select id="mPlace"></select></label>
+    <p class="err" id="mErr" role="alert"></p>
+    <div class="dlg-acts">
+      <button class="btn" type="submit">移す</button>
+      <button class="btn ghost" type="button" id="mCancel">キャンセル</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- 場所を作る・名前を変える -->
+<dialog id="placeDlg" class="dlg" aria-labelledby="pH">
+  <form id="placeForm" class="dlg-in" novalidate>
+    <h2 id="pH">場所を作る</h2>
+    <label class="field" id="pParentF"><span>どこの中に作る？</span><select id="pParent"></select></label>
+    <fieldset class="chips-f">
+      <legend id="pLegend">名前</legend>
+      <div class="chips" id="pChips"></div>
+    </fieldset>
+    <p class="err" id="pErr" role="alert"></p>
+    <div class="dlg-acts">
+      <button class="btn" type="submit" id="pOk">作る</button>
+      <button class="btn ghost" type="button" id="pCancel">キャンセル</button>
+    </div>
+  </form>
+</dialog>
+
+<div class="toast" id="toast" role="status" hidden><span id="toastMsg"></span><button type="button" id="toastUndo">元に戻す</button></div>
+<script src="free.js"></script>
+<script src="app.js"></script>
+<script src="../pwa.js"></script>
+</body></html>

@@ -1,0 +1,38 @@
+{
+  "name": "しまった場所メモ",
+  "short_name": "しまった場所メモ",
+  "description": "パスポートは寝室のクローゼットの上段の青い箱。家の中のどこに何をしまったかを、部屋・収納・箱の順に記録して、ひと言でさがせます。",
+  "lang": "ja",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#B9874E",
+  "theme_color": "#B9874E",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

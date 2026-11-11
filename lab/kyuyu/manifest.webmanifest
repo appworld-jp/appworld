@@ -1,0 +1,38 @@
+{
+  "name": "給油ノート",
+  "short_name": "給油ノート",
+  "description": "給油した日、走行距離、量、値段を記録。満タンから満タンまでで燃費を正しく計算し、月のガソリン代や1kmあたりの費用、オイル交換などの時期もわかります。車は何台でも。",
+  "lang": "ja",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#14171B",
+  "theme_color": "#14171B",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

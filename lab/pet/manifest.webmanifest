@@ -1,0 +1,38 @@
+{
+  "name": "ペット手帳",
+  "short_name": "ペット手帳",
+  "description": "ごはん・散歩・トイレ・薬をワンタップで記録。体重のグラフ、ワクチンやフィラリア・ノミダニ予防の次の日もわかる、ペットのための手帳です。何匹でも。",
+  "lang": "ja",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#2E6B57",
+  "theme_color": "#2E6B57",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

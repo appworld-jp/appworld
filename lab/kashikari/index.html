@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>貸し借り帳</title>
+<meta name="description" content="貸した本や傘、立て替えたお金を、相手と日付といっしょに記録。返ってくる目安を過ぎたものが先に並び、角の立たない「返してね」の文もコピーできます。">
+<meta name="theme-color" content="#F7F1E3">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="貸し借り帳">
+<link rel="stylesheet" href="style.css">
+</head><body>
+<header class="top">
+  <div class="top-in">
+    <a class="back" href="../">App World Lab</a>
+    <div class="title-row">
+      <h1>貸し借り帳</h1>
+      <span class="hanko" aria-hidden="true">帳</span>
+    </div>
+    <p class="lead">誰に何を貸したか、書いておけば忘れません。</p>
+    <div class="start">
+      <button type="button" class="big lend" id="lendBtn"><b>貸した</b><small>本・傘・お金など</small></button>
+      <button type="button" class="big borrow" id="borrowBtn"><b>借りた</b><small>返すものを忘れずに</small></button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="sum" id="sum" aria-live="polite" hidden>
+    <div class="s lend"><small>貸している</small><b id="sLend"></b><span id="sLendM"></span></div>
+    <div class="s borrow"><small>借りている</small><b id="sBorrow"></b><span id="sBorrowM"></span></div>
+  </section>
+
+  <nav class="tabs" id="tabs" aria-label="表示の切りかえ" hidden>
+    <button type="button" class="tab" data-tab="open" aria-pressed="true">まだのもの</button>
+    <button type="button" class="tab" data-tab="people" aria-pressed="false">人ごと</button>
+    <button type="button" class="tab" data-tab="done" aria-pressed="false">返ったもの</button>
+  </nav>
+
+  <section id="openView">
+    <ol class="ledger" id="openList"></ol>
+    <p class="none" id="openNone" hidden>いま貸し借りしているものはありません。</p>
+  </section>
+  <section id="peopleView" hidden>
+    <p class="note">お金は、まだ返っていない分だけを差し引きしています。</p>
+    <div class="people" id="people"></div>
+    <p class="none" id="peopleNone" hidden>まだ記録がありません。</p>
+  </section>
+  <section id="doneView" hidden>
+    <ol class="ledger" id="doneList"></ol>
+    <p class="none" id="doneNone" hidden>返ったものは、ここに残ります。</p>
+  </section>
+
+  <section class="empty" id="empty" hidden>
+    <svg viewBox="0 0 150 100" width="150" height="100" aria-hidden="true">
+      <rect x="18" y="12" width="96" height="80" rx="3" fill="#FFFDF7" stroke="#2A2A2A" stroke-width="2.5"/>
+      <path d="M30 34h72M30 50h72M30 66h72" stroke="#E2B9AE" stroke-width="2"/>
+      <path d="M42 12v80" stroke="#C2412D" stroke-width="2"/>
+      <circle cx="112" cy="70" r="20" fill="none" stroke="#C2412D" stroke-width="3.5"/>
+      <text x="112" y="77" text-anchor="middle" font-size="19" font-weight="700" fill="#C2412D">済</text>
+    </svg>
+    <p class="empty-h">貸したものを1つ書いてみましょう。</p>
+    <p>返ってきたら「返った」を押すだけ。返す目安を過ぎたものは先頭に出ます。</p>
+    <div class="row-btns center"><button type="button" class="btn ghost" id="sampleBtn">例を見る</button></div>
+  </section>
+
+  <div class="sample-bar" id="sampleBar" hidden>
+    <p>例の記録が入っています。</p>
+    <button type="button" class="btn ghost small" id="clearSample">例を消す</button>
+  </div>
+
+  <details class="move">
+    <summary>データの引っ越し</summary>
+    <p>機種変更のときは、ファイルに書き出して、新しい端末で読み込みます。</p>
+    <div class="row-btns">
+      <button type="button" class="btn ghost small" id="expBtn">ファイルに書き出す</button>
+      <label class="btn ghost small file-btn">ファイルを読み込む<input type="file" id="impFile" accept="application/json,.json"></label>
+    </div>
+    <p class="msg" id="moveMsg" role="status"></p>
+  </details>
+
+  <footer class="foot">
+    <p>貸し借りの記録は、この端末にだけ保存されます。</p>
+    <p>開発：App World Lab（App World 運営）</p>
+    <p><a href="../">App World Lab</a></p>
+  </footer>
+</main>
+
+<!-- 記録 -->
+<dialog id="edit" class="dlg" aria-labelledby="eH">
+  <form id="form" class="dlg-in" novalidate>
+    <h2 id="eH">貸したものを記録</h2>
+    <div class="seg" role="radiogroup" aria-label="貸した・借りた">
+      <label><input type="radio" name="dir" value="lend" checked><span>貸した</span></label>
+      <label><input type="radio" name="dir" value="borrow"><span>借りた</span></label>
+    </div>
+    <label class="field"><span id="whoL">誰に<em>必須</em></span><input id="fWho" type="text" maxlength="20" autocomplete="off" placeholder="佐藤さん"></label>
+    <div class="quick" id="whoChips"></div>
+    <fieldset class="chips-f">
+      <legend>なにを</legend>
+      <div class="chips" id="kindChips"></div>
+    </fieldset>
+    <label class="field" id="whatF"><span>品名<em id="whatReq">必須</em></span><input id="fWhat" type="text" maxlength="30" autocomplete="off" placeholder="『三体』の1巻"></label>
+    <label class="field" id="amtF" hidden><span>金額（円）<em>必須</em></span><input id="fAmt" type="text" inputmode="numeric" maxlength="12" autocomplete="off" placeholder="3000"></label>
+    <div class="two">
+      <label class="field"><span id="dateL">貸した日</span><input id="fDate" type="date"></label>
+      <label class="field"><span id="dueL">返してもらう目安</span><input id="fDue" type="date"></label>
+    </div>
+    <div class="quick" id="dueQuick">
+      <button type="button" data-d="7">1週間後</button>
+      <button type="button" data-d="14">2週間後</button>
+      <button type="button" data-m="1">1か月後</button>
+      <button type="button" data-d="0">決めない</button>
+    </div>
+    <label class="field"><span>メモ</span><input id="fNote" type="text" maxlength="60" autocomplete="off" placeholder="読み終わったら感想を聞く"></label>
+    <p class="err" id="fErr" role="alert"></p>
+    <div class="dlg-acts">
+      <button class="btn" type="submit">保存</button>
+      <button class="btn ghost" type="button" id="eCancel">キャンセル</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- 詳細 -->
+<dialog id="view" class="dlg" aria-labelledby="vWhat">
+  <div class="dlg-in">
+    <p class="v-dir" id="vDir"></p>
+    <h2 id="vWhat"></h2>
+    <dl class="v-dl" id="vDl"></dl>
+    <div class="v-acts">
+      <button type="button" class="btn" id="vReturn">返った</button>
+      <button type="button" class="btn ghost" id="vMsg">伝える文を作る</button>
+    </div>
+    <div class="dlg-acts">
+      <button type="button" class="btn ghost" id="vEdit">直す</button>
+      <button type="button" class="btn ghost" id="vClose">閉じる</button>
+    </div>
+    <button type="button" class="link-danger" id="vDel">この記録を消す</button>
+  </div>
+</dialog>
+
+<!-- 伝える文 -->
+<dialog id="msgDlg" class="dlg" aria-labelledby="mH">
+  <div class="dlg-in">
+    <h2 id="mH">やんわり伝える文</h2>
+    <div class="seg tone" role="radiogroup" aria-label="言い方">
+      <label><input type="radio" name="tone" value="polite" checked><span>ていねい</span></label>
+      <label><input type="radio" name="tone" value="plain"><span>ふつう</span></label>
+      <label><input type="radio" name="tone" value="casual"><span>気軽</span></label>
+    </div>
+    <p class="hint" id="toneHint"></p>
+    <label class="field"><span>文（直してから送れます）</span><textarea id="mText" rows="6"></textarea></label>
+    <p class="msg-ok" id="mOk" role="status"></p>
+    <div class="dlg-acts">
+      <button type="button" class="btn" id="mCopy">コピー</button>
+      <button type="button" class="btn ghost" id="mClose">閉じる</button>
+    </div>
+  </div>
+</dialog>
+
+<div class="toast" id="toast" role="status" hidden><span id="toastMsg"></span><button type="button" id="toastUndo">元に戻す</button></div>
+<script src="free.js"></script>
+<script src="app.js"></script>
+<script src="../pwa.js"></script>
+</body></html>

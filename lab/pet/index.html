@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ペット手帳</title>
+<meta name="description" content="ごはん・散歩・トイレ・薬をワンタップで記録。体重のグラフ、ワクチンやフィラリア・ノミダニ予防の次の日もわかる、ペットのための手帳です。何匹でも。">
+<meta name="theme-color" content="#2E6B57">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="ペット手帳">
+<link rel="stylesheet" href="style.css">
+</head><body>
+<header class="top">
+  <div class="top-in">
+    <a class="back" href="../">App World Lab</a>
+    <h1><svg class="paw" viewBox="0 0 32 32" width="30" height="30" aria-hidden="true"><ellipse cx="16" cy="21" rx="7.5" ry="6.5" fill="currentColor"/><ellipse cx="7" cy="13" rx="3" ry="3.8" fill="currentColor"/><ellipse cx="12.5" cy="7.5" rx="3" ry="3.8" fill="currentColor"/><ellipse cx="19.5" cy="7.5" rx="3" ry="3.8" fill="currentColor"/><ellipse cx="25" cy="13" rx="3" ry="3.8" fill="currentColor"/></svg>ペット手帳</h1>
+    <p class="lead">お世話した時間も、次の予防の日も、ここを見ればわかります。</p>
+  </div>
+  <nav class="pets" id="pets" aria-label="ペットを選ぶ"></nav>
+</header>
+
+<main class="wrap">
+  <section class="empty" id="empty" hidden>
+    <svg viewBox="0 0 160 110" width="160" height="110" aria-hidden="true">
+      <circle cx="80" cy="60" r="44" fill="#BFE6D6"/>
+      <ellipse cx="80" cy="72" rx="20" ry="17" fill="#2E6B57"/>
+      <ellipse cx="56" cy="50" rx="8" ry="10" fill="#2E6B57"/><ellipse cx="70" cy="34" rx="8" ry="10" fill="#2E6B57"/>
+      <ellipse cx="90" cy="34" rx="8" ry="10" fill="#2E6B57"/><ellipse cx="104" cy="50" rx="8" ry="10" fill="#2E6B57"/>
+      <path d="M118 22l4 8 8 1-6 6 2 8-8-4-7 4 1-8-6-6 8-1Z" fill="#F27A5E"/>
+    </svg>
+    <p class="empty-h">まず、いっしょに暮らす子を登録しましょう。</p>
+    <p>名前と種類を入れると、今日のお世話のチェックと予防の予定ができます。</p>
+    <div class="row-btns center">
+      <button type="button" class="btn" id="firstPet">ペットを登録</button>
+      <button type="button" class="btn ghost" id="sampleBtn">例を見る</button>
+    </div>
+  </section>
+
+  <div id="main" hidden>
+    <div class="pet-head">
+      <div>
+        <h2 id="petName"></h2>
+        <p class="pet-sub" id="petSub"></p>
+      </div>
+      <button type="button" class="btn ghost small" id="petEdit">ペットの設定</button>
+    </div>
+
+    <nav class="tabs" aria-label="表示の切りかえ">
+      <button type="button" class="tab" data-tab="today" aria-pressed="true">今日</button>
+      <button type="button" class="tab" data-tab="health" aria-pressed="false">予防・通院</button>
+      <button type="button" class="tab" data-tab="weight" aria-pressed="false">体重</button>
+      <button type="button" class="tab" data-tab="log" aria-pressed="false">記録</button>
+    </nav>
+
+    <section id="todayView">
+      <div class="alerts" id="alerts"></div>
+      <p class="done-msg" id="doneMsg" aria-live="polite"></p>
+      <div class="care" id="care"></div>
+      <form class="wform" id="wForm" hidden novalidate>
+        <label for="wIn">今日の体重</label>
+        <div class="wrow">
+          <input id="wIn" type="text" inputmode="decimal" autocomplete="off" placeholder="4.2">
+          <span class="unit" id="wUnit">kg</span>
+          <button type="submit" class="btn small">記録</button>
+          <button type="button" class="btn ghost small" id="wCancel">やめる</button>
+        </div>
+        <p class="err" id="wErr" role="alert"></p>
+      </form>
+      <h3 class="sec-h">今日の記録</h3>
+      <ol class="timeline" id="timeline"></ol>
+      <p class="none" id="tlNone">上のボタンを押すと、時刻といっしょに記録されます。</p>
+      <button type="button" class="link" id="careEdit">今日のチェックを変える</button>
+    </section>
+
+    <section id="healthView" hidden>
+      <p class="caution">間隔は一般的な目安です。実際の時期は、かかりつけの獣医さんの指示に合わせて変えてください。</p>
+      <ul class="hlist" id="hlist"></ul>
+      <p class="none" id="hNone" hidden>予防や通院の予定はまだありません。</p>
+      <button type="button" class="btn ghost" id="hAdd">＋ 予定を追加</button>
+    </section>
+
+    <section id="weightView" hidden>
+      <div class="wsum" id="wSum"></div>
+      <figure class="chart" id="chartBox">
+        <svg id="chart" viewBox="0 0 340 200" role="img" aria-label="体重の変化"></svg>
+        <figcaption class="sr" id="chartCap"></figcaption>
+      </figure>
+      <p class="none" id="wNone" hidden>「今日」の「体重」から記録すると、ここにグラフが出ます。</p>
+      <h3 class="sec-h">体重の記録</h3>
+      <ol class="wlist" id="wList"></ol>
+    </section>
+
+    <section id="logView" hidden>
+      <div id="logDays"></div>
+      <p class="none" id="logNone" hidden>まだ記録がありません。</p>
+    </section>
+  </div>
+
+  <div class="sample-bar" id="sampleBar" hidden>
+    <p>例のペットが入っています。</p>
+    <button type="button" class="btn ghost small" id="clearSample">例を消す</button>
+  </div>
+
+  <details class="move">
+    <summary>データの引っ越し</summary>
+    <p>機種変更のときは、ファイルに書き出して、新しい端末で読み込みます。</p>
+    <div class="row-btns">
+      <button type="button" class="btn ghost small" id="expBtn">ファイルに書き出す</button>
+      <label class="btn ghost small file-btn">ファイルを読み込む<input type="file" id="impFile" accept="application/json,.json"></label>
+    </div>
+    <p class="msg" id="moveMsg" role="status"></p>
+  </details>
+
+  <footer class="foot">
+    <p>ペットとお世話の記録は、この端末にだけ保存されます。</p>
+    <p>開発：App World Lab（App World 運営）</p>
+    <p><a href="../">App World Lab</a></p>
+  </footer>
+</main>
+
+<!-- ペット -->
+<dialog id="petDlg" class="dlg" aria-labelledby="pH">
+  <form id="petForm" class="dlg-in" novalidate>
+    <h2 id="pH">ペットを登録</h2>
+    <label class="field"><span>名前<em>必須</em></span><input id="pName" type="text" maxlength="16" autocomplete="off" placeholder="こむぎ"></label>
+    <fieldset class="chips-f">
+      <legend>種類</legend>
+      <div class="chips" id="spChips"></div>
+    </fieldset>
+    <div class="two">
+      <label class="field"><span>誕生日（わかれば）</span><input id="pBirth" type="date"></label>
+      <label class="field"><span>体重の単位</span><select id="pUnit"><option value="kg">kg</option><option value="g">g</option></select></label>
+    </div>
+    <p class="hint" id="pHint"></p>
+    <p class="err" id="pErr" role="alert"></p>
+    <div class="dlg-acts">
+      <button class="btn" type="submit">保存</button>
+      <button class="btn ghost" type="button" id="pCancel">キャンセル</button>
+    </div>
+    <button type="button" class="link-danger" id="pDel" hidden>このペットを消す</button>
+  </form>
+</dialog>
+
+<!-- 今日のチェック -->
+<dialog id="careDlg" class="dlg" aria-labelledby="cH">
+  <div class="dlg-in">
+    <h2 id="cH">今日のチェック</h2>
+    <p class="hint">1日に何回するかを決めると、足りないものがわかります。「記録だけ」は回数を数えません。</p>
+    <ul class="clist" id="clist"></ul>
+    <fieldset class="chips-f">
+      <legend>お世話を足す</legend>
+      <div class="chips" id="careChips"></div>
+    </fieldset>
+    <div class="dlg-acts"><button type="button" class="btn" id="cDone">閉じる</button></div>
+  </div>
+</dialog>
+
+<!-- 予定 -->
+<dialog id="hDlg" class="dlg" aria-labelledby="hH">
+  <form id="hForm" class="dlg-in" novalidate>
+    <h2 id="hH">予定を追加</h2>
+    <fieldset class="chips-f" id="hKindF">
+      <legend>なにの予定</legend>
+      <div class="chips" id="hChips"></div>
+    </fieldset>
+    <label class="field"><span>前回の日</span><input id="hLast" type="date"></label>
+    <div class="field"><span id="hEveryL">次までの間隔（目安）</span>
+      <div class="every">
+        <input id="hN" type="text" inputmode="numeric" maxlength="3" aria-labelledby="hEveryL" placeholder="12">
+        <select id="hU" aria-label="間隔の単位"><option value="m">か月ごと</option><option value="d">日ごと</option><option value="">決めない</option></select>
+      </div>
+    </div>
+    <label class="field"><span>次の日を決めているとき</span><input id="hNext" type="date"></label>
+    <p class="hint" id="hHint"></p>
+    <label class="field"><span>メモ</span><input id="hNote" type="text" maxlength="40" autocomplete="off" placeholder="さくら動物病院・薬は朝ごはんのあと"></label>
+    <p class="err" id="hErr" role="alert"></p>
+    <div class="dlg-acts">
+      <button class="btn" type="submit">保存</button>
+      <button class="btn ghost" type="button" id="hCancel">キャンセル</button>
+    </div>
+    <button type="button" class="link-danger" id="hDel" hidden>この予定を消す</button>
+  </form>
+</dialog>
+
+<div class="toast" id="toast" role="status" hidden><span id="toastMsg"></span><button type="button" id="toastUndo">元に戻す</button></div>
+<script src="free.js"></script>
+<script src="app.js"></script>
+<script src="../pwa.js"></script>
+</body></html>

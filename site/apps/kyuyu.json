@@ -1,0 +1,18 @@
+{
+  "id": "kyuyu",
+  "name": "給油ノート",
+  "tagline": "満タンから満タンで、燃費と出費を正しく",
+  "description": "車の給油を記録するノートです。日付、メーターの総距離か前回からの距離、入れた量、1Lあたりの値段か合計金額、満タンかどうかを入れると、満タンから次の満タンまでの距離と量で燃費（km/L）を計算します。途中の少しだけの給油も正しく含めます。平均・いちばん良い・悪い燃費、今月のガソリン代、1kmあたりの費用、燃費と月ごとの費用のグラフを表示。全角の数字でも入力できます。オイル交換などの整備を距離と期間の目安で知らせます。車は何台でも登録でき、データはこの端末にだけ保存され、ファイルで移せます。",
+  "platform": "web",
+  "category": "lifestyle",
+  "ai_tools": [
+    "Claude Code"
+  ],
+  "maker_name": "App World Lab（運営）",
+  "url": "https://appworld-lab.pages.dev/kyuyu/",
+  "launch_date": "2026-11-11",
+  "beta": false,
+  "operator": true,
+  "color": "#14171B",
+  "icon": true
+}

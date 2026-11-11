@@ -1,0 +1,18 @@
+{
+  "id": "shimatta",
+  "name": "しまった場所メモ",
+  "tagline": "どこにしまったかを、ひと言でさがせる",
+  "description": "家の中のどこに何をしまったかを記録するメモです。場所は「寝室 › クローゼット › 上段 › 青い箱」のように部屋・収納・段や箱の順に作れます。物の名前、メモ、場所のどれでも検索でき、ひらがなとカタカナ、全角と半角の違いは気にしません。最近探したもの、別の場所への移動、最後に確かめた日、場所ごとの中身の一覧（片づけのときにまとめて確認済みにできます）があります。場所の名前は候補から選ぶか、自分で入力できます。データはこの端末にだけ保存され、ファイルに書き出して機種変更先へ移せます。",
+  "platform": "web",
+  "category": "lifestyle",
+  "ai_tools": [
+    "Claude Code"
+  ],
+  "maker_name": "App World Lab（運営）",
+  "url": "https://appworld-lab.pages.dev/shimatta/",
+  "launch_date": "2026-11-11",
+  "beta": false,
+  "operator": true,
+  "color": "#B9874E",
+  "icon": true
+}

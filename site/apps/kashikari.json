@@ -1,0 +1,18 @@
+{
+  "id": "kashikari",
+  "name": "貸し借り帳",
+  "tagline": "貸した物とお金を、返ってくるまで覚えておく",
+  "description": "貸した物・借りた物・立て替えたお金を、相手、日付、返す目安の日といっしょに記録する帳面です。「まだのもの」では目安の日を過ぎたものが先に並び、返ってきたら「返ってきた」を押すだけ。人ごとの画面では、まだ返っていないお金を貸しと借りで差し引きして表示します。返してほしいときの文や、返す日を相談する文を「ていねい」「ふつう」「気軽」の3つの言い方で作り、直してからコピーできます。種類は自分で入力して追加できます。データはこの端末にだけ保存され、ファイルで機種変更先へ移せます。",
+  "platform": "web",
+  "category": "lifestyle",
+  "ai_tools": [
+    "Claude Code"
+  ],
+  "maker_name": "App World Lab（運営）",
+  "url": "https://appworld-lab.pages.dev/kashikari/",
+  "launch_date": "2026-11-11",
+  "beta": false,
+  "operator": true,
+  "color": "#C2412D",
+  "icon": true
+}
