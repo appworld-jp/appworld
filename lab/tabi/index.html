@@ -43,7 +43,9 @@
         <label><input type="radio" name="style" value="sight"><span>観光めぐり</span></label>
         <label><input type="radio" name="style" value="food"><span>食べ歩き</span></label>
         <label><input type="radio" name="style" value="nature"><span>自然・山歩き</span></label>
+        <div class="mine" id="style-mine"></div>
       </div>
+      <div class="fc-wrap" id="style-add"></div>
     </fieldset>
     <fieldset class="field">
       <legend>あてはまるもの<small>（いくつでも）</small></legend>
@@ -53,7 +55,9 @@
         <label><input type="checkbox" id="o-kids"><span>子どもと一緒</span></label>
         <label><input type="checkbox" id="o-plane"><span>飛行機で行く</span></label>
         <label><input type="checkbox" id="o-car"><span>車で行く</span></label>
+        <div class="mine" id="opts-mine"></div>
       </div>
+      <div class="fc-wrap" id="opts-add"></div>
     </fieldset>
     <button type="submit" class="primary" id="make">しおりをつくる</button>
     <button type="button" class="back-link" id="cancel" hidden>やめて、いまのしおりに戻る</button>
@@ -97,5 +101,6 @@
     <p class="no-print"><a href="../">App World Lab</a></p>
   </footer>
 </div>
+<script src="freechips.js"></script>
 <script src="app.js"></script>
 </body></html>

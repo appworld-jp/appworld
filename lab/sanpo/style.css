@@ -104,3 +104,20 @@ legend{font-size:13px;color:var(--sub);font-weight:700;padding:0;margin-bottom:6
 .foot p{margin:0}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 .nw{display:inline-block}
+/* 自分で入力 */
+.fc-item{display:inline-flex;align-items:stretch}
+.fc-item>.tag{border-top-right-radius:0;border-bottom-right-radius:0;border-right:0;padding-right:10px}
+.fc-item>.mood{border-top-right-radius:0;border-bottom-right-radius:0;border-right:0}
+.fc-x{border:2px solid var(--line);border-left:1px dashed var(--line);background:#fff;color:var(--sub);min-width:36px;padding:0 8px;cursor:pointer;font-size:16px;line-height:1;border-radius:0 999px 999px 0}
+.fc-item>.mood+.fc-x{border-radius:0 14px 14px 0}
+.tag.add,.mood.add{border-style:dashed;color:var(--forest);font-weight:700;background:transparent}
+.mood.add{min-width:auto;padding:4px 14px;font-size:14px;display:flex;align-items:center}
+.fc-form{flex:1 0 100%;display:grid;grid-template-columns:minmax(0,1fr);gap:4px}
+.fc-row{display:flex;gap:6px;align-items:center}
+.sheet .fc-in{flex:1;min-width:0;border:2px solid var(--line);border-radius:12px;background:#fff;padding:8px 12px;min-height:44px;font-size:16px;color:var(--ink)}
+.fc-in[aria-invalid=true]{border-color:#B23B1E}
+.fc-ok{border:0;border-radius:999px;background:var(--forest);color:#fff;font-weight:700;min-height:44px;padding:0 16px;cursor:pointer;flex:0 0 auto}
+.fc-no{border:0;background:none;color:var(--sub);min-height:44px;padding:0 6px;cursor:pointer;flex:0 0 auto;font-size:14px;text-decoration:underline;text-underline-offset:3px}
+.fc-err{margin:0;color:#B23B1E;font-size:13px}
+.fc-err:empty{display:none}
+.fc-form[hidden]{display:none}

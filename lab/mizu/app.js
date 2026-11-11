@@ -45,6 +45,25 @@
     $("cups").append(b);
   });
 
+  // 「ほかの量」で記録した量は、次からボタンになる（この端末の localStorage）
+  const FC = window.FreeChips;
+  const mine = FC.store("mizu.cups.custom", { limit: 6, valid: v => Number.isInteger(v) && v >= 10 && v <= 2000 });
+  function renderMine() {
+    const box = $("mine"); box.textContent = "";
+    const list = mine.all().sort((a, b) => a - b);
+    list.forEach(ml => {
+      const w = el("span", "fc-item");
+      const b = el("button", "mine-b"); b.type = "button"; b.setAttribute("aria-label", `${fmt(ml)}mlを記録`);
+      b.append(el("span", "drop"), el("b", null, fmt(ml) + "ml"));
+      b.addEventListener("click", () => add(ml));
+      w.append(b, FC.remover(fmt(ml) + "ml", () => { mine.remove(ml); renderMine(); toast(`${fmt(ml)}mlのボタンを外しました。きょうの記録は残っています。`); }));
+      box.append(w);
+    });
+    box.hidden = !list.length;
+    $("mine-note").hidden = list.length > 0;
+  }
+  renderMine();
+
   function add(ml) {
     const k = today(), item = { t: Date.now(), ml };
     $("custom-err").textContent = "";
@@ -138,7 +157,9 @@
     const v = Math.round(+$("custom-in").value);
     if (!(v >= 10 && v <= 2000)) { $("custom-err").textContent = "10〜2,000mlの数字を入れてください。"; $("custom-in").focus(); return; }
     $("custom-err").textContent = "";
-    $("custom-in").value = ""; add(v);
+    $("custom-in").value = "";
+    if (!CUPS.some(c => c.ml === v) && mine.add(v)) renderMine();
+    add(v);
   });
   // 日付が変わったら表示を更新する
   let shown = today();

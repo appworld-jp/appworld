@@ -119,3 +119,16 @@ input[type=number] { min-width: 0; flex: 1; height: 46px; border-radius: 14px; b
 @keyframes ring { from { opacity: .9; transform: scale(.4); } to { opacity: 0; transform: scale(1.25); } }
 .foot a { display: inline-block; padding: 8px; }
 .ln { display: inline-block; }
+/* 自分で入れた量 */
+.mine { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.fc-item { display: inline-flex; align-items: stretch; }
+.mine-b { display: inline-flex; align-items: center; gap: 8px; min-height: 46px; padding: 0 12px 0 16px; border: 1.5px solid var(--line); border-right: 0; border-radius: 999px 0 0 999px; background: var(--card); color: var(--ink); cursor: pointer; box-shadow: 0 4px 10px rgba(22,121,196,.06); }
+.mine-b:hover { border-color: var(--water); }
+.mine-b:active { transform: scale(.96); }
+.mine-b b { font-family: var(--num); font-size: 16px; }
+.mine-b .drop { width: 10px; height: 10px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); background: var(--water); }
+.fc-x { min-width: 40px; border: 1.5px solid var(--line); border-left: 1px dashed var(--line); border-radius: 0 999px 999px 0; background: var(--card); color: var(--sub); cursor: pointer; font-size: 16px; }
+.fc-x:hover { color: var(--warn); }
+#mine-note { margin-top: 4px; }
+.mine[hidden], .note[hidden] { display: none; }
+.fc-form[hidden]{display:none}

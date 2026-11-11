@@ -106,3 +106,25 @@ button,input{font:inherit;color:inherit}
 .foot p{margin:0}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 .nw{display:inline-block}
+/* 自分で入力 */
+:root{--fc:#E3CF9A}
+.chart .fc{fill:var(--fc)}.legend .fc{background:var(--fc)}.log .dot.fc{background:var(--fc)}
+.feels.mine{margin-top:10px}
+.feel.fc{background:var(--fc)}
+.feel.add{background:none;border:1px dashed var(--sub);color:var(--ink);font-weight:700}
+.fc-item{display:inline-flex;align-items:stretch}
+.fc-item>.feel{border-radius:999px 0 0 999px;padding-right:14px}
+.fc-x{border:0;background:rgba(255,255,255,.1);color:var(--ink);min-width:40px;min-height:44px;padding:0 10px;cursor:pointer;font-size:16px;border-radius:0 999px 999px 0}
+.edit .mine{display:flex;flex-wrap:wrap;gap:6px 14px;flex:1 0 100%;align-items:center}
+.edit .mine .fc-item{gap:2px;align-items:center}
+.edit .mine .fc-x{min-height:36px;min-width:36px;border-radius:50%;padding:0}
+.pill.add{border-style:dashed;font-weight:700}
+.fc-form{flex:1 0 100%;display:grid;grid-template-columns:minmax(0,1fr);gap:4px;text-align:left}
+.fc-row{display:flex;gap:6px;align-items:center}
+.fc-in{flex:1;min-width:0;background:#0F1435;border:1px solid var(--line);border-radius:12px;padding:8px 12px;color:var(--ink);min-height:44px;font-size:16px}
+.fc-in[aria-invalid=true]{border-color:var(--f0)}
+.fc-ok{border:0;border-radius:999px;background:var(--moon);color:var(--moon-ink);font-weight:700;min-height:44px;padding:0 16px;cursor:pointer;flex:0 0 auto}
+.fc-no{border:0;background:none;color:var(--sub);min-height:44px;padding:0 6px;cursor:pointer;flex:0 0 auto;font-size:14px;text-decoration:underline;text-underline-offset:3px}
+.fc-err{margin:0;color:var(--f0);font-size:13px}
+.fc-err:empty{display:none}
+.fc-form[hidden]{display:none}

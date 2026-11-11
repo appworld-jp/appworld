@@ -51,6 +51,7 @@
   <section class="add" aria-labelledby="h-add">
     <h2 id="h-add" class="sec">飲んだら、押す</h2>
     <div class="cups" id="cups"></div>
+    <div class="mine" id="mine" role="group" aria-label="自分で入れた量" hidden></div>
     <form class="custom" id="custom" novalidate>
       <label for="custom-in">ほかの量</label>
       <input id="custom-in" type="number" inputmode="numeric" min="10" max="2000" step="10" placeholder="350" aria-describedby="custom-err">
@@ -58,6 +59,7 @@
       <button type="submit" class="btn-s">記録する</button>
     </form>
     <p class="ferr" id="custom-err"></p>
+    <p class="note" id="mine-note">ここで記録した量は、次からボタンで選べます。</p>
     <p class="toast" id="toast" role="status"></p>
   </section>
 
@@ -77,5 +79,6 @@
     <p><a href="../">App World Lab</a></p>
   </footer>
 </main>
+<script src="freechips.js"></script>
 <script src="app.js"></script>
 </body></html>

@@ -146,3 +146,18 @@ p { text-wrap: pretty; }
 }
 @keyframes pop { 0% { opacity: 1; transform: translate(0, 0) scale(.4); } 70% { opacity: 1; } 100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(1.1); } }
 .done-state .ring-fg { stroke: var(--yellow); }
+/* じぶんで つくる おはなし */
+.books .fc-item { position: relative; display: grid; }
+.books .fc-x { position: absolute; right: -6px; bottom: -6px; width: 34px; height: 34px; border-radius: 50%; border: 2.5px solid var(--ink); background: #fff; color: var(--ink); font-size: 16px; font-weight: 800; line-height: 1; cursor: pointer; font-family: var(--maru); padding: 0; }
+.book.add { justify-content: center; border-style: dashed; box-shadow: none; background: rgba(255,255,255,.6); color: var(--ink); font-size: 15px; font-family: var(--maru); }
+.fc-form { display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; margin-top: 12px; }
+.fc-form[hidden] { display: none; }
+.fc-row { display: flex; gap: 8px; align-items: center; }
+.fc-in { flex: 1; min-width: 0; min-height: 52px; border: 3px solid var(--ink); border-radius: 16px; background: #fff; color: var(--ink); padding: 8px 14px; font-family: var(--maru); font-size: 17px; font-weight: 700; }
+.fc-in[aria-invalid=true] { border-color: #d6336c; }
+.fc-ok { min-height: 52px; padding: 0 18px; border: 3px solid var(--ink); border-radius: 999px; background: var(--pink); color: #fff; font-family: var(--maru); font-size: 17px; font-weight: 800; cursor: pointer; flex: none; box-shadow: 0 4px 0 var(--ink); text-shadow: 0 1px 0 rgba(35,50,90,.35); }
+.fc-no { min-height: 52px; border: 0; background: none; color: var(--ink); font-family: var(--maru); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; flex: none; }
+.fc-err { margin: 0; color: #c2255c; font-weight: 800; font-size: 14px; text-align: center; }
+.fc-err:empty { display: none; }
+.books .fc-item { flex: 0 0 158px; scroll-snap-align: start; }
+.book.add { justify-content: center; align-items: center; min-height: 150px; }

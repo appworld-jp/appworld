@@ -241,7 +241,7 @@
     const k = norm(w);
     if (!k) return;
     if (free.some(x => norm(x) === k)) { say(`「${w}」は、もう入っています。`); return; }
-    free.push(w); save(); syncAll(true);
+    free.push(w); myFoods.add(w); save(); syncAll(true);
     const n = RECIPES.filter(r => r.nKey.includes(k) || r.sKey.includes(k) || r.ing.some(x => x.key.includes(k))).length;
     say(n ? `「${w}」は食材の一覧にないので、料理名と材料名から探します。${n}品に入っています。`
           : `「${w}」は食材の一覧になく、使う料理もまだ入っていません。ほかの食材で探してみてください。`);
@@ -303,6 +303,43 @@
     $("groups").append(fs);
   });
 
+  // ---- 自分で入れた食材（一覧にない言葉）は、次からチェックで選べる ----
+  const FC = window.FreeChips;
+  const myFoods = FC.store("kondate.foods.custom", { limit: 30 });
+  const mineFs = el("fieldset", "group mine"); mineFs.append(el("legend", null, "自分で入れた食材"));
+  const mineChips = el("div", "chips");
+  const mineAdd = FC.adder({ label: "＋ 自分で入力", aria: "一覧にない食材を入力", placeholder: "例：ビーツ", max: 20, ok: "追加",
+    empty: "食材の名前を入れてから「追加」を押してください。",
+    submit: v => {
+      const k = norm(v);
+      if (SEASON.has(k)) return `「${v}」は調味料なので、入れなくても大丈夫です。`;
+      const hit = Object.values(FOOD).find(f => f.keys.includes(k));
+      if (hit) addFood(hit.id); else addFree(v);
+      const b = mineChips.querySelector(".fc-add"); if (b) b.focus();
+    } });
+  mineFs.append(mineChips, mineAdd.form);
+  $("groups").append(mineFs);
+  let mineSig = null;
+  function renderMine() {
+    const sig = JSON.stringify(myFoods.all());
+    if (sig === mineSig) { mineChips.querySelectorAll("input").forEach(i => { i.checked = free.includes(i.value); }); return; }
+    mineSig = sig;
+    mineChips.textContent = "";
+    myFoods.all().forEach(w => {
+      const lab = el("label", "chip free"), inp = el("input");
+      inp.type = "checkbox"; inp.value = w; inp.checked = free.includes(w);
+      inp.addEventListener("change", () => {
+        if (inp.checked) { if (!free.includes(w)) free.push(w); } else free = free.filter(x => x !== w);
+        save(); syncAll(false); say("");
+      });
+      lab.append(inp, el("span", null, w));
+      const wrap = el("span", "fc-item");
+      wrap.append(lab, FC.remover(w, () => { myFoods.remove(w); renderMine(); say(`「${w}」を候補から外しました。`); }));
+      mineChips.append(wrap);
+    });
+    mineChips.append(mineAdd.btn);
+  }
+
   function syncAll(rerun) {
     Object.entries(boxes).forEach(([id, inp]) => { inp.checked = have.has(id); });
     // 「もっと見る」の中で選ばれているものがあれば、閉じていても数を見せる
@@ -312,7 +349,7 @@
       const n = [...hiddenBox.querySelectorAll("input")].filter(i => i.checked).length;
       btn.dataset.on = n ? `${n}品選択中` : "";
     });
-    renderPicked();
+    renderPicked(); renderMine();
     const n = count();
     $("go").disabled = n === 0;
     $("go-label").textContent = n ? `献立を決める（${n}品）` : "食材を入れてください";
@@ -498,5 +535,5 @@
   });
 
   $("dish-count").textContent = `約${Math.floor(DISH_COUNT / 10) * 10}品`;
-  load(); renderFilters(); syncAll(false);
+  load(); free.forEach(w => myFoods.add(w)); renderFilters(); syncAll(false);
 })();

@@ -35,10 +35,20 @@
       trip: [["10:30", "ハイキング開始"], ["14:00", "下山、ひと休み"]]
     }
   };
+  // 自分で入れたスタイル（"my:" + 言葉）は、その言葉を予定に入れた型にする
+  const MY = "my:";
+  const myLabel = style => (typeof style === "string" && style.startsWith(MY) ? style.slice(MY.length) : "");
+  function myTemplate(w) {
+    return {
+      first: [["12:00", "現地で昼ごはん"], ["13:30", w], ["15:30", "宿にチェックイン"], ["18:30", "夕ごはん"]],
+      mid: [["8:00", "朝ごはん"], ["9:30", `${w}（午前）`], ["12:00", "昼ごはん"], ["13:30", `${w}（午後）`], ["16:30", "宿でひと休み"], ["18:30", "夕ごはん"]],
+      trip: [["11:00", w], ["13:30", "カフェでひと休み"]]
+    };
+  }
   const mins = t => { const [h, m] = t.split(":").map(Number); return h * 60 + m; };
 
   function buildDays(c) {
-    const st = T[c.style] || T.relax, n = c.days, out = [];
+    const st = myLabel(c.style) ? myTemplate(myLabel(c.style)) : T[c.style] || T.relax, n = c.days, out = [];
     const extra = (arr, kind) => {
       if (c.onsen) arr.push(kind === "last" ? ["7:00", "朝の温泉"] : kind === "trip" ? ["16:00", "日帰り温泉"] : ["20:30", "ゆっくり温泉"]);
       if (c.sea && kind !== "last") arr.push(["14:30", "海・プールで遊ぶ"]);
@@ -88,6 +98,8 @@
     if (c.style === "sight") add("観光", ["歩きやすい靴", "行きたい場所のメモ・地図"], "観光");
     if (c.style === "food") add("食べ歩き", ["ウェットティッシュ", "小銭", "胃腸薬"], "食べ歩き");
     if (c.style === "relax") add("のんびり", ["本・音楽", "ゆったりした部屋着"], "のんびり");
+    if (myLabel(c.style)) add(myLabel(c.style), [`「${myLabel(c.style)}」に必要なもの`]);
+    (c.mine || []).forEach(o => add(o, [`「${o}」に必要なもの`]));
     if (c.onsen) add("温泉", ["脱ぎ着しやすい服", "ヘアゴム", "ぬれたタオル用の袋", "化粧水・乳液"], "温泉");
     if (c.sea) add("海・プール", ["水着", "ラッシュガード", "ビーチサンダル", "大きめのタオル", "日焼け止め"], "海");
     if (c.kids) {
@@ -185,12 +197,14 @@
     return {
       dest: $("dest").value.trim().slice(0, 30), start: $("start").value, days: +$("days").value,
       style: (document.querySelector("input[name=style]:checked") || {}).value || "relax",
-      onsen: $("o-onsen").checked, sea: $("o-sea").checked, kids: $("o-kids").checked, plane: $("o-plane").checked, car: $("o-car").checked
+      onsen: $("o-onsen").checked, sea: $("o-sea").checked, kids: $("o-kids").checked, plane: $("o-plane").checked, car: $("o-car").checked,
+      mine: [...document.querySelectorAll("#opts-mine input:checked")].map(i => i.value)
     };
   }
   function fillForm(c) {
     $("dest").value = c.dest; $("start").value = c.start; $("days").value = String(c.days);
-    const r = document.querySelector(`input[name=style][value=${c.style}]`); if (r) r.checked = true;
+    renderMine(c.style, c.mine || []);
+    const r = [...document.querySelectorAll("input[name=style]")].find(i => i.value === c.style); if (r) r.checked = true;
     ["onsen", "sea", "kids", "plane", "car"].forEach(k => { $("o-" + k).checked = !!c[k]; });
   }
 
@@ -224,6 +238,55 @@
     S.pack.push({ g: "追加したもの", n: v, why: "", done: false }); save(); renderPack(); $("pack-new").value = ""; $("pack-new").focus();
   });
   $("memo").addEventListener("input", () => { S.memo = $("memo").value; save(); });
+
+  // ---- 自分で入力（スタイル・あてはまるもの） ----
+  const FC = window.FreeChips;
+  const myStyles = FC.store("tabi.styles.custom"), myOpts = FC.store("tabi.opts.custom");
+  const BUILT_STYLES = { "のんびり": "relax", "観光めぐり": "sight", "食べ歩き": "food", "自然・山歩き": "nature" };
+  const BUILT_OPTS = { "温泉に入る": "onsen", "海・プール": "sea", "子どもと一緒": "kids", "飛行機で行く": "plane", "車で行く": "car" };
+  function chip(type, name, value, checked) {
+    const lab = el("label"), inp = el("input"); inp.type = type; inp.value = value; inp.checked = checked;
+    if (type === "radio") inp.name = "style";
+    lab.append(inp, el("span", null, name));
+    return lab;
+  }
+  function wrap(node, name, onRemove) { const d = el("div", "fc-item"); d.append(node, FC.remover(name, onRemove)); return d; }
+  // style: いま選ばれているスタイル、opts: いまチェックされている自分の項目
+  function renderMine(style, opts) {
+    const sBox = $("style-mine"); sBox.textContent = "";
+    const sNames = myStyles.all();
+    if (myLabel(style) && !sNames.includes(myLabel(style))) sNames.push(myLabel(style));
+    sNames.forEach(n => {
+      const c = chip("radio", n, MY + n, style === MY + n);
+      sBox.append(myStyles.has(n) ? wrap(c, n, () => { const cur = readForm(); myStyles.remove(n); renderMine(cur.style === MY + n ? "" : cur.style, cur.mine); if (cur.style === MY + n) $("style").querySelector("input").checked = true; }) : c);
+    });
+    const oBox = $("opts-mine"); oBox.textContent = "";
+    const oNames = myOpts.all();
+    opts.forEach(o => { if (!oNames.includes(o)) oNames.push(o); });
+    oNames.forEach(n => {
+      const c = chip("checkbox", n, n, opts.includes(n));
+      oBox.append(myOpts.has(n) ? wrap(c, n, () => { const cur = readForm(); myOpts.remove(n); renderMine(cur.style, cur.mine.filter(x => x !== n)); }) : c);
+    });
+  }
+  function adders() {
+    const sa = FC.adder({ label: "＋ 自分で入力", aria: "旅のスタイルを入力", placeholder: "例：美術館めぐり", max: 16, ok: "決定", btnClass: "chip-add",
+      empty: "旅のスタイルを入れてから「決定」を押してください。",
+      submit: v => {
+        const cur = readForm();
+        if (BUILT_STYLES[v]) { renderMine(cur.style, cur.mine); $("style").querySelector(`input[value=${BUILT_STYLES[v]}]`).checked = true; return; }
+        myStyles.add(v); renderMine(MY + v, cur.mine);
+      } });
+    $("style").append(sa.btn); $("style-add").append(sa.form);
+    const oa = FC.adder({ label: "＋ 自分で入力", aria: "あてはまるものを入力", placeholder: "例：釣りをする", max: 16, ok: "追加", btnClass: "chip-add",
+      empty: "あてはまるものを入れてから「追加」を押してください。",
+      submit: v => {
+        const cur = readForm();
+        if (BUILT_OPTS[v]) { $("o-" + BUILT_OPTS[v]).checked = true; return; }
+        myOpts.add(v); renderMine(cur.style, cur.mine.concat(v));
+      } });
+    document.querySelector(".opts").append(oa.btn); $("opts-add").append(oa.form);
+  }
+  adders(); renderMine("", []);
 
   function setDefaultDate() { const d = new Date(); d.setDate(d.getDate() + 7); $("start").value = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; }
   setDefaultDate();

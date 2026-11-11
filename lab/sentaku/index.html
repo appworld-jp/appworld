@@ -46,6 +46,11 @@
       <button type="button" class="btn ghost small" id="bClear">選び直す</button>
       <button type="button" class="btn ghost small" id="bSample">例：ニット</button>
     </div>
+    <section class="wpick" aria-labelledby="wpickH">
+      <h2 id="wpickH">タグの文字</h2>
+      <p class="howto">記号のそばに書かれた文字があれば、選んでください。</p>
+      <div class="wchips" id="wchips" role="group" aria-labelledby="wpickH"></div>
+    </section>
     <section class="result" id="result" aria-live="polite"></section>
     <form class="savebox" id="saveForm" novalidate>
       <label for="gName">この服の名前</label>
@@ -116,5 +121,6 @@
 
 <div class="toast" id="toast" role="status" hidden><span id="toastMsg"></span><button type="button" id="toastUndo">元に戻す</button></div>
 <script src="symbols.js"></script>
+<script src="freechips.js"></script>
 <script src="app.js"></script>
 </body></html>

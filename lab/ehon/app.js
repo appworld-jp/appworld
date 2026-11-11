@@ -27,12 +27,56 @@
     });
   }
   choices("c-hero", "hero", D.heroes, "h-", "0 0 100 100");
+
+  // ---- しゅじんこうに なまえを つける（絵は えらんだ どうぶつのまま） ----
+  const FC = window.FreeChips;
+  const baseOf = id => D.heroes.find(x => x.id === id);
+  const myHeroes = FC.store("ehon.heroes.custom", { limit: 12, valid: v => v && typeof v === "object" && typeof v.id === "string" && typeof v.name === "string" && v.name.trim() && baseOf(v.base), same: (a, b) => a.id === b.id || (a.base === b.base && a.name === b.name) });
+  function heroOf(id) {
+    const b = baseOf(id); if (b) return b;
+    const m = myHeroes.all().find(x => x.id === id); if (!m) return null;
+    const base = baseOf(m.base), name = m.name;
+    const short = name.startsWith(base.label + "の") ? name.slice(base.label.length + 1) || name : name;
+    return Object.assign({}, base, { id: base.id, label: name, H: name.startsWith(base.label) ? name : `${base.label}の${name}`, h: short });
+  }
+  const heroAdd = FC.adder({ label: "＋ なまえを つける", aria: "しゅじんこうの なまえ", placeholder: "れい：ポンタ", max: 10, ok: "つける", btnClass: "face add",
+    empty: "なまえを いれてから「つける」を おしてね。",
+    submit: v => {
+      const cur = heroOf(sel.hero);
+      if (!cur) return "さきに、どうぶつを えらんでね。";
+      const base = cur.id;
+      let m = myHeroes.all().find(x => x.base === base && x.name === v);
+      if (!m) { m = { id: "my" + Date.now().toString(36), base, name: v }; myHeroes.add(m); }
+      sel.hero = m.id; store(); $("msg").textContent = ""; renderMyHeroes();
+      const i = document.querySelector(`input[name=hero][value="${m.id}"]`); if (i) i.focus();
+    } });
+  $("c-hero").after(heroAdd.form);
+  function renderMyHeroes() {
+    const box = $("c-hero");
+    box.querySelectorAll(".mine, .fc-add").forEach(n => n.remove());
+    myHeroes.all().forEach(m => {
+      const lab = document.createElement("label"); lab.className = "choice mine";
+      const inp = document.createElement("input"); inp.type = "radio"; inp.name = "hero"; inp.value = m.id; inp.checked = sel.hero === m.id;
+      inp.addEventListener("change", () => { sel.hero = m.id; store(); $("msg").textContent = ""; });
+      const art = svg("svg", { viewBox: "0 0 100 100", "aria-hidden": "true" }); art.append(use("h-" + m.base, 0, 0, 100, 100));
+      const t = document.createElement("span"); t.textContent = m.name;
+      const face = document.createElement("span"); face.className = "face"; face.append(art, t);
+      const x = FC.remover(m.name, () => { if (sel.hero === m.id) { sel.hero = m.base; store(); const r = document.querySelector(`input[name=hero][value="${m.base}"]`); if (r) r.checked = true; } myHeroes.remove(m); renderMyHeroes(); });
+      x.setAttribute("aria-label", `「${m.name}」を けす`);
+      lab.append(inp, face); 
+      const w = document.createElement("div"); w.className = "mine fc-item"; w.append(lab, x);
+      box.append(w);
+    });
+    box.append(heroAdd.btn);
+    box.querySelectorAll("input[name=hero]").forEach(i => { i.checked = i.value === sel.hero; });
+  }
+  renderMyHeroes();
   choices("c-place", "place", D.places, "p-", "0 0 320 200");
   choices("c-thing", "thing", D.things, "t-", "0 0 60 60");
 
   // ---- お話を組み立てる ----
   function build(t) {
-    const H = D.heroes.find(x => x.id === sel.hero), P = D.places.find(x => x.id === sel.place), T = D.things.find(x => x.id === sel.thing);
+    const H = heroOf(sel.hero), P = D.places.find(x => x.id === sel.place), T = D.things.find(x => x.id === sel.thing);
     const T0 = D.templates[t % D.templates.length];
     const words = Object.assign({}, H, P, T);
     const endList = T0.p.some(p => /\{F\}|\{f\}/.test([].concat(p.s).join())) ? D.ends : D.ends.slice(0, 2);
@@ -105,7 +149,7 @@
   // ---- 操作 ----
   $("maker").addEventListener("submit", e => {
     e.preventDefault();
-    const miss = !sel.hero ? "しゅじんこう" : !sel.place ? "ばしょ" : !sel.thing ? "すきなもの" : "";
+    const miss = !heroOf(sel.hero) ? "しゅじんこう" : !sel.place ? "ばしょ" : !sel.thing ? "すきなもの" : "";
     if (miss) { $("msg").textContent = `${miss}を えらんでね。`; return; }
     open();
   });

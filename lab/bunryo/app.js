@@ -406,8 +406,32 @@
     st.cur.serv[k] = v; servTouched = true; $(k === "from" ? "sFrom" : "sTo").value = String(v); save(); render();
   }));
   $("mult").addEventListener("input", () => { st.cur.mult = $("mult").value.slice(0, 10); save(); render(); syncMultChips(); });
-  function syncMultChips() { document.querySelectorAll("#multChips button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.v === st.cur.mult.trim()))); }
-  document.querySelectorAll("#multChips button").forEach(b => b.addEventListener("click", () => { st.cur.mult = b.dataset.v; $("mult").value = b.dataset.v; save(); render(); syncMultChips(); }));
+  function syncMultChips() { document.querySelectorAll("#multChips button[data-v], #myMults button[data-v]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.v === st.cur.mult.trim()))); }
+  const pickMult = v => { st.cur.mult = v; $("mult").value = v; save(); render(); syncMultChips(); };
+  document.querySelectorAll("#multChips button").forEach(b => b.addEventListener("click", () => pickMult(b.dataset.v)));
+  // 自分で入れた倍率は、次からボタンで選べる（入れ終わったとき＝change で覚える）
+  const FC = window.FreeChips;
+  const BUILT_MULT = [...document.querySelectorAll("#multChips button")].map(b => b.dataset.v);
+  const myMults = FC.store("lab-bunryo-mult.custom", { limit: 6, valid: v => typeof v === "string" && num(v) > 0 && num(v) < 100 });
+  function renderMyMults() {
+    const box = $("myMults"); box.replaceChildren();
+    myMults.all().forEach(v => {
+      const w = el("span", "fc-item");
+      const b = el("button", null, `${v}倍`); b.type = "button"; b.dataset.v = v;
+      b.addEventListener("click", () => pickMult(v));
+      w.append(b, FC.remover(`${v}倍`, () => { myMults.remove(v); renderMyMults(); }));
+      box.append(w);
+    });
+    box.hidden = !myMults.all().length;
+    syncMultChips();
+  }
+  $("mult").addEventListener("change", () => {
+    const v = $("mult").value.normalize("NFKC").trim().replace(/倍$/, "");
+    const f = num(v);
+    if (!(f > 0 && f < 100) || f === 1 || BUILT_MULT.some(x => num(x) === f) || myMults.all().some(x => num(x) === f)) return;
+    myMults.add(v); renderMyMults();
+  });
+  renderMyMults();
   document.querySelectorAll("#modeSeg button").forEach(b => b.addEventListener("click", () => { st.cur.mode = b.dataset.m; save(); panKey = ""; render(); }));
   document.querySelectorAll("#unitSeg button").forEach(b => b.addEventListener("click", () => { st.cur.unit = b.dataset.u; save(); render(); }));
 

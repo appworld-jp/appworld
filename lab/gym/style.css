@@ -156,3 +156,27 @@ main{padding-top:16px}
 .app.hist .dock{display:none}
 @media (min-width:700px){.chips{flex-wrap:wrap;overflow:visible;margin-right:0;padding-right:0}.steppers.two,.steppers.k-m{grid-template-columns:1fr 1fr}.steppers.two .ctrl,.steppers.k-m .ctrl{grid-template-columns:56px 1fr 56px}.steppers.two .ctrl input,.steppers.k-m .ctrl input{font-size:40px}.plist{grid-template-columns:1fr 1fr;column-gap:12px}.plist li:nth-child(2) .prow{border-top:0}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+/* 自分で入力（休憩の長さ・マイ種目） */
+.seg{flex-wrap:wrap}
+.seg .fc-item{flex:1;display:flex}
+.seg .fc-item>button{flex:1;border-top-right-radius:0;border-bottom-right-radius:0;border-right:0}
+.seg .fc-x{flex:0 0 40px;border:2px solid var(--line);border-left:1px dashed var(--line);background:var(--panel);color:var(--sub);border-radius:0 4px 4px 0;cursor:pointer;font-size:16px}
+.seg .fc-add{flex:1 1 auto;border-style:dashed;color:var(--volt);font-family:var(--f);font-size:14px;padding:0 12px}
+.fc-form{flex:1 0 100%;display:grid;grid-template-columns:minmax(0,1fr);gap:4px}
+.fc-row{display:flex;gap:6px;align-items:center}
+.fc-in{flex:1;min-width:0;min-height:46px;background:var(--panel);border:2px solid var(--line);border-radius:4px;padding:8px 12px;font-size:16px;font-weight:700;color:var(--ink)}
+.fc-in[aria-invalid=true]{border-color:#FF8F8F}
+.fc-ok{min-height:46px;border:2px solid var(--volt);background:var(--volt);color:var(--volt-ink);border-radius:4px;padding:0 14px;font-weight:800;cursor:pointer;flex:0 0 auto}
+.fc-no{min-height:46px;border:0;background:none;color:var(--sub);padding:0 6px;cursor:pointer;text-decoration:underline;text-underline-offset:3px;flex:0 0 auto}
+.fc-err{margin:0;font-size:13px;color:#FF8F8F;font-weight:700}
+.fc-err:empty{display:none}
+.plist li.mine{display:flex;align-items:stretch;border-top:1px solid var(--line)}
+.plist li.mine .prow{border-top:0;flex:1;min-width:0}
+.plist li.mine .fc-x{flex:0 0 44px;border:0;background:none;color:var(--sub);cursor:pointer;font-size:18px}
+.plist li.mine .fc-x:hover{color:var(--hot)}
+#restSeg>button{flex:1 1 56px;white-space:nowrap;padding:0 8px}
+#restSeg .fc-item{flex:1 1 110px}
+#restSeg .fc-item>button{white-space:nowrap;padding:0 8px}
+#restSeg .fc-add{flex:1 1 96px;white-space:nowrap}
+.seg .fc-item>.fc-x{flex:0 0 40px;padding:0;border-radius:0 4px 4px 0;border-right:2px solid var(--line);font-family:var(--f)}
+.fc-form[hidden]{display:none}

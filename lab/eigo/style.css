@@ -94,3 +94,22 @@ textarea::placeholder{color:var(--sub);opacity:.55;font-style:italic}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 
 p,figcaption,dd,li{text-wrap:pretty}
+/* 自分で決めたテーマ */
+.mythemes{display:flex;flex-wrap:wrap;gap:6px;margin:-8px 0 18px}
+.mythemes[hidden]{display:none}
+.tchip{font:inherit;font-size:13.5px;min-height:44px;padding:0 14px;border-radius:22px;border:1px solid var(--line);background:var(--paper);color:var(--ink);cursor:pointer}
+.tchip[aria-pressed=true]{background:var(--hl);border-color:var(--hl);font-weight:700}
+.tchip.add{border-style:dashed;color:var(--blue);font-weight:700;background:transparent}
+.fc-item{display:inline-flex;align-items:stretch}
+.fc-item>.tchip{border-radius:22px 0 0 22px;border-right:0;padding-right:10px}
+.fc-x{font:inherit;min-width:38px;border:1px solid var(--line);border-left:1px dashed var(--line);border-radius:0 22px 22px 0;background:var(--paper);color:var(--sub);cursor:pointer;font-size:15px}
+.fc-x:hover{color:var(--margin)}
+.fc-form{flex:1 0 100%;display:grid;grid-template-columns:minmax(0,1fr);gap:4px}
+.fc-row{display:flex;gap:6px;align-items:center}
+.fc-in{font:inherit;flex:1;min-width:0;min-height:44px;border:1px solid var(--line);border-radius:10px;background:var(--paper);color:var(--ink);padding:8px 12px;font-size:16px}
+.fc-in[aria-invalid=true]{border-color:var(--margin)}
+.fc-ok{font:inherit;font-weight:700;min-height:44px;padding:0 16px;border:0;border-radius:10px;background:var(--blue);color:var(--blue-ink);cursor:pointer;flex:0 0 auto}
+.fc-no{font:inherit;font-size:13px;min-height:44px;border:0;background:none;color:var(--sub);text-decoration:underline;text-underline-offset:3px;cursor:pointer;flex:0 0 auto}
+.fc-err{margin:0;font-size:13px;color:var(--margin);font-weight:700}
+.fc-err:empty{display:none}
+.fc-form[hidden]{display:none}

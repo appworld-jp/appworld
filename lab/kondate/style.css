@@ -176,3 +176,19 @@ p, li { text-wrap: pretty; }
 .lmore[hidden], .cands[hidden] { display: none; }
 .shop-n { margin-left: auto; font-size: 13px; color: var(--sub); }
 .shop .sec-head .link { margin-left: 0; }
+/* 自分で入れた食材 */
+.chip.free span { border-style: dashed; }
+.fc-item { display: inline-flex; align-items: stretch; }
+.fc-item .chip span { border-top-right-radius: 0; border-bottom-right-radius: 0; border-right: 0; }
+.fc-x { min-width: 38px; border: 1.5px dashed var(--line); border-left-style: dotted; border-radius: 0 12px 12px 0; background: var(--chip); color: var(--sub); box-shadow: var(--shadow); cursor: pointer; font-size: 15px; }
+.fc-x:hover { color: var(--accent); }
+.fc-add { min-height: 42px; padding: 8px 14px; border: 1.5px dashed var(--accent); border-radius: 12px; background: none; color: var(--accent); font-size: 15px; font-weight: 700; cursor: pointer; }
+.fc-form { display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; margin-top: 8px; }
+.fc-form[hidden] { display: none; }
+.fc-row { display: flex; gap: 6px; align-items: center; }
+.fc-in { flex: 1; min-width: 0; min-height: 46px; border: 1.5px solid var(--line); border-radius: 12px; background: var(--paper); color: var(--ink); padding: 8px 12px; font-size: 16px; font-family: inherit; }
+.fc-in[aria-invalid=true] { border-color: var(--miss); }
+.fc-ok { min-height: 46px; padding: 0 16px; border: 0; border-radius: 12px; background: var(--accent); color: var(--accent-ink); font-weight: 700; cursor: pointer; flex: none; font-family: inherit; }
+.fc-no { min-height: 46px; border: 0; background: none; color: var(--sub); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; flex: none; font-size: 14px; font-family: inherit; }
+.fc-err { margin: 0; color: var(--miss); font-size: 13px; }
+.fc-err:empty { display: none; }

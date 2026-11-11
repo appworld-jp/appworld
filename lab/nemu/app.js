@@ -10,7 +10,9 @@
   const clockOf = min => { const x = ((Math.round(min) % 1440) + 1440) % 1440; return `${Math.floor(x / 60)}:${pad(x % 60)}`; };
   const midnight = t => { const d = new Date(t); d.setHours(0, 0, 0, 0); return d.getTime(); };
   const dayName = t => { const d = new Date(t); return `${d.getMonth() + 1}/${d.getDate()}（${"日月火水木金土"[d.getDay()]}）`; };
-  const fcls = f => (f === 0 || f === 1 || f === 2 ? "f" + f : "fn");
+  const fcls = e => (e.fc ? "fc" : e.feel === 0 || e.feel === 1 || e.feel === 2 ? "f" + e.feel : "fn");
+  const feelText = e => (e.fc ? e.fc : e.feel == null ? "目覚め未入力" : FEEL[e.feel]);
+  const FC = window.FreeChips, myFeels = FC.store("nemulog.feel.custom");
 
   function load() {
     try { const o = JSON.parse(localStorage.getItem(KEY) || "null"); if (o && Array.isArray(o.entries)) return Object.assign({ entries: [], pending: null, rateId: null }, o); } catch (e) { /* ignore */ }
@@ -34,6 +36,7 @@
       const upd = () => { $("elapsed").textContent = `いま ${dur(Date.now() - S.pending)}`; };
       upd(); elT = setInterval(upd, 30000);
     } else if (rateE) {
+      renderRateCustom();
       $("slept").textContent = `${dur(rateE.wake - rateE.bed)}眠りました。`;
     } else {
       const h = new Date().getHours();
@@ -53,12 +56,27 @@
     S.entries.push(e); S.rateId = e.id; save(); renderAll();
   });
   function flashGreet(msg) { $("greet").textContent = msg; }
-  document.querySelectorAll(".feel").forEach(b => b.addEventListener("click", () => {
+  function rateWith(feel, fc) {
     const e = S.entries.find(x => x.id === S.rateId);
-    if (e) e.feel = Number(b.dataset.feel);
+    if (e) { e.feel = feel; if (fc) e.fc = fc; else delete e.fc; }
     S.rateId = null; save(); renderAll();
     flashGreet("記録しました。今日もいい一日を。");
-  }));
+  }
+  document.querySelectorAll(".feels > .feel").forEach(b => b.addEventListener("click", () => rateWith(Number(b.dataset.feel), null)));
+  function wrapCustom(chip, name, onRemove) { const w = document.createElement("span"); w.className = "fc-item"; w.append(chip, FC.remover(name, onRemove)); return w; }
+  // 目覚めの「自分で入力」（朝の画面）
+  function renderRateCustom() {
+    const box = $("rateMine"); box.textContent = "";
+    for (const name of myFeels.all()) {
+      const b = document.createElement("button"); b.type = "button"; b.className = "feel fc"; b.textContent = name;
+      b.addEventListener("click", () => rateWith(null, name));
+      box.append(wrapCustom(b, name, () => { myFeels.remove(name); renderRateCustom(); }));
+    }
+    const a = FC.adder({ label: "＋ 自分で入力", aria: "目覚めを入力", placeholder: "例：頭が重い", max: 12, ok: "記録", btnClass: "feel add",
+      empty: "目覚めのようすを入れてから「記録」を押してください。",
+      submit: v => { const i = FEEL.indexOf(v); if (i >= 0) { rateWith(i, null); return; } myFeels.add(v); rateWith(null, v); } });
+    box.append(a.btn, a.form);
+  }
   $("rateLater").addEventListener("click", () => { S.rateId = null; save(); renderNow(); });
 
   // ---------- week ----------
@@ -106,7 +124,7 @@
       let tot = 0;
       for (const e of r.list) {
         const a = Math.max(lo, (e.bed - r.d) / H), b = Math.min(hi, (e.wake - r.d) / H);
-        const rect = el("rect", { class: fcls(e.feel), x: x(a), y: y + 6, width: Math.max(4, x(b) - x(a)), height: 18, rx: 9 });
+        const rect = el("rect", { class: fcls(e), x: x(a), y: y + 6, width: Math.max(4, x(b) - x(a)), height: 18, rx: 9 });
         rect.appendChild(el("title", {}, `${hm(e.bed)}〜${hm(e.wake)}（${dur(e.wake - e.bed)}）`));
         svg.appendChild(rect); tot += e.wake - e.bed;
       }
@@ -187,8 +205,7 @@
     const wake = e ? e.wake : (now.getHours() < 12 ? now.getTime() : midnight(now.getTime()) + 7 * H);
     const bed = e ? e.bed : wake - 7 * H - 30 * M;
     $("inBed").value = toLocal(bed); $("inWake").value = toLocal(wake);
-    const f = e && e.feel != null ? String(e.feel) : "";
-    document.querySelectorAll("input[name=feel]").forEach(r => { r.checked = r.value === f; });
+    renderEditFeels(e && e.fc ? "c:" + e.fc : e && e.feel != null ? String(e.feel) : "");
     $("err").textContent = ""; $("edit").hidden = false; $("inBed").focus();
   }
   $("addBtn").addEventListener("click", () => openEdit(null));
@@ -197,24 +214,44 @@
     ev.preventDefault();
     const bed = fromLocal($("inBed").value), wake = fromLocal($("inWake").value);
     const fr = document.querySelector("input[name=feel]:checked");
-    const feel = fr && fr.value !== "" ? Number(fr.value) : null;
+    const fv = fr ? fr.value : "";
+    const fc = fv.startsWith("c:") ? fv.slice(2) : null;
+    const feel = fv !== "" && !fc ? Number(fv) : null;
     if (!isFinite(bed) || !isFinite(wake)) { $("err").textContent = "寝た時刻と起きた時刻を入れてください。"; return; }
     if (wake <= bed) { $("err").textContent = "起きた時刻は、寝た時刻よりあとにしてください。"; return; }
     if (wake - bed > 20 * H) { $("err").textContent = "20時間を超える記録は入れられません。日付を確かめてください。"; return; }
     if (S.entries.some(e => e.id !== editId && e.bed < wake && bed < e.wake)) { $("err").textContent = "ほかの記録と時間が重なっています。時刻を確かめてください。"; return; }
-    if (editId) Object.assign(S.entries.find(e => e.id === editId), { bed, wake, feel });
-    else S.entries.push({ id: uid(), bed, wake, feel });
+    if (editId) { const x = S.entries.find(e => e.id === editId); Object.assign(x, { bed, wake, feel }); if (fc) x.fc = fc; else delete x.fc; }
+    else S.entries.push(fc ? { id: uid(), bed, wake, feel, fc } : { id: uid(), bed, wake, feel });
     save(); $("edit").hidden = true; weekBack = Math.max(0, Math.floor((midnight(Date.now()) - midnight(wake)) / DAY / 7));
     renderAll();
   });
+  // 編集フォームの「目覚め」。自分で入れた言葉も選べる
+  function renderEditFeels(val) {
+    const box = $("feelMine"); box.textContent = "";
+    const fixed = document.querySelectorAll("#feelSet > .r input");
+    fixed.forEach(r => { r.checked = r.value === val; });
+    const names = myFeels.all();
+    if (val.startsWith("c:") && !names.includes(val.slice(2))) names.push(val.slice(2)); // 候補から外した言葉の記録も、そのまま編集できる
+    for (const name of names) {
+      const lab = document.createElement("label"); lab.className = "r";
+      const inp = document.createElement("input"); inp.type = "radio"; inp.name = "feel"; inp.value = "c:" + name; inp.checked = val === inp.value;
+      lab.append(inp, document.createTextNode(name));
+      box.append(myFeels.has(name) ? wrapCustom(lab, name, () => { const cur = document.querySelector("input[name=feel]:checked"); myFeels.remove(name); renderEditFeels(cur ? cur.value : ""); }) : lab);
+    }
+    const a = FC.adder({ label: "＋ 自分で入力", aria: "目覚めを入力", placeholder: "例：頭が重い", max: 12, ok: "追加", btnClass: "pill add",
+      empty: "目覚めのようすを入れてから「追加」を押してください。",
+      submit: v => { const i = FEEL.indexOf(v); if (i >= 0) { renderEditFeels(String(i)); return; } myFeels.add(v); renderEditFeels("c:" + v); const n = $("feelMine").querySelector(".fc-add"); if (n) n.focus(); } });
+    box.append(a.btn, a.form);
+  }
   function renderLog() {
     const ol = $("log"); ol.textContent = "";
     const list = sorted().slice(0, 21);
     for (const e of list) {
       const li = document.createElement("li");
-      const dot = document.createElement("span"); dot.className = "dot " + fcls(e.feel);
+      const dot = document.createElement("span"); dot.className = "dot " + fcls(e);
       const d = document.createElement("span"); d.className = "d"; d.textContent = `${dayName(e.wake)} ${dur(e.wake - e.bed)}`;
-      const t = document.createElement("span"); t.className = "t"; t.textContent = `${hm(e.bed)}〜${hm(e.wake)}・${e.feel == null ? "目覚め未入力" : FEEL[e.feel]}`;
+      const t = document.createElement("span"); t.className = "t"; t.textContent = `${hm(e.bed)}〜${hm(e.wake)}・${feelText(e)}`;
       const acts = document.createElement("span"); acts.className = "acts";
       const ed = document.createElement("button"); ed.type = "button"; ed.textContent = "編集"; ed.setAttribute("aria-label", `${dayName(e.wake)}の記録を編集`);
       ed.addEventListener("click", () => openEdit(e));

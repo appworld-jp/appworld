@@ -21,7 +21,17 @@
   // theme of the day: the same for everyone on that date
   const dayNo = Math.floor(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()) / 864e5);
   const dailyTheme = T[((dayNo % T.length) + T.length) % T.length];
-  const byId = id => T.find(t => t.id === id);
+  // 自分で決めたテーマ。id は "my:" + テーマの言葉。フレーズは、どんな話題にも使えるもの。
+  const FC = window.FreeChips, myThemes = FC.store("lab-eigo-themes.custom", { limit: 20 });
+  const GENERIC = [
+    ["Today I ~.", "今日は〜した。"],
+    ["I want to ~.", "〜したい。"],
+    ["I'm thinking about ~.", "〜のことを考えている。"],
+    ["It was ~.", "〜だった。"],
+    ["I'm looking forward to ~.", "〜が楽しみだ。"]
+  ];
+  const myTheme = ja => ({ id: "my:" + ja, ja, mine: true, q: "Write one sentence about it.", qja: `「${ja}」について、英語で一文書いてみましょう。`, p: GENERIC });
+  const byId = id => (typeof id === "string" && id.startsWith("my:") && id.length > 3 ? myTheme(id.slice(3)) : T.find(t => t.id === id));
   let theme = (st.entries[today] && byId(st.entries[today].theme)) || (st.pick && byId(st.pick.id)) || dailyTheme;
 
   const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -87,7 +97,30 @@
     const e = st.entries[today];
     $("saveBtn").textContent = e ? "上書き保存" : "保存";
     $("other").hidden = !!e;
+    renderMine(!!e);
     $("saved").textContent = e ? "今日の日記は保存済みです。書き直して上書きもできます。" : "";
+  }
+
+  function renderMine(locked) {
+    const box = $("myThemes"); box.replaceChildren();
+    box.hidden = locked;
+    if (locked) return;
+    myThemes.all().forEach(ja => {
+      const w = el("span", "fc-item");
+      const b = el("button", "tchip", ja); b.type = "button";
+      b.setAttribute("aria-pressed", String(theme.id === "my:" + ja));
+      b.addEventListener("click", () => setTheme(myTheme(ja)));
+      w.append(b, FC.remover(ja, () => { myThemes.remove(ja); if (theme.id === "my:" + ja) { st.pick = null; save(); theme = dailyTheme; renderToday(); } else renderMine(false); say(`「${ja}」を候補から外しました。`); }));
+      box.append(w);
+    });
+    const a = FC.adder({ label: "＋ 自分でテーマを決める", aria: "テーマを入力", placeholder: "例：好きな音楽", max: 20, ok: "決定", btnClass: "tchip add",
+      empty: "テーマを入れてから「決定」を押してください。",
+      submit: v => { const hit = T.find(t => t.ja === v); if (hit) { setTheme(hit); return; } myThemes.add(v); setTheme(myTheme(v)); } });
+    box.append(a.btn, a.form);
+  }
+  function setTheme(t) {
+    theme = t; st.pick = { date: today, id: t.id }; save(); renderToday();
+    say(`テーマを「${t.ja}」に変えました。`);
   }
 
   function renderDiary() {

@@ -119,3 +119,20 @@ p { text-wrap: pretty; }
 .cover h1 { padding-right: 62px; }
 @media print { .ready:not(.on) { display: none; } }
 .ln { display: inline-block; }
+/* 自分で入力 */
+.mine { display: contents; }
+.fc-item { display: inline-flex; align-items: stretch; }
+.fc-item label span { border-top-right-radius: 0; border-bottom-right-radius: 0; border-right: 0; padding-right: 10px; }
+.fc-x { min-width: 38px; border: 1.5px solid var(--indigo); border-left: 1px dashed var(--line); border-radius: 0 999px 999px 0; background: #fff; color: var(--sub); cursor: pointer; font-size: 15px; font-family: var(--gothic); }
+.fc-x:hover { color: var(--red); }
+.chip-add { min-height: 44px; padding: 8px 16px; border: 1.5px dashed var(--indigo); border-radius: 999px; background: none; color: var(--indigo); font-family: var(--mincho); font-size: 15px; font-weight: 700; cursor: pointer; }
+.fc-form { display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; margin-top: 8px; }
+.fc-form[hidden] { display: none; }
+.fc-row { display: flex; gap: 6px; align-items: center; }
+.fc-row .fc-in { flex: 1; min-width: 0; }
+.fc-in[aria-invalid=true] { border-color: var(--red); }
+.fc-ok { min-height: 48px; padding: 0 16px; border: 0; border-radius: 8px; background: var(--indigo); color: #fff; font-weight: 700; cursor: pointer; flex: none; font-family: var(--gothic); }
+.fc-no { min-height: 48px; border: 0; background: none; color: var(--sub); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; flex: none; font-family: var(--gothic); font-size: 14px; }
+.fc-err { margin: 0; color: var(--red); font-size: 13px; font-family: var(--gothic); }
+.fc-err:empty { display: none; }
+@media print { .fc-x, .chip-add, .fc-form { display: none !important; } }

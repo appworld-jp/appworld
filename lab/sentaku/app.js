@@ -27,19 +27,60 @@
     if (p && typeof p === "object") SLOTS.forEach(sl => { if (sl.ids.includes(p[sl.id])) o[sl.id] = p[sl.id]; });
     return o;
   }
+  // タグの文字（付記用語）。自分で入れた言葉もそのまま残す。
+  const cleanWords = w => Array.isArray(w) ? [...new Set(w.map(x => str(x, 20)).filter(Boolean))].slice(0, 12) : [];
   function clean(raw) {
     if (!raw || typeof raw !== "object") return null;
     const items = Array.isArray(raw.items) ? raw.items.slice(0, 300).map(g => {
       if (!g || !str(g.name, 30)) return null;
       const pick = cleanPick(g.pick); if (!Object.keys(pick).length) return null;
-      return { id: str(g.id, 20) || uid(), name: str(g.name, 30), pick };
+      const words = cleanWords(g.words);
+      return words.length ? { id: str(g.id, 20) || uid(), name: str(g.name, 30), pick, words } : { id: str(g.id, 20) || uid(), name: str(g.name, 30), pick };
     }).filter(Boolean) : [];
-    return { v: 1, items, cur: cleanPick(raw.cur) };
+    return { v: 1, items, cur: cleanPick(raw.cur), words: cleanWords(raw.words) };
   }
   const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
   let st = null;
   try { st = clean(JSON.parse(localStorage.getItem(KEY) || "null")); } catch (e) { st = null; }
-  if (!st) st = { v: 1, items: [], cur: {} };
+  if (!st) st = { v: 1, items: [], cur: {}, words: [] };
+  // 付記用語の意味（index.html の「記号のそばの文字」と同じ）
+  const WORDS = [
+    ["洗濯ネット使用", "洗濯ネットに入れて洗います。"],
+    ["裏返しにして洗う", "毛玉や色あせを防ぐため、裏返してから洗います。"],
+    ["弱く絞る", "脱水は短く、手で絞るなら軽く。"],
+    ["色落ちします", "白い物や淡い色の物とは別に洗います。"],
+    ["中性洗剤使用", "おしゃれ着用の中性洗剤を使います。"],
+    ["あて布使用", "アイロンは布を一枚あててからかけます。"]
+  ];
+  const wordDo = w => { const hit = WORDS.find(x => x[0] === w); return hit ? hit[1] : "タグに書かれたとおりにします。"; };
+  const FC = window.FreeChips, myWords = FC.store("lab-sentaku-words.custom", { limit: 20 });
+  function renderWords() {
+    const box = $("wchips"); box.replaceChildren();
+    const chip = w => {
+      const b = el("button", "wchip", w); b.type = "button";
+      b.setAttribute("aria-pressed", String(st.words.includes(w)));
+      b.addEventListener("click", () => { st.words = st.words.includes(w) ? st.words.filter(x => x !== w) : st.words.concat(w); save(); renderBuild(); });
+      return b;
+    };
+    WORDS.forEach(([w]) => box.append(chip(w)));
+    const mine = myWords.all();
+    st.words.forEach(w => { if (!WORDS.some(x => x[0] === w) && !mine.includes(w)) mine.push(w); });
+    mine.forEach(w => {
+      const c = chip(w);
+      if (!myWords.has(w)) { box.append(c); return; }
+      const wrap = el("span", "fc-item"); wrap.append(c, FC.remover(w, () => { myWords.remove(w); renderWords(); }));
+      box.append(wrap);
+    });
+    box.append(wAdd.btn);
+  }
+  const wAdd = FC.adder({ label: "＋ 自分で入力", aria: "タグの文字を入力", placeholder: "例：単品で洗う", max: 20, ok: "追加",
+    empty: "タグに書かれた文字を入れてから「追加」を押してください。",
+    submit: v => {
+      if (!WORDS.some(x => x[0] === v)) myWords.add(v);
+      if (!st.words.includes(v)) st.words = st.words.concat(v);
+      save(); renderBuild(); wAdd.btn.focus();
+    } });
+  $("wchips").after(wAdd.form);
   const save = () => { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {} };
 
   // ---------- タブ ----------
@@ -149,7 +190,7 @@
     return { head, steps, warn };
   }
   function renderBuild() {
-    renderStrip();
+    renderStrip(); renderWords();
     const r = $("result"); r.replaceChildren();
     const n = Object.keys(st.cur).length;
     if (!n) {
@@ -161,17 +202,24 @@
     const ol = el("ol", "steps");
     a.steps.forEach(([k, v]) => { const li = el("li"); li.append(el("b", null, k), el("p", null, v)); ol.append(li); });
     r.append(ol);
+    if (st.words.length) {
+      const li = el("li"); const ul = el("ul", "r-words");
+      st.words.forEach(w => { const x = el("li"); x.append(el("b", null, w), document.createTextNode(" " + wordDo(w))); ul.append(x); });
+      li.append(el("b", null, "タグの文字"), ul); ol.append(li);
+    }
     a.warn.forEach(x => r.append(el("p", "r-warn", x)));
-    r.append(el("p", "r-foot", "記号のそばに書かれた文字（「洗濯ネット使用」など）も合わせて守ってください。"));
+    if (!st.words.length) r.append(el("p", "r-foot", "記号のそばに書かれた文字（「洗濯ネット使用」など）があれば、下の「タグの文字」で選んでください。"));
   }
   $("bClear").addEventListener("click", () => {
     const prev = JSON.stringify(st.cur);
-    if (!Object.keys(st.cur).length) return;
-    st.cur = {}; save(); renderBuild();
-    toast("選んだ記号を消しました。", () => { st.cur = JSON.parse(prev); save(); renderBuild(); });
+    if (!Object.keys(st.cur).length && !st.words.length) return;
+    const prevW = st.words.slice();
+    st.cur = {}; st.words = []; save(); renderBuild();
+    toast("選んだ記号を消しました。", () => { st.cur = JSON.parse(prev); st.words = prevW; save(); renderBuild(); });
   });
   $("bSample").addEventListener("click", () => {
     st.cur = { wash: "w30c", bleach: "b_oxy", tumble: "t_no", dry: "d_flat_s", iron: "i1", dcl: "fb", wcl: "wclc" };
+    st.words = ["洗濯ネット使用", "裏返しにして洗う"];
     save(); renderBuild();
     if ($("gName").value.trim() === "") $("gName").value = "ウールのニット";
   });
@@ -186,8 +234,9 @@
       const icons = el("span", "gicons");
       SLOTS.forEach(sl => { const s = byId[g.pick[sl.id]]; if (s) icons.append(draw(s, 26)); });
       open.append(el("span", "gname", g.name), icons);
+      if (g.words && g.words.length) open.append(el("span", "gwords", g.words.join("・")));
       open.addEventListener("click", () => {
-        st.cur = Object.assign({}, g.pick); save(); renderBuild(); $("gName").value = g.name;
+        st.cur = Object.assign({}, g.pick); st.words = (g.words || []).slice(); save(); renderBuild(); $("gName").value = g.name;
         $("strip").scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" });
       });
       const del = el("button", "gdel", "削除"); del.type = "button"; del.setAttribute("aria-label", `${g.name}を削除`);
@@ -205,8 +254,9 @@
     if (!Object.keys(st.cur).length) { $("saveErr").textContent = "先に、上で記号を選んでください。"; return; }
     if (!name) { $("saveErr").textContent = "服の名前を入れてください。例：白いシャツ"; $("gName").focus(); return; }
     const same = st.items.find(g => g.name === name);
-    if (same) same.pick = Object.assign({}, st.cur);
-    else st.items.unshift({ id: uid(), name, pick: Object.assign({}, st.cur) });
+    const words = st.words.slice();
+    if (same) { same.pick = Object.assign({}, st.cur); if (words.length) same.words = words; else delete same.words; }
+    else st.items.unshift(words.length ? { id: uid(), name, pick: Object.assign({}, st.cur), words } : { id: uid(), name, pick: Object.assign({}, st.cur) });
     save(); renderSaved(); $("gName").value = "";
     toast(same ? `「${name}」を上書きしました。` : `「${name}」を保存しました。`);
   });

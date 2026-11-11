@@ -60,24 +60,51 @@
 
   // ---------- finish sheet ----------
   let pickTags = new Set(), pickMood = null;
-  function buildSheet() {
+  const FC = window.FreeChips;
+  const myTags = FC.store("sanpolog.tags.custom"), myMoods = FC.store("sanpolog.moods.custom");
+  const moodLabel = m => (typeof m === "string" ? ["💬", m] : MOODS[m]);
+  function wrapCustom(chip, name, onRemove) {
+    const w = document.createElement("span"); w.className = "fc-item";
+    w.append(chip, FC.remover(name, onRemove));
+    return w;
+  }
+  function tagBtn(name) {
+    const b = document.createElement("button"); b.type = "button"; b.className = "tag"; b.textContent = name;
+    b.setAttribute("aria-pressed", String(pickTags.has(name)));
+    b.addEventListener("click", () => { pickTags.has(name) ? pickTags.delete(name) : pickTags.add(name); b.setAttribute("aria-pressed", String(pickTags.has(name))); });
+    return b;
+  }
+  function buildSheet(focusAdder) {
     const t = $("fTags"); t.textContent = "";
-    for (const name of TAGS) {
-      const b = document.createElement("button"); b.type = "button"; b.className = "tag"; b.textContent = name;
-      b.setAttribute("aria-pressed", String(pickTags.has(name)));
-      b.addEventListener("click", () => { pickTags.has(name) ? pickTags.delete(name) : pickTags.add(name); b.setAttribute("aria-pressed", String(pickTags.has(name))); });
-      t.appendChild(b);
-    }
+    for (const name of TAGS) t.appendChild(tagBtn(name));
+    for (const name of myTags.all()) t.appendChild(wrapCustom(tagBtn(name), name, () => { myTags.remove(name); pickTags.delete(name); buildSheet(); }));
+    const ta = FC.adder({
+      label: "＋ 自分で入力", aria: "見たものを入力", placeholder: "例：金木犀", max: 20, ok: "追加", btnClass: "tag add",
+      empty: "見たものを入れてから「追加」を押してください。",
+      submit: v => { if (!TAGS.includes(v)) myTags.add(v); pickTags.add(v); buildSheet("tag"); }
+    });
+    t.append(ta.btn, ta.form);
     const m = $("fMood"); m.textContent = ""; m.setAttribute("role", "radiogroup"); m.setAttribute("aria-label", "気分");
-    MOODS.forEach(([ic, name], i) => {
+    const sync = () => m.querySelectorAll(".mood").forEach(x => x.setAttribute("aria-checked", String(pickMood === (x.dataset.c != null ? x.dataset.c : Number(x.dataset.i)))));
+    const moodBtn = (val, ic, name) => {
       const b = document.createElement("button"); b.type = "button"; b.className = "mood"; b.setAttribute("role", "radio");
-      b.setAttribute("aria-checked", String(pickMood === i));
+      if (typeof val === "string") b.dataset.c = val; else b.dataset.i = String(val);
       const e = document.createElement("b"); e.textContent = ic; e.setAttribute("aria-hidden", "true");
       const s = document.createElement("span"); s.textContent = name;
       b.append(e, s);
-      b.addEventListener("click", () => { pickMood = pickMood === i ? null : i; m.querySelectorAll(".mood").forEach((x, j) => x.setAttribute("aria-checked", String(pickMood === j))); });
-      m.appendChild(b);
+      b.addEventListener("click", () => { pickMood = pickMood === val ? null : val; sync(); });
+      return b;
+    };
+    MOODS.forEach(([ic, name], i) => m.appendChild(moodBtn(i, ic, name)));
+    for (const name of myMoods.all()) m.appendChild(wrapCustom(moodBtn(name, "💬", name), name, () => { myMoods.remove(name); if (pickMood === name) pickMood = null; buildSheet(); }));
+    const ma = FC.adder({
+      label: "＋ 自分で入力", aria: "気分を入力", placeholder: "例：わくわく", max: 12, ok: "決定", btnClass: "mood add",
+      empty: "気分を入れてから「決定」を押してください。",
+      submit: v => { const i = MOODS.findIndex(x => x[1] === v); if (i >= 0) pickMood = i; else { myMoods.add(v); pickMood = v; } buildSheet("mood"); }
     });
+    m.append(ma.btn, ma.form);
+    sync();
+    if (focusAdder) { const box = focusAdder === "tag" ? t : m; const f = box.querySelector(".fc-add"); if (f) f.focus(); }
   }
   let manual = false;
   function openSheet(min, date, isManual) {
@@ -167,7 +194,8 @@
       const m = document.createElement("span"); m.className = "m"; m.textContent = fmtMin(w.min);
       top.append(d, m); li.appendChild(top);
       const tg = document.createElement("div"); tg.className = "tg";
-      if (w.mood != null && MOODS[w.mood]) { const s = document.createElement("span"); s.className = "mo"; s.textContent = MOODS[w.mood].join(" "); tg.appendChild(s); }
+      const ml = w.mood != null ? moodLabel(w.mood) : null;
+      if (ml) { const s = document.createElement("span"); s.className = "mo"; s.textContent = ml.join(" "); tg.appendChild(s); }
       if (w.theme) { const s = document.createElement("span"); s.className = "tt"; s.textContent = "テーマ：" + w.theme; tg.appendChild(s); }
       for (const t of w.tags) { const s = document.createElement("span"); s.textContent = t; tg.appendChild(s); }
       if (tg.childNodes.length) li.appendChild(tg);

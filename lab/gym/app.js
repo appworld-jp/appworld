@@ -27,7 +27,7 @@
   function el(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
 
   // ---------- 保存 ----------
-  function defaults() { return { sets: [], custom: [], ctype: {}, rest: 90, step: 2.5, sound: true, ex: CLASSICS[0] }; }
+  function defaults() { return { sets: [], custom: [], gone: [], myRests: [], ctype: {}, rest: 90, step: 2.5, sound: true, ex: CLASSICS[0] }; }
   function load() {
     try {
       const o = JSON.parse(localStorage.getItem(KEY) || "null");
@@ -36,7 +36,9 @@
         s.sets = s.sets.filter(x => x && typeof x.ex === "string" && typeof x.t === "number");
         s.custom = Array.isArray(s.custom) ? s.custom.filter(x => typeof x === "string" && x.trim()) : [];
         s.ctype = s.ctype && typeof s.ctype === "object" ? s.ctype : {};
-        if (!RESTS.includes(s.rest)) s.rest = 90;
+        s.gone = Array.isArray(s.gone) ? s.gone.filter(x => typeof x === "string") : [];
+        s.myRests = Array.isArray(s.myRests) ? s.myRests.filter(x => Number.isInteger(x) && x >= 10 && x <= 600 && !RESTS.includes(x)).slice(0, 6) : [];
+        if (!RESTS.includes(s.rest) && !s.myRests.includes(s.rest)) s.rest = 90;
         if (!STEPS.includes(s.step)) s.step = 2.5;
         return s;
       }
@@ -58,7 +60,7 @@
       return true;
     });
     S.sets.forEach(s => { if (rename[s.ex]) s.ex = rename[s.ex]; });
-    S.sets.forEach(s => { if (!BY_NAME.has(s.ex) && !S.custom.includes(s.ex)) S.custom.push(s.ex); });
+    S.sets.forEach(s => { if (!BY_NAME.has(s.ex) && !S.custom.includes(s.ex) && !S.gone.includes(s.ex)) S.custom.push(s.ex); });
     if (rename[S.ex]) S.ex = rename[S.ex];
     if (!BY_NAME.has(S.ex) && !S.custom.includes(S.ex)) S.ex = CLASSICS[0];
     S.v = 2;
@@ -120,7 +122,7 @@
   }
   function favs() {
     const sc = usage();
-    const out = [...sc.keys()].sort((a, b) => sc.get(b) - sc.get(a)).slice(0, 6);
+    const out = [...sc.keys()].filter(n => !S.gone.includes(n)).sort((a, b) => sc.get(b) - sc.get(a)).slice(0, 6);
     for (const c of CLASSICS) if (out.length < 6 && !out.includes(c)) out.push(c);
     if (!out.includes(S.ex)) out.unshift(S.ex);
     return out.slice(0, 7);
@@ -227,7 +229,17 @@
       if (ex.type !== "w") b.append(el("span", "tag", KIND_LABEL[ex.type]));
       if (ex.name === S.ex) b.setAttribute("aria-current", "true");
       b.addEventListener("click", () => choose(ex.name));
-      li.append(b); ul.append(li);
+      li.append(b);
+      if (ex.custom) {
+        li.className = "mine";
+        li.append(window.FreeChips.remover(ex.name, () => {
+          S.custom = S.custom.filter(c => c !== ex.name);
+          if (!S.gone.includes(ex.name)) S.gone.push(ex.name);
+          save(); renderBrowse(); renderFav();
+          toast(`「${ex.name}」をマイ種目から外しました。履歴は残っています`);
+        }));
+      }
+      ul.append(li);
     }
     if (bPart === MINE) {
       if (!items.length) ul.append(el("li", "none", "一覧にない種目を、自分で追加できます。"));
@@ -274,6 +286,7 @@
     $("addForm").hidden = true;
     if (hit) { choose(hit); toast(hit === name ? `「${hit}」を選びました` : `一覧にある「${hit}」を選びました`); return; }
     S.custom.push(name); S.ctype[name] = addKind; keyCache.delete(name);
+    S.gone = S.gone.filter(c => c !== name);
     choose(name);
     toast(`「${name}」を追加しました`);
   });
@@ -507,12 +520,31 @@
 
   function renderSettings() {
     const seg = $("restSeg"); seg.textContent = "";
-    for (const r of RESTS) {
-      const b = el("button", null, r < 120 ? `${r}秒` : `${r / 60}分`); b.type = "button";
+    const restBtn = r => {
+      const b = el("button", null, r < 120 ? `${r}秒` : fmtSec(r)); b.type = "button";
       b.setAttribute("aria-pressed", String(S.rest === r));
       b.addEventListener("click", () => { S.rest = r; save(); renderSettings(); });
-      seg.append(b);
+      return b;
+    };
+    for (const r of RESTS) seg.append(restBtn(r));
+    for (const r of S.myRests) {
+      const w = el("span", "fc-item"); w.append(restBtn(r), window.FreeChips.remover(r < 120 ? `${r}秒` : fmtSec(r), () => {
+        S.myRests = S.myRests.filter(x => x !== r); if (S.rest === r) S.rest = 90; save(); renderSettings();
+      }));
+      seg.append(w);
     }
+    const a = window.FreeChips.adder({ label: "＋ 自分で", aria: "休憩の長さ（秒）", placeholder: "45、2分30秒", max: 10, ok: "決定",
+      empty: "休憩の長さを入れてから「決定」を押してください。",
+      submit: v => {
+        const t = v.normalize("NFKC").replace(/\s/g, "");
+        const m = /^(?:(\d+)分)?(?:(\d+)秒?)?$/.exec(t);
+        const sec = m && (m[1] || m[2]) ? (+m[1] || 0) * 60 + (+m[2] || 0) : NaN;
+        if (!(sec >= 10 && sec <= 600)) return "10秒〜10分のあいだで入れてください。例：45、2分30秒";
+        if (!RESTS.includes(sec) && !S.myRests.includes(sec)) { S.myRests.push(sec); if (S.myRests.length > 6) S.myRests.shift(); }
+        S.rest = sec; save(); renderSettings();
+        const f = $("restSeg").querySelector(".fc-add"); if (f) f.focus();
+      } });
+    seg.append(a.btn, a.form);
     $("sound").checked = !!S.sound;
   }
   $("sound").addEventListener("change", () => { S.sound = $("sound").checked; save(); if (S.sound) audioInit(); });

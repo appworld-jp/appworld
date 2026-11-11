@@ -2,15 +2,26 @@
 (function () {
   "use strict";
   const $ = id => document.getElementById(id);
-  const S = window.STORIES, A = window.AREAS, TOTAL = 180000, PART = 30000, C = 628.3;
+  const BASE = window.STORIES, A = window.AREAS, TOTAL = 180000, PART = 30000, C = 628.3;
   const NS = "http://www.w3.org/2000/svg";
   const KEY = "hamigaki.v2";
   const reduce = matchMedia("(prefers-reduced-motion: reduce)");
-  let pick = new Date().getDate() % S.length;
+  // じぶんで つくる おはなし：なまえを いれると、6ばめんの おはなしに なる
+  const FC = window.FreeChips, mine = FC.store("hamigaki.stories.custom", { limit: 8 });
+  const myStory = n => ({ mine: n, title: `${n}と、ぴかぴかのほし`, parts: [
+    `あるひ、${n}は、そらに ひかる ちいさな ほしを みつけました。「どうして そんなに ぴかぴかなの？」`,
+    `ほしは いいました。「まいにち、ていねいに みがいているからだよ。${n}も いっしょに やってみる？」`,
+    `${n}は ほしと いっしょに、しゃか、しゃか、しゃか。1ぽんずつ、ていねいに みがきます。`,
+    `すると、どこからか むしばきんが やってきました。「おくちの なかに すみたいなあ」`,
+    `でも、${n}の はは もう ぴかぴか。むしばきんは「まぶしくて すめないよ」と、にげていきました。`,
+    `ほしは にっこり。「${n}の はも、わたしと おなじくらい ひかってるね」。おしまい。`
+  ] });
+  let S = BASE.concat(mine.all().map(myStory));
+  let pick = new Date().getDate() % BASE.length;
   let timer = null, endAt = 0, remain = TOTAL, part = -1, paused = false, lock = null;
   let saved = { done: 0, speak: false, pick: null };
   try { const v = JSON.parse(localStorage.getItem(KEY) || "null"); if (v) saved = Object.assign(saved, v); } catch (e) {}
-  if (Number.isInteger(saved.pick) && saved.pick >= 0 && saved.pick < S.length) pick = saved.pick;
+  if (Number.isInteger(saved.pick) && saved.pick >= 0 && saved.pick < BASE.length + mine.all().length) pick = saved.pick;
   const store = () => { try { localStorage.setItem(KEY, JSON.stringify(saved)); } catch (e) {} };
   const svgEl = (tag, attrs) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); return e; };
 
@@ -23,17 +34,44 @@
     ["#d6f3ff", "M3 19a9 9 0 0 1 18 0zM10 19v-4a2 2 0 0 1 4 0v4"],
     ["#ffe39a", "M12 12m-2.5 0a2.5 2.5 0 1 0 5 0a2.5 2.5 0 1 0-5 0M12 9.5V5M14.5 12H19M12 14.5V19M9.5 12H5"]
   ];
-  S.forEach((s, i) => {
-    const b = document.createElement("button"); b.type = "button"; b.className = "book"; b.setAttribute("role", "radio");
-    const cv = document.createElement("span"); cv.className = "cover"; cv.style.background = COVERS[i % COVERS.length][0];
-    const sv = svgEl("svg", { viewBox: "0 0 24 24", "aria-hidden": "true" });
-    sv.append(svgEl("path", { d: COVERS[i % COVERS.length][1], fill: "none", stroke: "#23325a", "stroke-width": "2.2", "stroke-linecap": "round", "stroke-linejoin": "round" }));
-    cv.append(sv);
-    const t = document.createElement("span"); t.className = "name"; titleInto(t, s.title);
-    b.append(cv, t);
-    b.addEventListener("click", () => { pick = i; saved.pick = i; store(); syncBooks(); preview(); });
-    $("books").append(b);
-  });
+  const MY_COVER = ["#ffd6a5", "M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.5 6.7 19.4l1.2-6L3.4 9.3l6-.7z"];
+  const adder = FC.adder({ label: "＋ じぶんで つくる", aria: "おはなしの しゅじんこうの なまえ", placeholder: "れい：ねこのタマ", max: 10, ok: "つくる", btnClass: "book add",
+    empty: "なまえを いれてから「つくる」を おしてね。",
+    submit: v => {
+      if (!mine.has(v)) mine.add(v);
+      buildBooks();
+      const i = S.findIndex(x => x.mine === v);
+      if (i >= 0) { pick = i; saved.pick = i; store(); syncBooks(); preview(); const b = bookEls()[i]; b.scrollIntoView({ block: "nearest", inline: "nearest" }); b.focus({ preventScroll: true }); }
+    } });
+  $("books").after(adder.form);
+  const bookEls = () => [...$("books").querySelectorAll(".book[role=radio]")];
+  function buildBooks() {
+    S = BASE.concat(mine.all().map(myStory));
+    if (pick >= S.length) pick = 0;
+    $("books").textContent = "";
+    S.forEach((s, i) => {
+      const cvr = s.mine ? MY_COVER : COVERS[i % COVERS.length];
+      const b = document.createElement("button"); b.type = "button"; b.className = "book"; b.setAttribute("role", "radio");
+      const cv = document.createElement("span"); cv.className = "cover"; cv.style.background = cvr[0];
+      const sv = svgEl("svg", { viewBox: "0 0 24 24", "aria-hidden": "true" });
+      sv.append(svgEl("path", { d: cvr[1], fill: "none", stroke: "#23325a", "stroke-width": "2.2", "stroke-linecap": "round", "stroke-linejoin": "round" }));
+      cv.append(sv);
+      const t = document.createElement("span"); t.className = "name"; titleInto(t, s.title);
+      b.append(cv, t);
+      b.addEventListener("click", () => { pick = i; saved.pick = i; store(); syncBooks(); preview(); });
+      if (!s.mine) { $("books").append(b); return; }
+      const w = document.createElement("div"); w.className = "fc-item";
+      const x = FC.remover(s.title, () => {
+        const cur = S[pick]; mine.remove(s.mine); buildBooks();
+        pick = Math.max(0, S.indexOf(S.find(y => y === cur || (cur.mine && y.mine === cur.mine)) || S[0]));
+        saved.pick = pick; store(); syncBooks(); preview();
+      });
+      x.setAttribute("aria-label", `「${s.title}」を けす`);
+      w.append(b, x); $("books").append(w);
+    });
+    $("books").append(adder.btn);
+    syncBooks();
+  }
   // 「くじらのクウと、ひかるかい」→ 読点のあとで改行する
   function titleInto(node, title) {
     node.textContent = "";
@@ -41,10 +79,11 @@
     const parts = i < 0 ? [title] : [title.slice(0, i + 1), title.slice(i + 1)];
     parts.forEach(x => { const e = document.createElement("span"); e.className = "ln"; e.textContent = x; node.append(e); });
   }
-  function syncBooks() { [...$("books").children].forEach((b, i) => { b.setAttribute("aria-checked", String(i === pick)); b.tabIndex = i === pick ? 0 : -1; }); }
+  function syncBooks() { bookEls().forEach((b, i) => { b.setAttribute("aria-checked", String(i === pick)); b.tabIndex = i === pick ? 0 : -1; }); }
   $("books").addEventListener("keydown", e => {
     const d = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key]; if (!d || timer) return;
-    e.preventDefault(); pick = (pick + d + S.length) % S.length; saved.pick = pick; store(); syncBooks(); preview(); $("books").children[pick].focus();
+    if (!e.target.closest || !e.target.closest(".book[role=radio]")) return;
+    e.preventDefault(); pick = (pick + d + S.length) % S.length; saved.pick = pick; store(); syncBooks(); preview(); bookEls()[pick].focus();
   });
 
   // ---- 星（30秒ごと） ----
@@ -114,7 +153,7 @@
     $("start").hidden = m === "run" || m === "pause";
     $("pause").hidden = !(m === "run" || m === "pause");
     $("stop").hidden = !(m === "run" || m === "pause");
-    [...$("books").children].forEach(b => { b.disabled = m === "run" || m === "pause"; });
+    $("books").querySelectorAll("button").forEach(b => { b.disabled = m === "run" || m === "pause"; });
   }
   async function wake(on) {
     try {
@@ -178,6 +217,6 @@
   $("stop").addEventListener("click", stop);
   document.addEventListener("visibilitychange", () => { if (!document.hidden && timer) { tick(); wake(true); } });
 
-  syncBooks(); reset(); count();
-  { const b = $("books"), c = b.children[pick]; if (c) b.scrollLeft = c.offsetLeft - b.offsetLeft - 16; }
+  buildBooks(); reset(); count();
+  { const b = $("books"), c = bookEls()[pick]; if (c) b.scrollLeft = c.offsetLeft - b.offsetLeft - 16; }
 })();

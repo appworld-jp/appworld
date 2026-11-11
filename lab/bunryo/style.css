@@ -142,3 +142,8 @@ h1{margin:12px 0 0;display:inline-block;background:#FBF7EC;color:#2D2A22;font-si
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:9;display:flex;align-items:center;gap:12px;background:#2D2A22;color:#FBF7EC;border-radius:12px;padding:10px 12px 10px 16px;max-width:calc(100% - 32px);width:max-content;font-size:14px;box-shadow:0 10px 30px rgba(0,0,0,.3)}
 .toast button{background:transparent;border:1.5px solid currentColor;color:inherit;border-radius:8px;min-height:40px;padding:4px 12px;cursor:pointer;flex:none;font-weight:700}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+/* 自分で入れた倍率 */
+.chips.mine{margin-top:8px}
+.fc-item{display:inline-flex;align-items:stretch}
+.fc-item>button[data-v]{border-top-right-radius:0;border-bottom-right-radius:0;border-right:0;padding-right:10px}
+.chips .fc-x{border-radius:0 999px 999px 0;border-left:1px dashed var(--olive);padding:4px 10px;min-width:36px;color:var(--ink);font-weight:400}

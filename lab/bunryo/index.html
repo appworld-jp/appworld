@@ -77,7 +77,9 @@
             <button type="button" data-v="2">2倍</button>
             <button type="button" data-v="3">3倍</button>
           </div>
-          <label class="field mult-f"><span>倍率</span><input id="mult" type="text" inputmode="decimal" autocomplete="off" placeholder="1.5"></label>
+          <div class="chips mine" id="myMults" role="group" aria-label="自分で入れた倍率" hidden></div>
+          <label class="field mult-f"><span>倍率</span><input id="mult" type="text" inputmode="decimal" autocomplete="off" placeholder="1.25" aria-describedby="multHint"></label>
+          <p class="hint" id="multHint">ここに入れた倍率は、次からボタンで選べます。</p>
         </div>
 
         <h3 class="h3">単位</h3>
@@ -143,5 +145,6 @@
 
 <div class="toast" id="toast" role="status" hidden><span id="toastMsg"></span><button type="button" id="toastUndo">元に戻す</button></div>
 <script src="data.js"></script>
+<script src="freechips.js"></script>
 <script src="app.js"></script>
 </body></html>
