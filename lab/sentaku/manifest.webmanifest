@@ -1,0 +1,38 @@
+{
+  "name": "洗濯表示よみとき",
+  "short_name": "洗濯表示よみとき",
+  "description": "服のタグの洗濯表示をタップすると、意味と実際のお手入れのしかたがわかります。今の記号（JIS L 0001）と2016年までの旧表示に対応。1着ぶんの記号を選ぶと、洗い方をまとめて教えてくれます。",
+  "lang": "ja",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#24408E",
+  "theme_color": "#24408E",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

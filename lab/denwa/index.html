@@ -5,6 +5,11 @@
 <meta name="description" content="会社や役所への電話、窓口での手続きで言われたことを、その場で書き留めるメモ。日時は自動で入り、担当者名・受付番号・次にやることと期限をまとめて残せます。">
 <meta name="theme-color" content="#1F6F4F">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="電話・窓口メモ">
 <link rel="stylesheet" href="style.css">
 </head><body>
 <header class="head">
@@ -118,4 +123,5 @@
 <div class="toast" id="toast" role="status" hidden><span id="toastMsg"></span><button type="button" id="toastUndo">元に戻す</button></div>
 <script src="own.js"></script>
 <script src="app.js"></script>
+<script src="../pwa.js"></script>
 </body></html>

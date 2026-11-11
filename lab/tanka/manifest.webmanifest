@@ -1,0 +1,38 @@
+{
+  "name": "どっちが安い？",
+  "short_name": "どっちが安い？",
+  "description": "値段と量を入れるだけで、100gあたり・1Lあたり・1mあたりの値段を出して、いちばん安い商品がすぐわかります。税抜き表示やポイント還元にも対応。お店で片手で使えます。",
+  "lang": "ja",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#FFD31A",
+  "theme_color": "#FFD31A",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

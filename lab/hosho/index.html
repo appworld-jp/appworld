@@ -5,6 +5,11 @@
 <meta name="description" content="家電や買った物の型番、購入日、保証期間をまとめて記録。保証がもうすぐ切れる物がひと目でわかり、修理の申し込みに要る型番もすぐコピーできます。">
 <meta name="theme-color" content="#2B3A55">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="保証と説明書の台帳">
 <link rel="stylesheet" href="style.css">
 </head><body>
 <header class="cover">
@@ -145,4 +150,5 @@
 
 <div class="toast" id="toast" role="status" hidden><span id="toastMsg"></span><button type="button" id="toastUndo">元に戻す</button></div>
 <script src="app.js"></script>
+<script src="../pwa.js"></script>
 </body></html>

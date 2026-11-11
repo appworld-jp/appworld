@@ -5,6 +5,11 @@
 <meta name="description" content="お住まいの地域のごみの収集日を一度登録すれば、今日と明日に出すごみ、月のカレンダー、種類ごとの次の収集日がすぐにわかります。">
 <meta name="theme-color" content="#1d5a3a">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="ごみの日カレンダー">
 <link rel="stylesheet" href="style.css">
 </head><body>
 <header class="board">
@@ -121,4 +126,5 @@
 </main>
 <div class="toast" id="toast" role="status" aria-live="polite"><span id="toast-t"></span><button type="button" id="toast-undo" hidden>取り消す</button></div>
 <script src="app.js"></script>
+<script src="../pwa.js"></script>
 </body></html>

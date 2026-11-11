@@ -5,6 +5,11 @@
 <meta name="description" content="誕生日を入れると、いまの年齢と学年、小学校から大学までの入学・卒業の年、和暦、干支、星座、還暦や古希の年がわかります。家族の分を保存でき、年度ごとの早見表も見られます。">
 <meta name="theme-color" content="#B8382A">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="学年・年齢早見">
 <link rel="stylesheet" href="style.css">
 </head><body>
 <header class="top">
@@ -159,4 +164,5 @@
 <div class="toast" id="toast" role="status" hidden><span id="toastMsg"></span><button type="button" id="toastUndo">元に戻す</button></div>
 <script src="calc.js"></script>
 <script src="app.js"></script>
+<script src="../pwa.js"></script>
 </body></html>

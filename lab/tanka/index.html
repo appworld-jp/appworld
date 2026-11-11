@@ -5,6 +5,11 @@
 <meta name="description" content="値段と量を入れるだけで、100gあたり・1Lあたり・1mあたりの値段を出して、いちばん安い商品がすぐわかります。税抜き表示やポイント還元にも対応。お店で片手で使えます。">
 <meta name="theme-color" content="#FFD31A">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="どっちが安い？">
 <link rel="stylesheet" href="style.css">
 </head><body>
 <header class="pop">
@@ -62,4 +67,5 @@
 
 <div class="toast" id="toast" role="status" hidden><span id="toastMsg"></span><button type="button" id="toastUndo">元に戻す</button></div>
 <script src="app.js"></script>
+<script src="../pwa.js"></script>
 </body></html>

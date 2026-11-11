@@ -1,0 +1,38 @@
+{
+  "name": "シフト交換板",
+  "short_name": "シフト交換板",
+  "description": "シフトを代わってほしいとき、日にちと時間を入れるだけでグループに貼れる依頼文ができます。リンクを開いた人は、名前を入れるだけで返事を作れます。",
+  "lang": "ja",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#EAF6F2",
+  "theme_color": "#EAF6F2",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

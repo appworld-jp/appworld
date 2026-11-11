@@ -63,6 +63,20 @@ class Audit(HTMLParser):
             self.problems.append("inline script text")
 
 
+class Meta(HTMLParser):
+    """The page's <meta property/name=... content=...> tags as a dict."""
+
+    def __init__(self, text: str):
+        super().__init__()
+        self.tags = {}
+        self.feed(text)
+
+    def handle_starttag(self, tag, attrs):
+        a = dict(attrs)
+        if tag == "meta" and (a.get("property") or a.get("name")):
+            self.tags[a.get("property") or a.get("name")] = a.get("content")
+
+
 def listing(**over) -> dict:
     return {"id": "test-app", "name": "テスト", "tagline": "ためしの一言", "description": "説明です。",
             "platform": "web", "category": "fun", "ai_tools": ["Cursor"], "maker_name": "作り手",
@@ -78,9 +92,9 @@ class BuildTest(unittest.TestCase):
     def tearDown(self):
         self.tmp.cleanup()
 
-    def run_build(self, apps=HERE / "apps", icons=HERE / "icons", production=True, today=date(2026, 11, 10)):
+    def run_build(self, apps=HERE / "apps", icons=HERE / "icons", production=True, today=date(2026, 11, 10), og=HERE / "og"):
         with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
-            return build.build(today, production=production, apps_dir=apps, icons_dir=icons, out=self.out,
+            return build.build(today, production=production, apps_dir=apps, icons_dir=icons, og_dir=og, out=self.out,
                                **(URLS if production else {}))
 
     def scratch(self, *listings, icons: dict | None = None):
@@ -146,6 +160,47 @@ class BuildTest(unittest.TestCase):
         self.assertEqual(len(locs), 4 + len(LAB))
         self.assertTrue(all(u.startswith("https://appworld-1ug.pages.dev/") for u in locs))
         self.assertIn("Sitemap: https://appworld-1ug.pages.dev/sitemap.xml", (self.out / "robots.txt").read_text())
+
+    def test_share_images_are_large_and_absolute(self):
+        self.run_build()
+        site = URLS["site_url"]
+        for name in ("index.html", "apps.html", "submit.html", "about.html", *[f"app-{s}.html" for s in LAB]):
+            with self.subTest(page=name):
+                tags = Meta((self.out / name).read_text(encoding="utf-8")).tags
+                own = name.startswith("app-")
+                image = f"og/{name[4:-5]}.png" if own else "og/default.png"  # every operator listing has its own image
+                self.assertRegex(tags["og:image"], rf"^{site}/{image}\?v=[0-9a-f]{{10}}$")
+                self.assertTrue((self.out / image).is_file())
+                self.assertEqual(tags["twitter:card"], "summary_large_image")
+                self.assertEqual((tags["og:image:width"], tags["og:image:height"]), ("1200", "630"))
+                self.assertTrue(tags["og:image:alt"])
+        self.assertEqual((self.out / "og" / "default.png").read_bytes()[:8], b"\x89PNG\r\n\x1a\n")
+        self.assertNotIn("og:image", (self.out / "404.html").read_text(encoding="utf-8"))
+
+    def test_listing_without_share_image_uses_the_default(self):
+        apps, icons = self.scratch(listing(name="A&B"),
+                                   listing(id="later", launch_date="2026-12-01", url="https://example.com/later/"))
+        og = self.dir / "og"; og.mkdir()
+        shutil.copy(HERE / "og" / "default.png", og / "default.png")
+        shutil.copy(HERE / "og" / "default.png", og / "later.png")  # a future listing's image waits for its launch
+        self.run_build(apps, icons, og=og)
+        tags = Meta((self.out / "app-test-app.html").read_text(encoding="utf-8")).tags
+        self.assertRegex(tags["og:image"], r"^https://appworld-1ug\.pages\.dev/og/default\.png\?v=[0-9a-f]{10}$")
+        self.assertEqual(tags["og:image:alt"], build.OG_DEFAULT_ALT)
+        self.assertEqual(tags["twitter:card"], "summary_large_image")
+        self.assertEqual(sorted(p.name for p in (self.out / "og").iterdir()), ["default.png"])
+
+    def test_own_share_image_alt_is_escaped_and_missing_default_still_builds(self):
+        apps, icons = self.scratch(listing(name="A&B \"x\""))
+        og = self.dir / "og"; og.mkdir()
+        shutil.copy(HERE / "og" / "default.png", og / "test-app.png")
+        self.run_build(apps, icons, og=og)
+        text = (self.out / "app-test-app.html").read_text(encoding="utf-8")
+        self.assertIn('content="A&amp;B &quot;x&quot; — ためしの一言"', text)
+        self.assertRegex(Meta(text).tags["og:image"], r"^https://appworld-1ug\.pages\.dev/og/test-app\.png\?v=")
+        home = Meta((self.out / "index.html").read_text(encoding="utf-8")).tags  # no default image: a plain card
+        self.assertNotIn("og:image", home)
+        self.assertEqual(home["twitter:card"], "summary")
 
     def test_headers_have_the_production_csp(self):
         self.run_build()

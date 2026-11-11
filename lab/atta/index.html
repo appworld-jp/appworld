@@ -5,6 +5,11 @@
 <meta name="description" content="会った人の名前、どこで会ったか、特徴や話したことを残すメモ。集まりの途中でもすばやく追加でき、どんな言葉でも探せます。カードをめくって名前を覚える練習もできます。">
 <meta name="theme-color" content="#5B2A63">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="会った人メモ">
 <link rel="stylesheet" href="style.css">
 </head><body>
 <header class="head">
@@ -158,4 +163,5 @@
 
 <div class="toast" id="toast" role="status" hidden><span id="toastMsg"></span><button type="button" id="toastUndo">元に戻す</button></div>
 <script src="app.js"></script>
+<script src="../pwa.js"></script>
 </body></html>

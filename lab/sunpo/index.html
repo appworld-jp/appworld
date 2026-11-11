@@ -5,6 +5,11 @@
 <meta name="description" content="窓や冷蔵庫置き場など、測った寸法を部屋ごとにメモ。家具や家電の幅・高さ・奥行きを入れると、どこに入るかがすぐわかります。">
 <meta name="theme-color" content="#F2B705">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="寸法メモ">
 <link rel="stylesheet" href="style.css">
 </head><body>
 <header class="top">
@@ -130,4 +135,5 @@
 
 <div class="toast" id="toast" role="status" hidden><span id="toastMsg"></span><button type="button" id="toastUndo">元に戻す</button></div>
 <script src="app.js"></script>
+<script src="../pwa.js"></script>
 </body></html>

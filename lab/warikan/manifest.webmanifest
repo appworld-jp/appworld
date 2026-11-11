@@ -1,0 +1,38 @@
+{
+  "name": "立て替え精算",
+  "short_name": "立て替え精算",
+  "description": "旅行や飲み会で立て替えたお金を入れるだけで、だれがだれにいくら払えばいいかを、少ない回数の送金で計算します。LINEに貼れるまとめ文もコピーできます。",
+  "lang": "ja",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#24324f",
+  "theme_color": "#24324f",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

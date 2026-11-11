@@ -40,6 +40,10 @@ DEV_CONTACT_URL = "https://github.com/appworld-jp/appworld/issues/new"
 FALLBACK_COLORS = ["#D9775A", "#3E8C84", "#4C6FD1", "#B9567E", "#8A64C8", "#C9A13A",
                    "#4E9A6B", "#5A7FA0", "#C46B4E", "#3F8FB5", "#6C5BB0", "#8E6B9E"]
 OPERATOR_NOTE = "App Worldの運営が作ったアプリです。"
+# Share images (og:image), made by tools/make_og.mjs: og/<id>.png per listing, og/default.png for the rest.
+OG_SIZE = (1200, 630)
+OG_DEFAULT = "og/default.png"
+OG_DEFAULT_ALT = f"{SITE_NAME} — AIで作られたアプリがここに集まる。"
 
 e = html.escape
 
@@ -107,6 +111,16 @@ class Site:
             self.versions[name] = hashlib.sha256((self.out / name).read_bytes()).hexdigest()[:10]
         return f"{name}?v={self.versions[name]}"
 
+    def og_image(self, app: dict | None = None) -> tuple[str, str]:
+        """Absolute URL and alt text of a page's share image: the app's own when it has one, else the default."""
+        if app and (self.out / "og" / f"{app['id']}.png").is_file():
+            name, alt = f"og/{app['id']}.png", f"{app['name']} — {app['tagline']}"
+        elif (self.out / OG_DEFAULT).is_file():
+            name, alt = OG_DEFAULT, OG_DEFAULT_ALT
+        else:
+            return "", ""
+        return f"{self.site_url}/{self.asset(name)}", alt
+
     def icon_src(self, app: dict) -> str:
         return self.asset(f"icons/{app['id']}.svg") if app.get("icon") else ""
 
@@ -137,11 +151,19 @@ def footer(root: str) -> str:
 
 
 def page(site: Site, *, path: str, title: str, desc: str, body: str, css: tuple = (), js: tuple = (),
-         current: str = "", over: bool = False, og_type: str = "website", root: str = "") -> str:
-    """One complete HTML page. `root` is "/" for 404.html, which is served at any path."""
+         current: str = "", over: bool = False, og_type: str = "website", root: str = "", app: dict | None = None) -> str:
+    """One complete HTML page. `root` is "/" for 404.html, which is served at any path.
+    `app` picks the share image for an app page (falls back to the site's default image)."""
     meta = ""
     if path:
         url = site.abs_url(path)
+        image, alt = site.og_image(app)
+        image_meta = (f'<meta property="og:image" content="{e(image)}">\n'
+                      '<meta property="og:image:type" content="image/png">\n'
+                      f'<meta property="og:image:width" content="{OG_SIZE[0]}">\n'
+                      f'<meta property="og:image:height" content="{OG_SIZE[1]}">\n'
+                      f'<meta property="og:image:alt" content="{e(alt)}">\n'
+                      f'<meta name="twitter:image:alt" content="{e(alt)}">\n') if image else ""
         meta = (f'<link rel="canonical" href="{e(url)}">\n'
                 f'<meta property="og:title" content="{e(title)}">\n'
                 f'<meta property="og:description" content="{e(desc)}">\n'
@@ -149,7 +171,8 @@ def page(site: Site, *, path: str, title: str, desc: str, body: str, css: tuple 
                 f'<meta property="og:type" content="{og_type}">\n'
                 f'<meta property="og:site_name" content="{SITE_NAME}">\n'
                 '<meta property="og:locale" content="ja_JP">\n'
-                '<meta name="twitter:card" content="summary">\n')
+                + image_meta
+                + f'<meta name="twitter:card" content="{"summary_large_image" if image else "summary"}">\n')
     styles = "".join(f'<link rel="stylesheet" href="{root}{site.asset(n)}">\n'
                      for n in ("fonts.css", "app.css", *css, "colors.css"))
     scripts = "".join(f'<script src="{root}{site.asset(n)}"></script>\n' for n in js)
@@ -387,7 +410,7 @@ def detail(site: Site, app: dict, live: list[dict]) -> str:
   </div>
 </main>"""
     return page(site, path=f"app-{aid}.html", title=f"{app['name']} | {SITE_NAME}", desc=app["tagline"], body=body,
-                css=("apps.css", "detail.css"), js=("detail.js",), current="apps.html", og_type="article")
+                css=("apps.css", "detail.css"), js=("detail.js",), current="apps.html", og_type="article", app=app)
 
 
 def submit_page(site: Site) -> str:
@@ -570,7 +593,7 @@ def script_data(site: Site, live: list[dict]) -> str:
 
 def build(today: date, site_url: str | None = None, *, production: bool = False, submit_url: str | None = None,
           contact_url: str | None = None, apps_dir: pathlib.Path = HERE / "apps", icons_dir: pathlib.Path = HERE / "icons",
-          out: pathlib.Path = HERE / "dist") -> list[dict]:
+          og_dir: pathlib.Path = HERE / "og", out: pathlib.Path = HERE / "dist") -> list[dict]:
     listings, problems = load_all(apps_dir, icons_dir)
     blocking = {k: v for k, v in problems.items() if v[0]}
     if blocking:
@@ -600,6 +623,12 @@ def build(today: date, site_url: str | None = None, *, production: bool = False,
             if errs:
                 sys.exit(f"アイコンに問題があるため、公開をやめました（{a['id']}）: {'; '.join(errs)}")
             shutil.copy(src, out / "icons" / src.name)
+    # Share images: the default, and one per live listing (a future listing's image waits for its launch date).
+    (out / "og").mkdir()
+    for name in ["default", *(a["id"] for a in live)]:
+        src = og_dir / f"{name}.png"
+        if src.is_file():
+            shutil.copy(src, out / "og" / src.name)
 
     site = Site(out, site_url or DEV_SITE_URL, submit_url or DEV_SUBMIT_URL, contact_url or DEV_CONTACT_URL, icons_dir)
     (out / "colors.css").write_text(

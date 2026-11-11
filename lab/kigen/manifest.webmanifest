@@ -1,0 +1,38 @@
+{
+  "name": "更新日まとめ帳",
+  "short_name": "更新日まとめ帳",
+  "description": "運転免許証、パスポート、マイナンバーカード、車検、保険、スマホの契約。更新や期限の日をまとめて控えて、準備を始める時期がひと目でわかります。",
+  "lang": "ja",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0E6E60",
+  "theme_color": "#0E6E60",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

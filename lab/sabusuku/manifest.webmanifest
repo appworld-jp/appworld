@@ -1,0 +1,38 @@
+{
+  "name": "サブスク棚卸し",
+  "short_name": "サブスク棚卸し",
+  "description": "動画や音楽、アプリ、スマホ代、保険などの毎月の支払いを並べて、月と年の合計を計算。あまり使っていない物や、やめたらいくら浮くかがすぐわかります。",
+  "lang": "ja",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#F2C230",
+  "theme_color": "#F2C230",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

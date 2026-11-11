@@ -19,13 +19,16 @@ AIで作られたアプリが集まるサイトです。https://appworld-1ug.pag
 |---|---|
 | `site/apps/*.json` | 掲載 1 件につき 1 ファイル |
 | `site/icons/*.svg` | アプリのアイコン（`"icon": true` の掲載） |
+| `site/og/*.png` | シェア用の画像（1200×630。`default.png` と掲載ごとの `<id>.png`） |
 | `site/check_listing.py` | 掲載とアイコンの自動チェック |
 | `site/build.py` | サイトを `site/dist/` に作る |
+| `tools/make_og.mjs` | シェア用の画像を作る（掲載を追加したときに手元で実行） |
 | `site/static/` | CSS、JavaScript、フォント（`dist/` にそのままコピー） |
 | `automation/intake.py` | 申請フォームの内容を掲載ファイルにする |
 | `automation/x_daily_post.py` | 毎朝の X 投稿 |
 | `.github/` | 申請フォームと自動化のワークフロー |
 | `lab/` | App World Lab（運営が作ったアプリ。別の Pages プロジェクト） |
+| `tools/make_pwa.mjs` | Lab のアプリをホーム画面に追加でき、オフラインでも使えるようにする |
 
 ## ビルド
 ```sh
@@ -34,6 +37,26 @@ python3 site/build.py --production --site-url https://appworld-1ug.pages.dev \
   --submit-url "https://github.com/appworld-jp/appworld/issues/new?template=listing.yml" \
   --contact-url "https://github.com/appworld-jp/appworld/issues/new"
 ```
+
+## シェア用の画像
+X や LINE でページを共有したときに大きく出る画像（og:image）は `site/og/` にあります。掲載を追加・変更したら、作り直してから一緒にコミットしてください。
+
+```sh
+node tools/make_og.mjs            # アイコンのある掲載すべてと default.png
+node tools/make_og.mjs atta gomi  # 指定した掲載だけ（default.png も作り直す）
+```
+
+Playwright（Chromium）で、サイト内のフォント（Zen Kaku Gothic New）とアイコンから描きます。ビルド（`site/build.py`）は画像をコピーするだけで、画像のない掲載は `default.png` を使います。
+
+## Lab のアプリをホーム画面に追加できるようにする
+`lab/<アプリ>/` を追加・変更したら、`lab/index.html` に載せたあとで実行して、一緒にコミットしてください。何度実行しても同じ結果になります（キャッシュ名のハッシュだけが内容に合わせて変わります）。
+
+```sh
+node tools/make_pwa.mjs              # lab/index.html に載っていて index.html のあるアプリすべて
+node tools/make_pwa.mjs dot gomi     # 指定したアプリだけ
+```
+
+アプリごとに `manifest.webmanifest`、`icon-180.png`（iPhone 用）、`icon-192.png`、`icon-512.png`、`icon-maskable-512.png`（`icon.svg` から Playwright で描く）、`sw.js` を作り、`index.html` に manifest・アイコンのタグと `<script src="../pwa.js">` を足します。`lab/pwa.js` は共通の登録スクリプトで、スマホでは足もとに「ホーム画面に追加」の案内を 1 行出します（閉じると覚えます）。`sw.js` はネットワーク優先で、つながっていれば常に最新を出し、オフラインのときはキャッシュから開きます。`sw.js` を手で直さないこと。
 
 ## テスト
 ```sh

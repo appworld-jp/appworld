@@ -1,0 +1,38 @@
+{
+  "name": "冷凍ストック帳",
+  "short_name": "冷凍ストック帳",
+  "description": "冷凍庫に何が、いつから入っているかを記録。古い順に並ぶので、奥で眠っている物を先に使えます。食品ごとの保存の目安つき。",
+  "lang": "ja",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#1C6E9E",
+  "theme_color": "#1C6E9E",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

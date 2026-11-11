@@ -1,0 +1,38 @@
+{
+  "name": "会った人メモ",
+  "short_name": "会った人メモ",
+  "description": "会った人の名前、どこで会ったか、特徴や話したことを残すメモ。集まりの途中でもすばやく追加でき、どんな言葉でも探せます。カードをめくって名前を覚える練習もできます。",
+  "lang": "ja",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#5B2A63",
+  "theme_color": "#5B2A63",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

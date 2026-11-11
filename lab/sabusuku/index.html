@@ -5,6 +5,11 @@
 <meta name="description" content="動画や音楽、アプリ、スマホ代、保険などの毎月の支払いを並べて、月と年の合計を計算。あまり使っていない物や、やめたらいくら浮くかがすぐわかります。">
 <meta name="theme-color" content="#F2C230">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="サブスク棚卸し">
 <link rel="stylesheet" href="style.css">
 </head><body>
 <header class="hd">
@@ -142,4 +147,5 @@
 <div class="toast" id="toast" role="status" hidden><span id="toastMsg"></span><button type="button" id="toastUndo">元に戻す</button></div>
 <script src="free.js"></script>
 <script src="app.js"></script>
+<script src="../pwa.js"></script>
 </body></html>

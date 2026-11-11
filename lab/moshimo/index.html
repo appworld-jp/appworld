@@ -5,6 +5,11 @@
 <meta name="description" content="家族の持病、飲んでいる薬、アレルギー、かかりつけ病院、緊急連絡先、避難場所を1枚にまとめるメモです。財布に入るカードやA4で印刷でき、救助の人に見せる大きな文字の画面もあります。">
 <meta name="theme-color" content="#0E7A55">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="もしものメモ">
 <link rel="stylesheet" href="style.css">
 </head><body>
 <div class="app" id="app">
@@ -140,4 +145,5 @@
 
 <div class="toast" id="toast" role="status" hidden><span id="toastMsg"></span><button type="button" id="toastUndo">元に戻す</button></div>
 <script src="app.js"></script>
+<script src="../pwa.js"></script>
 </body></html>

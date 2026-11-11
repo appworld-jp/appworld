@@ -1,0 +1,38 @@
+{
+  "name": "もしものメモ",
+  "short_name": "もしものメモ",
+  "description": "家族の持病、飲んでいる薬、アレルギー、かかりつけ病院、緊急連絡先、避難場所を1枚にまとめるメモです。財布に入るカードやA4で印刷でき、救助の人に見せる大きな文字の画面もあります。",
+  "lang": "ja",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0E7A55",
+  "theme_color": "#0E7A55",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

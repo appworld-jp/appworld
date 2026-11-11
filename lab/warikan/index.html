@@ -5,6 +5,11 @@
 <meta name="description" content="旅行や飲み会で立て替えたお金を入れるだけで、だれがだれにいくら払えばいいかを、少ない回数の送金で計算します。LINEに貼れるまとめ文もコピーできます。">
 <meta name="theme-color" content="#24324f">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="立て替え精算">
 <link rel="stylesheet" href="style.css">
 </head><body>
 <main class="desk">
@@ -109,4 +114,5 @@
 <div class="toast" id="toast" role="status" aria-live="polite"><span id="toast-t"></span><button type="button" id="toast-undo" hidden>取り消す</button></div>
 <script src="calc.js"></script>
 <script src="app.js"></script>
+<script src="../pwa.js"></script>
 </body></html>
