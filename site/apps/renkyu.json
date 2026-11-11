@@ -1,0 +1,18 @@
+{
+  "id": "renkyu",
+  "name": "連休メーカー",
+  "tagline": "有給をどこで取れば何連休になるか一発でわかる",
+  "description": "日本の祝日（振替休日・国民の休日を含む）をカレンダーに表示し、有給を1〜5日足すと何連休になるかを1年分まとめて計算します。「2日休むと9連休」のように、ゴールデンウィークや祝日ごとの案を並べ、押すとカレンダーで有給の日がわかります。休みの曜日、祝日が休みかどうか、会社の休み（年末年始・夏休みなど）や土曜出勤も入れられます。春分・秋分の日は計算式で求めており、2020〜2099年に対応しています。設定はこの端末にだけ保存され、ファイルに書き出して移せます。",
+  "platform": "web",
+  "category": "productivity",
+  "ai_tools": [
+    "Claude Code"
+  ],
+  "maker_name": "App World Lab（運営）",
+  "url": "https://appworld-lab.pages.dev/renkyu/",
+  "launch_date": "2026-11-11",
+  "beta": false,
+  "operator": true,
+  "color": "#C8361F",
+  "icon": true
+}

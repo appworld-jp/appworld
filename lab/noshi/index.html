@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>のし・表書きガイド</title>
+<meta name="description" content="出産祝い、結婚祝い、香典、お中元などの場面を選ぶと、水引の種類、表書き、名前の書き方、包む金額の目安と注意がわかります。名前入りののし紙も印刷できます。">
+<meta name="theme-color" content="#23305A">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="のし・表書きガイド">
+<link rel="stylesheet" href="style.css">
+</head><body>
+<header class="hd">
+  <div class="hd-in">
+    <a class="back" href="../">App World Lab</a>
+    <h1>のし・<span class="nb">表書きガイド</span></h1>
+    <p class="lead">贈る場面を選ぶと、水引と表書き、<span class="nb">包む金額の目安がわかります。</span></p>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="pick" aria-labelledby="hPick">
+    <h2 id="hPick" class="sh"><span class="num">一</span>どんな贈りもの？</h2>
+    <div id="occGroups"></div>
+    <div class="mine-box">
+      <div class="chips" id="mineChips" role="group" aria-label="自分で入れた場面"></div>
+      <div class="mzpick" id="mzPick" hidden>
+        <p class="mz-q" id="mzQ">いちばん近いものを選んでください</p>
+        <div class="chips" id="mzChips" role="group" aria-labelledby="mzQ"></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="result" id="result" hidden>
+    <section class="prev" aria-labelledby="hPrev">
+      <h2 id="hPrev" class="sh"><span class="num">二</span>のし紙</h2>
+      <div class="paper-wrap" id="paperWrap">
+        <div class="paper" id="paper" aria-label="のし紙の見本">
+          <svg class="mz" id="mzSvg" viewBox="0 0 200 90" preserveAspectRatio="none" aria-hidden="true"></svg>
+          <svg class="noshi-mark" id="noshiMark" viewBox="0 0 30 60" aria-hidden="true"><path d="M8 2l18 6-6 50L4 54z" fill="#FFFFFF" stroke="#B53A2E" stroke-width="1.5"/><path d="M10 6l12 4-4 40-10-3z" fill="#C8102E"/><path d="M13 10l6 2-3 32-4-1z" fill="#F2C94C"/></svg>
+          <p class="omote" id="pOmote"></p>
+          <div class="names" id="pNames"></div>
+        </div>
+      </div>
+      <p class="hint" id="paperHint"></p>
+
+      <div class="ctrl">
+        <div class="fgroup">
+          <span class="lab" id="omL">表書き</span>
+          <div class="chips" id="omChips" role="group" aria-labelledby="omL"></div>
+        </div>
+        <div class="fgroup">
+          <span class="lab">名前（連名は3人まで。右から目上の順）</span>
+          <div class="names-in" id="namesIn"></div>
+          <button type="button" class="link" id="addName">＋ 連名にする</button>
+          <p class="err" id="nameErr" role="alert"></p>
+        </div>
+        <label class="fld"><span>右肩に小さく（会社名・肩書など。なくてもOK）</span><input id="company" type="text" maxlength="20" autocomplete="organization" placeholder="株式会社みなと商事"></label>
+        <div class="fgroup">
+          <span class="lab" id="sizeL">印刷の大きさ</span>
+          <div class="seg" id="sizeSeg" role="group" aria-labelledby="sizeL">
+            <button type="button" data-s="a4" aria-pressed="true">A4いっぱい</button>
+            <button type="button" data-s="tan" aria-pressed="false">短冊（A4に切り取り線）</button>
+          </div>
+        </div>
+        <button type="button" class="btn" id="printBtn">印刷する</button>
+        <p class="hint">印刷の画面で「余白なし」「倍率100%」を選ぶと、きれいに収まります。</p>
+      </div>
+    </section>
+
+    <section class="guide" aria-labelledby="hGuide" aria-live="polite">
+      <h2 id="hGuide" class="sh"><span class="num">三</span><span><span id="gTitle"></span>の決まり</span></h2>
+      <div class="g-card">
+        <h3>水引</h3>
+        <p class="g-big" id="gMz"></p>
+        <p id="gMzWhy"></p>
+      </div>
+      <div class="g-card">
+        <h3>表書き</h3>
+        <ul class="omlist" id="gOm"></ul>
+        <p id="gOmNote"></p>
+      </div>
+      <div class="g-card">
+        <h3>名前の書き方</h3>
+        <p id="gWho"></p>
+        <ul class="dots" id="gWhoRules"></ul>
+      </div>
+      <div class="g-card" id="gWhenBox">
+        <h3>贈る時期</h3>
+        <p id="gWhen"></p>
+      </div>
+      <div class="g-card" id="gAmtBox">
+        <h3>金額の目安</h3>
+        <table class="amt"><tbody id="gAmt"></tbody></table>
+        <p class="hint">あくまで目安です。地域や関係、家のしきたりで変わります。迷ったら身近な人に聞いてみてください。</p>
+      </div>
+      <div class="g-card warn" id="gTabooBox">
+        <h3>気をつけること</h3>
+        <ul class="dots" id="gTaboo"></ul>
+        <p id="gRegion"></p>
+      </div>
+    </section>
+  </div>
+
+  <details class="card fold">
+    <summary>データの引っ越し</summary>
+    <p class="hint">入れた名前と、自分で足した場面・表書きはこの端末だけに残ります。機種変更のときは、ファイルに書き出して、新しい端末で読み込んでください。</p>
+    <div class="row">
+      <button type="button" class="btn ghost small" id="expBtn">ファイルに書き出す</button>
+      <label class="btn ghost small file-btn">ファイルを読み込む<input type="file" id="impFile" accept="application/json,.json"></label>
+    </div>
+    <p class="msg" id="moveMsg" role="status"></p>
+  </details>
+
+  <footer class="foot">
+    <p>入れた名前と自分で足した項目は、この端末にだけ保存されます。</p>
+    <p>開発：App World Lab（App World 運営）</p>
+    <p><a href="../">App World Lab</a></p>
+  </footer>
+</main>
+
+<div class="toast" id="toast" role="status" hidden><span id="toastMsg"></span><button type="button" id="toastUndo">元に戻す</button></div>
+<script src="occasions.js"></script>
+<script src="freechips.js"></script>
+<script src="app.js"></script>
+<script src="../pwa.js"></script>
+</body></html>

@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>水やり帳</title>
+<meta name="description" content="観葉植物の水やりを、季節ごとの目安の日数で覚えておく帳面。今日水が要る鉢から並び、ワンタップで記録。肥料と植え替えの時期もわかります。">
+<meta name="theme-color" content="#1F6F6B">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="水やり帳">
+<link rel="stylesheet" href="style.css">
+</head><body>
+<header class="hd">
+  <div class="hd-in">
+    <a class="back" href="../">App World Lab</a>
+    <h1><span class="drop" aria-hidden="true"></span>水やり帳</h1>
+    <p class="lead">水をやった日を覚えておくので、<span class="nb">今日どの鉢に要るかがすぐわかります。</span></p>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="today" aria-live="polite">
+    <p class="t-season" id="season"></p>
+    <p class="t-big" id="todayBig"></p>
+    <p class="t-sub" id="todaySub"></p>
+  </section>
+
+  <section aria-labelledby="hList">
+    <div class="list-h">
+      <h2 id="hList">鉢の一覧</h2>
+      <button type="button" class="btn add" id="addBtn"><span aria-hidden="true">＋</span> 鉢を足す</button>
+    </div>
+    <ul class="pots" id="pots"></ul>
+    <div class="empty" id="empty" hidden>
+      <svg class="empty-art" viewBox="0 0 120 100" aria-hidden="true"><path d="M60 52c-14-2-24-12-26-28 16 0 26 10 26 28zm0 0c2-18 12-30 30-30-2 18-14 28-30 30z" fill="#5BA35A"/><path d="M60 52v14" stroke="#3F7D3E" stroke-width="4"/><path d="M34 64h52l-6 30H40z" fill="#C8683F"/><rect x="30" y="60" width="60" height="9" rx="3" fill="#B25530"/><path d="M98 18c4 6 6 9 6 12a6 6 0 0 1-12 0c0-3 2-6 6-12z" fill="#3E9BD8"/></svg>
+      <p class="empty-h">まだ鉢がありません</p>
+      <p>「鉢を足す」で植物を選ぶと、季節に合った水やりの目安が入ります。</p>
+      <div class="row center">
+        <button type="button" class="btn" id="firstAdd">はじめての鉢を足す</button>
+        <button type="button" class="btn ghost" id="sample">例を入れてみる</button>
+      </div>
+    </div>
+  </section>
+
+  <details class="card fold">
+    <summary>水やりの目安について</summary>
+    <p>日数は、園芸書などで広く紹介されている一般的な目安です。部屋の明るさや温度、鉢の大きさで変わります。<strong>水をやる前に、土を指で触って乾いているか確かめてください。</strong></p>
+    <p>4〜9月を「春夏」、10〜3月を「秋冬」として数えます。日数は鉢ごとに変えられます。</p>
+  </details>
+
+  <details class="card fold">
+    <summary>データの引っ越し</summary>
+    <p class="hint">記録はこの端末だけに残ります。機種変更のときは、ファイルに書き出して、新しい端末で読み込んでください。</p>
+    <div class="row">
+      <button type="button" class="btn ghost small" id="expBtn">ファイルに書き出す</button>
+      <label class="btn ghost small file-btn">ファイルを読み込む<input type="file" id="impFile" accept="application/json,.json"></label>
+    </div>
+    <p class="msg" id="moveMsg" role="status"></p>
+  </details>
+
+  <footer class="foot">
+    <p>鉢と水やりの記録は、この端末にだけ保存されます。</p>
+    <p>開発：App World Lab（App World 運営）</p>
+    <p><a href="../">App World Lab</a></p>
+  </footer>
+</main>
+
+<!-- 鉢を足す・直す -->
+<dialog class="sheet" id="editDlg" aria-labelledby="editH">
+  <div class="sheet-in">
+    <div class="sheet-h"><h2 id="editH">鉢を足す</h2><button type="button" class="x" id="editClose" aria-label="閉じる">×</button></div>
+    <div class="fgroup">
+      <span class="lab" id="kindL">植物</span>
+      <div class="chips" id="kindChips" role="group" aria-labelledby="kindL"></div>
+      <p class="guide" id="kindGuide"></p>
+    </div>
+    <label class="fld"><span>名前（なくてもOK）</span><input id="fName" type="text" maxlength="20" autocomplete="off" placeholder="リビングのポトス"></label>
+    <div class="fgroup">
+      <span class="lab" id="placeL">置き場所（なくてもOK）</span>
+      <div class="chips" id="placeChips" role="group" aria-labelledby="placeL"></div>
+    </div>
+    <fieldset class="nums">
+      <legend>水やり（目安の日数）</legend>
+      <label class="num"><span>春夏（4〜9月）</span><input id="fSS" type="number" inputmode="numeric" min="1" max="90"><span class="u">日ごと</span></label>
+      <label class="num"><span>秋冬（10〜3月）</span><input id="fAW" type="number" inputmode="numeric" min="1" max="90"><span class="u">日ごと</span></label>
+      <p class="err" id="numErr" role="alert"></p>
+    </fieldset>
+    <label class="fld"><span>最後に水をやった日</span><input id="fLast" type="date"></label>
+    <fieldset class="nums">
+      <legend>肥料（0にすると休み）</legend>
+      <label class="num"><span>春夏</span><input id="fFS" type="number" inputmode="numeric" min="0" max="180"><span class="u">日ごと</span></label>
+      <label class="num"><span>秋冬</span><input id="fFA" type="number" inputmode="numeric" min="0" max="180"><span class="u">日ごと</span></label>
+    </fieldset>
+    <fieldset class="nums">
+      <legend>植え替え</legend>
+      <label class="num"><span>最後に植え替えた月</span><input id="fRepot" type="month"></label>
+      <label class="num"><span>植え替えの間隔</span><input id="fRP" type="number" inputmode="numeric" min="1" max="10"><span class="u">年ごと</span></label>
+    </fieldset>
+    <p class="err" id="editErr" role="alert"></p>
+    <div class="row end">
+      <button type="button" class="btn ghost" id="editCancel">やめる</button>
+      <button type="button" class="btn" id="editSave">保存</button>
+    </div>
+  </div>
+</dialog>
+
+<!-- 鉢のくわしい情報 -->
+<dialog class="sheet" id="infoDlg" aria-labelledby="infoH">
+  <div class="sheet-in">
+    <div class="sheet-h"><h2 id="infoH"></h2><button type="button" class="x" id="infoClose" aria-label="閉じる">×</button></div>
+    <div id="infoBody"></div>
+    <p class="msg" id="infoMsg" role="status"></p>
+    <div class="row between">
+      <button type="button" class="btn ghost small danger" id="infoDel">この鉢を消す</button>
+      <button type="button" class="btn small" id="infoEdit">直す</button>
+    </div>
+  </div>
+</dialog>
+
+<div class="toast" id="toast" role="status" hidden><span id="toastMsg"></span><button type="button" id="toastUndo">元に戻す</button></div>
+<script src="plants.js"></script>
+<script src="freechips.js"></script>
+<script src="app.js"></script>
+<script src="../pwa.js"></script>
+</body></html>

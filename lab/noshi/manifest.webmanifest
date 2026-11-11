@@ -1,0 +1,38 @@
+{
+  "name": "のし・表書きガイド",
+  "short_name": "のし・表書きガイド",
+  "description": "出産祝い、結婚祝い、香典、お中元などの場面を選ぶと、水引の種類、表書き、名前の書き方、包む金額の目安と注意がわかります。名前入りののし紙も印刷できます。",
+  "lang": "ja",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#23305A",
+  "theme_color": "#23305A",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

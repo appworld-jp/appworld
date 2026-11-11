@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>メール文例帳</title>
+<meta name="description" content="お礼、お詫び、催促、日程調整、断り、退職のあいさつなど、ていねいなメールを空欄を埋めるだけで作れます。ていねい・ふつう・社内向けの言い回しを選べ、件名の案も出ます。">
+<meta name="theme-color" content="#1F3A5F">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="メール文例帳">
+<link rel="stylesheet" href="style.css">
+</head><body>
+<header class="hd">
+  <div class="hd-in">
+    <a class="back" href="../">App World Lab</a>
+    <h1>メール文例帳</h1>
+    <p class="lead">空欄を埋めるだけで、<span class="nb">失礼のないメールが書けます。</span></p>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="index" aria-labelledby="hIdx">
+    <h2 id="hIdx" class="sh">文例を選ぶ</h2>
+    <div id="tplList"></div>
+    <div class="mine" id="mineBox">
+      <h3 class="ix-h">自分の文例</h3>
+      <ul class="mine-list" id="mineList"></ul>
+      <p class="hint" id="mineNone">作った文面を「自分の文例として保存」すると、ここに並びます。</p>
+    </div>
+  </nav>
+
+  <div class="work">
+    <section class="form card" id="formCard" aria-labelledby="hForm">
+      <h2 id="hForm" class="sh"><span id="tplName"></span></h2>
+      <div class="tone" id="toneSeg" role="group" aria-label="言い回し"></div>
+      <p class="tone-d" id="toneDesc"></p>
+      <div class="to" id="toBox">
+        <label class="fld" id="toCoF"><span>相手の会社名（なくてもOK）</span><input id="toCompany" type="text" maxlength="40" autocomplete="off" placeholder="株式会社みなと商事"></label>
+        <label class="fld" id="toDeptF"><span>相手の部署・役職（なくてもOK）</span><input id="toDept" type="text" maxlength="30" autocomplete="off" placeholder="営業部 部長"></label>
+        <label class="fld" id="toNameF"><span id="toNameL">相手の名前</span><input id="toName" type="text" maxlength="20" autocomplete="off" placeholder="山田"></label>
+      </div>
+      <div class="fields" id="fields"></div>
+      <details class="me" id="meBox">
+        <summary>差出人（自分の情報）<span class="me-s" id="meSum"></span></summary>
+        <div class="me-in">
+          <label class="fld"><span>会社名</span><input id="myCompany" type="text" maxlength="40" autocomplete="organization" placeholder="株式会社さくら企画"></label>
+          <label class="fld"><span>部署</span><input id="myDept" type="text" maxlength="30" autocomplete="off" placeholder="営業部"></label>
+          <label class="fld"><span>名前</span><input id="myName" type="text" maxlength="20" autocomplete="name" placeholder="鈴木 一郎"></label>
+          <label class="fld"><span>連絡先（署名に入ります）</span><textarea id="myContact" rows="2" maxlength="200" placeholder="電話：03-0000-0000&#10;メール：suzuki@example.co.jp"></textarea></label>
+          <p class="hint">一度入れると、どの文例にも使われます。</p>
+        </div>
+      </details>
+    </section>
+
+    <section class="out" aria-labelledby="hOut">
+      <h2 id="hOut" class="sh">できあがり</h2>
+      <div class="letter">
+        <div class="subj">
+          <label class="fld"><span>件名</span><input id="subject" type="text" maxlength="100" autocomplete="off"></label>
+          <div class="chips" id="subjChips" role="group" aria-label="件名の案"></div>
+        </div>
+        <label class="body-l" for="body">本文</label>
+        <textarea id="body" class="body" rows="18" spellcheck="false"></textarea>
+        <p class="blanks" id="blanks" aria-live="polite"></p>
+        <div class="edited" id="editedBar" hidden>
+          <span>本文を手で直しています。項目を変えても本文は変わりません。</span>
+          <button type="button" class="btn ghost small" id="regen">項目から作り直す</button>
+        </div>
+      </div>
+      <div class="acts">
+        <button type="button" class="btn" id="copyAll">件名と本文をコピー</button>
+        <button type="button" class="btn ghost" id="copyBody">本文だけコピー</button>
+        <button type="button" class="btn ghost" id="copySubj">件名だけコピー</button>
+      </div>
+      <p class="msg" id="copyMsg" role="status"></p>
+      <div class="savebox">
+        <button type="button" class="link" id="saveOpen" aria-expanded="false">＋ 自分の文例として保存</button>
+        <div class="save-f" id="saveForm" hidden>
+          <label class="fld"><span>文例の名前</span><input id="saveName" type="text" maxlength="20" autocomplete="off" placeholder="月末の請求のお知らせ"></label>
+          <p class="err" id="saveErr" role="alert"></p>
+          <div class="row">
+            <button type="button" class="btn small" id="saveBtn">保存</button>
+            <button type="button" class="btn ghost small" id="saveCancel">やめる</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <details class="card fold">
+    <summary>データの引っ越し</summary>
+    <p class="hint">差出人の情報と自分の文例は、この端末だけに残ります。機種変更のときは、ファイルに書き出して、新しい端末で読み込んでください。</p>
+    <div class="row">
+      <button type="button" class="btn ghost small" id="expBtn">ファイルに書き出す</button>
+      <label class="btn ghost small file-btn">ファイルを読み込む<input type="file" id="impFile" accept="application/json,.json"></label>
+    </div>
+    <p class="msg" id="moveMsg" role="status"></p>
+  </details>
+
+  <footer class="foot">
+    <p>入力した内容と自分の文例は、この端末にだけ保存されます。</p>
+    <p>開発：App World Lab（App World 運営）</p>
+    <p><a href="../">App World Lab</a></p>
+  </footer>
+</main>
+
+<div class="toast" id="toast" role="status" hidden><span id="toastMsg"></span><button type="button" id="toastUndo">元に戻す</button></div>
+<script src="templates.js"></script>
+<script src="app.js"></script>
+<script src="../pwa.js"></script>
+</body></html>

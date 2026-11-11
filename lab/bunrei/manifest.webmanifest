@@ -1,0 +1,38 @@
+{
+  "name": "メール文例帳",
+  "short_name": "メール文例帳",
+  "description": "お礼、お詫び、催促、日程調整、断り、退職のあいさつなど、ていねいなメールを空欄を埋めるだけで作れます。ていねい・ふつう・社内向けの言い回しを選べ、件名の案も出ます。",
+  "lang": "ja",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#1F3A5F",
+  "theme_color": "#1F3A5F",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
