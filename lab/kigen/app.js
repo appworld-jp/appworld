@@ -54,16 +54,28 @@
     { id: "other", label: "その他", dateL: "期限の日", prep: 30, cycle: [1, 2, 3, 5], info: "" }
   ];
   const K = Object.fromEntries(KINDS.map(k => [k.id, k]));
+  // 自分で入れた種類は kind を "other" にして、名前を kindL に持つ。
+  const kindLabel = it => it.kindL || K[it.kind].label;
   const PREPS = [[14, "2週間前"], [30, "1か月前"], [60, "2か月前"], [90, "3か月前"], [180, "半年前"], [365, "1年前"]];
-  const prepText = d => (PREPS.find(p => p[0] === d) || [0, `${d}日前`])[1];
+  // 準備の時期は「10日前」「6週間前」「4か月前」のように自分でも入れられる
+  function parsePrep(t) {
+    const m = String(t).normalize("NFKC").replace(/\s+/g, "").replace(/前$/, "").match(/^(\d{1,3})(日|週|週間|か月|ヶ月|カ月|ケ月|ヵ月|箇月|月|年)?$/);
+    if (!m) return null;
+    const n = Number(m[1]), u = m[2] || "日";
+    const d = u === "日" ? n : u[0] === "週" ? n * 7 : u === "年" ? n * 365 : n * 30;
+    return d >= 1 && d <= 730 ? { d, label: `${n}${u === "日" ? "日" : u[0] === "週" ? "週間" : u === "年" ? "年" : "か月"}前` } : null;
+  }
+  const ownPreps = () => prepFree.values().map(v => [parsePrep(v), v]).filter(x => x[0]).map(([p, v]) => [p.d, v]);
+  const prepText = d => (PREPS.find(p => p[0] === d) || ownPreps().find(p => p[0] === d) || [0, `${d}日前`])[1];
 
   // ---------- 保存 ----------
   const str = (v, max) => typeof v === "string" ? v.trim().slice(0, max) : "";
   function cleanItem(it) {
     if (!it || typeof it !== "object" || !isYmd(it.date)) return null;
     const kind = K[it.kind] ? it.kind : "other";
+    const kindL = kind === "other" ? str(it.kindL, 20) : "";
     return {
-      id: str(it.id, 20) || uid(), kind, name: str(it.name, 30) || K[kind].label, date: it.date,
+      id: str(it.id, 20) || uid(), kind, kindL, name: str(it.name, 30) || kindL || K[kind].label, date: it.date,
       prep: Number.isInteger(it.prep) && it.prep >= 0 && it.prep <= 730 ? it.prep : K[kind].prep,
       place: str(it.place, 40), note: str(it.note, 300), num: str(it.num, 40)
     };
@@ -145,7 +157,7 @@
     let hits = 0;
     GROUPS.forEach(([key, title, note]) => {
       let list = by[key];
-      if (q) list = list.filter(({ it }) => norm([it.name, K[it.kind].label, it.place, it.note].join(" ")).includes(q));
+      if (q) list = list.filter(({ it }) => norm([it.name, kindLabel(it), it.place, it.note].join(" ")).includes(q));
       if (!list.length) return;
       hits += list.length;
       list.sort((a, b) => key === "over" ? (a.it.date < b.it.date ? 1 : -1) : (a.it.date < b.it.date ? -1 : a.it.date > b.it.date ? 1 : 0));
@@ -161,7 +173,7 @@
         stub.append(el("small", null, t.pre), el("b", t.sm ? "sm" : null, t.big));
         if (t.post) stub.append(el("em", null, t.post));
         const body = el("span", "tk-body");
-        if (it.name !== K[it.kind].label) body.append(el("span", "tk-kind", K[it.kind].label));
+        if (it.name !== kindLabel(it)) body.append(el("span", "tk-kind", kindLabel(it)));
         body.append(el("span", "tk-name", it.name), el("span", "tk-date", `${jp(it.date)}まで`));
         const w = windowText(it, s);
         if (w && s.key !== "over") body.append(el("span", "tk-sub win", w));
@@ -183,7 +195,19 @@
   const openD = d => { if (d.showModal) d.showModal(); else d.setAttribute("open", ""); };
   const closeD = d => { if (d.close) d.close(); else d.removeAttribute("open"); };
   const kindBtn = (k, onPick) => { const b = el("button", "kb", k.label); b.type = "button"; b.addEventListener("click", () => onPick(k.id)); return b; };
-  $("kinds").replaceChildren(...KINDS.map(k => kindBtn(k, id => { closeD($("pick")); openEdit(null, id); })));
+  const kindFree = window.FreeChoice({
+    key: KEY + ".custom", set: "kind", label: "登録する物", max: 20, placeholder: "犬の予防接種、保険証",
+    builtins: () => KINDS.map(k => ({ value: k.id, label: k.label })),
+    onChange: () => renderKinds(),
+    onPick: v => { closeD($("pick")); if (K[v]) openEdit(null, v); else openEdit(null, "other", v); }
+  });
+  function renderKinds() {
+    $("kinds").replaceChildren(...KINDS.map(k => kindBtn(k, id => { closeD($("pick")); openEdit(null, id); })),
+      ...kindFree.values().map(v => { const b = el("button", "kb own", v); b.type = "button"; b.addEventListener("click", () => { closeD($("pick")); openEdit(null, "other", v); }); return kindFree.wrap(b, v); }),
+      kindFree.root);
+  }
+  renderKinds();
+  $("addBtn").addEventListener("click", () => kindFree.close());
   $("quick").replaceChildren(...["menkyo", "passport", "mynumber", "shaken"].map(id => kindBtn(K[id], id2 => openEdit(null, id2))));
   const more = el("button", "kb", "ほかの物"); more.type = "button"; more.addEventListener("click", () => openD($("pick")));
   $("quick").append(more);
@@ -191,15 +215,24 @@
   $("addBtn").addEventListener("click", () => openD($("pick")));
 
   // ---------- 登録・編集 ----------
-  let editId = null, editKind = "other";
+  let editId = null, editKind = "other", editKindL = "";
+  const prepFree = window.FreeChoice({
+    key: KEY + ".custom", set: "prep", label: "時期", max: 10, placeholder: "10日、6週間",
+    builtins: () => PREPS.map(([d, label]) => ({ value: d, label })),
+    validate: v => parsePrep(v) ? "" : "「10日」「6週間」「4か月」のように、2年までで入れてください。",
+    transform: v => { const p = parsePrep(v); const b = PREPS.find(x => x[0] === p.d) || ownPreps().find(x => x[0] === p.d); return b ? b[1] : p.label; },
+    onChange: () => buildPrep(Number((document.querySelector("input[name=prep]:checked") || {}).value) || K[editKind].prep),
+    onPick: v => buildPrep(typeof v === "number" ? v : parsePrep(v).d)
+  });
   function buildPrep(sel) {
     const seg = $("prepSeg"); seg.replaceChildren();
+    const own = ownPreps().filter(p => !PREPS.some(b => b[0] === p[0]));
     const opts = PREPS.slice();
-    if (!opts.some(p => p[0] === sel)) opts.push([sel, `${sel}日前`]);
-    opts.forEach(([d, label]) => {
-      const lab = el("label"); const r = el("input"); r.type = "radio"; r.name = "prep"; r.value = String(d); r.checked = d === sel;
-      lab.append(r, el("span", null, label)); seg.append(lab);
-    });
+    const chip = (d, label) => { const lab = el("label"); const r = el("input"); r.type = "radio"; r.name = "prep"; r.value = String(d); r.checked = d === sel; lab.append(r, el("span", null, label)); return lab; };
+    PREPS.forEach(([d, label]) => seg.append(chip(d, label)));
+    own.forEach(([d, label]) => seg.append(prepFree.wrap(chip(d, label), label)));
+    if (!opts.some(p => p[0] === sel) && !own.some(p => p[0] === sel)) seg.append(chip(sel, `${sel}日前`));
+    seg.append(prepFree.root);
   }
   function syncWin() {
     const d = $("fDate").value, k = K[editKind];
@@ -207,14 +240,16 @@
   }
   $("fDate").addEventListener("input", syncWin);
   $("fDenshi").addEventListener("change", () => { $("fDenshiF").hidden = !$("fDenshi").checked; });
-  function openEdit(id, kind) {
+  function openEdit(id, kind, kindL) {
     editId = id;
     const it = id ? st.items.find(x => x.id === id) : null;
     editKind = it ? it.kind : kind || "other";
+    editKindL = it ? it.kindL : editKind === "other" ? kindL || "" : "";
     const k = K[editKind];
-    $("eH").textContent = it ? "記録を直す" : k.label;
+    $("eH").textContent = it ? "記録を直す" : editKindL || k.label;
     $("eInfo").textContent = k.info;
-    $("fName").value = it ? it.name : k.id === "other" ? "" : k.label;
+    prepFree.close();
+    $("fName").value = it ? it.name : k.id === "other" ? editKindL : k.label;
     $("fName").placeholder = k.id === "other" ? "NHKの口座振替の見直し" : `${k.label}（夫）`;
     $("fDateL").textContent = k.dateL;
     $("fDate").value = it ? it.date : "";
@@ -241,7 +276,7 @@
     const wantDenshi = !$("denshiBox").hidden && $("fDenshi").checked;
     if (wantDenshi && !isYmd($("fDenshiDate").value)) return fail("fDenshiDate", "電子証明書の有効期限を選んでください。");
     const snap = snapshot();
-    const item = cleanItem({ id: editId || uid(), kind: editKind, name, date, prep, place: $("fPlace").value, note: $("fNote").value, num: $("fNum").value });
+    const item = cleanItem({ id: editId || uid(), kind: editKind, kindL: editKindL, name, date, prep, place: $("fPlace").value, note: $("fNote").value, num: $("fNum").value });
     if (editId) st.items = st.items.map(i => i.id === editId ? item : i); else st.items.push(item);
     let extra = "";
     if (wantDenshi) {
@@ -261,7 +296,7 @@
     const it = st.items.find(x => x.id === id); if (!it) return;
     viewId = id;
     const s = status(it), k = K[it.kind], t = bigText({ ...s, date: it.date });
-    $("vKind").textContent = k.label; $("vKind").hidden = it.name === k.label;
+    $("vKind").textContent = kindLabel(it); $("vKind").hidden = it.name === kindLabel(it);
     $("vName").textContent = it.name;
     const big = $("vBig"); big.replaceChildren(); big.style.setProperty("--c", `var(--${s.key})`);
     if (s.key === "over") { big.append(el("b", null, `${-s.left}日`), el("span", null, "過ぎています")); }

@@ -35,6 +35,10 @@
     { id: "other", label: "その他", text: "なし", kw: [] }
   ];
   const T = Object.fromEntries(TYPES.map(t => [t.id, t]));
+  // 自分で入れた種類は type を "other"（目安なし）にして、名前を typeL に持つ。場所は自由な文字のまま持つ。
+  const typeLabel = it => it.typeL || T[it.type].label;
+  const typeOf = v => v && v[0] === "~" ? { type: "other", typeL: v.slice(1) } : { type: T[v] ? v : "other", typeL: "" };
+  const typeVal = it => it.typeL ? "~" + it.typeL : it.type;
   function guessType(name) {
     const n = (name || "").normalize("NFKC");
     // 「冷凍食品」は先に、「刺身」は「魚」より先に見る
@@ -49,13 +53,13 @@
     if (!it || typeof it !== "object" || !str(it.name, 30)) return null;
     return {
       id: str(it.id, 20) || uid(), name: str(it.name, 30), amt: str(it.amt, 12),
-      type: T[it.type] ? it.type : "other", place: PLACES.includes(it.place) ? it.place : "",
+      type: T[it.type] ? it.type : "other", typeL: !T[it.type] || it.type === "other" ? str(it.typeL, 20) : "", place: str(it.place, 12),
       date: isYmd(it.date) ? it.date : today, exp: isYmd(it.exp) ? it.exp : ""
     };
   }
   function cleanHist(h) {
     if (!h || typeof h !== "object" || !str(h.name, 30)) return null;
-    return { name: str(h.name, 30), amt: str(h.amt, 12), type: T[h.type] ? h.type : "other", place: PLACES.includes(h.place) ? h.place : "",
+    return { name: str(h.name, 30), amt: str(h.amt, 12), type: T[h.type] ? h.type : "other", typeL: !T[h.type] || h.type === "other" ? str(h.typeL, 20) : "", place: str(h.place, 12),
       n: Number.isInteger(h.n) && h.n > 0 ? Math.min(h.n, 9999) : 1, last: isYmd(h.last) ? h.last : today };
   }
   function clean(raw) {
@@ -100,30 +104,64 @@
   const ageText = a => a === 0 ? "今日入れた" : `${a}日目`;
 
   // ---------- 入れる ----------
-  const typeOpts = sel => { sel.replaceChildren(); TYPES.forEach(t => { const o = el("option", null, t.label); o.value = t.id; sel.append(o); }); };
-  typeOpts($("aType")); typeOpts($("eType"));
+  // 種類と場所の「＋ 自分で入力」。種類はセレクト、場所は入れる欄ではチップ、直す画面ではセレクト。
+  const CK = KEY + ".custom";
+  const typeBuiltins = () => TYPES.map(t => ({ value: t.id, label: t.label }));
+  const placeBuiltins = () => [{ value: "", label: "場所なし" }, ...PLACES.map(p => ({ value: p, label: p }))];
+  let eTypeExtra = "", ePlaceExtra = "";
+  function selectFree(sel, set, label, max, ph, builtins, prefix, after, onPicked, extra, fallback) {
+    let prev = sel.value;
+    const fc = window.FreeChoice({
+      key: CK, set, label, max, placeholder: ph, builtins, list: "open", noOpenButton: true,
+      onChange: () => refreshAll(),
+      onPick: v => { refreshAll(); sel.value = builtins().some(b => b.value === v) ? v : prefix + v; prev = sel.value; onPicked(); },
+      onCancel: () => { sel.value = prev; sel.focus(); }
+    });
+    after.after(fc.root);
+    sel.addEventListener("focus", () => { if (sel.value !== "__free") prev = sel.value; });
+    sel.addEventListener("change", () => { if (sel.value === "__free") fc.open(); else { prev = sel.value; fc.close(); onPicked(); } });
+    return { fc, fill: v => { fc.fillSelect(sel, v, prefix, extra(), fallback); prev = sel.value; }, keep: () => { const v = sel.value === "__free" ? prev : sel.value; fc.fillSelect(sel, v, prefix, extra(), fallback); } };
+  }
+  const aTypeS = selectFree($("aType"), "type", "種類", 20, "ケーキ、肉まん", typeBuiltins, "~", $("aType").closest(".add-sub"), () => { typeTouched = true; syncAdd(); }, () => "", "other");
+  const eTypeS = selectFree($("eType"), "type", "種類", 20, "ケーキ、肉まん", typeBuiltins, "~", $("eType").closest(".two"), () => syncE(), () => eTypeExtra, "other");
+  const ePlaceS = selectFree($("ePlace"), "place", "場所", 12, "製氷室、ドアポケット", placeBuiltins, "", $("ePlace").closest(".two"), () => {}, () => ePlaceExtra, "");
+  const placeFc = window.FreeChoice({
+    key: CK, set: "place", label: "場所", max: 12, placeholder: "製氷室、ドアポケット",
+    builtins: placeBuiltins,
+    onChange: () => refreshAll(),
+    onPick: v => { renderPlaces(v); }
+  });
+  function renderPlaces(sel) {
+    const cur = sel != null ? sel : (document.querySelector("input[name=ap]:checked") || {}).value || "";
+    const chip = (v, label) => { const l = el("label"); const r = el("input"); r.type = "radio"; r.name = "ap"; r.value = v; r.checked = v === cur; l.append(r, el("span", null, label)); return l; };
+    $("aPlace").replaceChildren(...placeBuiltins().map(b => chip(b.value, b.label)), ...placeFc.values().map(v => placeFc.wrap(chip(v, v), v)), placeFc.root);
+    if (!document.querySelector("input[name=ap]:checked")) document.querySelector("input[name=ap]").checked = true;
+  }
+  function refreshAll() { aTypeS.keep(); eTypeS.keep(); ePlaceS.keep(); renderPlaces(); }
+  aTypeS.fill("other"); eTypeS.fill("other"); ePlaceS.fill(""); renderPlaces("");
   $("guideList").replaceChildren(...TYPES.filter(t => t.id !== "other").map(t => { const li = el("li"); li.append(el("span", null, t.label), el("b", null, t.text)); return li; }));
   let typeTouched = false;
   const resetAdd = () => {
     $("aName").value = ""; $("aAmt").value = ""; $("aDate").value = today; $("aDate").max = today; $("aExp").value = "";
-    $("aType").value = "other"; typeTouched = false; syncAdd();
+    $("aType").value = "other"; typeTouched = false; aTypeS.fc.close(); syncAdd();
   };
   function syncAdd() {
-    const t = T[$("aType").value];
+    const tv = typeOf($("aType").value), t = T[tv.type];
     $("aExpF").hidden = !t.exp;
     const g = $("aGuide"); g.replaceChildren();
     if (!$("aName").value.trim()) return;
     if (t.exp) g.append("市販の冷凍食品は、袋の期限で知らせます。");
+    else if (tv.typeL) g.append(`「${tv.typeL}」には保存の目安がありません。入れた日から何日たったかを表示します。`);
     else if (t.lo == null) g.append("種類を選ぶと、保存の目安がわかります（「その他」は目安なし）。");
     else { g.append(`${t.label}の目安は `); g.append(el("b", null, t.text)); g.append(" です。"); }
   }
   $("aName").addEventListener("input", () => { if (!typeTouched) $("aType").value = guessType($("aName").value); syncAdd(); $("aErr").textContent = ""; $("aName").removeAttribute("aria-invalid"); });
-  $("aType").addEventListener("change", () => { typeTouched = true; syncAdd(); });
+
   function remember(it) {
     const k = norm(it.name);
     const h = st.hist.find(x => norm(x.name) === k);
-    if (h) { h.n++; h.last = today; h.amt = it.amt; h.type = it.type; h.place = it.place; h.name = it.name; }
-    else st.hist.push({ name: it.name, amt: it.amt, type: it.type, place: it.place, n: 1, last: today });
+    if (h) { h.n++; h.last = today; h.amt = it.amt; h.type = it.type; h.typeL = it.typeL; h.place = it.place; h.name = it.name; }
+    else st.hist.push({ name: it.name, amt: it.amt, type: it.type, typeL: it.typeL, place: it.place, n: 1, last: today });
   }
   let flashId = null;
   $("addForm").addEventListener("submit", e => {
@@ -133,7 +171,8 @@
     const date = $("aDate").value;
     if (date && (!isYmd(date) || date > today)) { $("aErr").textContent = "冷凍した日は、今日より前の日を選んでください。"; $("aDate").focus(); return; }
     const place = (document.querySelector("input[name=ap]:checked") || {}).value || "";
-    const it = cleanItem({ name, amt: $("aAmt").value, type: $("aType").value, place, date: date || today, exp: $("aExp").value });
+    if ($("aType").value === "__free") { $("aErr").textContent = "種類を入れて「追加」を押すか、一覧から選んでください。"; return; }
+    const it = cleanItem({ name, amt: $("aAmt").value, ...typeOf($("aType").value), place, date: date || today, exp: $("aExp").value });
     const snap = snapshot();
     st.items.push(it); remember(it); save(); flashId = it.id;
     resetAdd(); render();
@@ -155,7 +194,7 @@
       b.addEventListener("click", () => {
         const snap = snapshot();
         if (stEdit) { st.hist = st.hist.filter(x => x !== h); save(); render(); toast(`「${h.name}」をいつものから外しました。`, () => { restore(snap); render(); }); return; }
-        const it = cleanItem({ name: h.name, amt: h.amt, type: h.type, place: h.place, date: today });
+        const it = cleanItem({ name: h.name, amt: h.amt, type: h.type, typeL: h.typeL, place: h.place, date: today });
         st.items.push(it); remember(it); save(); flashId = it.id; render();
         toast(`「${it.name}」を入れました。`, () => { restore(snap); render(); });
       });
@@ -167,7 +206,8 @@
   // ---------- 一覧 ----------
   let pf = "";
   function renderPf() {
-    const opts = [["", "すべて"], ...PLACES.filter(p => st.items.some(i => i.place === p)).map(p => [p, p])];
+    const own = [...new Set(st.items.map(i => i.place).filter(p => p && !PLACES.includes(p)))];
+    const opts = [["", "すべて"], ...PLACES.filter(p => st.items.some(i => i.place === p)).map(p => [p, p]), ...own.map(p => [p, p])];
     if (st.items.some(i => !i.place) && opts.length > 1) opts.push(["-", "場所なし"]);
     if (!opts.some(([v]) => v === pf)) pf = "";
     $("pf").hidden = opts.length < 2;
@@ -202,7 +242,7 @@
       if (it.amt) top.append(el("span", "b-amt", it.amt));
       if (it.place) top.append(el("span", "b-place", it.place));
       li.append(tape, top);
-      li.append(el("p", "b-meta", `${ageText(s.age)}・${T[it.type].label}`));
+      li.append(el("p", "b-meta", `${ageText(s.age)}・${typeLabel(it)}`));
       if (s.frac != null) {
         const m = el("div", "meter"); m.setAttribute("aria-hidden", "true");
         const i = el("i"); i.style.width = `${Math.max(4, s.frac * 100)}%`; m.append(i);
@@ -268,12 +308,13 @@
 
   // ---------- 直す ----------
   let editId = null;
-  const syncE = () => { $("eExpF").hidden = !T[$("eType").value].exp; };
-  $("eType").addEventListener("change", syncE);
+  function syncE() { $("eExpF").hidden = !T[typeOf($("eType").value).type].exp; }
   function openEdit(id) {
     const it = st.items.find(x => x.id === id); if (!it) return;
     editId = id;
-    $("eName").value = it.name; $("eAmt").value = it.amt; $("ePlace").value = it.place; $("eType").value = it.type;
+    $("eName").value = it.name; $("eAmt").value = it.amt;
+    eTypeExtra = it.typeL; ePlaceExtra = PLACES.includes(it.place) ? "" : it.place;
+    eTypeS.fc.close(); ePlaceS.fc.close(); eTypeS.fill(typeVal(it)); ePlaceS.fill(it.place);
     $("eDate").value = it.date; $("eDate").max = today; $("eExp").value = it.exp; $("eErr").textContent = "";
     $("eName").removeAttribute("aria-invalid");
     syncE(); openD($("edit"));
@@ -284,7 +325,8 @@
     if (!name) { $("eErr").textContent = "品名を入れてください。"; $("eName").setAttribute("aria-invalid", "true"); $("eName").focus(); return; }
     const d = $("eDate").value;
     if (!isYmd(d) || d > today) { $("eErr").textContent = "冷凍した日は、今日より前の日を選んでください。"; $("eDate").focus(); return; }
-    const it = cleanItem({ id: editId, name, amt: $("eAmt").value, place: $("ePlace").value, type: $("eType").value, date: d, exp: $("eExp").value });
+    if ($("eType").value === "__free" || $("ePlace").value === "__free") { $("eErr").textContent = "入れた言葉の横の「追加」を押すか、一覧から選んでください。"; return; }
+    const it = cleanItem({ id: editId, name, amt: $("eAmt").value, place: $("ePlace").value, ...typeOf($("eType").value), date: d, exp: $("eExp").value });
     st.items = st.items.map(x => x.id === editId ? it : x); save(); closeD($("edit")); render();
     toast(`「${it.name}」を保存しました。`);
   });

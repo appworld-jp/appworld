@@ -116,9 +116,9 @@ h1{margin:8px 0 0;font-size:34px;line-height:1.15;font-weight:900;letter-spacing
 .seg-f legend{font-size:13px;font-weight:700;color:var(--sub);padding:0;margin-bottom:6px}
 .seg{display:flex;flex-wrap:wrap;gap:6px}
 .seg label{position:relative}
-.seg input{position:absolute;opacity:0;inset:0;margin:0}
-.seg span,.seg button{display:grid;place-items:center;min-height:44px;padding:0 12px;border:1.5px solid var(--line);border-radius:10px;background:var(--soft);cursor:pointer;font-size:14px;font-family:inherit}
-.seg input:checked+span,.seg button[aria-pressed=true]{background:var(--ink);color:var(--card);border-color:var(--ink);font-weight:700}
+.seg label>input{position:absolute;opacity:0;inset:0;margin:0}
+.seg label>span,.seg>button{display:grid;place-items:center;min-height:44px;padding:0 12px;border:1.5px solid var(--line);border-radius:10px;background:var(--soft);cursor:pointer;font-size:14px;font-family:inherit}
+.seg input:checked+span,.seg>button[aria-pressed=true]{background:var(--ink);color:var(--card);border-color:var(--ink);font-weight:700}
 .seg input:focus-visible+span{outline:3px solid var(--soon);outline-offset:2px}
 .check{display:flex;align-items:center;gap:10px;min-height:44px;font-weight:700;font-size:15px;cursor:pointer}
 .check input{width:22px;height:22px;accent-color:var(--teal)}
@@ -151,3 +151,26 @@ h1{margin:8px 0 0;font-size:34px;line-height:1.15;font-weight:900;letter-spacing
 .tk.flash{animation:pop .4s ease-out}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 @media (max-width:380px){.sp{display:inline}.tk{grid-template-columns:84px 1fr}.stub b{font-size:24px}}
+
+/* 自分で入力（種類・準備の時期） */
+.kinds .fc,.seg .fc{display:contents}
+.fc-chip{display:flex;align-items:stretch;min-width:0}
+.fc-chip>:first-child{flex:1;min-width:0}
+.seg .fc-chip label span{border-radius:10px 0 0 10px}
+.kinds .fc-chip .kb{border-radius:12px 0 0 12px}
+.kb.own::before{background:var(--sub)}
+.fc-del{min-width:40px;min-height:44px;border:1.5px solid var(--line);border-left:0;border-radius:0 10px 10px 0;background:var(--soft);color:var(--sub);cursor:pointer;font-size:16px;padding:0}
+.kinds .fc-del{border-radius:0 12px 12px 0}
+.fc-del:hover{color:var(--over)}
+.fc-open{min-height:44px;padding:0 12px;border:1.5px dashed var(--teal);border-radius:10px;background:transparent;color:var(--teal);cursor:pointer;font-size:14px;font-weight:700;font-family:inherit}
+.kinds .fc-open{min-height:56px;border-radius:12px;text-align:left;padding:8px 14px}
+@media (prefers-color-scheme:dark){.fc-open{color:var(--later);border-color:var(--later)}}
+.fc-row{grid-column:1/-1;flex-basis:100%;display:flex;gap:6px;flex-wrap:wrap;min-width:0}
+.fc-in{flex:1 1 9em;min-width:0;min-height:46px;border:1.5px solid var(--line);border-radius:10px;padding:6px 12px;background:var(--card);color:var(--ink);font:inherit;font-size:16px}
+.fc-in:focus{outline:none;border-color:var(--teal)}
+.fc-in[aria-invalid=true]{border:2px solid var(--over)}
+.fc-add,.fc-no,.fc-undo{min-height:46px;padding:0 16px;border-radius:10px;border:1.5px solid var(--teal);background:var(--teal);color:#fff;font:inherit;font-weight:700;font-size:14px;cursor:pointer}
+.fc-no,.fc-undo{background:transparent;color:var(--ink);border-color:var(--line)}
+.fc-err{grid-column:1/-1;flex-basis:100%;margin:0;color:var(--over);font-weight:700;font-size:13px}
+.fc-err:empty{display:none}
+.fc-note{grid-column:1/-1;flex-basis:100%;margin:0;font-size:13px;color:var(--sub);display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px}

@@ -54,6 +54,8 @@
     { id: "other", label: "その他", act: "お返し", none: true, guide: "" }
   ];
   const E = Object.fromEntries(EVS.map(e => [e.id, e]));
+  // 自分で入れた行事は ev を "other" にして、名前を evL に持つ。
+  const evLabel = it => it.evL || E[it.ev].label;
   const STATES = ["todo", "done", "none"];
 
   // ---------- 保存 ----------
@@ -63,7 +65,7 @@
     if (!it || typeof it !== "object" || !str(it.who, 30)) return null;
     const dir = it.dir === "out" ? "out" : "in";
     return {
-      id: str(it.id, 20) || uid(), dir, ev: E[it.ev] ? it.ev : "other", who: str(it.who, 30), kid: str(it.kid, 20),
+      id: str(it.id, 20) || uid(), dir, ev: E[it.ev] ? it.ev : "other", evL: E[it.ev] && it.ev !== "other" ? "" : str(it.evL, 20), who: str(it.who, 30), kid: str(it.kid, 20),
       what: str(it.what, 40), amt: amt(it.amt), date: isYmd(it.date) ? it.date : today,
       state: dir === "in" && STATES.includes(it.state) ? it.state : "none",
       retWhat: str(it.retWhat, 40), retAmt: amt(it.retAmt), retDate: isYmd(it.retDate) ? it.retDate : "", note: str(it.note, 300)
@@ -109,9 +111,9 @@
     const e = E[it.ev];
     const li = el("li", `noshi ${it.dir}` + (it.id === justId ? " just" : ""));
     const open = el("button", "open"); open.type = "button";
-    open.setAttribute("aria-label", `${it.who}${it.dir === "in" ? "から" : "へ"}の${e.label}を開く`);
+    open.setAttribute("aria-label", `${it.who}${it.dir === "in" ? "から" : "へ"}の${evLabel(it)}を開く`);
     const top = el("span", "n-top");
-    top.append(el("span", "n-ev", e.label), el("span", "n-who", it.who), el("span", "n-dir", it.dir === "in" ? "から" : "へ"));
+    top.append(el("span", "n-ev" + (it.evL ? " own" : ""), evLabel(it)), el("span", "n-who", it.who), el("span", "n-dir", it.dir === "in" ? "から" : "へ"));
     open.append(top);
     const what = el("p", "n-what");
     const bits = [];
@@ -164,7 +166,7 @@
     const q = norm($("q").value);
     let list = st.items.slice();
     if (dirF) list = list.filter(i => i.dir === dirF);
-    if (q) list = list.filter(i => norm([i.who, i.kid, i.what, E[i.ev].label, i.note, i.retWhat].join(" ")).includes(q));
+    if (q) list = list.filter(i => norm([i.who, i.kid, i.what, evLabel(i), i.note, i.retWhat].join(" ")).includes(q));
     list.sort((a, b) => a.date < b.date ? 1 : a.date > b.date ? -1 : 0);
     $("allCnt").textContent = st.items.length ? `${st.items.length}件` : "";
     $("allEmpty").hidden = !!st.items.length;
@@ -220,7 +222,7 @@
         li.append(el("b", null, `${e.act === "お礼" ? "お礼" : e.act}を贈った`));
         li.append(el("span", "r", [x.i.retWhat, x.i.retAmt != null ? yen(x.i.retAmt) : ""].filter(Boolean).join("・") || "内容の記録なし"));
       } else {
-        li.append(el("b", null, `${e.label}を${x.dir === "in" ? "いただいた" : "贈った"}`));
+        li.append(el("b", null, `${evLabel(x.i)}を${x.dir === "in" ? "いただいた" : "贈った"}`));
         const d = [x.i.what, x.i.amt != null ? yen(x.i.amt) : "", x.i.kid ? `${x.i.kid}に` : ""].filter(Boolean).join("・");
         if (d) li.append(document.createTextNode(`　${d}`));
         if (x.i.dir === "in" && x.i.state === "todo") li.append(el("span", "r", `${e.act}はまだです`));
@@ -261,20 +263,37 @@
   // ---------- 記録・編集 ----------
   const openD = d => { if (d.showModal) d.showModal(); else d.setAttribute("open", ""); };
   const closeD = d => { if (d.close) d.close(); else d.removeAttribute("open"); };
-  $("evChips").replaceChildren(...EVS.map(e => { const l = el("label"); const r = el("input"); r.type = "radio"; r.name = "ev"; r.value = e.id; l.append(r, el("span", null, e.label)); return l; }));
-  $("guideList").replaceChildren(...EVS.filter(e => e.guide).map(e => { const li = el("li"); li.append(el("b", null, e.label), el("span", null, e.guide)); return li; }));
   const radio = n => (document.querySelector(`input[name=${n}]:checked`) || {}).value;
   const setRadio = (n, v) => { document.querySelectorAll(`input[name=${n}]`).forEach(r => { r.checked = r.value === v; }); };
+  // 行事のチップ。決まった行事のあとに、自分で入れた行事（"~名前"）と「＋ 自分で入力」を並べる。
+  const evChip = (value, label) => { const l = el("label"); const r = el("input"); r.type = "radio"; r.name = "ev"; r.value = value; l.append(r, el("span", null, label)); return l; };
+  const evFree = window.FreeChoice({
+    key: KEY + ".custom", set: "ev", label: "行事", max: 20, placeholder: "快気祝い、還暦祝い",
+    builtins: () => EVS.map(e => ({ value: e.id, label: e.label })),
+    onChange: () => renderEvChips(radio("ev")),
+    onPick: v => { renderEvChips(E[v] ? v : "~" + v); sync(); }
+  });
+  let evExtra = "";
+  function renderEvChips(sel) {
+    const own = evFree.values();
+    if (evExtra && !own.includes(evExtra)) own.push(evExtra); // 候補から外した行事の記録を開いたとき
+    $("evChips").replaceChildren(...EVS.map(e => evChip(e.id, e.label)),
+      ...own.map(v => evFree.values().includes(v) ? evFree.wrap(evChip("~" + v, v), v) : evChip("~" + v, v)), evFree.root);
+    if (sel) setRadio("ev", sel);
+  }
+  $("guideList").replaceChildren(...EVS.filter(e => e.guide).map(e => { const li = el("li"); li.append(el("b", null, e.label), el("span", null, e.guide)); return li; }));
+
   let editId = null, stateTouched = false;
+  const evId = v => v && v[0] === "~" ? "other" : v;
   function defaultState(ev) { const e = E[ev]; return !e || e.none ? "none" : "todo"; }
   function sync() {
-    const dir = radio("dir"), ev = radio("ev"), e = E[ev];
+    const dir = radio("dir"), ev = evId(radio("ev")), e = E[ev];
     const nen = ev === "otoshidama";
     $("fWhoL").textContent = dir === "in" ? "誰から" : nen ? "誰に（子どもの名前）" : "誰へ";
     $("fWho").placeholder = dir === "out" && nen ? "はると（姉の子）" : "田中さん（夫の会社）";
     $("fKidF").hidden = !(nen && dir === "in");
     $("fStateF").hidden = dir !== "in";
-    $("fStateL").textContent = e ? (e.act === "お礼" ? "お礼" : `お返し（${e.act}）`) : "お返し";
+    $("fStateL").textContent = e ? (e.act === "お礼" ? "お礼" : e.act === "お返し" ? "お返し" : `お返し（${e.act}）`) : "お返し";
     if (!stateTouched && !editId && ev) setRadio("state", defaultState(ev));
     $("retBox").hidden = !(dir === "in" && radio("state") === "done");
     const tip = $("fTip"); tip.replaceChildren();
@@ -299,7 +318,8 @@
     const p = preset || {};
     $("eH").textContent = it ? (markDone ? (E[it.ev].act === "お礼" ? "お礼をした" : "お返しをした") : "記録を直す") : "記録する";
     setRadio("dir", it ? it.dir : p.dir || "in");
-    setRadio("ev", it ? it.ev : p.ev || "");
+    evExtra = it && it.evL ? it.evL : ""; evFree.close();
+    renderEvChips(it ? (it.evL ? "~" + it.evL : it.ev) : p.ev || "");
     $("fWho").value = it ? it.who : ""; $("fKid").value = it ? it.kid : ""; $("fWhat").value = it ? it.what : "";
     $("fAmt").value = it && it.amt != null ? String(it.amt) : ""; $("fDate").value = it ? it.date : today;
     setRadio("state", it ? (markDone ? "done" : it.state) : "todo");
@@ -317,8 +337,9 @@
   $("form").addEventListener("submit", e => {
     e.preventDefault();
     document.querySelectorAll("#form [aria-invalid]").forEach(x => x.removeAttribute("aria-invalid"));
-    const ev = radio("ev");
-    if (!ev) { $("fErr").textContent = "行事を選んでください（わからなければ「その他」）。"; document.querySelector("input[name=ev]").focus(); return; }
+    const evv = radio("ev");
+    if (!evv) { $("fErr").textContent = "行事を選んでください。ないときは「＋ 自分で入力」から入れられます。"; document.querySelector("input[name=ev]").focus(); return; }
+    const ev = evId(evv), evL = evv[0] === "~" ? evv.slice(1) : "";
     const who = $("fWho").value.trim();
     if (!who) return fail("fWho", radio("dir") === "in" ? "誰からいただいたかを入れてください。" : "誰へ贈ったかを入れてください。");
     const a = parseYen($("fAmt").value);
@@ -328,7 +349,7 @@
     if (!$("retBox").hidden && !ra.ok) return fail("fRetAmt", "お返しの金額は数字で入れてください（例：5000）。");
     const snap = snapshot();
     const item = cleanItem({
-      id: editId || uid(), dir: radio("dir"), ev, who, kid: $("fKidF").hidden ? "" : $("fKid").value, what: $("fWhat").value, amt: a.n,
+      id: editId || uid(), dir: radio("dir"), ev, evL, who, kid: $("fKidF").hidden ? "" : $("fKid").value, what: $("fWhat").value, amt: a.n,
       date: $("fDate").value, state: radio("state"), retWhat: $("retBox").hidden ? "" : $("fRetWhat").value, retAmt: $("retBox").hidden ? null : ra.n,
       retDate: $("retBox").hidden ? "" : $("fRetDate").value, note: $("fNote").value
     });
@@ -336,7 +357,7 @@
     if (editId) st.items = st.items.map(i => i.id === editId ? item : i); else st.items.push(item);
     save(); justId = item.id; closeD($("edit")); render();
     const e2 = E[item.ev];
-    let msg = `${item.who}${item.dir === "in" ? "から" : "へ"}の${e2.label}を保存しました。`;
+    let msg = `${item.who}${item.dir === "in" ? "から" : "へ"}の${evLabel(item)}を保存しました。`;
     if (was && was.state !== "done" && item.state === "done") msg = `${item.who}への${e2.act === "お礼" ? "お礼" : e2.act}、済みにしました。`;
     else if (!was && item.state === "todo") { const d = dueInfo(item); if (d) msg += `${e2.act}は${jp(d.due)}ごろまでが目安です。`; }
     toast(msg, () => { restore(snap); render(); });

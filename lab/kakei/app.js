@@ -17,7 +17,7 @@
   let view = new Date(); view.setDate(1);
   let lastId = null, toastTimer = null;
 
-  try { const v = JSON.parse(localStorage.getItem(KEY) || "null"); if (v && Array.isArray(v.e)) st = { e: v.e.filter(x => x && typeof x.a === "number"), budget: +v.budget || 0 }; } catch (e) {}
+  try { const v = JSON.parse(localStorage.getItem(KEY) || "null"); if (v && Array.isArray(v.e)) st = { e: v.e.filter(x => x && typeof x.a === "number").map(x => { if (typeof x.cn === "string" && x.cn.trim()) x.cn = x.cn.trim().slice(0, 12); else delete x.cn; return x; }), budget: +v.budget || 0 }; } catch (e) {}
   const save = () => { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) { toast("保存できませんでした。ブラウザの設定で、サイトのデータ保存を許可してください。", true); } };
   const el = (t, c, x) => { const e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; };
   const svg = (p, color) => {
@@ -28,6 +28,10 @@
     s.append(path); return s;
   };
   const color = i => `var(--c${i})`;
+  // 自分で入れた項目は c を「その他」(4) にして、名前を cn に持つ。色と印は「その他」と同じ。
+  const OTHER = 4, TAG = "M4 12V5a1 1 0 0 1 1-1h7l8 8-8 8zM8.5 8.5h.01";
+  const catName = x => x.cn || (CATS[x.c] ? CATS[x.c].n : "その他");
+  const colorOf = x => color(x.cn || !CATS[x.c] ? OTHER : x.c);
 
   // 全角数字やカンマも受けつける
   function parseAmount(s) {
@@ -36,26 +40,45 @@
     return parseInt(t, 10);
   }
 
-  CATS.forEach((c, i) => {
-    const b = el("button", "cat c" + i); b.type = "button";
-    b.append(svg(c.p, "currentColor"), el("span", null, c.n));
-    b.addEventListener("click", () => add(i));
-    $("cats").append(b);
+  const free = window.FreeChoice({
+    key: KEY + ".custom", set: "cat", label: "項目", max: 12, placeholder: "子ども、趣味、医療費",
+    builtins: () => CATS.map((c, i) => ({ value: i, label: c.n })),
+    onChange: () => renderCats(),
+    onPick: v => add(v)
   });
+  function renderCats() {
+    const box = $("cats"); box.textContent = "";
+    CATS.forEach((c, i) => {
+      const b = el("button", "cat c" + i); b.type = "button";
+      b.append(svg(c.p, "currentColor"), el("span", null, c.n));
+      b.addEventListener("click", () => add(i));
+      box.append(b);
+    });
+    free.values().forEach(n => {
+      const b = el("button", "cat c4 own"); b.type = "button";
+      b.append(svg(TAG, "currentColor"), el("span", null, n));
+      b.addEventListener("click", () => add(n));
+      box.append(free.wrap(b, n));
+    });
+    box.append(free.root);
+  }
+  renderCats();
 
+  // ci は決まった項目の番号か、自分で入れた項目の名前
   function add(ci) {
     const a = parseAmount($("amount").value);
     if (!a) { $("amount-err").textContent = $("amount").value.trim() ? "金額は数字だけで入れてください（例：1200）。" : "先に金額を入れてください。"; $("amount").focus(); return; }
     $("amount-err").textContent = "";
     const d = $("date").value || iso(new Date());
-    const item = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), d, a, c: ci, m: $("memo").value.trim().slice(0, 30) };
+    const item = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), d, a, c: typeof ci === "string" ? OTHER : ci, m: $("memo").value.trim().slice(0, 30) };
+    if (typeof ci === "string") item.cn = ci;
     st.e.push(item); save();
     lastId = item.id;
     $("amount").value = ""; $("memo").value = "";
     const [y, m] = d.split("-").map(Number);
     if (y !== view.getFullYear() || m !== view.getMonth() + 1) { view = new Date(y, m - 1, 1); }
     render();
-    toast(`${CATS[ci].n}に${yen(a)}を記録しました。`, false, true); bump();
+    toast(`${catName(item)}に${yen(a)}を記録しました。`, false, true); bump();
     $("amount").focus();
   }
 
@@ -100,18 +123,24 @@
     $("meter").className = B && total > B ? "over" : "";
 
     // 項目ごとの棒
-    const sums = CATS.map((_, i) => items.filter(x => x.c === i).reduce((s, x) => s + x.a, 0));
+    // 決まった項目のあとに、自分で入れた項目を名前ごとにまとめる
+    const groups = CATS.map((c, i) => ({ n: c.n, col: color(i), v: items.filter(x => !x.cn && x.c === i).reduce((s, x) => s + x.a, 0) }));
+    const own = [];
+    items.filter(x => x.cn).forEach(x => { let g = own.find(o => o.n === x.cn); if (!g) own.push(g = { n: x.cn, col: color(OTHER), v: 0, own: true }); g.v += x.a; });
+    own.sort((a, b) => b.v - a.v);
+    const rows = groups.concat(own);
+    const sums = rows.map(g => g.v);
     const max = Math.max(1, ...sums);
     const bars = $("bars"); bars.textContent = "";
     if (!total) { bars.append(el("li", "empty", "記録すると、食費・日用品などの合計がここに出ます。")); }
     else
     sums.forEach((v, i) => {
       const li = el("li"), tr = el("span", "track"), fill = el("i");
-      fill.style.width = (v / max * 100) + "%"; fill.style.background = color(i);
+      fill.style.width = (v / max * 100) + "%"; fill.style.background = rows[i].col;
       tr.append(fill); tr.setAttribute("aria-hidden", "true");
       const val = el("span", "v", yen(v));
       if (total) val.append(el("span", "pct", Math.round(v / total * 100) + "%"));
-      li.append(el("span", null, CATS[i].n), tr, val);
+      li.append(el("span", "bn", rows[i].n), tr, val);
       bars.append(li);
     });
 
@@ -130,12 +159,12 @@
       h.append(el("span", null, `${dt.getMonth() + 1}月${dt.getDate()}日（${wd[dt.getDay()]}）`), el("b", null, yen(arr.reduce((s, x) => s + x.a, 0))));
       const ul = el("ul");
       arr.slice().reverse().forEach(x => {
-        const li = el("li"), dot = el("span", "dot"), w = el("span", "what", CATS[x.c] ? CATS[x.c].n : "その他");
-        dot.style.background = color(x.c);
+        const li = el("li"), dot = el("span", "dot"), w = el("span", "what", catName(x));
+        dot.style.background = colorOf(x);
         if (x.m) w.append(el("small", null, x.m));
         const del = el("button", "del", "×"); del.type = "button";
-        del.setAttribute("aria-label", `${CATS[x.c] ? CATS[x.c].n : ""} ${yen(x.a)} を削除`);
-        del.addEventListener("click", () => { if (confirm(`${yen(x.a)}（${CATS[x.c].n}）を削除しますか？`)) remove(x.id); });
+        del.setAttribute("aria-label", `${catName(x)} ${yen(x.a)} を削除`);
+        del.addEventListener("click", () => { if (confirm(`${yen(x.a)}（${catName(x)}）を削除しますか？`)) remove(x.id); });
         li.append(dot, w, el("span", "amt", yen(x.a)), del); ul.append(li);
       });
       box.append(h, ul); list.append(box);

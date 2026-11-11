@@ -134,13 +134,13 @@ h1::before{content:"";display:block;width:24px;height:32px;margin:0 auto 6px;bac
 .evs legend,.seg-f legend{font-size:13px;font-weight:700;color:var(--sub);padding:0;margin-bottom:6px}
 .ev-chips{display:flex;flex-wrap:wrap;gap:6px}
 .ev-chips label{position:relative}
-.ev-chips input{position:absolute;inset:0;opacity:0;margin:0}
+.ev-chips label>input{position:absolute;inset:0;opacity:0;margin:0}
 .ev-chips span{display:grid;place-items:center;min-height:40px;padding:0 12px;border:1px solid var(--line);border-radius:4px;cursor:pointer;font-size:14px;background:var(--washi)}
 .ev-chips input:checked+span{background:var(--beni);border-color:var(--beni);color:#fff;font-weight:700}
 @media (prefers-color-scheme:dark){.ev-chips input:checked+span{color:#1A1514}}
 .ev-chips input:focus-visible+span{outline:3px solid var(--kin);outline-offset:2px}
 .field{display:grid;gap:4px;font-size:13px;font-weight:700;color:var(--sub);min-width:0}
-.field input,.field textarea{width:100%;min-height:48px;border:1px solid var(--line);border-radius:4px;padding:8px 12px;background:var(--washi);font-size:16px;color:var(--ink);font-weight:400}
+.field input,.field textarea{width:100%;min-width:0;max-width:100%;min-height:48px;border:1px solid var(--line);border-radius:4px;padding:8px 12px;background:var(--washi);font-size:16px;color:var(--ink);font-weight:400}
 .field textarea{resize:vertical}
 .field input:focus,.field textarea:focus{outline:none;border-color:var(--beni);background:var(--card)}
 .field input[aria-invalid=true]{border-color:var(--beni);border-width:2px}
@@ -176,3 +176,20 @@ h1::before{content:"";display:block;width:24px;height:32px;margin:0 auto 6px;bac
 .noshi.just::after{opacity:.6;animation:tie .5s ease-out}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 @media (min-width:700px){h1{font-size:36px}}
+
+/* 自分で入力（行事） */
+.ev-chips .fc{display:contents}
+.fc-chip{display:inline-flex;align-items:stretch}
+.fc-chip label span{border-radius:4px 0 0 4px}
+.fc-del{min-width:34px;min-height:40px;border:1px solid var(--line);border-left:0;border-radius:0 4px 4px 0;background:var(--soft);color:var(--sub);cursor:pointer;font-size:16px;padding:0}
+.fc-open{min-height:40px;padding:0 12px;border:1px dashed var(--beni);border-radius:4px;background:transparent;color:var(--beni);cursor:pointer;font-size:14px;font-weight:700}
+.fc-row{flex-basis:100%;display:flex;gap:6px;flex-wrap:wrap}
+.fc-in{flex:1 1 10em;min-width:0;min-height:44px;border:1px solid var(--line);border-radius:4px;padding:6px 12px;background:var(--card);font-size:16px}
+.fc-in[aria-invalid=true]{border:2px solid var(--beni)}
+.fc-add,.fc-no,.fc-undo{min-height:44px;padding:0 14px;border-radius:999px;border:1.5px solid var(--beni);background:var(--beni);color:#FFF8F2;font-weight:700;cursor:pointer;font-size:14px}
+.fc-no,.fc-undo{background:transparent;color:var(--ink);border-color:var(--line)}
+@media (prefers-color-scheme:dark){.fc-add{color:#1A1514}}
+.fc-err{flex-basis:100%;margin:0;color:var(--beni);font-weight:700;font-size:13px}
+.fc-note{flex-basis:100%;margin:0;font-size:13px;color:var(--sub);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.fc-err:empty,.fc-list[hidden],.fc-note[hidden]{display:none}
+.n-ev.own{color:var(--sub)}

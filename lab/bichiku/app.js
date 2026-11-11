@@ -23,6 +23,9 @@
     { k: "petfood", label: "ペットフード", unit: "日分", need: "pet", presets: [["ドライフード", 1, 7], ["ウェットフード", 1, 7]] }
   ];
   const KIND = Object.fromEntries(KINDS.map(k => [k.k, k]));
+  // 自分で入れた種類は k を "own" にして、名前を kl に持つ。必要な量の計算には入れず、期限だけ見る。
+  const ownKind = label => ({ k: "own", label, unit: "個", presets: [], own: true });
+  const kindOf = it => it.k === "own" ? ownKind(it.kl || "そのほか") : KIND[it.k];
   const OTHER = [
     { id: "light", t: "懐中電灯・ランタン" }, { id: "batt", t: "乾電池" }, { id: "mobile", t: "モバイルバッテリー" },
     { id: "radio", t: "携帯ラジオ" }, { id: "stove", t: "カセットコンロ" }, { id: "med", t: "常備薬とお薬手帳のコピー" },
@@ -52,14 +55,20 @@
     const ppl = {};
     for (const p of PEOPLE) { const v = raw.ppl && Number(raw.ppl[p.k]); ppl[p.k] = Number.isFinite(v) ? Math.max(0, Math.min(20, Math.round(v))) : 0; }
     const items = Array.isArray(raw.items) ? raw.items.slice(0, 300).map(it => {
-      if (!it || !KIND[it.k]) return null;
+      if (!it || !(KIND[it.k] || (it.k === "own" && typeof it.kl === "string" && it.kl.trim()))) return null;
       const n = Math.round(Number(it.n)), per = Number(it.per);
       if (!(n >= 1 && n <= 9999) || !(per > 0 && per <= 999)) return null;
       const name = typeof it.name === "string" ? it.name.trim().slice(0, 30) : "";
-      return { id: typeof it.id === "string" && /^[\w-]{1,30}$/.test(it.id) ? it.id : uid(), k: it.k, name: name || KIND[it.k].label, n, per, exp: parse(it.exp) ? it.exp : "" };
+      const kl = it.k === "own" ? it.kl.trim().slice(0, 20) : "";
+      const o = { id: typeof it.id === "string" && /^[\w-]{1,30}$/.test(it.id) ? it.id : uid(), k: it.k, name: name || kl || KIND[it.k].label, n, per, exp: parse(it.exp) ? it.exp : "" };
+      if (kl) o.kl = kl;
+      return o;
     }).filter(Boolean) : [];
     const checks = {};
-    if (raw.checks && typeof raw.checks === "object") for (const o of OTHER) if (raw.checks[o.id] === true) checks[o.id] = true;
+    if (raw.checks && typeof raw.checks === "object") {
+      for (const o of OTHER) if (raw.checks[o.id] === true) checks[o.id] = true;
+      for (const id of Object.keys(raw.checks).slice(0, 200)) if (id[0] === "~" && id.length <= 21 && raw.checks[id] === true) checks[id] = true;
+    }
     return { v: 1, ppl, days: raw.days === 7 ? 7 : 3, items, checks };
   }
   let st = null;
@@ -152,7 +161,7 @@
     return { cls: "ok", t: `${jd(it.exp)}まで` };
   }
   const amount = it => {
-    const k = KIND[it.k];
+    const k = kindOf(it);
     if (k.perUnit) return `${num(it.per)}${k.unit} × ${it.n}${k.k === "water" ? "本" : "個"} ＝ ${num(it.n * it.per)}${k.unit}`;
     return `${num(it.n * it.per)}${k.unit}`;
   };
@@ -162,7 +171,7 @@
     li.dataset.exp = tag.cls;
     const main = el("div", "it-main");
     const head = el("p", "it-h");
-    head.append(el("span", "it-k", KIND[it.k].label), el("b", "it-name", it.name));
+    head.append(el("span", "it-k" + (it.k === "own" ? " own" : ""), kindOf(it).label), el("b", "it-name", it.name));
     const sub = el("p", "it-sub");
     sub.append(el("span", null, amount(it)), el("span", "it-exp " + tag.cls, tag.t));
     main.append(head, sub);
@@ -201,39 +210,59 @@
     soon.forEach(it => sl.append(itemRow(it, true)));
     const ul = $("items"); ul.textContent = "";
     $("stockEmpty").hidden = st.items.length > 0;
-    st.items.slice().sort((a, b) => KINDS.indexOf(KIND[a.k]) - KINDS.indexOf(KIND[b.k]) || byExp(a, b)).forEach(it => ul.append(itemRow(it, false)));
+    const ord = it => it.k === "own" ? KINDS.length : KINDS.indexOf(KIND[it.k]);
+    st.items.slice().sort((a, b) => ord(a) - ord(b) || (a.kl || "").localeCompare(b.kl || "", "ja") || byExp(a, b)).forEach(it => ul.append(itemRow(it, false)));
   }
 
   // ---------- 追加 ----------
+  // curKind は決まった種類のキーか、自分で入れた種類の "~名前"
   let curKind = "water";
+  const kindFree = window.FreeChoice({
+    key: KEY + ".custom", set: "kind", label: "種類", max: 20, placeholder: "マスク、電池、常備薬",
+    builtins: () => KINDS.map(k => ({ value: k.k, label: k.label })),
+    onChange: () => renderKinds(),
+    onPick: v => { curKind = KIND[v] ? v : "~" + v; renderKinds(); setKind(curKind); $("aName").focus(); }
+  });
+  const kindList = () => relevant().concat(kindFree.values().map(v => Object.assign(ownKind(v), { key: "~" + v })));
+  const keyOf = k => k.key || k.k;
+  const curK = () => curKind[0] === "~" ? ownKind(curKind.slice(1)) : KIND[curKind];
   function renderKinds() {
     const box = $("kinds"); box.textContent = "";
-    const ks = relevant();
-    if (!ks.some(k => k.k === curKind)) curKind = "water";
+    const ks = kindList();
+    if (!ks.some(k => keyOf(k) === curKind)) curKind = "water";
     for (const k of ks) {
-      const b = el("button", "kind", k.label); b.type = "button";
-      b.setAttribute("role", "radio"); b.setAttribute("aria-checked", String(k.k === curKind));
-      b.tabIndex = k.k === curKind ? 0 : -1;
-      b.addEventListener("click", () => { setKind(k.k); });
+      const b = el("button", "kind" + (k.own ? " own" : ""), k.label); b.type = "button";
+      b.setAttribute("role", "radio"); b.setAttribute("aria-checked", String(keyOf(k) === curKind));
+      b.tabIndex = keyOf(k) === curKind ? 0 : -1;
+      b.addEventListener("click", () => { setKind(keyOf(k)); });
       b.addEventListener("keydown", e => {
         const i = ks.indexOf(k);
         const j = e.key === "ArrowRight" ? i + 1 : e.key === "ArrowLeft" ? i - 1 : null;
         if (j == null) return;
-        e.preventDefault(); const n = ks[(j + ks.length) % ks.length]; setKind(n.k); box.querySelectorAll(".kind")[(j + ks.length) % ks.length].focus();
+        e.preventDefault(); const n = ks[(j + ks.length) % ks.length]; setKind(keyOf(n)); box.querySelectorAll(".kind")[(j + ks.length) % ks.length].focus();
       });
-      box.append(b);
+      box.append(k.own ? kindFree.wrap(b, k.label) : b);
     }
+    box.append(kindFree.root);
     renderPresets();
   }
   function setKind(k) {
     curKind = k;
-    $("kinds").querySelectorAll(".kind").forEach((b, i) => { const on = relevant()[i].k === k; b.setAttribute("aria-checked", String(on)); b.tabIndex = on ? 0 : -1; });
+    const ks = kindList();
+    $("kinds").querySelectorAll(".kind").forEach((b, i) => { const on = keyOf(ks[i]) === k; b.setAttribute("aria-checked", String(on)); b.tabIndex = on ? 0 : -1; });
     $("aName").value = ""; $("aN").value = ""; $("addErr").textContent = "";
     renderPresets();
   }
   function renderPresets() {
-    const k = KIND[curKind];
+    const k = curK();
     const box = $("presets"); box.textContent = "";
+    if (k.own) {
+      box.append(el("span", "pre-l", `「${k.label}」は必要な量の計算には入りません。数と期限を控えておけます。`));
+      $("aName").placeholder = k.label; $("aPer").value = 1; $("aN").placeholder = "1";
+      document.querySelector(".f-per").hidden = true;
+      document.querySelector(".f-n span").textContent = "数";
+      return;
+    }
     box.append(el("span", "pre-l", "よくあるもの"));
     for (const [name, per, n] of k.presets) {
       const b = el("button", "pre", name); b.type = "button";
@@ -249,16 +278,18 @@
   }
   $("addForm").addEventListener("submit", e => {
     e.preventDefault();
-    const k = KIND[curKind];
+    const k = curK();
     const n = Math.round(Number($("aN").value));
     const per = k.perUnit ? Number($("aPer").value) : 1;
     if (!$("aN").value || !(n >= 1 && n <= 9999)) { $("addErr").textContent = "数を1以上で入れてください。"; $("aN").focus(); return; }
     if (!(per > 0 && per <= 999)) { $("addErr").textContent = `1つあたりの量（${k.unit}）を入れてください。`; $("aPer").focus(); return; }
     const exp = $("aExp").value;
     if (exp && !parse(exp)) { $("addErr").textContent = "期限の日付を確かめてください。"; $("aExp").focus(); return; }
-    const name = $("aName").value.trim().slice(0, 30) || k.presets[0][0];
+    const name = $("aName").value.trim().slice(0, 30) || (k.own ? k.label : k.presets[0][0]);
     $("addErr").textContent = "";
-    st.items.push({ id: uid(), k: k.k, name, n, per, exp: exp || "" }); save();
+    const item = { id: uid(), k: k.k, name, n, per, exp: exp || "" };
+    if (k.own) item.kl = k.label;
+    st.items.push(item); save();
     $("aName").value = ""; $("aN").value = ""; $("aExp").value = "";
     renderAll();
     const msg = exp && daysTo(exp) < 0 ? `${name}を追加しました。期限が切れているので、数には入れていません。` : `${name}を追加しました。`;
@@ -266,22 +297,31 @@
   });
 
   // ---------- ほかの持ち物 ----------
+  // 自分で足したものは id を "~名前" にして、チェックの状態を同じ st.checks に持つ
+  const checkFree = window.FreeChoice({
+    key: KEY + ".custom", set: "check", label: "備えるもの", max: 20, placeholder: "予備のメガネ",
+    builtins: () => OTHER.map(o => ({ value: o.id, label: o.t })),
+    onChange: () => renderChecks(),
+    onPick: v => { const id = OTHER.some(o => o.id === v) ? v : "~" + v; st.checks[id] = true; save(); renderChecks(); }
+  });
+  const checkList = () => OTHER.filter(o => !o.need || st.ppl[o.need] > 0).concat(checkFree.values().map(v => ({ id: "~" + v, t: v, own: true })));
   function renderChecks() {
     const ul = $("checks"); ul.textContent = "";
-    const list = OTHER.filter(o => !o.need || st.ppl[o.need] > 0);
-    let n = 0;
+    const list = checkList();
     for (const o of list) {
-      const li = el("li");
+      const li = el("li", o.own ? "own" : null);
       const lab = el("label", "ck");
       const cb = el("input"); cb.type = "checkbox"; cb.checked = !!st.checks[o.id];
-      if (cb.checked) n++;
       cb.addEventListener("change", () => { if (cb.checked) st.checks[o.id] = true; else delete st.checks[o.id]; save(); renderChecksCount(); });
-      lab.append(cb, el("span", null, o.t)); li.append(lab); ul.append(li);
+      lab.append(cb, el("span", null, o.t)); li.append(lab);
+      if (o.own) li.append(checkFree.removeButton(o.t));
+      ul.append(li);
     }
+    const li = el("li", "fc-li"); li.append(checkFree.root); ul.append(li);
     renderChecksCount();
   }
   function renderChecksCount() {
-    const list = OTHER.filter(o => !o.need || st.ppl[o.need] > 0);
+    const list = checkList();
     const n = list.filter(o => st.checks[o.id]).length;
     $("otherCount").textContent = `家にあるものにチェックを入れてください。${list.length}個中${n}個あります。`;
   }

@@ -43,6 +43,8 @@
     { id: "other", label: "その他", color: "#8B8D98", kw: [] }
   ];
   const C = Object.fromEntries(CATS.map(c => [c.id, c]));
+  // 自分で入れた種類は cat を "other" にして、名前を catL に持つ。色は「その他」と同じ灰色。
+  const catLabel = it => it.catL || C[it.cat].label;
   const guessCat = name => { const n = norm(name); const c = CATS.find(c => c.kw.some(k => n.includes(k))); return c ? c.id : "other"; };
   const SERVICES = ["Netflix", "Amazonプライム", "Disney+", "U-NEXT", "Hulu", "DAZN", "ABEMAプレミアム", "YouTube Premium", "Spotify", "Apple Music", "Amazon Music Unlimited", "Kindle Unlimited", "Audible", "Nintendo Switch Online", "PlayStation Plus", "iCloud+", "Google One", "Microsoft 365", "Adobe Creative Cloud", "スマホ代", "光回線", "生命保険", "スポーツジム", "NHK受信料", "新聞"];
   const PAYS = ["クレジットカード", "デビットカード", "口座振替", "キャリア決済", "App Store", "Google Play", "PayPay"];
@@ -58,7 +60,7 @@
       price: typeof it.price === "number" && isFinite(it.price) && it.price >= 0 && it.price < 1e8 ? Math.round(it.price * 100) / 100 : 0,
       cyc, n: cyc === "n" && Number.isInteger(it.n) && it.n >= 2 && it.n <= 60 ? it.n : cyc === "n" ? 3 : 1,
       next: isYmd(it.next) ? it.next : "", day: Number.isInteger(it.day) && it.day >= 1 && it.day <= 31 ? it.day : 0,
-      pay: str(it.pay, 30), cat: C[it.cat] ? it.cat : "other", star: [1, 2, 3].includes(it.star) ? it.star : 3,
+      pay: str(it.pay, 30), cat: C[it.cat] ? it.cat : "other", catL: !C[it.cat] || it.cat === "other" ? str(it.catL, 20) : "", star: [1, 2, 3].includes(it.star) ? it.star : 3,
       note: str(it.note, 300), off: !!it.off, offDate: isYmd(it.offDate) ? it.offDate : ""
     };
   }
@@ -104,7 +106,7 @@
     const stc = el("span", `st s${it.star}`, "★".repeat(it.star)); stc.setAttribute("aria-label", `使っている度${it.star}`); nm.append(stc);
     b.append(nm, el("span", "pm", it.off ? `年${yen(perYear(it))}` : `月${yen(perMonth(it))}`));
     const meta = el("span", "meta");
-    const tag = el("span", "tag", C[it.cat].label); tag.style.borderColor = C[it.cat].color; tag.style.boxShadow = `inset 4px 0 0 ${C[it.cat].color}`;
+    const tag = el("span", "tag", catLabel(it)); tag.style.borderColor = C[it.cat].color; tag.style.boxShadow = `inset 4px 0 0 ${C[it.cat].color}`;
     meta.append(tag, ` ${it.off ? `${it.offDate ? md(it.offDate) + "に" : ""}解約` : it.next ? `次は${jp(it.next)}` : "支払日は未登録"}${it.pay ? `・${it.pay}` : ""}`);
     b.append(meta, el("span", "raw", it.cyc === "m" ? "" : `${cycText(it)}${yen(it.price)}`));
     b.addEventListener("click", () => openEdit(it.id));
@@ -134,7 +136,9 @@
     const offY = off.reduce((s, i) => s + perYear(i), 0);
     $("totSub").textContent = has ? `${act.length}件。${y >= 12000 ? `1日あたり約${yen(y / 365)}です。` : ""}${off.length ? `やめた${off.length}件で、年${yen(offY)}浮いています。` : ""}` : off.length ? `いま払っている物はありません。やめた${off.length}件で、年${yen(offY)}浮いています。` : "";
     const bar = $("bar"); bar.replaceChildren(); const lg = $("legend"); lg.replaceChildren();
-    const byCat = CATS.map(c => ({ c, v: act.filter(i => i.cat === c.id).reduce((s, i) => s + perMonth(i), 0) })).filter(x => x.v > 0).sort((a, b) => b.v - a.v);
+    const groups = new Map();
+    act.forEach(i => { const k = catLabel(i); if (!groups.has(k)) groups.set(k, { c: { label: k, color: C[i.cat].color }, v: 0 }); groups.get(k).v += perMonth(i); });
+    const byCat = [...groups.values()].filter(x => x.v > 0).sort((a, b) => b.v - a.v);
     byCat.forEach(({ c, v }) => {
       const i = el("i"); i.style.background = c.color; i.style.flex = String(v); bar.append(i);
       const li = el("li"); const sw = el("i"); sw.style.background = c.color; li.append(sw, `${c.label} `, el("b", null, yen(v))); lg.append(li);
@@ -161,10 +165,10 @@
     $("allCnt").textContent = `${act.length}件`;
     $("q").hidden = act.length < 8;
     const q = norm($("q").value);
-    let list = act.filter(i => !q || norm([i.name, i.pay, C[i.cat].label, i.note].join(" ")).includes(q));
+    let list = act.filter(i => !q || norm([i.name, i.pay, catLabel(i), i.note].join(" ")).includes(q));
     if (sortBy === "price") list.sort((a, b) => perMonth(b) - perMonth(a));
     else if (sortBy === "date") list.sort((a, b) => (a.next || "9999") < (b.next || "9999") ? -1 : 1);
-    else list.sort((a, b) => CATS.findIndex(c => c.id === a.cat) - CATS.findIndex(c => c.id === b.cat) || perMonth(b) - perMonth(a));
+    else list.sort((a, b) => CATS.findIndex(c => c.id === a.cat) - CATS.findIndex(c => c.id === b.cat) || (a.catL || "").localeCompare(b.catL || "", "ja") || perMonth(b) - perMonth(a));
     $("allList").replaceChildren(...list.map(it => row(it)));
     // やめた物
     $("offBox").hidden = !off.length;
@@ -196,9 +200,24 @@
   // ---------- 追加・編集 ----------
   const openD = d => { if (d.showModal) d.showModal(); else d.setAttribute("open", ""); };
   const closeD = d => { if (d.close) d.close(); else d.removeAttribute("open"); };
-  $("catSeg").replaceChildren(...CATS.map(c => { const l = el("label"); const r = el("input"); r.type = "radio"; r.name = "cat"; r.value = c.id; const s = el("span"); const i = el("i"); i.style.background = c.color; s.append(i, c.label); l.append(r, s); return l; }));
   const radio = n => (document.querySelector(`input[name=${n}]:checked`) || {}).value;
   const setRadio = (n, v) => document.querySelectorAll(`input[name=${n}]`).forEach(r => { r.checked = r.value === String(v); });
+  // 種類のチップ。自分で入れた種類は値を "~名前" にする。
+  const catChip = (value, label, color) => { const l = el("label"); const r = el("input"); r.type = "radio"; r.name = "cat"; r.value = value; const s = el("span"); const i = el("i"); i.style.background = color; s.append(i, label); l.append(r, s); return l; };
+  const catFree = window.FreeChoice({
+    key: KEY + ".custom", set: "cat", label: "種類", max: 20, placeholder: "車、ペット、寄付",
+    builtins: () => CATS.map(c => ({ value: c.id, label: c.label })),
+    onChange: () => renderCats(radio("cat")),
+    onPick: v => { catTouched = true; renderCats(C[v] ? v : "~" + v); }
+  });
+  let catExtra = "";
+  function renderCats(sel) {
+    const own = catFree.values();
+    if (catExtra && !own.includes(catExtra)) own.push(catExtra);
+    $("catSeg").replaceChildren(...CATS.map(c => catChip(c.id, c.label, c.color)),
+      ...own.map(v => { const ch = catChip("~" + v, v, C.other.color); return catFree.values().includes(v) ? catFree.wrap(ch, v) : ch; }), catFree.root);
+    if (sel) setRadio("cat", sel);
+  }
   let editId = null, catTouched = false;
   function syncForm() {
     $("fNF").hidden = radio("cyc") !== "n";
@@ -220,7 +239,9 @@
     $("eH").textContent = it ? "編集する" : "追加する";
     $("fName").value = it ? it.name : ""; $("fPrice").value = it ? String(it.price) : "";
     $("fNext").value = it ? it.next : ""; setRadio("cyc", it ? it.cyc : "m"); $("fN").value = it && it.cyc === "n" ? String(it.n) : "";
-    setRadio("star", it ? it.star : 3); setRadio("cat", it ? it.cat : "other");
+    setRadio("star", it ? it.star : 3);
+    catExtra = it && it.catL ? it.catL : ""; catFree.close();
+    renderCats(it ? (it.catL ? "~" + it.catL : it.cat) : "other");
     $("fPay").value = it ? it.pay : ""; $("fNote").value = it ? it.note : "";
     $("eMore").hidden = !it; $("eOff").textContent = it && it.off ? "また払い始めた" : "解約した";
     $("fErr").textContent = "";
@@ -244,7 +265,7 @@
     if (next && !isYmd(next)) return fail("fNext", "次の支払日を選び直してください。");
     const old = editId ? st.items.find(i => i.id === editId) : null;
     const snap = snapshot();
-    const item = cleanItem({ id: editId || uid(), name, price, cyc, n, next, day: next ? parseYmd(next).getDate() : 0, pay: $("fPay").value, cat: radio("cat"), star: Number(radio("star")), note: $("fNote").value, off: old ? old.off : false, offDate: old ? old.offDate : "" });
+    const item = cleanItem({ id: editId || uid(), name, price, cyc, n, next, day: next ? parseYmd(next).getDate() : 0, pay: $("fPay").value, cat: (radio("cat") || "")[0] === "~" ? "other" : radio("cat"), catL: (radio("cat") || "")[0] === "~" ? radio("cat").slice(1) : "", star: Number(radio("star")), note: $("fNote").value, off: old ? old.off : false, offDate: old ? old.offDate : "" });
     if (editId) st.items = st.items.map(i => i.id === editId ? item : i); else st.items.push(item);
     save(); tickTot = true; closeD($("edit")); render();
     toast(`${item.name}を保存しました。${item.off ? "" : `1か月あたり${yen(perMonth(item))}です。`}`, () => { restore(snap); render(); });

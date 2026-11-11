@@ -212,7 +212,7 @@
   function syncSeg() {
     const w = radio("w"), x = radio("x");
     $("wMonthsF").hidden = w !== "m"; $("wEndF").hidden = w !== "end";
-    $("xEndF").hidden = x !== "end"; $("xByF").hidden = x === "none";
+    $("xEndF").hidden = x !== "end"; $("xMonthsF").hidden = x !== "m"; $("xByF").hidden = x === "none";
   }
   $("wSeg").addEventListener("change", syncSeg);
   $("xSeg").addEventListener("change", syncSeg);
@@ -231,8 +231,9 @@
     $("wMonths").value = w.type === "m" ? String(w.months) : ""; $("wEnd").value = w.type === "end" ? w.end : "";
     const x = it ? it.x : { type: "none" };
     if (x.type === "m" && [36, 60, 120].includes(x.months)) setRadio("x", String(x.months));
-    else if (x.type === "m") { setRadio("x", "end"); }
+    else if (x.type === "m") { setRadio("x", "m"); }
     else setRadio("x", x.type);
+    $("xMonths").value = x.type === "m" ? String(x.months) : "";
     $("xEnd").value = x.type === "end" ? x.end : x.type === "m" && it && it.date ? addMonthsEnd(it.date, x.months) : "";
     $("xBy").value = it ? it.xBy : "";
     $("fErr").textContent = "";
@@ -260,6 +261,7 @@
     const xr = radio("x");
     if (xr === "none") x = { type: "none" };
     else if (xr === "end") { if (!isYmd($("xEnd").value)) return fail("xEnd", "延長保証の終了日を選んでください。"); x = { type: "end", end: $("xEnd").value }; }
+    else if (xr === "m") { const n = parseInt(norm($("xMonths").value), 10); if (!(n > 0 && n <= 600)) return fail("xMonths", "延長保証の月数を数字で入れてください（例：96）。"); x = { type: "m", months: n }; }
     else x = { type: "m", months: Number(xr) };
     if ((w.type === "m" || x.type === "m") && !date) return fail("fDate", "保証の期限を出すには、購入日が要ります。");
     const urlRaw = $("fUrl").value.trim();

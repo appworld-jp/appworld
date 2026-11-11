@@ -149,3 +149,28 @@ h1{margin:8px 0 0;font-size:28px;line-height:1.25;display:flex;align-items:cente
   .kind[aria-checked=true]{background:var(--y);border-color:var(--y);color:#1E2A33}
   .stripe{background:repeating-linear-gradient(-45deg,var(--y) 0 14px,#0B1014 14px 28px)}
 }
+
+/* 自分で入力（種類・ほかにあると安心なもの） */
+.kinds .fc{display:contents}
+.fc-chip{display:inline-flex;align-items:stretch}
+.fc-chip .kind{border-radius:99px 0 0 99px;border-right:0}
+.kinds .fc-del{min-width:38px;min-height:44px;border:2px solid var(--line);border-left:0;border-radius:0 99px 99px 0;background:var(--bg);color:var(--sub);cursor:pointer;font-size:16px;padding:0 6px 0 0}
+.fc-chip:has(.kind[aria-checked=true]) .fc-del{border-color:#1E2A33}
+.kind.own:not([aria-checked=true]){border-style:dashed}
+.it-k.own{background:var(--sub)}
+.fc-open{min-height:44px;padding:0 14px;border-radius:99px;border:2px dashed var(--y2);background:transparent;color:var(--ink);font-weight:700;cursor:pointer;font-size:14px;font-family:inherit}
+.fc-row{flex-basis:100%;display:flex;gap:6px;flex-wrap:wrap;min-width:0}
+.fc-in{flex:1 1 9em;min-width:0;min-height:46px;border:2px solid var(--line);border-radius:8px;padding:6px 12px;background:var(--card);color:var(--ink);font:inherit;font-size:16px}
+.fc-in:focus{outline:none;border-color:var(--y2)}
+.fc-in[aria-invalid=true]{border-color:var(--bad)}
+.fc-add,.fc-no,.fc-undo{min-height:46px;padding:0 16px;border-radius:99px;border:2px solid #1E2A33;background:#1E2A33;color:var(--y);font:inherit;font-weight:700;font-size:14px;cursor:pointer}
+.fc-no,.fc-undo{background:transparent;color:var(--ink);border-color:var(--line)}
+.fc-err{flex-basis:100%;margin:0;color:var(--bad);font-weight:700;font-size:13px}
+.fc-err:empty{display:none}
+.fc-note{flex-basis:100%;margin:0;font-size:13px;color:var(--sub);display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px}
+.checks li.own{display:flex;align-items:stretch}
+.checks li.own .ck{flex:1;min-width:0;border-radius:8px 0 0 8px}
+.checks li.own .fc-del{min-width:44px;border:1.5px solid var(--line);border-left:0;border-radius:0 8px 8px 0;background:var(--card);color:var(--sub);cursor:pointer;font-size:16px;padding:0}
+.checks .fc-li{grid-column:1/-1}
+.checks .fc{display:flex;flex-wrap:wrap;gap:6px}
+@media (prefers-color-scheme:dark){.fc-add{background:var(--y);border-color:var(--y);color:#1E2A33}.fc-chip:has(.kind[aria-checked=true]) .fc-del{border-color:var(--y)}}
