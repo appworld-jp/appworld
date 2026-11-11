@@ -1,5 +1,5 @@
 /*
-  Content-Security-Policy: default-src 'none'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data:; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; upgrade-insecure-requests
+  Content-Security-Policy: default-src 'none'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data:; manifest-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; upgrade-insecure-requests
   Strict-Transport-Security: max-age=31536000; includeSubDomains
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
@@ -20,3 +20,14 @@
   Cache-Control: public, max-age=604800
 /*.js
   Cache-Control: public, max-age=604800
+
+# Add to home screen and offline use. The service worker only fetches same-origin files (connect-src 'self')
+# and is always revalidated, so a new build reaches phones at once. Its cache version comes from build.py.
+/sw.js
+  ! Content-Security-Policy
+  ! Cache-Control
+  Content-Security-Policy: default-src 'none'; connect-src 'self'
+  Cache-Control: no-cache
+/manifest.webmanifest
+  Content-Type: application/manifest+json
+  Cache-Control: no-cache

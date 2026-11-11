@@ -5,9 +5,9 @@
   color-scheme:light;
 }
 *{box-sizing:border-box}
-html{background:var(--silver)}
-body{color:var(--char);font-family:var(--f);font-size:15px;line-height:1.85;font-feature-settings:"palt" 1;font-variant-numeric:tabular-nums;
-  background:radial-gradient(120% 70% at 60% 16%,var(--silver-hi) 0%,var(--silver) 50%,var(--silver-lo) 100%),var(--silver)}
+/* the ground is painted on <html> and body has no margin, so the same silver reaches every edge on every page and at any scroll position */
+html{min-height:100%;background:radial-gradient(120% 70% at 60% 16%,var(--silver-hi) 0%,var(--silver) 50%,var(--silver-lo) 100%) var(--silver);-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;color:var(--char);font-family:var(--f);font-size:15px;line-height:1.85;font-feature-settings:"palt" 1;font-variant-numeric:tabular-nums;overflow-x:clip}
 .g{padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
 .in{max-width:1200px;margin:0 auto}
 a{color:inherit}
@@ -25,7 +25,42 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .nav nav a{font-size:12px;letter-spacing:.1em;text-decoration:none;color:var(--graphite);position:relative;padding-block:4px}
 .nav nav a:hover,.nav nav a.on{color:var(--char)}
 .nav nav a.on::after{content:"";position:absolute;left:0;right:0;bottom:-4px;height:2px;border-radius:2px;background:var(--amber);box-shadow:0 0 12px 2px rgba(233,162,59,.6)}
-@media (max-width:620px){.nav nav a:not(.keep){display:none}}
+
+/* phones: the top bar keeps only the logo; navigation moves to a tab bar at the bottom */
+.tabs{display:none}
+@media (max-width:720px){
+  .nav nav.top{display:none}
+  .nav .in{padding-block:max(18px,env(safe-area-inset-top,0px)) 8px}
+  body{padding-bottom:calc(64px + env(safe-area-inset-bottom,0px))}
+  html{scroll-padding-bottom:calc(72px + env(safe-area-inset-bottom,0px))}
+  .tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));position:fixed;left:0;right:0;bottom:0;z-index:20;
+    padding:0 env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px);
+    background:rgba(214,214,213,.86);border-top:1px solid rgba(38,39,40,.12);box-shadow:0 -10px 30px -24px rgba(30,30,30,.5);
+    backdrop-filter:blur(14px) saturate(1.2);-webkit-backdrop-filter:blur(14px) saturate(1.2)}
+  .tabs a{min-height:56px;display:grid;justify-items:center;align-content:center;gap:2px;text-decoration:none;color:var(--graphite);font-size:10.5px;font-weight:500;letter-spacing:.04em;line-height:1.3;position:relative;-webkit-tap-highlight-color:transparent}
+  .tabs svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+  .tabs a.on{color:var(--char)}
+  .tabs a.on svg{stroke-width:2}
+  .tabs a.on::before{content:"";position:absolute;top:0;left:28%;right:28%;height:2px;border-radius:0 0 2px 2px;background:var(--amber);box-shadow:0 0 10px 1px rgba(233,162,59,.6)}
+  .tabs a:active{background:rgba(255,255,255,.25)}
+  footer{margin-top:64px}
+  footer .in{padding-bottom:22px}
+}
+.shelf,.flow{scroll-margin-top:12px}
+
+/* add-to-home-screen hint (site.js, phones only): a small card above the tab bar */
+.a2hs{position:fixed;left:10px;right:10px;bottom:calc(72px + env(safe-area-inset-bottom,0px));z-index:21;border-radius:16px;padding:8px 8px 8px 14px;
+  display:flex;gap:10px;align-items:center;background:#ECECEB;border:1px solid rgba(255,255,255,.8);box-shadow:0 0 0 1px rgba(38,39,40,.08),0 16px 30px -18px rgba(30,30,30,.6);
+  opacity:0;transform:translateY(16px);pointer-events:none;transition:opacity .3s,transform .3s}
+.a2hs.show{opacity:1;transform:none;pointer-events:auto}
+.a2hs-t{margin:0;display:grid;gap:0;font-size:11.5px;line-height:1.55;color:var(--graphite);flex:1;min-width:0}
+.a2hs-t b{font-size:12.5px;font-weight:700;color:var(--char)}
+.a2hs-acts{display:flex;gap:6px;flex:none}
+.a2hs button{font:inherit;font-size:12px;font-weight:500;min-height:44px;padding:0 12px;border-radius:999px;cursor:pointer}
+.a2hs-add{background:var(--char);color:#F1F1F0;border:0}
+.a2hs-x{background:transparent;color:var(--char);border:1px solid rgba(38,39,40,.25)}
+.a2hs [hidden]{display:none}
+@media (prefers-reduced-motion:reduce){.a2hs{transition:none}}
 
 /* hero */
 .hero{position:relative;overflow:hidden}

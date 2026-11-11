@@ -9,7 +9,7 @@ AIで作られたアプリが集まるサイトです。https://appworld-1ug.pag
 
 ## 安全のために決めていること
 - サイトは静的なページだけです。サーバ、データベース、ログインはありません
-- JavaScript は、サイト内から配信する自前のもの（球体の表示、一覧の検索、小さな飾り）だけです。ページの内容は JavaScript なしでも読めます
+- JavaScript は、サイト内から配信する自前のもの（球体の表示、一覧の検索、小さな飾り、オフライン用の service worker と「ホーム画面に追加」の案内）だけです。ページの内容は JavaScript なしでも読めます
 - 掲載は、公式ストアか https の公式サイトへのリンクだけです。ファイルは配布しません
 - 外部のスクリプト、フォント、解析タグを読み込みません。フォントもサイト内から配信します（`site/_headers` の CSP で禁止しています）
 - 運営が作ったアプリには「運営」と表示します
@@ -23,6 +23,8 @@ AIで作られたアプリが集まるサイトです。https://appworld-1ug.pag
 | `site/check_listing.py` | 掲載とアイコンの自動チェック |
 | `site/build.py` | サイトを `site/dist/` に作る |
 | `tools/make_og.mjs` | シェア用の画像を作る（掲載を追加したときに手元で実行） |
+| `tools/make_site_icons.mjs` | サイト自体のホーム画面用アイコン（`site/static/icon-*.png`、`apple-touch-icon.png`）を `favicon.svg` から作る |
+| `site/sw.js` | service worker のひな形（`build.py` が版と事前キャッシュの一覧を入れて `dist/sw.js` に書き出す） |
 | `site/static/` | CSS、JavaScript、フォント（`dist/` にそのままコピー） |
 | `automation/intake.py` | 申請フォームの内容を掲載ファイルにする |
 | `automation/x_daily_post.py` | 毎朝の X 投稿 |
@@ -37,6 +39,9 @@ python3 site/build.py --production --site-url https://appworld-1ug.pages.dev \
   --submit-url "https://github.com/appworld-jp/appworld/issues/new?template=listing.yml" \
   --contact-url "https://github.com/appworld-jp/appworld/issues/new"
 ```
+
+## サイトをホーム画面に追加できるようにする
+サイトは `manifest.webmanifest` と `sw.js`（`build.py` が毎回作る）でホーム画面に追加でき、一度開いたページはオフラインでも開けます。`sw.js` はネットワーク優先で、版は事前キャッシュするファイルの内容のハッシュです。スマホでは `site/static/site.js` が下にタブを出し、「ホーム画面に追加」の案内を 1 回だけ出します（閉じたことを localStorage に覚えます）。`favicon.svg` を変えたら、`node tools/make_site_icons.mjs` でアイコンを作り直してコミットしてください。
 
 ## シェア用の画像
 X や LINE でページを共有したときに大きく出る画像（og:image）は `site/og/` にあります。掲載を追加・変更したら、作り直してから一緒にコミットしてください。
@@ -56,7 +61,7 @@ node tools/make_pwa.mjs              # lab/index.html に載っていて index.h
 node tools/make_pwa.mjs dot gomi     # 指定したアプリだけ
 ```
 
-アプリごとに `manifest.webmanifest`、`icon-180.png`（iPhone 用）、`icon-192.png`、`icon-512.png`、`icon-maskable-512.png`（`icon.svg` から Playwright で描く）、`sw.js` を作り、`index.html` に manifest・アイコンのタグと `<script src="../pwa.js">` を足します。`lab/pwa.js` は共通の登録スクリプトで、スマホでは足もとに「ホーム画面に追加」の案内を 1 行出します（閉じると覚えます）。`sw.js` はネットワーク優先で、つながっていれば常に最新を出し、オフラインのときはキャッシュから開きます。`sw.js` を手で直さないこと。
+アプリごとに `manifest.webmanifest`、`icon-180.png`（iPhone 用）、`icon-192.png`、`icon-512.png`、`icon-maskable-512.png`（`icon.svg` から Playwright で描く）、`sw.js` を作り、`index.html` に manifest・アイコンのタグと `<script src="../pwa.js">` を足します。`lab/pwa.js` は共通の登録スクリプトで、スマホでは開いて 3 秒後に、画面の下に「ホーム画面に追加」の小さな帯を出します（下にスクロールすると隠れ、閉じるか追加すると以後は出しません）。`sw.js` はネットワーク優先で、つながっていれば常に最新を出し、オフラインのときはキャッシュから開きます。`sw.js` を手で直さないこと。
 
 ## テスト
 ```sh

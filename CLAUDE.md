@@ -7,7 +7,7 @@
 - 担当（サブエージェント）の報告が英語でも、オーナーには日本語で伝える
 
 ## サイト
-- 外部のスクリプト、フォント、解析タグを読み込まない。JavaScript はサイト内から配信する自前のものだけ使う（CSP は `script-src 'self'`。2026-11-05 の決定）。ページは build.py で全部書き出し、JavaScript は飾りと検索だけ（`site/static/home.js`、`apps.js`、`detail.js`）
+- 外部のスクリプト、フォント、解析タグを読み込まない。JavaScript はサイト内から配信する自前のものだけ使う（CSP は `script-src 'self'`。2026-11-05 の決定）。ページは build.py で全部書き出し、JavaScript は飾り・検索・ホーム画面への追加だけ（`site/static/home.js`、`apps.js`、`detail.js`、`site.js`。`site/sw.js` は build.py が版を入れて書き出す）
 - 生成する HTML にインラインの `<script>`、`<style>`、`style=""`、`on…=` を書かない（`site/test_build.py` で確認）。アプリごとの色は生成する `colors.css` で付ける
 - フォントはサイト内から配信する（Google Fonts などの外部から読み込まない）
 - 掲載は `site/apps/*.json`。`check_listing.py` を通らないものは公開しない（作品はすべて外部リンク。ファイルは配布しない）

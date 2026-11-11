@@ -2,8 +2,9 @@
 """Build App World from site/apps/*.json into site/dist/.
 
 A static site: no server, no database, no login. The pages are fully
-pre-rendered; three small first-party scripts add the icon sphere, the
-search on the all-apps page and a detail-page animation (CSP script-src 'self').
+pre-rendered; small first-party scripts add the icon sphere, the search on the
+all-apps page, a detail-page animation and (site.js, on every page) the service
+worker and the add-to-home-screen hint (CSP script-src 'self').
 
     python3 site/build.py                     # local preview, today = today in Japan
     python3 site/build.py --today 2026-11-10  # fixed date (reproducible)
@@ -18,6 +19,7 @@ import hashlib
 import html
 import json
 import pathlib
+import re
 import shutil
 import sys
 from datetime import date, datetime, time, timedelta, timezone
@@ -44,6 +46,13 @@ OPERATOR_NOTE = "App Worldの運営が作ったアプリです。"
 OG_SIZE = (1200, 630)
 OG_DEFAULT = "og/default.png"
 OG_DEFAULT_ALT = f"{SITE_NAME} — AIで作られたアプリがここに集まる。"
+# Add to home screen: the page background (app.css --silver) and the icons made by tools/make_site_icons.mjs.
+THEME_COLOR = "#C0C0BF"
+PWA_ICONS = [("icon-192.png", "192x192", "image/png", "any"), ("icon-512.png", "512x512", "image/png", "any"),
+             ("icon-maskable-512.png", "512x512", "image/png", "maskable"), ("favicon.svg", "any", "image/svg+xml", "any")]
+# The service worker precaches the regular-weight pieces of the font that the shell pages need
+# (fonts.css is split by unicode-range); 500 and 700 are cached as pages use them.
+FONT_WEIGHTS = (400,)
 
 e = html.escape
 
@@ -127,19 +136,43 @@ class Site:
 
 # ---------- shared page parts ----------
 
-NAV = [("index.html", "ホーム", ""), ("index.html#shelf", "新着", ""), ("apps.html", "すべてのアプリ", ""),
-       ("submit.html", "アプリを掲載する", "keep")]
+# (href, label in the top bar, label in the phone tab bar, icon). The top bar is for wide screens;
+# phones (<= 720px, app.css) get the tab bar at the bottom instead.
+NAV = [("index.html", "ホーム", "ホーム", "home"), ("index.html#shelf", "新着", "新着", "new"),
+       ("apps.html", "全てのアプリ", "探す", "find"), ("submit.html", "アプリを掲載する", "掲載する", "add")]
+TAB_ICONS = {
+    "home": '<path d="M4 10.4 12 4l8 6.4V19a1 1 0 0 1-1 1h-4.5v-5.5h-5V20H5a1 1 0 0 1-1-1z"/>',
+    "new": '<path d="M12 3.5l2.1 5.4 5.4 2.1-5.4 2.1L12 18.5l-2.1-5.4L4.5 11l5.4-2.1z"/><path d="M18.5 16.5v4M16.5 18.5h4"/>',
+    "find": '<circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5 5"/>',
+    "add": '<rect x="4" y="4" width="16" height="16" rx="5"/><path d="M12 8.5v7M8.5 12h7"/>',
+}
+
+
+def nav_href(href: str, current: str, root: str) -> str:
+    """On the home page 新着 is a plain in-page jump (no reload through the host's /index.html -> / redirect)."""
+    return href[len("index.html"):] if current == "index.html" and href.startswith("index.html#") else root + href
 
 
 def header(current: str, root: str, over: bool = False) -> str:
     links = ""
-    for href, label, cls in NAV:
-        classes = " ".join(c for c in (cls, "on" if href == current else "") if c)
-        attrs = (f' class="{classes}"' if classes else "") + (' aria-current="page"' if href == current else "")
-        links += f'<a{attrs} href="{root}{href}">{label}</a>'
+    for href, label, _, _ in NAV:
+        on = href == current
+        classes = " ".join(c for c in ("keep" if href == "submit.html" else "", "on" if on else "") if c)
+        attrs = (f' class="{classes}"' if classes else "") + (' aria-current="page"' if on else "")
+        links += f'<a{attrs} href="{nav_href(href, current, root)}">{label}</a>'
     return (f'<header class="nav g{" over" if over else ""}"><div class="in">'
             f'<a class="logo" href="{root}index.html">{SITE_NAME}</a>'
-            f'<nav aria-label="メイン">{links}</nav></div></header>')
+            f'<nav class="top" aria-label="メイン">{links}</nav></div></header>')
+
+
+def tab_bar(current: str, root: str) -> str:
+    """The phone navigation: four tabs fixed at the bottom (hidden on wide screens by app.css)."""
+    tabs = ""
+    for href, _, label, icon in NAV:
+        on = ' class="on" aria-current="page"' if href == current else ""
+        tabs += (f'<a{on} href="{nav_href(href, current, root)}" data-tab="{icon}">'
+                 f'<svg viewBox="0 0 24 24" aria-hidden="true">{TAB_ICONS[icon]}</svg><span>{label}</span></a>')
+    return f'<nav class="tabs" aria-label="メイン">{tabs}</nav>'
 
 
 def footer(root: str) -> str:
@@ -175,7 +208,7 @@ def page(site: Site, *, path: str, title: str, desc: str, body: str, css: tuple 
                 + f'<meta name="twitter:card" content="{"summary_large_image" if image else "summary"}">\n')
     styles = "".join(f'<link rel="stylesheet" href="{root}{site.asset(n)}">\n'
                      for n in ("fonts.css", "app.css", *css, "colors.css"))
-    scripts = "".join(f'<script src="{root}{site.asset(n)}"></script>\n' for n in js)
+    scripts = "".join(f'<script src="{root}{site.asset(n)}"></script>\n' for n in (*js, "site.js"))
     return (
         '<!doctype html>\n<html lang="ja"><head><meta charset="utf-8">\n'
         '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">\n'
@@ -183,10 +216,16 @@ def page(site: Site, *, path: str, title: str, desc: str, body: str, css: tuple 
         f'<meta name="description" content="{e(desc)}">\n'
         + meta
         + f'<link rel="icon" href="{root}{site.asset("favicon.svg")}" type="image/svg+xml">\n'
+        f'<link rel="apple-touch-icon" href="{root}{site.asset("apple-touch-icon.png")}">\n'
+        f'<link rel="manifest" href="/manifest.webmanifest">\n'
+        f'<meta name="theme-color" content="{THEME_COLOR}">\n'
+        f'<meta name="apple-mobile-web-app-title" content="{SITE_NAME}">\n'
+        '<meta name="mobile-web-app-capable" content="yes">\n'
+        '<meta name="apple-mobile-web-app-capable" content="yes">\n'
         f'<link rel="alternate" type="application/rss+xml" title="{SITE_NAME}の新着" href="{root}feed.xml">\n'
         + styles
         + "</head><body>\n"
-        + header(current, root, over) + "\n" + body + "\n" + footer(root) + "\n"
+        + header(current, root, over) + "\n" + body + "\n" + footer(root) + "\n" + tab_bar(current, root) + "\n"
         + scripts
         + "</body></html>\n"
     )
@@ -247,7 +286,7 @@ def home(site: Site, live: list[dict]) -> str:
         shelf_body = (
             f'<div class="rail" id="rail" tabindex="0" aria-label="新着のアプリ（横にスクロールできます）">{panels}</div>'
             '<div class="g"><div class="in"><div class="progress" aria-hidden="true"><i id="prog"></i></div>'
-            f'<div class="more"><a class="link" href="apps.html">すべてのアプリを見る（{len(live)}件）</a></div></div></div>'
+            f'<div class="more"><a class="link" href="apps.html">全てのアプリを見る（{len(live)}件）</a></div></div></div>'
         )
         shelf_cap = f'<p class="cap">最新の掲載　{dotted(latest)}</p>'
         stats = (f'<span>掲載 <b>{len(live)}</b>件</span>'
@@ -323,8 +362,8 @@ def apps_page(site: Site, live: list[dict]) -> str:
         )
     else:
         listing = empty_state("まだアプリが掲載されていません。最初のアプリを掲載してみませんか。")
-    body = f'<main class="g"><div class="in list"><div class="list-head"><h1>すべてのアプリ</h1></div>{listing}</div></main>'
-    return page(site, path="apps.html", title=f"すべてのアプリ | {SITE_NAME}",
+    body = f'<main class="g"><div class="in list"><div class="list-head"><h1>全てのアプリ</h1></div>{listing}</div></main>'
+    return page(site, path="apps.html", title=f"全てのアプリ | {SITE_NAME}",
                 desc=f"{SITE_NAME}に掲載されているアプリの一覧です。キーワード、対応、ジャンル、使ったAIで探せます。",
                 body=body, css=("apps.css",), js=("apps.js",), current="apps.html")
 
@@ -347,7 +386,7 @@ def detail(site: Site, app: dict, live: list[dict]) -> str:
     if app.get("operator"):
         share_text = "<b>気に入ったら、シェアしてください</b>紹介ページをXで広められます。"
     else:
-        share_text = "<b>このアプリの開発者の方へ</b>紹介ページをシェアして、最初のユーザーに届けましょう。"
+        share_text = "<b>このアプリの開発者の方へ</b>紹介ページをシェアすると、最初のユーザーに届きやすくなります。"
 
     rel = related_apps(app, live)
     more = ""
@@ -363,7 +402,7 @@ def detail(site: Site, app: dict, live: list[dict]) -> str:
 
     body = f"""<main class="g">
   <div class="in detail c-{aid}">
-    <nav class="crumb cap" aria-label="現在地"><a href="apps.html">すべてのアプリ</a><span aria-hidden="true">/</span><a href="{e(g_link)}">{e(g)}</a></nav>
+    <nav class="crumb cap" aria-label="現在地"><a href="apps.html">全てのアプリ</a><span aria-hidden="true">/</span><a href="{e(g_link)}">{e(g)}</a></nav>
 
     <section class="d-hero glass" aria-labelledby="d-name">
       <div class="d-vis" aria-hidden="true"><div class="orbit"></div>{tile(site, app, "icon big", lazy=False)}</div>
@@ -464,7 +503,7 @@ def submit_page(site: Site) -> str:
       </div>
       <div class="rule glass ng">
         <h2>掲載できないもの</h2>
-        <ul><li>他の人が作ったアプリ</li><li>紹介ページや動画、ソースコードだけで、まだ使えないもの</li><li>ファイルを直接ダウンロードさせるリンク（APK、ZIPなど）や、短縮URL</li><li>「稼げる」「副業で月○万円」などをうたうもの、アダルト、ギャンブル</li><li>個人情報を不正に集めるもの、法令や各ストアの規約に反するもの</li></ul>
+        <ul><li>ほかの人が作ったアプリ</li><li>紹介ページや動画、ソースコードだけで、まだ使えないもの</li><li>ファイルを直接ダウンロードさせるリンク（APK、ZIPなど）や、短縮URL</li><li>「稼げる」「副業で月○万円」などをうたうもの、アダルト、ギャンブル</li><li>個人情報を不正に集めるもの、法令や各ストアの規約に反するもの</li></ul>
       </div>
     </section>
 
@@ -501,7 +540,7 @@ def about_page(site: Site) -> str:
     <h2 id="safety">安全のために決めていること</h2>
     <ul>
       <li>掲載するのは、公式ストア（App Store、Google Play）か https の公式サイトへのリンクだけです。ファイルの配布はしません。</li>
-      <li>会員登録やログインはなく、あなたの個人情報を預かりません。</li>
+      <li>会員登録やログインはなく、個人情報を預かりません。</li>
       <li>広告や解析のための外部のプログラムを読み込みません。</li>
       <li>運営が作ったアプリには「運営」と表示します。</li>
       <li>有料の掲載を始めた場合は、その掲載に「PR」と表示します。</li>
@@ -524,7 +563,8 @@ def about_page(site: Site) -> str:
     <h2 id="privacy">プライバシーポリシー</h2>
     <ul>
       <li>このサイトには会員登録やログインがなく、利用者の個人情報を集めていません。Cookie や、広告・解析のためのプログラムも使っていません。</li>
-      <li>このサイトのページは、ほかのサイトからプログラム、フォント、画像を読み込みません。ブラウザに情報を保存する機能（localStorage など）も使いません。</li>
+      <li>このサイトのページは、ほかのサイトからプログラム、フォント、画像を読み込みません。</li>
+      <li>ブラウザに保存するのは、「ホーム画面に追加」の案内を閉じたことと、オフラインでも開けるようにするためのページのコピーだけです。どちらもお使いの端末の中だけに残り、どこにも送りません。</li>
       <li>サイトの配信を担うサービスが、安全のためにアクセスの記録（IPアドレスなど）を一時的に残すことがあります。</li>
       <li>掲載の申請は GitHub で受け付けています。申請に書かれた内容と GitHub の公開プロフィールは、GitHub 上で公開されます。GitHub での情報の扱いは、GitHub のプライバシーポリシーに従います。</li>
       <li>掲載されているアプリを開くと、そのアプリのサイトに移動します。移動先での情報の扱いは、それぞれのサイトの方針に従います。</li>
@@ -532,7 +572,7 @@ def about_page(site: Site) -> str:
     </ul>
 
     <h2 id="code">運営のアプリのコードについて</h2>
-    <p>「運営」の印がついたアプリは、ブラウザで使うのは無料です。コードを複製・改変して自分で使う、公開する、自分のアプリに組み込むには、有料の利用許諾が必要です。購入の窓口は準備中です。詳しくは<a href="https://github.com/appworld-jp/appworld/blob/main/LICENSE.md" target="_blank" rel="noopener noreferrer">ライセンス</a>をご覧ください。</p>
+    <p>「運営」の印が付いたアプリは、ブラウザで使うのは無料です。コードを複製・改変して自分で使う、公開する、自分のアプリに組み込むには、有料の利用許諾が必要です。購入の窓口は準備中です。詳しくは<a href="https://github.com/appworld-jp/appworld/blob/main/LICENSE.md" target="_blank" rel="noopener noreferrer">ライセンス</a>をご覧ください。</p>
 
     <h2 id="law">特定商取引法に基づく表記</h2>
     <p>現在、有料のサービスは提供していません。有料のサービスを始める前に、このページに掲載します。</p>
@@ -548,11 +588,94 @@ def not_found_page(site: Site) -> str:
   <div class="in missing">
     <h1>ページが見つかりませんでした</h1>
     <p>掲載が終わったか、アドレスが間違っている可能性があります。</p>
-    <p class="acts"><a class="btn" href="/apps.html">すべてのアプリを見る</a><a class="link" href="/index.html">ホームへ</a></p>
+    <p class="acts"><a class="btn" href="/apps.html">全てのアプリを見る</a><a class="link" href="/index.html">ホームへ</a></p>
   </div>
 </main>"""
     return page(site, path="", title=f"ページが見つかりません | {SITE_NAME}", desc=TAGLINE, body=body,
                 css=("about.css",), root="/")
+
+
+def offline_page(site: Site) -> str:
+    """Shown by the service worker for a page that was never opened while online."""
+    body = """<main class="g">
+  <div class="in missing">
+    <h1>オフラインです</h1>
+    <p>このページはまだ保存されていません。インターネットにつながってから、もう一度開いてください。</p>
+    <p class="acts"><a class="btn" href="/">ホームへ</a><a class="link" href="/apps.html">全てのアプリ</a></p>
+  </div>
+</main>"""
+    return page(site, path="", title=f"オフラインです | {SITE_NAME}", desc=TAGLINE, body=body,
+                css=("about.css",), root="/")
+
+
+# ---------- add to home screen, offline ----------
+
+def manifest() -> str:
+    return json.dumps({
+        "name": SITE_NAME, "short_name": SITE_NAME, "description": TAGLINE, "lang": "ja", "dir": "ltr",
+        "id": "/", "start_url": "/", "scope": "/", "display": "standalone",
+        "background_color": THEME_COLOR, "theme_color": THEME_COLOR,
+        "icons": [{"src": f"/{src}", "sizes": sizes, "type": kind, "purpose": purpose}
+                  for src, sizes, kind, purpose in PWA_ICONS],
+    }, ensure_ascii=False, indent=2) + "\n"
+
+
+def font_files(fonts_css: str, text: str, weights=FONT_WEIGHTS) -> list[str]:
+    """The font files (fonts.css is split by unicode-range) that `text` needs in the given weights."""
+    codes = {ord(c) for c in text if not c.isspace()}
+    files = []
+    for block in re.findall(r"@font-face\s*\{([^}]*)\}", fonts_css):
+        weight = re.search(r"font-weight:\s*(\d+)", block)
+        src = re.search(r"url\(([^)]+)\)", block)
+        ranges = re.search(r"unicode-range:\s*([^;]+)", block)
+        if not (weight and src and ranges) or int(weight.group(1)) not in weights:
+            continue
+        spans = []
+        for part in ranges.group(1).split(","):
+            lo, _, hi = part.strip().removeprefix("U+").removeprefix("u+").partition("-")
+            spans.append((int(lo, 16), int(hi or lo, 16)))
+        if any(lo <= c <= hi for c in codes for lo, hi in spans):
+            files.append(src.group(1).strip("'\""))
+    return files
+
+
+def page_assets(html_text: str) -> list[str]:
+    """Same-origin CSS, JS and icons a page links (with their ?v= hash), as absolute paths."""
+    refs = re.findall(r'<(?:link|script)\b[^>]*?\s(?:href|src)="([^"]+)"', html_text)
+    out = []
+    for r in refs:
+        r = html.unescape(r)
+        if urlsplit(r).scheme or r.startswith("//") or not re.search(r"\.(css|js|svg|png)(\?|$)", r):
+            continue
+        out.append("/" + r.lstrip("/"))
+    return out
+
+
+def service_worker(out: pathlib.Path, shell: dict[str, str]) -> str:
+    """dist/sw.js from site/sw.js: precache the shell pages, everything they link, the font pieces
+    they need and the home-screen icons. VERSION is a hash of all of it, so a new build replaces the cache."""
+    entries = dict(shell)
+    text = ""
+    for name in shell.values():
+        page_text = (out / (name.lstrip("/") or "index.html")).read_text(encoding="utf-8")
+        text += re.sub(r"<[^>]+>", " ", page_text)
+        for a in page_assets(page_text):
+            entries.setdefault(a, a)
+    for css in [k for k in entries if k.split("?")[0].endswith(".css")]:
+        for f in font_files((out / css.split("?")[0].lstrip("/")).read_text(encoding="utf-8"), text):
+            entries.setdefault("/" + f, "/" + f)
+    for src, *_ in PWA_ICONS:
+        entries.setdefault(f"/{src}", f"/{src}")
+    entries.setdefault("/manifest.webmanifest", "/manifest.webmanifest")
+    template = (HERE / "sw.js").read_text(encoding="utf-8")
+    h = hashlib.sha256(template.encode())
+    for key, src in sorted(entries.items()):
+        h.update(f"\0{key}\0".encode())
+        h.update((out / (src.split("?")[0].lstrip("/") or "index.html")).read_bytes())
+    precache = json.dumps(sorted([k, v] for k, v in entries.items()), separators=(",", ":"))
+    return (template.replace('"__VERSION__"', json.dumps(h.hexdigest()[:12])).replace('"__PRECACHE__"', precache)
+            .replace("Template: site/build.py fills in VERSION and PRECACHE and writes dist/sw.js.",
+                     "Generated by site/build.py from site/sw.js. Do not edit."))
 
 
 def feed(site: Site, live: list[dict]) -> str:
@@ -642,12 +765,17 @@ def build(today: date, site_url: str | None = None, *, production: bool = False,
         "submit.html": submit_page(site),
         "about.html": about_page(site),
         "404.html": not_found_page(site),
+        "offline.html": offline_page(site),
         **{f"app-{a['id']}.html": detail(site, a, live) for a in live},
     }
     for name, text in pages.items():
         (out / name).write_text(text, encoding="utf-8")
     (out / "feed.xml").write_text(feed(site, live), encoding="utf-8")
     (out / "sitemap.xml").write_text(sitemap(site, live), encoding="utf-8")
+    (out / "manifest.webmanifest").write_text(manifest(), encoding="utf-8")
+    # pages keyed as the host serves them (Cloudflare Pages drops .html), fetched by their file name
+    (out / "sw.js").write_text(service_worker(out, {"/": "/", "/apps": "/apps.html", "/offline": "/offline.html"}),
+                               encoding="utf-8")
     (out / "robots.txt").write_text(f"User-agent: *\nAllow: /\n\nSitemap: {site.abs_url('')}sitemap.xml\n", encoding="utf-8")
     print(f"built {len(live)} listings, {len(pages)} pages -> {out}")
     return live

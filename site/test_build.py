@@ -3,6 +3,7 @@
 import contextlib
 import io
 import json
+import re
 import pathlib
 import shutil
 import tempfile
@@ -110,7 +111,8 @@ class BuildTest(unittest.TestCase):
         live = self.run_build()
         self.assertEqual(sorted(a["id"] for a in live), sorted(LAB))
         pages = sorted(p.name for p in self.out.glob("*.html"))
-        expected = ["404.html", "about.html", "apps.html", "index.html", "submit.html", *[f"app-{s}.html" for s in LAB]]
+        expected = ["404.html", "about.html", "apps.html", "index.html", "offline.html", "submit.html",
+                    *[f"app-{s}.html" for s in LAB]]
         self.assertEqual(pages, sorted(expected))
         for name in pages:
             text = (self.out / name).read_text(encoding="utf-8")
@@ -206,8 +208,72 @@ class BuildTest(unittest.TestCase):
         self.run_build()
         headers = (self.out / "_headers").read_text()
         self.assertIn("Content-Security-Policy: default-src 'none'; script-src 'self'; style-src 'self'; font-src 'self'; "
-                      "img-src 'self' data:; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; upgrade-insecure-requests", headers)
+                      "img-src 'self' data:; manifest-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; upgrade-insecure-requests", headers)
         self.assertNotIn("/preview", headers)
+        sw = headers.split("\n/sw.js\n", 1)[1].split("\n/", 1)[0]  # its own rules: same-origin fetches only, never stale
+        self.assertIn("! Content-Security-Policy", sw)
+        self.assertIn("Content-Security-Policy: default-src 'none'; connect-src 'self'", sw)
+        self.assertIn("! Cache-Control", sw)
+        self.assertIn("Cache-Control: no-cache", sw)
+        self.assertIn("/manifest.webmanifest\n  Content-Type: application/manifest+json", headers)
+
+    def test_pages_link_the_manifest_and_site_script_and_have_the_phone_tabs(self):
+        self.run_build()
+        for path in sorted(self.out.glob("*.html")):
+            text = path.read_text(encoding="utf-8")
+            with self.subTest(page=path.name):
+                self.assertIn('<link rel="manifest" href="/manifest.webmanifest">', text)
+                self.assertIn('<link rel="apple-touch-icon" href=', text)
+                self.assertIn(f'<meta name="theme-color" content="{build.THEME_COLOR}">', text)
+                self.assertRegex(text, r'<script src="/?site\.js\?v=[0-9a-f]{10}"></script>\n</body>')
+                self.assertEqual(text.count('<nav class="tabs" aria-label="メイン">'), 1)
+                self.assertEqual(text.count('<nav class="top" aria-label="メイン">'), 1)
+                self.assertIn(">探す</span>", text)
+                self.assertNotIn("すべて", text)
+        home = (self.out / "index.html").read_text(encoding="utf-8")
+        self.assertIn('<a class="on" aria-current="page" href="index.html" data-tab="home">', home)
+        self.assertIn('<a class="on" aria-current="page" href="apps.html" data-tab="find">',
+                      (self.out / "app-kondate.html").read_text(encoding="utf-8"))
+        self.assertIn("「ホーム画面に追加」の案内を閉じたこと", (self.out / "about.html").read_text(encoding="utf-8"))
+        m = json.loads((self.out / "manifest.webmanifest").read_text(encoding="utf-8"))
+        self.assertEqual((m["name"], m["short_name"], m["start_url"], m["scope"], m["display"], m["lang"]),
+                         ("App World", "App World", "/", "/", "standalone", "ja"))
+        purposes = {(i["sizes"], i["purpose"]) for i in m["icons"]}
+        self.assertTrue({("192x192", "any"), ("512x512", "any"), ("512x512", "maskable")} <= purposes)
+        for icon in m["icons"]:
+            self.assertTrue((self.out / icon["src"].lstrip("/")).is_file(), icon["src"])
+        self.assertEqual((self.out / "apple-touch-icon.png").read_bytes()[:8], b"\x89PNG\r\n\x1a\n")
+
+    def test_service_worker_is_versioned_and_precaches_the_shell(self):
+        self.run_build()
+        sw = (self.out / "sw.js").read_text(encoding="utf-8")
+        self.assertNotIn("__VERSION__", sw); self.assertNotIn("__PRECACHE__", sw)
+        version = re.search(r'const CACHE = PREFIX \+ "([0-9a-f]{12})";', sw)
+        self.assertTrue(version)
+        precache = json.loads(re.search(r"const PRECACHE = (\[.*\]);", sw).group(1))
+        keys = {k for k, _ in precache}
+        for key in ("/", "/apps", "/offline", "/manifest.webmanifest", "/icon-192.png"):
+            self.assertIn(key, keys)
+        for name in ("fonts.css", "app.css", "apps.css", "colors.css", "home.js", "apps.js", "site.js", "data.js"):
+            self.assertTrue(any(k.startswith(f"/{name}?v=") for k in keys), name)
+        fonts = [k for k in keys if k.startswith("/fonts/")]
+        self.assertTrue(fonts and all(k.endswith("-400-normal.woff2") for k in fonts))
+        for _, src in precache:  # every file exists, and links match what the pages ask for
+            self.assertTrue((self.out / (src.split("?")[0].lstrip("/") or "index.html")).is_file(), src)
+        self.assertIn('href="app.css?v=', (self.out / "index.html").read_text(encoding="utf-8"))
+        # a rebuild with the same input keeps the version; a changed page changes it
+        self.run_build()
+        self.assertIn(version.group(0), (self.out / "sw.js").read_text(encoding="utf-8"))
+        self.run_build(today=date(2026, 11, 11))
+        self.assertNotIn(version.group(0), (self.out / "sw.js").read_text(encoding="utf-8"))
+
+    def test_font_files_follow_unicode_range_and_weight(self):
+        css = ("@font-face{font-weight:400;src:url(fonts/a-400.woff2) format('woff2');unicode-range:U+3042,U+4e00-4e10}"
+               "@font-face{font-weight:700;src:url(fonts/a-700.woff2) format('woff2');unicode-range:U+3042}"
+               "@font-face{font-weight:400;src:url(fonts/b-400.woff2) format('woff2');unicode-range:U+0041-005a}")
+        self.assertEqual(build.font_files(css, "あ"), ["fonts/a-400.woff2"])
+        self.assertEqual(build.font_files(css, "一 B"), ["fonts/a-400.woff2", "fonts/b-400.woff2"])
+        self.assertEqual(build.font_files(css, "あ", weights=(700,)), ["fonts/a-700.woff2"])
 
     def test_script_data_escapes_markup(self):
         site = build.Site(self.out, URLS["site_url"], URLS["submit_url"], URLS["contact_url"], self.dir)
