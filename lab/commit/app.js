@@ -250,7 +250,7 @@
     var nBad = res.checks.filter(function (c) { return c.level !== "ok"; }).length;
     $("dock-line").textContent = msg.split("\n")[0];
     $("dock").classList.toggle("has-bad", nBad > 0);
-    $("dock").setAttribute("aria-label", "できたメッセージを確認する" + (nBad ? "（直すところ" + nBad + "つ）" : ""));
+    $("dock").setAttribute("aria-label", "できたメッセージを確認する" + (nBad ? "（修正点" + nBad + "件）" : ""));
     updateDock();
     renderChecks($("checks"), res.checks, writeFix, { period: "消す", style: "直す", wrap: "折り返す", footer: "issue欄に移す" });
   }
@@ -364,7 +364,7 @@
   function runFix(typeOverride) {
     var src = $("fix-src").value;
     if (!src.trim()) {
-      $("fix-err").textContent = "メッセージを貼ってから押してください。";
+      $("fix-err").textContent = "メッセージを貼ってから「チェックして整える」を押してください。";
       $("fix-src").focus();
       return;
     }
@@ -373,17 +373,17 @@
     var before = R.lint(src, { jaStyle: store.prefs.jaStyle, own: ownTypes() });
     var bad = before.checks.filter(function (c) { return c.level !== "ok"; });
     renderChecks($("before-checks"), before.checks.filter(function (c) { return c.level !== "ok"; }).concat(bad.length ? [] : before.checks), null, {});
-    $("before-count").textContent = bad.length ? "直すところ" + bad.length + "つ" : "問題なし";
+    $("before-count").textContent = bad.length ? "修正点" + bad.length + "件" : "問題なし";
     $("before-count").className = "badge" + (bad.length ? " bad" : " good");
     fillFixTypes();
     var c = R.clean(src, { jaStyle: store.prefs.jaStyle, type: typeOverride || null, own: ownTypes() });
     if (!c) return;
     fixTypeSel.value = c.type;
-    $("fix-guess").textContent = typeOverride ? "選んだ種類です。" : c.guessedFrom ? "「" + c.guessedFrom + "」から考えました。" : "";
+    $("fix-guess").textContent = typeOverride ? "選んだ種類です。" : c.guessedFrom ? "「" + c.guessedFrom + "」から判断しました。" : "";
     $("fix-dst").value = c.text;
     var ch = $("changes"); ch.textContent = "";
     var list = c.changes.filter(function (t) { return !/から、種類を/.test(t) || !typeOverride; });
-    if (!list.length) ch.appendChild(el("li", "none", "直すところはありませんでした。"));
+    if (!list.length) ch.appendChild(el("li", "none", "修正点はありませんでした。"));
     list.forEach(function (t) { ch.appendChild(el("li", null, t)); });
     $("fix-out").hidden = false;
     $("fix-empty").hidden = true;
@@ -443,7 +443,7 @@
       var acts = el("div", "h-acts");
       var cp = el("button", "btn small", "コピー"); cp.type = "button";
       cp.addEventListener("click", function () { copyText(h.m, $("toast-hist"), "コピーしました。", "コピーできませんでした。メッセージを長押しして選んでください。"); });
-      var fx = el("button", "btn small ghost", "直すで開く"); fx.type = "button";
+      var fx = el("button", "btn small ghost", "「直す」で開く"); fx.type = "button";
       fx.addEventListener("click", function () { $("fix-src").value = h.m; showTab("fix"); runFix(null); $("fix-src").focus(); });
       var del = el("button", "btn small ghost", "削除"); del.type = "button";
       del.setAttribute("aria-label", "削除：" + lines[0]);
@@ -467,9 +467,9 @@
     });
   }
   $("hist-clear").addEventListener("click", function () {
-    if (!confirm("履歴をすべて消しますか？")) return;
+    if (!confirm("履歴を全て削除しますか？")) return;
     store.hist = []; save(); updateHistCount(); renderHist();
-    $("toast-hist").textContent = "履歴を消しました。";
+    $("toast-hist").textContent = "履歴を削除しました。";
   });
 
   /* ---------- 早見表 ---------- */

@@ -1,7 +1,7 @@
 {
   "name": "バグ探し練習帳",
   "short_name": "バグ探し練習帳",
-  "description": "1日1問、JavaScriptかPythonの短いコードからバグのある行を当てる練習帳。答えると、原因と直し方、実際に起きる事故がわかります。",
+  "description": "1日1問、JavaScriptかPythonの短いコードからバグのある行を当てる練習帳。答えると、原因と直し方、実際に起きる事故が分かります。",
   "lang": "ja",
   "dir": "ltr",
   "start_url": "./",

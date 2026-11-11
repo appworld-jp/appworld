@@ -5,11 +5,11 @@
   const KEY = "gyaku.v1";
   const MIN = 60000;
   const TEMPLATES = [
-    { name: "朝の支度", mode: "leave", time: "08:00", steps: [["起きる・顔を洗う", 5], ["朝ごはん", 15], ["歯みがき", 5], ["着がえ", 10], ["髪・メイク", 15], ["持ち物チェック", 5]] },
-    { name: "子どもの登園", mode: "leave", time: "08:15", steps: [["子どもを起こす", 5], ["朝ごはん", 20], ["着がえ", 10], ["歯みがき・トイレ", 10], ["連絡帳と持ち物", 5], ["靴と上着", 5]] },
-    { name: "出張の日", mode: "leave", time: "06:30", steps: [["起きる", 5], ["シャワー", 15], ["身じたく", 15], ["朝ごはん", 10], ["荷物の最終チェック", 5], ["戸じまり・火の元", 5]] },
-    { name: "待ち合わせ", mode: "arrive", time: "13:00", steps: [["着がえ", 15], ["身じたく", 15], ["持ち物チェック", 5], ["移動", 40]] },
-    { name: "新しい段取り", mode: "leave", time: "09:00", steps: [["したく", 15]] }
+    { name: "朝の支度", mode: "leave", time: "08:00", steps: [["起きる・顔を洗う", 5], ["朝ご飯", 15], ["歯磨き", 5], ["着替え", 10], ["髪・メイク", 15], ["持ち物チェック", 5]] },
+    { name: "子どもの登園", mode: "leave", time: "08:15", steps: [["子どもを起こす", 5], ["朝ご飯", 20], ["着替え", 10], ["歯磨き・トイレ", 10], ["連絡帳と持ち物", 5], ["靴と上着", 5]] },
+    { name: "出張の日", mode: "leave", time: "06:30", steps: [["起きる", 5], ["シャワー", 15], ["身支度", 15], ["朝ご飯", 10], ["荷物の最終チェック", 5], ["戸締まり・火の元", 5]] },
+    { name: "待ち合わせ", mode: "arrive", time: "13:00", steps: [["着替え", 15], ["身支度", 15], ["持ち物チェック", 5], ["移動", 40]] },
+    { name: "新しい段取り", mode: "leave", time: "09:00", steps: [["支度", 15]] }
   ];
   const pad = n => String(n).padStart(2, "0");
   const hm = d => `${d.getHours()}:${pad(d.getMinutes())}`;
@@ -70,7 +70,7 @@
       b.addEventListener("click", () => { st.cur = x.id; save(); renderPlan(); });
       nav.append(b);
     });
-    const add = el("button", "rt plus", "＋ 新しく"); add.type = "button";
+    const add = el("button", "rt plus", "＋ 新規"); add.type = "button";
     add.addEventListener("click", () => { $("templates").hidden = false; renderTpl(); $("tpl-list").querySelector("button").focus(); });
     nav.append(add);
 
@@ -88,9 +88,9 @@
       nm.addEventListener("input", () => { s.name = nm.value; save(); });
       nm.addEventListener("change", () => { s.name = nm.value.trim(); nm.value = s.name; save(); });
       const dur = el("div", "dur");
-      const minus = el("button", "st-b", "−"); minus.type = "button"; minus.setAttribute("aria-label", `${s.name || "このやること"}を1分へらす`);
+      const minus = el("button", "st-b", "−"); minus.type = "button"; minus.setAttribute("aria-label", `${s.name || "このやること"}を1分減らす`);
       const v = el("input", "dv"); v.inputMode = "numeric"; v.value = String(s.min); v.setAttribute("aria-label", `${s.name || "このやること"}の分数`);
-      const plus = el("button", "st-b", "＋"); plus.type = "button"; plus.setAttribute("aria-label", `${s.name || "このやること"}を1分ふやす`);
+      const plus = el("button", "st-b", "＋"); plus.type = "button"; plus.setAttribute("aria-label", `${s.name || "このやること"}を1分増やす`);
       const setMin = n => { s.min = Math.min(240, Math.max(1, n)); save(); renderPlan(); focusIn(s.id, ".dv"); };
       minus.addEventListener("click", () => { s.min = Math.max(1, s.min - (s.min > 10 ? 5 : 1)); save(); renderPlan(); focusIn(s.id, ".st-b"); });
       plus.addEventListener("click", () => { s.min = Math.min(240, s.min + (s.min >= 10 ? 5 : 1)); save(); renderPlan(); focusIn(s.id, ".st-b:last-of-type"); });
@@ -103,10 +103,10 @@
       const tools = el("div", "tools");
       const up = el("button", "tb", "↑"); up.type = "button"; up.setAttribute("aria-label", `${s.name || "このやること"}を前へ`); up.disabled = i === 0;
       const dn = el("button", "tb", "↓"); dn.type = "button"; dn.setAttribute("aria-label", `${s.name || "このやること"}を後ろへ`); dn.disabled = i === r.steps.length - 1;
-      const rm = el("button", "tb rm", "×"); rm.type = "button"; rm.setAttribute("aria-label", `${s.name || "このやること"}を消す`);
+      const rm = el("button", "tb rm", "×"); rm.type = "button"; rm.setAttribute("aria-label", `${s.name || "このやること"}を削除`);
       up.addEventListener("click", () => { r.steps.splice(i - 1, 0, r.steps.splice(i, 1)[0]); save(); renderPlan(); focusIn(s.id, i - 1 === 0 ? ".tb:nth-child(2)" : ".tb"); });
       dn.addEventListener("click", () => { r.steps.splice(i + 1, 0, r.steps.splice(i, 1)[0]); save(); renderPlan(); focusIn(s.id, i + 1 === r.steps.length - 1 ? ".tb" : ".tb:nth-child(2)"); });
-      rm.addEventListener("click", () => { const snap = snapshot(); r.steps.splice(i, 1); save(); renderPlan(); toast(`「${s.name || "やること"}」を消しました。`, snap); });
+      rm.addEventListener("click", () => { const snap = snapshot(); r.steps.splice(i, 1); save(); renderPlan(); toast(`「${s.name || "やること"}」を削除しました。`, snap); });
       tools.append(up, dn, rm);
       li.append(nm, dur, tools);
       ol.append(li);
@@ -130,7 +130,7 @@
     const box = $("tpl-list"); box.textContent = "";
     TEMPLATES.forEach(t => {
       const b = el("button", "tpl"); b.type = "button";
-      b.append(el("b", null, t.name), el("small", null, t.steps.length > 1 ? `${t.steps.map(s => s[0]).slice(0, 3).join("、")}…（${fmtDur(t.steps.reduce((s, x) => s + x[1], 0))}）` : "やることを自分で入れる"));
+      b.append(el("b", null, t.name), el("small", null, t.steps.length > 1 ? `${t.steps.map(s => s[0]).slice(0, 3).join("、")}…（${fmtDur(t.steps.reduce((s, x) => s + x[1], 0))}）` : "やることを自分で入力"));
       b.addEventListener("click", () => {
         const r = fromTpl(t);
         if (st.routines.some(x => x.name === r.name)) { let n = 2; while (st.routines.some(x => x.name === `${t.name}${n}`)) n++; r.name = `${t.name}${n}`; }
@@ -195,8 +195,8 @@
   }
   const mmss = ms => { const s = Math.max(0, Math.floor(Math.abs(ms) / 1000)); const h = Math.floor(s / 3600); return h ? `${h}:${pad(Math.floor(s / 60) % 60)}:${pad(s % 60)}` : `${Math.floor(s / 60)}:${pad(s % 60)}`; };
   function statusText(m) {
-    if (m <= -30000) return { t: `${Math.max(1, Math.round(-m / MIN))}分おくれ`, c: "late" };
-    if (m >= 30000) return { t: `${Math.max(1, Math.round(m / MIN))}分よゆう`, c: "ahead" };
+    if (m <= -30000) return { t: `${Math.max(1, Math.round(-m / MIN))}分遅れ`, c: "late" };
+    if (m >= 30000) return { t: `${Math.max(1, Math.round(m / MIN))}分余裕`, c: "ahead" };
     return { t: "予定どおり", c: "on" };
   }
   function renderRun() {
@@ -207,7 +207,7 @@
     const cur = run.plan[run.i];
     const tgt = new Date(run.target);
     const left = run.target - now;
-    $("dep").textContent = left >= 0 ? `${hm(tgt)} ${finalWord(r)}まで あと${mmss(left)}` : `${hm(tgt)} ${finalWord(r)}の時刻を${mmss(left)}すぎています`;
+    $("dep").textContent = left >= 0 ? `${hm(tgt)} ${finalWord(r)}まで あと${mmss(left)}` : `${hm(tgt)} ${finalWord(r)}の時刻を${mmss(left)}過ぎています`;
     $("now").textContent = cur.name;
     const nextT = run.i + 1 < run.plan.length ? sch[run.i + 1] : run.target;
     const nextName = run.i + 1 < run.plan.length ? run.plan[run.i + 1].name : finalWord(r);
@@ -261,7 +261,7 @@
     const diff = run.target - now;
     stopRun(); show("done");
     $("done-h").textContent = `${finalWord(r)}！`;
-    $("done-sub").textContent = diff >= MIN ? `予定より${Math.floor(diff / MIN)}分早く終わりました。いってらっしゃい。` : diff <= -MIN ? `予定より${Math.ceil(-diff / MIN)}分おくれました。次は少し早めに始めましょう。` : "ぴったりです。いってらっしゃい。";
+    $("done-sub").textContent = diff >= MIN ? `予定より${Math.floor(diff / MIN)}分早く終わりました。いってらっしゃい。` : diff <= -MIN ? `予定より${Math.ceil(-diff / MIN)}分遅れました。次は少し早めに始めると安心です。` : "ぴったりです。いってらっしゃい。";
     chime(3);
     $("done-back").focus();
   }
@@ -304,7 +304,7 @@
     const blob = new Blob([JSON.stringify({ app: "gyaku", version: 1, exported: new Date().toISOString(), routines: st.routines }, null, 1)], { type: "application/json" });
     const a = el("a"); a.href = URL.createObjectURL(blob); a.download = `gyaku-${ymd(new Date())}.json`;
     document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
-    toast("ファイルに書き出しました。新しい端末で「ファイルを読みこむ」から開いてください。");
+    toast("ファイルに書き出しました。新しい端末で「ファイルを読み込む」から開いてください。");
   });
   $("import").addEventListener("change", async e => {
     const f = e.target.files[0]; e.target.value = ""; $("move-err").textContent = "";
@@ -315,8 +315,8 @@
       if (raw.app && raw.app !== "gyaku") throw 0;
       const v = valid({ routines: raw.routines }); if (!v) throw 0;
       const snap = snapshot(); st.routines = v.routines; st.cur = v.routines[0].id; save(); renderPlan();
-      toast(`${v.routines.length}件の段取りを読みこみました。`, snap);
-    } catch (x) { $("move-err").textContent = "読みこめませんでした。このアプリで書き出したファイル（.json）を選んでください。"; }
+      toast(`${v.routines.length}件の段取りを読み込みました。`, snap);
+    } catch (x) { $("move-err").textContent = "読み込めませんでした。このアプリで書き出したファイル（.json）を選んでください。"; }
   });
 
   // ---- トースト ----

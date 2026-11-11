@@ -107,7 +107,7 @@
   const kindVal = () => document.querySelector("input[name=kind]:checked").value;
   function syncKind() {
     const k = kindVal();
-    $("offer-label").textContent = k === "swap" ? "代わりに入れる日" : "お礼（なくてもOK）";
+    $("offer-label").textContent = k === "swap" ? "代わりに入れる日" : "お礼（任意）";
     $("f-offer").placeholder = k === "swap" ? "11/22（土）の朝番" : "今度どこか1回代わります";
   }
   document.querySelectorAll("input[name=kind]").forEach(r => r.addEventListener("change", syncKind));
@@ -147,8 +147,8 @@
     ev.preventDefault();
     const r = clean({ k: kindVal(), d: $("f-date").value, s: $("f-start").value, e: $("f-end").value, p: $("f-place").value, n: $("f-name").value, o: $("f-offer").value, m: $("f-note").value });
     ["f-date", "f-start", "f-end"].forEach(id => $(id).removeAttribute("aria-invalid"));
-    if (!r) { $("f-err").textContent = "日付が空です。シフトの日を選んでください。"; $("f-date").setAttribute("aria-invalid", "true"); $("f-date").focus(); return; }
-    if (!r.s || !r.e) { const id = r.s ? "f-end" : "f-start"; $("f-err").textContent = `${r.s ? "終了" : "開始"}の時間が空です。時間を入れてください。`; $(id).setAttribute("aria-invalid", "true"); $(id).focus(); return; }
+    if (!r) { $("f-err").textContent = "シフトの日付を選んでください。"; $("f-date").setAttribute("aria-invalid", "true"); $("f-date").focus(); return; }
+    if (!r.s || !r.e) { const id = r.s ? "f-end" : "f-start"; $("f-err").textContent = `${r.s ? "終了" : "開始"}時刻を入れてください。`; $(id).setAttribute("aria-invalid", "true"); $(id).focus(); return; }
     $("f-err").textContent = "";
     try { localStorage.setItem(KEY + ".name", r.n); } catch (e) { /* ignore */ }
     r.id = Date.now(); r.done = false;
@@ -157,7 +157,7 @@
     $("o-h").setAttribute("tabindex", "-1"); $("o-h").focus();
     $("out").scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion:reduce)").matches ? "auto" : "smooth", block: "start" });
   });
-  $("copy-text").addEventListener("click", () => copy($("share-text").value, "toast", "コピーしました。LINEやSlackのグループに貼りましょう。"));
+  $("copy-text").addEventListener("click", () => copy($("share-text").value, "toast", "コピーしました。LINEやSlackのグループに貼ってください。"));
   $("copy-url").addEventListener("click", () => current && copy(shareUrl(current), "toast", "リンクをコピーしました。"));
   $("share").addEventListener("click", () => share($("share-text").value));
 
@@ -177,8 +177,8 @@
       const btns = document.createElement("div"); btns.className = "m-btns";
       const b = (label, fn, aria) => { const x = document.createElement("button"); x.type = "button"; x.className = "btn small"; x.textContent = label; if (aria) x.setAttribute("aria-label", aria); x.addEventListener("click", fn); btns.append(x); };
       b("文を見る", () => { showOut(r); $("out").scrollIntoView({ block: "start" }); $("o-h").focus(); }, `${dateLabel(r.d)}の依頼文を見る`);
-      b(r.done ? "募集中に戻す" : "決まった", () => { r.done = !r.done; save(); renderMine(); if (r.done) { const x = $("mine").querySelector(`[data-id="${r.id}"]`); if (x) x.classList.add("just"); } }, r.done ? `${dateLabel(r.d)}の依頼を募集中に戻す` : `${dateLabel(r.d)}の依頼を、代わりが決まったことにする`);
-      b("消す", () => { if (confirm("この依頼を一覧から消しますか？")) { mine = mine.filter(x => x !== r); save(); renderMine(); } }, `${dateLabel(r.d)}の依頼を消す`);
+      b(r.done ? "募集中に戻す" : "決まった", () => { r.done = !r.done; save(); renderMine(); if (r.done) { const x = $("mine").querySelector(`[data-id="${r.id}"]`); if (x) x.classList.add("just"); } }, r.done ? `${dateLabel(r.d)}の依頼を募集中に戻す` : `${dateLabel(r.d)}の依頼を決定済みにする`);
+      b("削除", () => { if (confirm("この依頼を一覧から削除しますか？")) { mine = mine.filter(x => x !== r); save(); renderMine(); } }, `${dateLabel(r.d)}の依頼を削除`);
       li.append(top, sub, btns); ul.append(li);
     });
     $("mine-empty").hidden = mine.length > 0;
@@ -193,9 +193,9 @@
   $("rep-name").addEventListener("input", () => { updateReply(); if ($("rep-name").value.trim()) { $("rep-err").textContent = ""; $("rep-name").removeAttribute("aria-invalid"); } try { localStorage.setItem(KEY + ".name", $("rep-name").value.trim()); } catch (e) { /* ignore */ } });
   $("rep-msg").addEventListener("input", updateReply);
   $("rep-copy").addEventListener("click", () => {
-    if (!$("rep-name").value.trim()) { $("rep-err").textContent = "名前が空です。誰からの返事か分かるように、名前を入れてください。"; $("rep-name").setAttribute("aria-invalid", "true"); $("rep-name").focus(); return; }
+    if (!$("rep-name").value.trim()) { $("rep-err").textContent = "誰からの返事か分かるように、名前を入れてください。"; $("rep-name").setAttribute("aria-invalid", "true"); $("rep-name").focus(); return; }
     $("rep-err").textContent = ""; $("rep-name").removeAttribute("aria-invalid");
-    copy($("rep-text").value, "rep-toast", "コピーしました");
+    copy($("rep-text").value, "rep-toast", "コピーしました。");
   });
   $("rep-share").addEventListener("click", () => share($("rep-text").value));
   $("to-new").addEventListener("click", ev => { ev.preventDefault(); history.pushState(null, "", baseUrl()); route(); });
@@ -214,7 +214,7 @@
     } else {
       document.title = "シフト交換板";
       $("f-err").textContent = "";
-      if (location.hash.startsWith("#r=")) { $("f-err").textContent = "リンクの内容を読み取れませんでした。送ってくれた人に、もう一度リンクをもらってください。"; }
+      if (location.hash.startsWith("#r=")) { $("f-err").textContent = "リンクを読み込めませんでした。送ってくれた人に、もう一度リンクを送ってもらってください。"; }
     }
     window.scrollTo(0, 0);
   }
@@ -224,7 +224,7 @@
   (function example() {
     const t = new Date(); t.setDate(t.getDate() + 5);
     const d = `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, "0")}-${String(t.getDate()).padStart(2, "0")}`;
-    const cap = document.createElement("p"); cap.className = "ex-cap"; cap.textContent = "見本：こんなカードと依頼文ができます";
+    const cap = document.createElement("p"); cap.className = "ex-cap"; cap.textContent = "見本：このようなカードと依頼文ができます";
     $("example").replaceChildren(card({ k: "cover", d, s: "17:00", e: "22:00", p: "駅前店・ホール", n: "佐藤", o: "今度どこか1回代わります", m: "" }), cap);
   })();
   syncKind(); renderMine(); route();

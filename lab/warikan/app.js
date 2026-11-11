@@ -78,15 +78,15 @@
     $("mem-name").focus();
   });
   $("sample").addEventListener("click", () => {
-    const m = ["たなか", "さとう", "すずき"].map(n => ({ id: uid(), name: n }));
+    const m = ["田中", "佐藤", "鈴木"].map(n => ({ id: uid(), name: n }));
     const all = m.map(x => x.id);
     const x = { id: uid(), name: "箱根旅行（例）", members: m, unit: 10, absorb: "auto", updated: Date.now(), pays: [
       { id: uid(), by: m[0].id, amount: 45000, what: "旅館", for: all, w: null },
       { id: uid(), by: m[1].id, amount: 12800, what: "レンタカーとガソリン", for: all, w: null },
-      { id: uid(), by: m[2].id, amount: 6300, what: "お昼ごはん", for: all, w: { [m[0].id]: 1.5, [m[1].id]: 1, [m[2].id]: 1 } }
+      { id: uid(), by: m[2].id, amount: 6300, what: "昼ご飯", for: all, w: { [m[0].id]: 1.5, [m[1].id]: 1, [m[2].id]: 1 } }
     ] };
     st.events.push(x); save(); open(x.id);
-    toast("例を入れました。数字を変えたり、支払いを足したりして試せます。");
+    toast("例を入れました。数字を変えたり、支払いを追加したりして試せます。");
   });
   $("back").addEventListener("click", () => { st.cur = null; render(); window.scrollTo(0, 0); });
 
@@ -95,7 +95,7 @@
     $("ev-name").textContent = e.name;
     // メンバー
     const mu = $("members"); mu.textContent = "";
-    if (!e.members.length) mu.append(el("li", "none", "まず、精算する人を入れてください。自分も入れます。"));
+    if (!e.members.length) mu.append(el("li", "none", "まず、精算する人を入れてください。自分も含めます。"));
     e.members.forEach(m => {
       const li = el("li", "mem"); li.append(el("span", null, m.name));
       const x = el("button", "x", "×"); x.type = "button"; x.setAttribute("aria-label", `${m.name}を外す`);
@@ -112,7 +112,7 @@
       const sub = el("div", "pr-sub");
       const forT = p.for.length === e.members.length ? "全員の分" : p.for.map(id => nameOf(e, id)).join("・") + "の分";
       sub.append(el("span", null, `${nameOf(e, p.by)}が立て替え・${forT}${p.w ? "（割合あり）" : ""}`));
-      const ed = el("button", "link small", "直す"); ed.type = "button"; ed.setAttribute("aria-label", `${p.what || "支払い"} ${yen(p.amount)}を直す`);
+      const ed = el("button", "link small", "編集"); ed.type = "button"; ed.setAttribute("aria-label", `${p.what || "支払い"} ${yen(p.amount)}を編集`);
       ed.addEventListener("click", () => editPay(e, p));
       const del = el("button", "link small danger", "削除"); del.type = "button"; del.setAttribute("aria-label", `${p.what || "支払い"} ${yen(p.amount)}を削除`);
       del.addEventListener("click", () => { const snap = snapshot(); e.pays = e.pays.filter(x => x !== p); if (editing === p.id) resetPay(); touch(e); save(); render(); toast(`${p.what || "支払い"}（${yen(p.amount)}）を削除しました。`, snap); });
@@ -124,7 +124,7 @@
 
   function removeMember(e, m) {
     $("mem-err").textContent = "";
-    if (e.pays.some(p => p.by === m.id || p.for.includes(m.id))) { $("mem-err").textContent = `${m.name}は支払いに入っているので外せません。先に支払いを直してください。`; return; }
+    if (e.pays.some(p => p.by === m.id || p.for.includes(m.id))) { $("mem-err").textContent = `${m.name}は支払いに入っているので外せません。先に支払いを編集してください。`; return; }
     const snap = snapshot();
     e.members = e.members.filter(x => x !== m); if (e.absorb === m.id) e.absorb = "auto";
     pf.for.delete(m.id); if (pf.by === m.id) pf.by = null;
@@ -137,7 +137,7 @@
     if (!names.length) { err.textContent = "名前を入れてください。「、」で区切ると、まとめて入れられます。"; $("mem-name").focus(); return; }
     for (const n of names) {
       if (n.length > 12) { err.textContent = "名前は12文字までです。"; return; }
-      if (e.members.some(m => m.name === n) || names.filter(v => v === n).length > 1) { err.textContent = `「${n}」はもう入っています。同じ名前の人がいるときは「たなか（兄）」のように分けてください。`; return; }
+      if (e.members.some(m => m.name === n) || names.filter(v => v === n).length > 1) { err.textContent = `「${n}」はもう入っています。同じ名前の人がいるときは「田中（兄）」のように分けてください。`; return; }
     }
     if (e.members.length + names.length > 30) { err.textContent = "メンバーは30人までです。"; return; }
     names.forEach(n => { const m = { id: uid(), name: n }; e.members.push(m); if (!editing) pf.for.add(m.id); });
@@ -216,7 +216,7 @@
     if (a == null) { $("p-amount-err").textContent = `金額は1〜${C.MAX_AMOUNT.toLocaleString("ja-JP")}円の整数で入れてください。`; bad = true; }
     if (!pf.by || !e.members.some(m => m.id === pf.by)) { $("p-by-err").textContent = "払った人を選んでください。"; bad = true; }
     const ids = e.members.filter(m => pf.for.has(m.id)).map(m => m.id);
-    if (!ids.length) { $("p-for-err").textContent = "だれの分か、1人以上選んでください。"; bad = true; }
+    if (!ids.length) { $("p-for-err").textContent = "誰の分か、1人以上選んでください。"; bad = true; }
     let w = null;
     if (pf.useW) {
       w = {};
@@ -227,7 +227,7 @@
     const snap = snapshot();
     const data = { by: pf.by, amount: a, what: $("p-what").value.trim().slice(0, 24), for: ids, w };
     let msg;
-    if (editing) { const p = e.pays.find(v => v.id === editing); if (p) Object.assign(p, data); msg = "支払いを直しました。"; }
+    if (editing) { const p = e.pays.find(v => v.id === editing); if (p) Object.assign(p, data); msg = "支払いを更新しました。"; }
     else { e.pays.push(Object.assign({ id: uid() }, data)); msg = `${nameOf(e, pf.by)}の${data.what || "支払い"}（${yen(a)}）を追加しました。`; }
     touch(e); save(); resetPay(); render(); toast(msg, snap);
     $("p-amount").focus({ preventScroll: true });
@@ -247,7 +247,7 @@
     sel.value = e.members.some(m => m.id === e.absorb) ? e.absorb : "auto";
     $("o-unit").value = String(e.unit);
     if (e.members.length < 2) { box.append(el("p", "none", "メンバーを2人以上入れると、ここに精算が出ます。")); $("summary").value = ""; return; }
-    if (!e.pays.length) { box.append(el("p", "none", "支払いを追加すると、だれがだれにいくら払うかがここに出ます。")); $("summary").value = ""; return; }
+    if (!e.pays.length) { box.append(el("p", "none", "支払いを追加すると、誰が誰にいくら払うかがここに出ます。")); $("summary").value = ""; return; }
     const c = compute(e);
     box.append(el("p", "total", `合計 ${yen(c.total)}（${e.members.length}人）`));
     const ul = el("ul", "transfers");
@@ -262,7 +262,7 @@
     if (c.tr.length) box.append(el("p", "hint", `送金は${c.tr.length}回で終わります。`));
     if (c.r.diff) box.append(el("p", "adj", adjText(e, c)));
     const tbl = el("table", "bal");
-    const cap = el("caption", null, "ひとりずつの内訳"); tbl.append(cap);
+    const cap = el("caption", null, "1人ずつの内訳"); tbl.append(cap);
     const th = el("tr"); ["", "払った", "負担", "差し引き"].forEach(t => th.append(el("th", null, t))); th.firstChild.setAttribute("aria-label", "名前");
     const thead = el("thead"); thead.append(th); tbl.append(thead);
     const tb = el("tbody");
@@ -302,7 +302,7 @@
     try { await navigator.clipboard.writeText(t); okk = true; } catch (x) {
       try { $("summary").select(); okk = document.execCommand("copy"); } catch (y) {}
     }
-    msg.textContent = okk ? "コピーしました。LINEのトークに貼りつけてください。" : "コピーできませんでした。上の文を長押しして選んでください。";
+    msg.textContent = okk ? "コピーしました。LINEのトークに貼り付けてください。" : "コピーできませんでした。上の文を長押しして選んでください。";
     clearTimeout(msg._t); msg._t = setTimeout(() => { msg.textContent = ""; }, 5000);
   });
 
@@ -326,7 +326,7 @@
     const blob = new Blob([JSON.stringify({ app: "warikan", version: 1, exported: new Date().toISOString(), events: st.events }, null, 1)], { type: "application/json" });
     const a = el("a"); a.href = URL.createObjectURL(blob); a.download = `warikan-${ymd(new Date())}.json`;
     document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
-    toast("ファイルに書き出しました。新しい端末で「ファイルを読みこむ」から開いてください。");
+    toast("ファイルに書き出しました。新しい端末で「ファイルを読み込む」から開いてください。");
   });
   $("import").addEventListener("change", async x => {
     const f = x.target.files[0]; x.target.value = ""; $("move-err").textContent = "";
@@ -340,8 +340,8 @@
       // 同じ精算（同じID）は読みこんだほうで置きかえ、ほかは残す
       const map = new Map(st.events.map(e => [e.id, e])); v.events.forEach(e => map.set(e.id, e));
       st.events = [...map.values()]; st.cur = null; save(); render();
-      toast(`${v.events.length}件の精算を読みこみました。`, snap);
-    } catch (y) { $("move-err").textContent = "読みこめませんでした。このアプリで書き出したファイル（.json）を選んでください。"; }
+      toast(`${v.events.length}件の精算を読み込みました。`, snap);
+    } catch (y) { $("move-err").textContent = "読み込めませんでした。このアプリで書き出したファイル（.json）を選んでください。"; }
   });
 
   // ---- トースト ----

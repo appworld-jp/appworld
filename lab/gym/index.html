@@ -28,7 +28,7 @@
         <div class="find">
           <div class="search">
             <svg class="glass" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/></svg>
-            <input id="q" type="search" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="sugg" aria-label="種目をさがす" placeholder="ベンチ、懸垂" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search" maxlength="30">
+            <input id="q" type="search" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="sugg" aria-label="種目を探す" placeholder="ベンチ、懸垂" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search" maxlength="30">
           </div>
           <button type="button" class="browse" id="browseBtn" aria-expanded="false" aria-controls="browse">部位から選ぶ</button>
         </div>
@@ -122,22 +122,22 @@
       <div class="block">
         <h2 class="lbl">今日のセット</h2>
         <ol class="today" id="today"></ol>
-        <p class="empty" id="todayEmpty">1セット終えたら、下の「セットを記録」を押します。</p>
+        <p class="empty" id="todayEmpty">1セット終えたら、下の「セットを記録」を押してください。</p>
       </div>
 
       <div class="block settings">
         <h2 class="lbl" id="restSetLbl">休憩の長さ</h2>
         <div class="seg" id="restSeg" role="group" aria-labelledby="restSetLbl"></div>
-        <label class="switch"><input type="checkbox" id="sound">休憩が終わったら、音と振動で知らせる</label>
+        <label class="switch"><input type="checkbox" id="sound">休憩の終わりを音と振動で知らせる</label>
       </div>
     </section>
 
     <section id="viewHist" hidden aria-labelledby="histTitle">
       <h2 class="h2" id="histTitle">種目ごとの履歴</h2>
-      <p class="sub">ベストは、重さの種目ならいちばん重いセット（同じ重さなら回数が多いほう）、自重の種目なら回数、時間の種目ならいちばん長い記録です。</p>
+      <p class="sub">ベストは、重さの種目なら一番重いセット（同じ重さなら回数が多いほう）、自重の種目なら回数、時間の種目なら最も長い記録です。</p>
       <div id="hist"></div>
       <p class="empty" id="histEmpty">セットを記録すると、種目ごとの履歴とベストがここに並びます。</p>
-      <button type="button" class="danger" id="wipe">すべての記録を消す</button>
+      <button type="button" class="danger" id="wipe">全ての記録を削除</button>
     </section>
   </main>
 

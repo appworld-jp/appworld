@@ -3,25 +3,25 @@
   "use strict";
 
   var TYPES = [
-    { id: "feat", label: "機能を追加", when: "使う人から見て、できることが増えたとき",
+    { id: "feat", label: "機能追加", when: "使う人から見て、できることが増えたとき",
       ja: "feat(cart): 送料無料までの残り金額を表示", jaDesu: "feat(cart): 送料無料までの残り金額を表示しました", en: "feat(cart): show amount left for free shipping" },
-    { id: "fix", label: "バグを修正", when: "おかしな動きを直したとき",
+    { id: "fix", label: "バグ修正", when: "おかしな動きを直したとき",
       ja: "fix(auth): ログイン後にトップへ戻される問題を修正", jaDesu: "fix(auth): ログイン後にトップへ戻される問題を修正しました", en: "fix(auth): keep users on the same page after login" },
     { id: "docs", label: "ドキュメント", when: "READMEやコメントなど、文書だけを変えたとき",
       ja: "docs: READMEにセットアップ手順を追記", jaDesu: "docs: READMEにセットアップ手順を追記しました", en: "docs: add setup steps to README" },
     { id: "style", label: "コードの整形", when: "空白やインデントなど、動きが変わらない書式の変更",
       ja: "style: インデントをスペース2つに統一", jaDesu: "style: インデントをスペース2つに統一しました", en: "style: format files with prettier" },
-    { id: "refactor", label: "作りの整理", when: "動きは同じまま、コードの中身を書き直したとき",
+    { id: "refactor", label: "リファクタリング", when: "動きは同じまま、コードの中身を書き直したとき",
       ja: "refactor(api): 日付の変換処理を共通化", jaDesu: "refactor(api): 日付の変換処理を共通化しました", en: "refactor(api): extract date parsing into a helper" },
-    { id: "perf", label: "速くする", when: "速さや軽さを良くしたとき",
+    { id: "perf", label: "性能改善", when: "処理の速さや軽さを改善したとき",
       ja: "perf(search): 検索結果をキャッシュして再検索を高速化", jaDesu: "perf(search): 検索結果をキャッシュして再検索を高速化しました", en: "perf(search): cache results for repeated queries" },
-    { id: "test", label: "テスト", when: "テストを足したり直したりしたとき",
+    { id: "test", label: "テスト", when: "テストを追加・修正したとき",
       ja: "test(cart): 割引計算のテストを追加", jaDesu: "test(cart): 割引計算のテストを追加しました", en: "test(cart): add tests for discount calculation" },
     { id: "build", label: "ビルド・依存関係", when: "ビルドの設定やパッケージを変えたとき",
       ja: "build: Viteを6.0に更新", jaDesu: "build: Viteを6.0に更新しました", en: "build: bump vite to 6.0" },
     { id: "ci", label: "CIの設定", when: "GitHub ActionsなどCIの設定を変えたとき",
       ja: "ci: プルリクエストでテストを自動実行", jaDesu: "ci: プルリクエストでテストを自動実行するように変更しました", en: "ci: run tests on pull requests" },
-    { id: "chore", label: "その他の雑務", when: "上のどれにも当てはまらない作業",
+    { id: "chore", label: "その他", when: "上のどれにも当てはまらない作業",
       ja: "chore: .gitignoreにログファイルを追加", jaDesu: "chore: .gitignoreにログファイルを追加しました", en: "chore: ignore log files" }
   ];
   var TYPE_IDS = TYPES.map(function (t) { return t.id; });
@@ -260,7 +260,7 @@
     if (!p) {
       if (/^[A-Za-z]+(\([^)]*\))?!?：/.test(header)) add("error", "「：」が全角です。半角の「:」にします。", "header");
       else if (/^[A-Za-z]+(\([^)]*\))?!?:\S/.test(header)) add("error", "「:」のあとに半角スペースを1つ入れます。", "header");
-      else if (/^[A-Za-z]+(\([^)]*\))?!? +:/.test(header)) add("error", "「:」の前のスペースはいりません。", "header");
+      else if (/^[A-Za-z]+(\([^)]*\))?!? +:/.test(header)) add("error", "「:」の前のスペースは不要です。", "header");
       else if (/^[A-Za-z]+\(\)/.test(header)) add("error", "範囲のかっこが空です。範囲を書くか、かっこごと消します。", "header");
       else if (/^\s/.test(header)) add("error", "1行目の先頭に空白があります。", "header");
       else add("error", "先頭に種類がありません。「fix: 」のように書きます。", "header");
@@ -373,7 +373,7 @@
     if (!type) {
       var g = guessType(desc + " " + rest.join(" "));
       type = g.type; guessedFrom = g.word;
-      changes.push(g.word ? "「" + g.word + "」から、種類を「" + type + "」と考えました。" : "決め手になる言葉がないので、種類を「chore」にしました。");
+      changes.push(g.word ? "「" + g.word + "」から、種類を「" + type + "」と判断しました。" : "決め手になる言葉がないので、種類を「chore」にしました。");
     }
     if (opts.type && opts.type !== type) { type = opts.type; guessedFrom = null; }
 

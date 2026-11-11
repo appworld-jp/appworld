@@ -2,7 +2,7 @@
 <html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>出発から逆算タイマー</title>
-<meta name="description" content="家を出る時刻と、それまでにやることを入れるだけ。何時に何を始めればいいかを逆算し、今やることと、おくれ・よゆうを大きく表示します。">
+<meta name="description" content="家を出る時刻と、それまでにやることを入れるだけ。何時に何を始めればよいかを逆算し、今やることと遅れ・余裕を大きく表示します。">
 <meta name="theme-color" content="#111214">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="manifest" href="manifest.webmanifest">
@@ -17,10 +17,10 @@
   <section id="plan" aria-labelledby="h-app">
     <header class="head">
       <h1 id="h-app">出発から逆算タイマー</h1>
-      <p class="lead">出る時刻から逆算して、何時に何を始めればいいかを出します。</p>
+      <p class="lead">出る時刻から逆算して、何時に何を始めればよいかが分かります。</p>
     </header>
 
-    <nav class="routines" aria-label="段取りの切りかえ" id="routines"></nav>
+    <nav class="routines" aria-label="段取りの切り替え" id="routines"></nav>
 
     <div class="templates" id="templates" hidden>
       <h2 class="sec">ひな形を選ぶ</h2>
@@ -43,8 +43,8 @@
       <p class="ferr" id="steps-err"></p>
       <button type="button" class="add" id="add-step">＋ やることを追加</button>
 
-      <button type="button" class="go" id="go">はじめる</button>
-      <p class="hint">「はじめる」を押すと、今やることと残り時間を大きく表示します。</p>
+      <button type="button" class="go" id="go">始める</button>
+      <p class="hint">「始める」を押すと、今やることと残り時間を大きく表示します。</p>
 
       <details class="more">
         <summary>この段取りの名前・削除</summary>
@@ -55,10 +55,10 @@
 
     <section class="move" aria-labelledby="h-move">
       <h2 id="h-move" class="sec">機種変更のとき</h2>
-      <p class="hint">段取りはこの端末の中だけにあります。新しい端末へは、ファイルに書き出して読みこんでください。</p>
+      <p class="hint">段取りはこの端末の中にだけあります。新しい端末へ移すときは、ファイルに書き出してから読み込んでください。</p>
       <div class="row">
         <button type="button" class="btn" id="export">ファイルに書き出す</button>
-        <label class="btn file">ファイルを読みこむ<input type="file" id="import" accept="application/json,.json"></label>
+        <label class="btn file">ファイルを読み込む<input type="file" id="import" accept="application/json,.json"></label>
       </div>
       <p class="ferr" id="move-err" role="alert"></p>
     </section>
@@ -88,7 +88,7 @@
     <p class="done-mark" aria-hidden="true">●</p>
     <h2 id="done-h" class="done-h"></h2>
     <p class="done-sub" id="done-sub"></p>
-    <button type="button" class="go" id="done-back">段取りにもどる</button>
+    <button type="button" class="go" id="done-back">段取りに戻る</button>
   </section>
 
   <footer class="foot">

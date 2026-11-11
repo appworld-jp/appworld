@@ -28,9 +28,9 @@
     <div class="card-slot panel" id="recv-card"></div>
     <section class="panel" aria-labelledby="rep-h">
       <h2 id="rep-h">引き受けるときは</h2>
-      <label class="fld"><span>あなたの名前</span><input id="rep-name" type="text" maxlength="20" placeholder="山田" autocomplete="nickname" aria-describedby="rep-err"></label>
+      <label class="fld"><span>名前</span><input id="rep-name" type="text" maxlength="20" placeholder="山田" autocomplete="nickname" aria-describedby="rep-err"></label>
       <p class="err" id="rep-err" role="alert"></p>
-      <label class="fld"><span>ひとこと（なくてもOK）</span><input id="rep-msg" type="text" maxlength="80" placeholder="お礼は気にしなくて大丈夫です" autocomplete="off"></label>
+      <label class="fld"><span>ひとこと（任意）</span><input id="rep-msg" type="text" maxlength="80" placeholder="お礼は気にしなくて大丈夫です" autocomplete="off"></label>
       <label class="lbl" for="rep-text">返事の文</label>
       <textarea id="rep-text" class="sharebox" rows="6" readonly></textarea>
       <div class="btns">
@@ -38,9 +38,9 @@
         <button type="button" class="btn" id="rep-share" hidden>共有</button>
       </div>
       <p class="toast" id="rep-toast" aria-live="polite"></p>
-      <p class="hint">コピーしたら、依頼が届いたLINEやSlackに貼って送りましょう。シフトの変更は、店長など責任者にも伝えてください。</p>
+      <p class="hint">コピーしたら、依頼が届いたLINEやSlackに貼って送ってください。シフトの変更は、店長など責任者にも伝えてください。</p>
     </section>
-    <p class="center"><a class="btn link" href="./" id="to-new">自分も依頼をつくる</a></p>
+    <p class="center"><a class="btn link" href="./" id="to-new">自分も依頼を作る</a></p>
   </main>
 
   <!-- create request -->
@@ -55,7 +55,7 @@
     </section>
 
     <form class="panel" id="form" novalidate aria-labelledby="f-h">
-      <h2 id="f-h">依頼をつくる</h2>
+      <h2 id="f-h">依頼を作る</h2>
       <div class="kind" role="radiogroup" aria-label="依頼の種類">
         <label><input type="radio" name="kind" value="cover" checked><span>代わってほしい</span></label>
         <label><input type="radio" name="kind" value="swap"><span>交換したい</span></label>
@@ -67,10 +67,10 @@
         <label class="fld"><span>終了</span><input id="f-end" type="time" value="22:00" required></label>
       </div>
       <p class="err" id="f-err" role="alert"></p>
-      <label class="fld"><span>あなたの名前</span><input id="f-name" type="text" maxlength="20" placeholder="佐藤" autocomplete="nickname"></label>
-      <label class="fld"><span id="offer-label">お礼（なくてもOK）</span><input id="f-offer" type="text" maxlength="60" placeholder="今度どこか1回代わります" autocomplete="off"></label>
-      <label class="fld"><span>ひとこと（なくてもOK）</span><textarea id="f-note" rows="2" maxlength="120" placeholder="家の用事が入ってしまいました。"></textarea></label>
-      <button type="submit" class="btn main wide">依頼文をつくる</button>
+      <label class="fld"><span>名前</span><input id="f-name" type="text" maxlength="20" placeholder="佐藤" autocomplete="nickname"></label>
+      <label class="fld"><span id="offer-label">お礼（任意）</span><input id="f-offer" type="text" maxlength="60" placeholder="今度どこか1回代わります" autocomplete="off"></label>
+      <label class="fld"><span>ひとこと（任意）</span><textarea id="f-note" rows="2" maxlength="120" placeholder="家の用事が入ってしまいました。"></textarea></label>
+      <button type="submit" class="btn main wide">依頼文を作る</button>
     </form>
 
     <section class="panel out" id="out" hidden aria-labelledby="o-h">
@@ -84,13 +84,13 @@
         <button type="button" class="btn" id="share" hidden>共有</button>
       </div>
       <p class="toast" id="toast" aria-live="polite"></p>
-      <p class="hint">リンクを開いた人は、名前を入れるだけで「引き受けます」の返事を作れます。依頼の内容はリンクの中に入っているので、貼る場所に気をつけてください。</p>
+      <p class="hint">リンクを開いた人は、名前を入れるだけで「引き受けます」の返事を作れます。リンクには依頼の内容が含まれるので、貼る場所に気を付けてください。</p>
     </section>
 
     <section class="panel" aria-labelledby="l-h">
       <div class="row-between"><h2 id="l-h">自分の依頼</h2><span class="count" id="l-count"></span></div>
       <ul class="mine" id="mine"></ul>
-      <p class="empty" id="mine-empty">つくった依頼はここに残ります。代わりが見つかったら「決まった」を押しましょう。</p>
+      <p class="empty" id="mine-empty">作った依頼はここに残ります。代わりが見つかったら「決まった」を押してください。</p>
     </section>
   </main>
 

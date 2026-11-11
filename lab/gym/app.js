@@ -344,10 +344,10 @@
     } else if (todays.length) {
       p.textContent = t === "m" ? "今日が初めての記録です。次回は、今日の記録がここに出ます。" : "今日が初めての記録です。次回は、今日のセットがここに出ます。";
     } else {
-      p.textContent = t === "w" ? "はじめての種目です。重さと回数を合わせて記録すると、次回はその数字が最初から入ります。"
-        : t === "r" ? "はじめての種目です。回数を合わせて記録すると、次回はその回数が最初から入ります。"
-        : t === "s" ? "はじめての種目です。秒数を合わせるか「計る」で時間を計って記録すると、次回はその時間が最初から入ります。"
-        : "はじめての種目です。時間（と距離）を合わせて記録すると、次回はその数字が最初から入ります。";
+      p.textContent = t === "w" ? "初めての種目です。重さと回数を合わせて記録すると、次回はその数字が最初から入ります。"
+        : t === "r" ? "初めての種目です。回数を合わせて記録すると、次回はその回数が最初から入ります。"
+        : t === "s" ? "初めての種目です。秒数を合わせるか「計る」で時間を計って記録すると、次回はその時間が最初から入ります。"
+        : "初めての種目です。時間（と距離）を合わせて記録すると、次回はその数字が最初から入ります。";
     }
     const list = $("today"); list.textContent = "";
     const before = S.sets.filter(s => s.ex === S.ex && dayKey(s.t) !== dayKey(Date.now()));
@@ -370,7 +370,7 @@
     fresh = null;
     $("lead").hidden = S.sets.length > 0;
     $("todayEmpty").hidden = todays.length > 0;
-    $("todayEmpty").textContent = t === "m" ? "終わったら、下の「記録する」を押します。" : "1セット終えたら、下の「セットを記録」を押します。";
+    $("todayEmpty").textContent = t === "m" ? "終わったら、下の「記録する」を押してください。" : "1セット終えたら、下の「セットを記録」を押してください。";
     $("record").querySelector(".go-l").textContent = t === "m" ? "記録する" : "セットを記録";
     renderNums();
   }
@@ -434,10 +434,10 @@
     renderNums();
   }
   $("watch").addEventListener("click", () => {
-    if (watchT) { stopWatch(true); toast(`${fmtSec(cur.sec)}を計りました。「セットを記録」で保存します`); return; }
+    if (watchT) { stopWatch(true); toast(`${fmtSec(cur.sec)}を計測しました。「セットを記録」で保存できます`); return; }
     watchT = Date.now();
     $("watch").textContent = "止める"; $("watch").setAttribute("aria-pressed", "true"); $("watch").classList.add("on");
-    const tickW = () => { const s = Math.floor((Date.now() - watchT) / 1000); $("sIn").value = s; $("goSub").textContent = fmtSec(s); $("sHint").textContent = "計っています"; };
+    const tickW = () => { const s = Math.floor((Date.now() - watchT) / 1000); $("sIn").value = s; $("goSub").textContent = fmtSec(s); $("sHint").textContent = "計測中"; };
     clearInterval(watchI); watchI = setInterval(tickW, 200); tickW();
   });
 
@@ -504,7 +504,7 @@
     $("arc").style.strokeDashoffset = String(CIRC * (1 - left / timer.total));
     if (left === 0 && !timer.done) {
       timer.done = true; alarm();
-      $("rest").classList.add("done"); $("restLbl").textContent = "休憩終わり。次のセットへ";
+      $("rest").classList.add("done"); $("restLbl").textContent = "休憩終了。次のセットへ";
       clearInterval(tickI);
       setTimeout(() => { if (timer && timer.done) stopRest(); }, 6000);
     }
@@ -539,7 +539,7 @@
         const t = v.normalize("NFKC").replace(/\s/g, "");
         const m = /^(?:(\d+)分)?(?:(\d+)秒?)?$/.exec(t);
         const sec = m && (m[1] || m[2]) ? (+m[1] || 0) * 60 + (+m[2] || 0) : NaN;
-        if (!(sec >= 10 && sec <= 600)) return "10秒〜10分のあいだで入れてください。例：45、2分30秒";
+        if (!(sec >= 10 && sec <= 600)) return "10秒〜10分の範囲で入れてください。例：45、2分30秒";
         if (!RESTS.includes(sec) && !S.myRests.includes(sec)) { S.myRests.push(sec); if (S.myRests.length > 6) S.myRests.shift(); }
         S.rest = sec; save(); renderSettings();
         const f = $("restSeg").querySelector(".fc-add"); if (f) f.focus();
@@ -585,7 +585,7 @@
     $("wipe").hidden = used.length === 0;
   }
   $("wipe").addEventListener("click", () => {
-    if (!confirm("すべての記録を消しますか？元に戻せません。")) return;
+    if (!confirm("全ての記録を削除しますか？元に戻せません。")) return;
     S.sets = []; save(); renderHist(); prefill(); renderLog(); renderFav();
   });
 

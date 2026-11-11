@@ -3,7 +3,7 @@
   const $ = id => document.getElementById(id);
   const KEY = "nemulog.v1";
   const H = 3600000, M = 60000, DAY = 86400000;
-  const FEEL = ["ねむい", "ふつう", "ぐっすり"];
+  const FEEL = ["眠い", "普通", "ぐっすり"];
   const pad = n => String(n).padStart(2, "0");
   const hm = t => { const d = new Date(t); return `${d.getHours()}:${pad(d.getMinutes())}`; };
   const dur = ms => { const m = Math.round(ms / M); return m >= 60 ? `${Math.floor(m / 60)}時間${m % 60 ? (m % 60) + "分" : ""}` : `${m}分`; };
@@ -33,7 +33,7 @@
     clearInterval(elT);
     if (S.pending) {
       $("since").textContent = hm(S.pending);
-      const upd = () => { $("elapsed").textContent = `いま ${dur(Date.now() - S.pending)}`; };
+      const upd = () => { $("elapsed").textContent = `経過 ${dur(Date.now() - S.pending)}`; };
       upd(); elT = setInterval(upd, 30000);
     } else if (rateE) {
       renderRateCustom();
@@ -41,7 +41,7 @@
     } else {
       const h = new Date().getHours();
       const morning = h >= 5 && h < 11, day = h >= 11 && h < 18;
-      $("greet").textContent = morning ? "おはようございます。" : day ? "こんにちは。" : "今日もおつかれさまでした。";
+      $("greet").textContent = morning ? "おはようございます。" : day ? "こんにちは。" : "今日もお疲れさまでした。";
       $("idleHint").textContent = morning ? "昨夜の分は、下の「＋ 追加」から入れられます。" : day ? "寝るときに押してください。昼寝の記録にも使えます。" : "布団に入ったら押してください。朝は「起きた」を押すだけです。";
     }
   }
@@ -73,7 +73,7 @@
       box.append(wrapCustom(b, name, () => { myFeels.remove(name); renderRateCustom(); }));
     }
     const a = FC.adder({ label: "＋ 自分で入力", aria: "目覚めを入力", placeholder: "例：頭が重い", max: 12, ok: "記録", btnClass: "feel add",
-      empty: "目覚めのようすを入れてから「記録」を押してください。",
+      empty: "目覚めの様子を入れてから「記録」を押してください。",
       submit: v => { const i = FEEL.indexOf(v); if (i >= 0) { rateWith(i, null); return; } myFeels.add(v); rateWith(null, v); } });
     box.append(a.btn, a.form);
   }
@@ -172,24 +172,24 @@
     const ul = $("tips"); ul.textContent = "";
     const add = (t, cls) => { const li = document.createElement("li"); li.textContent = t; if (cls) li.className = cls; ul.appendChild(li); };
     const nd = nights(all).length;
-    if (nd < 3) { add(`この週の記録が3日分になると、あなたの眠りに合わせたヒントが出ます（あと${3 - nd}日）。`, "wait"); return; }
+    if (nd < 3) { add(`この週の記録が3日分たまると、眠りに合わせたヒントが出ます（あと${3 - nd}日）。`, "wait"); return; }
     const n = nights(all), avg = mean(n) / H, beds = all.map(e => bedMin(e.bed)), wakes = all.map(e => wakeMin(e.wake));
     const avgBed = mean(beds) + 720; // minutes since midnight of the evening, may exceed 1440
     let k = 0;
-    if (avg < 6) { add(`平均の睡眠が${dur(mean(n))}で、6時間を切っています。厚生労働省の「健康づくりのための睡眠ガイド2023」では、大人は6時間以上が目安です。まずは寝る時刻を15分早めてみましょう。`); k++; }
+    if (avg < 6) { add(`平均の睡眠が${dur(mean(n))}で、6時間を切っています。厚生労働省の「健康づくりのための睡眠ガイド2023」では、大人は6時間以上が目安です。まずは寝る時刻を15分早めてみてください。`); k++; }
     else if (avg > 9.5) { add(`平均の睡眠が${dur(mean(n))}と長めです。寝床で長く過ごしすぎると、眠りが浅くなることがあります。眠くなってから布団に入るのも一つの方法です。`); k++; }
     if (beds.length >= 3 && sd(beds) > 60) { add(`寝る時刻が日によって1時間以上ばらついています（±${Math.round(sd(beds))}分）。まずは起きる時刻を毎日そろえると、寝る時刻もそろいやすくなります。`); k++; }
-    else if (wakes.length >= 3 && sd(wakes) > 60) { add(`起きる時刻のばらつきが±${Math.round(sd(wakes))}分あります。休みの日も平日との差を1時間ほどにおさえると、体内時計が乱れにくくなります。`); k++; }
+    else if (wakes.length >= 3 && sd(wakes) > 60) { add(`起きる時刻のばらつきが±${Math.round(sd(wakes))}分あります。休みの日も平日との差を1時間ほどに抑えると、体内時計が乱れにくくなります。`); k++; }
     const wk = all.filter(e => { const g = new Date(e.wake).getDay(); return g > 0 && g < 6; }).map(e => wakeMin(e.wake));
     const we = all.filter(e => { const g = new Date(e.wake).getDay(); return g === 0 || g === 6; }).map(e => wakeMin(e.wake));
-    if (wk.length >= 2 && we.length >= 1 && mean(we) - mean(wk) >= 120) { add(`休日の起床が平日より${dur((mean(we) - mean(wk)) * M)}遅くなっています。「社会的時差ぼけ」と呼ばれる状態で、週明けがつらくなりがちです。差を少しずつ縮めてみましょう。`); k++; }
+    if (wk.length >= 2 && we.length >= 1 && mean(we) - mean(wk) >= 120) { add(`休日の起床が平日より${dur((mean(we) - mean(wk)) * M)}遅くなっています。「社会的時差ぼけ」と呼ばれる状態で、週明けがつらくなりがちです。差を少しずつ縮めていくと楽になります。`); k++; }
     if (avgBed >= 1440 + 60) { add(`寝る時刻の平均が${clockOf(avgBed)}と遅めです。寝る1時間前からスマホの画面を見る時間を減らし、部屋の明かりを落とすと寝つきやすくなります。`); k++; }
     const good = all.filter(e => e.feel === 2), bad = all.filter(e => e.feel === 0);
     if (good.length && bad.length) {
       const g = mean(good.map(e => e.wake - e.bed)), b = mean(bad.map(e => e.wake - e.bed));
-      if (g - b >= 45 * M) { add(`「ねむい」朝は、「ぐっすり」の朝より平均${dur(g - b)}短く眠っています。あなたには${dur(g)}くらいが合っていそうです。`); k++; }
+      if (g - b >= 45 * M) { add(`「眠い」朝は、「ぐっすり」の朝より平均${dur(g - b)}短く眠っています。${dur(g)}くらい眠るのが合っていそうです。`); k++; }
     }
-    if (!k) add(`睡眠時間も寝る時刻も安定しています。平均${dur(mean(n))}、寝る時刻はだいたい${clockOf(avgBed)}。この調子で続けましょう。`);
+    if (!k) add(`睡眠時間も寝る時刻も安定しています。平均${dur(mean(n))}、寝る時刻はだいたい${clockOf(avgBed)}です。`);
   }
   $("prevWeek").addEventListener("click", () => { weekBack++; renderWeek(); });
   $("nextWeek").addEventListener("click", () => { weekBack = Math.max(0, weekBack - 1); renderWeek(); });
@@ -218,7 +218,7 @@
     const fc = fv.startsWith("c:") ? fv.slice(2) : null;
     const feel = fv !== "" && !fc ? Number(fv) : null;
     if (!isFinite(bed) || !isFinite(wake)) { $("err").textContent = "寝た時刻と起きた時刻を入れてください。"; return; }
-    if (wake <= bed) { $("err").textContent = "起きた時刻は、寝た時刻よりあとにしてください。"; return; }
+    if (wake <= bed) { $("err").textContent = "起きた時刻は、寝た時刻より後にしてください。"; return; }
     if (wake - bed > 20 * H) { $("err").textContent = "20時間を超える記録は入れられません。日付を確かめてください。"; return; }
     if (S.entries.some(e => e.id !== editId && e.bed < wake && bed < e.wake)) { $("err").textContent = "ほかの記録と時間が重なっています。時刻を確かめてください。"; return; }
     if (editId) { const x = S.entries.find(e => e.id === editId); Object.assign(x, { bed, wake, feel }); if (fc) x.fc = fc; else delete x.fc; }
@@ -240,7 +240,7 @@
       box.append(myFeels.has(name) ? wrapCustom(lab, name, () => { const cur = document.querySelector("input[name=feel]:checked"); myFeels.remove(name); renderEditFeels(cur ? cur.value : ""); }) : lab);
     }
     const a = FC.adder({ label: "＋ 自分で入力", aria: "目覚めを入力", placeholder: "例：頭が重い", max: 12, ok: "追加", btnClass: "pill add",
-      empty: "目覚めのようすを入れてから「追加」を押してください。",
+      empty: "目覚めの様子を入れてから「追加」を押してください。",
       submit: v => { const i = FEEL.indexOf(v); if (i >= 0) { renderEditFeels(String(i)); return; } myFeels.add(v); renderEditFeels("c:" + v); const n = $("feelMine").querySelector(".fc-add"); if (n) n.focus(); } });
     box.append(a.btn, a.form);
   }

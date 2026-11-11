@@ -63,13 +63,13 @@
     const soon = Math.max(1, Math.round(span * 0.2));
     const state = left < 0 ? "over" : left <= soon ? "soon" : "ok";
     let label;
-    if (left < 0) label = `${-left}日すぎています`;
-    else if (left === 0) label = "今日がめやすです";
-    else if (left === 1) label = "あした";
+    if (left < 0) label = `${-left}日過ぎています`;
+    else if (left === 0) label = "今日が目安です";
+    else if (left === 1) label = "明日";
     else label = left > 60 ? `あと約${Math.round(left / 30)}か月` : `あと${left}日`;
     return { state, left, span, ago, last, due, ratio: Math.min(1.25, ago / Math.max(1, dayDiff(due, last))), label };
   }
-  const agoText = n => n === 0 ? "今日" : n === 1 ? "きのう" : `${n}日前`;
+  const agoText = n => n === 0 ? "今日" : n === 1 ? "昨日" : `${n}日前`;
   const everyText = it => (it.n === 1 && it.u === "w" ? "毎週" : it.n === 1 && it.u === "m" ? "毎月" : it.n === 1 && it.u === "d" ? "毎日" : `${it.n}${UNITS[it.u]}ごと`);
 
   // ---- 表示 ----
@@ -84,9 +84,9 @@
       if (c[f.state] != null) c[f.state]++;
       const li = el("li", "card s-" + f.state); li.dataset.id = it.id;
       const open = el("button", "card-open"); open.type = "button";
-      open.setAttribute("aria-label", `${it.name}。${f.label}。くわしく見る`);
+      open.setAttribute("aria-label", `${it.name}。${f.label}。詳しく見る`);
       const nm = el("span", "nm", it.name);
-      const meta = el("span", "meta", f.state === "none" ? `めやす：${everyText(it)}` : `前回 ${f.last.getMonth() + 1}月${f.last.getDate()}日（${agoText(f.ago)}）・${everyText(it)}`);
+      const meta = el("span", "meta", f.state === "none" ? `目安：${everyText(it)}` : `前回 ${f.last.getMonth() + 1}月${f.last.getDate()}日（${agoText(f.ago)}）・${everyText(it)}`);
       const stt = el("span", "stt", f.label);
       const bar = el("span", "gauge"); bar.setAttribute("aria-hidden", "true");
       const fill = el("i"); fill.style.width = Math.min(100, f.ratio * 100) + "%"; bar.append(fill);
@@ -108,7 +108,7 @@
     const empty = !st.items.length;
     document.body.classList.toggle("empty", empty);
     $("tally").hidden = empty;
-    if (!empty) $("tally").textContent = `すぎている ${c.over}　もうすぐ ${c.soon}　だいじょうぶ ${c.ok}`;
+    if (!empty) $("tally").textContent = `過ぎている ${c.over}　もうすぐ ${c.soon}　まだ先 ${c.ok}`;
     $("add-open").hidden = empty;
     const addShown = empty || $("add-open").getAttribute("aria-expanded") === "true";
     $("add").hidden = !addShown;
@@ -131,7 +131,7 @@
       b.addEventListener("click", () => { picked.has(name) ? picked.delete(name) : picked.add(name); renderPresets(); });
       box.append(b);
     });
-    if (!box.children.length) box.append(el("p", "hint", "よくある項目は、すべて追加ずみです。"));
+    if (!box.children.length) box.append(el("p", "hint", "よくある項目は全て追加済みです。"));
     $("add-presets").disabled = !picked.size;
     $("pcount").textContent = picked.size ? `${picked.size}件を選んでいます` : "";
   }
@@ -144,7 +144,7 @@
 
   function readEvery(nEl, uEl, errEl) {
     const n = Number(toHalf(nEl.value));
-    if (!Number.isInteger(n) || n < 1 || n > 365) { errEl.textContent = "めやすは1〜365の数字で入れてください。"; nEl.focus(); return null; }
+    if (!Number.isInteger(n) || n < 1 || n > 365) { errEl.textContent = "目安は1〜365の数字で入れてください。"; nEl.focus(); return null; }
     return { n, u: uEl.value };
   }
   $("custom").addEventListener("submit", e => {
@@ -192,7 +192,7 @@
     const it = st.items.find(i => i.id === openId); if (!it) { $("sheet").close(); return; }
     const f = info(it);
     $("d-name").textContent = it.name;
-    $("d-status").textContent = f.state === "none" ? `めやすは${everyText(it)}。まだ記録がありません。` : f.left < 0 ? `${f.label}。めやすは${jpY(f.due)}でした。` : f.left === 0 ? `${f.label}。` : `${f.label === "あした" ? "あしたがめやすです" : f.label}。次は${jpY(f.due)}ごろです。`;
+    $("d-status").textContent = f.state === "none" ? `目安は${everyText(it)}。まだ記録がありません。` : f.left < 0 ? `${f.label}。目安は${jpY(f.due)}でした。` : f.left === 0 ? `${f.label}。` : `${f.label === "明日" ? "明日が目安です" : f.label}。次は${jpY(f.due)}ごろです。`;
     $("d-status").className = "d-status s-" + f.state;
     $("d-date").max = ymd(new Date());
     const ul = $("d-hist"); ul.textContent = "";
@@ -201,11 +201,11 @@
       const li = el("li"); const d = parse(s);
       li.append(el("span", "hd", jpY(d)));
       const prev = arr[i + 1];
-      li.append(el("span", "gap", prev ? `${dayDiff(d, parse(prev))}日あいだ` : "はじめての記録"));
-      const x = el("button", "rm", "×"); x.type = "button"; x.setAttribute("aria-label", `${jpY(d)}の記録を消す`);
+      li.append(el("span", "gap", prev ? `${dayDiff(d, parse(prev))}日ぶり` : "初めての記録"));
+      const x = el("button", "rm", "×"); x.type = "button"; x.setAttribute("aria-label", `${jpY(d)}の記録を削除`);
       x.addEventListener("click", () => {
         const snap = snapshot(); it.log = it.log.filter(v => v !== s); save(); render();
-        toast(`${jp(d)}の記録を消しました。`, snap);
+        toast(`${jp(d)}の記録を削除しました。`, snap);
       });
       li.append(x); ul.append(li);
     });
@@ -214,7 +214,7 @@
     e.preventDefault();
     const v = $("d-date").value, err = $("d-date-err"); err.textContent = "";
     if (!isYmd(v)) { err.textContent = "日付を選んでください。"; return; }
-    if (v > ymd(new Date())) { err.textContent = "先の日付は記録できません。今日までの日を選んでください。"; return; }
+    if (v > ymd(new Date())) { err.textContent = "未来の日付は記録できません。今日までの日付を選んでください。"; return; }
     const it = st.items.find(i => i.id === openId);
     if (it.log.includes(v)) { err.textContent = "その日は、もう記録してあります。"; return; }
     markDone(openId, v);
@@ -245,7 +245,7 @@
     const blob = new Blob([JSON.stringify({ app: "itsu", version: 1, exported: new Date().toISOString(), items: st.items }, null, 1)], { type: "application/json" });
     const a = el("a"); a.href = URL.createObjectURL(blob); a.download = `itsu-${ymd(new Date())}.json`;
     document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
-    toast("ファイルに書き出しました。新しい端末で「ファイルを読みこむ」から開いてください。");
+    toast("ファイルに書き出しました。新しい端末で「ファイルを読み込む」から開いてください。");
   });
   $("import").addEventListener("change", async e => {
     const f = e.target.files[0]; e.target.value = ""; $("move-err").textContent = "";
@@ -256,8 +256,8 @@
       if (raw.app && raw.app !== "itsu") throw 0;
       const v = valid(raw); if (!v || (!v.items.length && raw.items.length)) throw 0;
       const snap = snapshot(); st = v; save(); render();
-      toast(`${v.items.length}件の項目を読みこみました。`, snap);
-    } catch (x) { $("move-err").textContent = "読みこめませんでした。このアプリで書き出したファイル（.json）を選んでください。"; }
+      toast(`${v.items.length}件の項目を読み込みました。`, snap);
+    } catch (x) { $("move-err").textContent = "読み込めませんでした。このアプリで書き出したファイル（.json）を選んでください。"; }
   });
 
   // ---- トースト ----

@@ -10,7 +10,7 @@ code: `function sum(prices) {
 }`,
 fix: `  for (let i = 0; i < prices.length; i++) {`,
 why: "「<=」だと i が prices.length まで進み、最後に存在しない prices[prices.length]（undefined）を足します。数値に undefined を足すと NaN になり、合計全体が NaN になります。",
-incident: "カートの合計金額や売上レポートに「NaN」と表示される。境界が1つずれる「off-by-one」は、もっとも多いバグの一つです。" },
+incident: "カートの合計金額や売上レポートに「NaN」と表示される。境界が1つずれる「off-by-one」は、最も多いバグの一つです。" },
 
 { id: "js-sort", lang: "JavaScript", title: "最高点を取り出す", bug: 1,
 code: `const scores = [10, 9, 100, 25];
@@ -19,7 +19,7 @@ const best = scores[scores.length - 1];
 console.log("最高点:", best);`,
 fix: `scores.sort((a, b) => a - b);`,
 why: "比較関数を渡さない sort() は、要素を文字列にして辞書順に並べます。結果は [10, 100, 25, 9] になり、最後の要素は 9 です。",
-incident: "ランキングや価格の並べ替えで、100 が 25 より前に来るなど順位が崩れる。テストのデータが1桁だけだと気づけません。" },
+incident: "ランキングや価格の並べ替えで、100 が 25 より前に来るなど順位が崩れる。テストのデータが1桁だけだと気付けません。" },
 
 { id: "js-assign", lang: "JavaScript", title: "管理者だけに削除を許す", bug: 1,
 code: `function canDelete(user) {
@@ -30,9 +30,9 @@ code: `function canDelete(user) {
 }`,
 fix: `  if (user.role === "admin") {`,
 why: "「=」は比較ではなく代入です。user.role に \"admin\" を入れ、その値（空でない文字列）が真とみなされるため、誰に対しても true を返します。元のロールまで書き換わります。",
-incident: "一般の利用者が管理者の操作をできてしまう「権限昇格」。データも書き換わるので、あとから原因を追いにくくなります。" },
+incident: "一般の利用者が管理者の操作をできてしまう「権限昇格」。データも書き換わるので、後から原因を追いにくくなります。" },
 
-{ id: "js-await", lang: "JavaScript", title: "全部保存してから完了を伝える", bug: 3,
+{ id: "js-await", lang: "JavaScript", title: "全て保存してから完了を伝える", bug: 3,
 code: `// db.save() は Promise を返す
 async function saveAll(items) {
   for (const item of items) {
@@ -142,7 +142,7 @@ isNumber("123"); // true
 isNumber("456"); // なぜか false`,
 fix: `const digits = /^\\d+$/;`,
 why: "g フラグ付きの正規表現は lastIndex（前回一致した位置）を覚えていて、test() はその続きから調べます。2回目は4文字目から探すので失敗します。",
-incident: "同じ値なのに入力チェックが通ったり弾かれたりを交互にくり返す。再現しにくい不具合として報告されます。" },
+incident: "同じ値なのに入力チェックが通ったり弾かれたりを交互に繰り返す。再現しにくい不具合として報告されます。" },
 
 { id: "js-switch", lang: "JavaScript", title: "地域ごとの送料を決める", bug: 4, ok: [4, 5],
 code: `function shippingFee(region) {
@@ -182,7 +182,7 @@ code: `function isSameTime(a, b) {
 }`,
 fix: `  return x.getTime() === y.getTime();`,
 why: "=== はオブジェクトが同じものかどうかを比べます。別々に作った Date は、中身が同じ日時でも別のオブジェクトなので、常に false になります。",
-incident: "同じ時間帯に予約が二重に入る。重複チェックが一度も働いていなかったと、あとで判明します。" },
+incident: "同じ時間帯に予約が二重に入る。重複チェックが一度も働いていなかったと、後で判明します。" },
 
 { id: "js-or-zero", lang: "JavaScript", title: "音量の設定を読む", bug: 2,
 code: `function getVolume(settings) {
@@ -208,7 +208,7 @@ const label = (d.getMonth() + 1) + "/" + d.getDate();
 show("締め切り " + label);`,
 fix: `const d = new Date(2026, 10, 9); // 端末の時刻で作る`,
 why: "\"YYYY-MM-DD\" だけの文字列は、UTC の0時として解釈されます。日本（UTC+9）では9日の9時ですが、アメリカなど UTC より遅れた地域では8日の夜になり、getDate() は 8 を返します。",
-incident: "海外の利用者にだけ、締め切りや誕生日が1日前に表示される。日本でテストしている限り気づけません。" },
+incident: "海外の利用者にだけ、締め切りや誕生日が1日前に表示される。日本でテストしている限り気付けません。" },
 
 { id: "js-fill", lang: "JavaScript", title: "3行の表を作る", bug: 0,
 code: `const rows = new Array(3).fill([]);
@@ -216,7 +216,7 @@ rows[0].push("A");
 console.log(rows[1].length); // 1`,
 fix: `const rows = Array.from({ length: 3 }, () => []);`,
 why: "fill([]) は1つの配列を作って、同じものを3か所に入れます。rows[0] に追加すると、rows[1] と rows[2] からも同じ要素が見えます。",
-incident: "1行目に入力した内容が、表のすべての行に表示される。" },
+incident: "1行目に入力した内容が、表の全ての行に表示される。" },
 
 { id: "js-arrow", lang: "JavaScript", title: "税込み価格の一覧を作る", bug: 2, ok: [1, 2],
 code: `const prices = [100, 200, 300];
@@ -226,7 +226,7 @@ const taxed = prices.map(p => {
 console.log(taxed);`,
 fix: `  return Math.round(p * 1.1);`,
 why: "アロー関数で { } を使うと、本体はブロックになります。return を書かないと undefined を返すので、結果は [undefined, undefined, undefined] です。",
-incident: "税込み価格の列がすべて空欄になる。" },
+incident: "税込み価格の列が全て空欄になる。" },
 
 { id: "py-default", lang: "Python", title: "カートに商品を入れる", bug: 0,
 code: `def add_item(item, cart=[]):
@@ -251,7 +251,7 @@ fix: `    for i in range(len(scores)):`,
 why: "range(1, n) は1から始まるので、先頭の scores[0] が足されません。Python の添字は0から始まります。",
 incident: "平均点がいつも少し低く出る。1件目のデータだけが集計から漏れます。" },
 
-{ id: "py-remove", lang: "Python", title: "\"b\" をすべて消す", bug: 1, ok: [1, 3],
+{ id: "py-remove", lang: "Python", title: "\"b\" を全て消す", bug: 1, ok: [1, 3],
 code: `users = ["a", "b", "b", "c"]
 for u in users:
     if u == "b":
@@ -278,7 +278,7 @@ code: `def notify(user):
         pass`,
 fix: `    except Exception:
         logger.exception("メールの送信に失敗しました")`,
-why: "何も指定しない except はすべての例外を受け止め、pass で何もしません。user.email の書き間違いのようなバグまで隠れ、失敗しても誰も気づきません。Ctrl+C（KeyboardInterrupt）まで止めてしまいます。",
+why: "何も指定しない except は全ての例外を受け止め、pass で何もしません。user.email の書き間違いのようなバグまで隠れ、失敗しても誰も気付きません。Ctrl+C（KeyboardInterrupt）まで止めてしまいます。",
 incident: "パスワード再設定のメールが何週間も送られていなかったのに、エラーが1件も記録されていない。" },
 
 { id: "py-input", lang: "Python", title: "年齢で購入できるか判定する", bug: 0, ok: [0, 1],
@@ -304,8 +304,8 @@ code: `seats = [[0] * 3] * 3
 seats[0][0] = 1  # 1列目の1番を予約
 print(seats)`,
 fix: `seats = [[0] * 3 for _ in range(3)]`,
-why: "外側の * 3 は、同じ内側のリストへの参照を3つ並べるだけです。1か所を変えると、3行すべてが変わって [[1, 0, 0], [1, 0, 0], [1, 0, 0]] になります。",
-incident: "1席予約しただけで、各列の1番の席がすべて埋まったように表示される。" },
+why: "外側の * 3 は、同じ内側のリストへの参照を3つ並べるだけです。1か所を変えると、3行全てが変わって [[1, 0, 0], [1, 0, 0], [1, 0, 0]] になります。",
+incident: "1席予約しただけで、各列の1番の席が全て埋まったように表示される。" },
 
 { id: "py-sql", lang: "Python", title: "名前でユーザーを探す", bug: 1, ok: [1, 2],
 code: `def find_user(cur, name):
@@ -332,7 +332,7 @@ fix: `base = name.removesuffix(".txt")  # Python 3.9 以降`,
 why: "rstrip の引数は「取り除く文字の集まり」で、文字列としての一致ではありません。末尾が '.'、't'、'x' のどれかである限り削り続けるので、結果は \"report_te\" です。",
 incident: "書き出したファイル名が途中で切れ、別のファイルを上書きしてしまう。" },
 
-{ id: "py-version", lang: "Python", title: "いちばん新しいバージョンを選ぶ", bug: 1,
+{ id: "py-version", lang: "Python", title: "最新のバージョンを選ぶ", bug: 1,
 code: `versions = ["1.9", "1.10", "1.2"]
 latest = max(versions)
 print(latest)  # 1.10 のはず`,
@@ -399,5 +399,5 @@ fix: `def log(msg, at=None):
     if at is None:
         at = datetime.now()`,
 why: "引数の既定値は、関数を定義したときに1回だけ評価されます。datetime.now() はプログラムを起動したときの時刻で固定され、何度呼んでも同じ時刻が出ます。",
-incident: "ログの時刻がすべて起動した時刻になり、障害の調査で順番を追えない。" }
+incident: "ログの時刻が全て起動した時刻になり、障害の調査で順番を追えない。" }
 ];

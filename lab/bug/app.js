@@ -84,7 +84,7 @@
       b.classList.toggle("right", ok && i === pick);
       b.setAttribute("aria-disabled", "true");
     });
-    $("ask").textContent = `あなたの答え：${pick + 1}行目`;
+    $("ask").textContent = `選んだ答え：${pick + 1}行目`;
     $("ask").classList.toggle("good", ok);
     const res = $("result"); res.hidden = false; res.classList.toggle("ok", ok);
     $("verdict").textContent = ok ? (fresh ? "正解！" : "正解済みの問題です") : `残念！バグは${cur.bug + 1}行目でした`;
@@ -94,7 +94,7 @@
     $("fix").textContent = cur.fix;
     $("incident").textContent = cur.incident;
     const rest = P.filter(p => !S.res[p.id]).length;
-    $("nextBtn").textContent = rest ? (cur.id === dailyId() ? "もう1問解く" : "次の問題") : "全問解きました！一覧へ";
+    $("nextBtn").textContent = rest ? (cur.id === dailyId() ? "もう1問解く" : "次の問題") : "全問解きました。一覧へ";
     if (fresh) $("verdict").scrollIntoView({ block: "nearest", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
   }
   $("nextBtn").addEventListener("click", () => {

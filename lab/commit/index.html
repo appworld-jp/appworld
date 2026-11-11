@@ -58,9 +58,9 @@
             </fieldset>
           </li>
           <li class="step" id="st-scope">
-            <label class="st-h" for="scope">範囲<span class="opt">なくてもOK</span></label>
+            <label class="st-h" for="scope">範囲<span class="opt">任意</span></label>
             <input id="scope" class="mono" type="text" inputmode="latin" spellcheck="false" autocapitalize="off" maxlength="30" placeholder="auth">
-            <p class="help">変えた場所を短い英語で。auth、cart、apiなど。</p>
+            <p class="help">変更した場所を短い英語で。auth、cart、apiなど。</p>
           </li>
           <li class="step" id="st-summary">
             <div class="st-row"><label class="st-h" for="summary">要約<span class="req">必須</span></label><span class="meter" id="meter" aria-live="polite"></span></div>
@@ -68,10 +68,10 @@
             <p class="help" id="sum-help">何をしたかを1行で。全角は2文字分で数えます。</p>
           </li>
           <li class="step" id="st-body">
-            <span class="st-h">本文<span class="opt">なくてもOK</span></span>
-            <label class="sub-l" for="why">なぜ変えたか</label>
+            <span class="st-h">本文<span class="opt">任意</span></span>
+            <label class="sub-l" for="why">変更の理由</label>
             <textarea id="why" rows="3" spellcheck="false" placeholder="ログインのたびにトップへ戻され、見ていたページを開き直す手間があったため。"></textarea>
-            <label class="sub-l" for="what">変えたこと（1行に1つ）</label>
+            <label class="sub-l" for="what">変更点（1行に1つ）</label>
             <textarea id="what" rows="3" spellcheck="false" placeholder="ログイン前のURLを保存して、ログイン後にそのページへ戻す&#10;戻り先は同じサイトのURLだけに限定"></textarea>
             <label class="check"><input type="checkbox" id="wrap" checked><span>72文字分で折り返す</span></label>
           </li>
@@ -81,10 +81,10 @@
               <label class="sub-l" for="break-note">何が変わるか</label>
               <textarea id="break-note" rows="2" spellcheck="false" placeholder="設定のキー名をloginUrlからauthUrlに変更"></textarea>
             </div>
-            <p class="help">使う側のコードや設定を直す必要がある変更なら、チェックします。種類に「!」が付きます。</p>
+            <p class="help">使う側のコードや設定を直す必要がある変更ならチェックを入れてください。種類に「!」が付きます。</p>
           </li>
           <li class="step" id="st-issue">
-            <label class="st-h" for="issues">関連するissue<span class="opt">なくてもOK</span></label>
+            <label class="st-h" for="issues">関連するissue<span class="opt">任意</span></label>
             <div class="issue-row">
               <input id="issues" class="mono" type="text" inputmode="numeric" spellcheck="false" placeholder="12, 34">
               <label class="sr" for="issue-kw">issueとの関係</label>
@@ -116,7 +116,7 @@
             <span class="toast" id="toast-out" role="status" aria-live="polite"></span>
           </div>
           <div class="oneline" id="oneline" hidden>
-            <p class="ol-h">1行だけなので、このまま打っても書けます</p>
+            <p class="ol-h">1行だけなので、このコマンドでもコミットできます</p>
             <code class="ol-cmd mono" id="cmd"></code>
             <button type="button" class="btn small" id="copy-cmd">コマンドをコピー</button>
           </div>
@@ -142,7 +142,7 @@
           <button type="button" class="btn primary" id="fix-run">チェックして整える</button>
           <button type="button" class="btn ghost" id="fix-sample">例を入れる</button>
         </div>
-        <p class="help">種類がなければ、「修正」「README」などの言葉から考えます。</p>
+        <p class="help">種類がなければ、「修正」「README」などの言葉から判断します。</p>
       </div>
 
       <div class="fix-out" id="fix-out" hidden>
@@ -157,7 +157,7 @@
             <select id="fix-type" class="mono"></select>
             <span class="guess" id="fix-guess"></span>
           </div>
-          <label class="sr" for="fix-dst">整えた案（そのまま直せます）</label>
+          <label class="sr" for="fix-dst">整えた案（このまま編集できます）</label>
           <textarea id="fix-dst" class="mono" rows="8" spellcheck="false" autocapitalize="off"></textarea>
           <div class="row-acts">
             <button type="button" class="btn primary" id="copy-fix">この案をコピー</button>
@@ -171,11 +171,11 @@
         </div>
       </div>
       <div class="fix-empty" id="fix-empty">
-        <p class="fe-h">こんなふうに整えます</p>
+        <p class="fe-h">整えるとこうなります</p>
         <pre class="fe-before mono" aria-label="整える前の例">ログイン画面のバグを修正しました。
 #45</pre>
         <span class="fe-arrow" aria-hidden="true">↓</span>
-        <pre class="fe-after mono" aria-label="整えたあとの例">fix: ログイン画面のバグを修正
+        <pre class="fe-after mono" aria-label="整えた後の例">fix: ログイン画面のバグを修正
 
 Refs #45</pre>
       </div>
@@ -186,7 +186,7 @@ Refs #45</pre>
   <section class="panel" role="tabpanel" id="p-hist" aria-labelledby="tab-hist" hidden>
     <div class="hist-head">
       <h2 class="sec-h">最近コピーしたメッセージ</h2>
-      <button type="button" class="btn ghost small" id="hist-clear" hidden>すべて消す</button>
+      <button type="button" class="btn ghost small" id="hist-clear" hidden>全て削除</button>
     </div>
     <ol class="hist" id="hist"></ol>
     <p class="hist-empty" id="hist-empty">まだありません。コピーしたメッセージが、新しい順に20件まで残ります。</p>
@@ -197,7 +197,7 @@ Refs #45</pre>
   <section class="panel" role="tabpanel" id="p-sheet" aria-labelledby="tab-sheet" hidden>
     <h2 class="sec-h">種類の早見表</h2>
     <ul class="sheet" id="sheet"></ul>
-    <h2 class="sec-h">書き方のきまり</h2>
+    <h2 class="sec-h">書き方の決まり</h2>
     <ol class="rules">
       <li><code>種類(範囲): 要約</code>の形で1行目を書きます。種類は小文字です。</li>
       <li>1行目は半角50文字分までが目安です（全角は2文字分）。72を超えないようにします。</li>
@@ -205,13 +205,13 @@ Refs #45</pre>
       <li>本文を書くときは、1行目のあとに空行を1行入れます。本文は72文字分で折り返します。</li>
       <li>互換性がなくなる変更は、種類に「!」を付け、最後に<code>BREAKING CHANGE: 何が変わるか</code>を書きます。</li>
       <li>issueは最後の行に<code>Refs #12</code>や<code>Closes #12</code>と書きます。</li>
-      <li>英語は命令形で書きます（added ではなく add）。日本語は文末をチームで決めて、そろえます。</li>
+      <li>英語は命令形で書きます（added ではなく add）。日本語は文末をチームで決めてそろえます。</li>
     </ol>
   </section>
   </main>
 
   <footer class="foot">
-    <p class="honest">AIは使っていません。決まったルールとひな形だけで組み立てて、チェックします。入力した文字は外に送りません。</p>
+    <p class="honest">AIは使っていません。決まったルールとひな形だけでメッセージを組み立て、チェックします。入力した内容は外部に送信しません。</p>
     <p>コピーしたメッセージと設定は、この端末にだけ保存されます。</p>
     <p>開発：App World Lab（App World 運営）</p>
     <p><a href="../">App World Lab</a></p>

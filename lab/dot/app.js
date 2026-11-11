@@ -169,7 +169,7 @@
     const cv = $("view"); cv.width = w; cv.height = h;
     cv.getContext("2d").putImageData(out, 0, 0);
     st.out = { w, h };
-    $("info").textContent = `${w}×${h}ドット・${used.size}色` + (st.dither ? "・網目あり" : "") + (st.outline ? "・ふちどりあり" : "");
+    $("info").textContent = `${w}×${h}ドット・${used.size}色` + (st.dither ? "・網目あり" : "") + (st.outline ? "・縁取りあり" : "");
     $("saveRaw").textContent = `原寸で保存（${w}×${h}）`;
     const sc = Math.max(1, Math.floor(1024 / Math.max(w, h)));
     $("saveBig").textContent = `画像で保存（${w * sc}×${h * sc}）`;

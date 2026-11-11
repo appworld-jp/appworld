@@ -23,16 +23,16 @@
   const match = (ctx, re) => ctx.tasks.filter(t => re.test(t.name));
   const RULES = [
     { id: "mtg", name: "打ち合わせ・連絡", why: "作業時間の1割ほどは、打ち合わせやチャットの返信に使われがちです。", hours: c => c.base ? R(Math.max(1, c.base * 0.10)) : 0 },
-    { id: "test", name: "テスト・動作確認", why: "作った分の2割ほどは、動かして確かめる時間が要ります。", hours: c => c.base ? R(Math.max(1, c.base * 0.20)) : 0 },
+    { id: "test", name: "テスト・動作確認", why: "作る時間の2割ほどは、動かして確かめる時間が必要です。", hours: c => c.base ? R(Math.max(1, c.base * 0.20)) : 0 },
     { id: "review", name: "見直し・確認依頼", why: "自分の見直しと、相手に確認してもらう時間です。", hours: c => c.base ? R(Math.max(0.5, c.base * 0.08)) : 0 },
-    { id: "fix", name: "修正の対応", why: "確認のあとに出る直しの時間です。ほぼ必ず発生します。", hours: c => c.base ? R(Math.max(1, c.base * 0.15)) : 0 },
+    { id: "fix", name: "修正の対応", why: "確認後に出る修正の時間です。ほぼ必ず発生します。", hours: c => c.base ? R(Math.max(1, c.base * 0.15)) : 0 },
     { id: "release", name: "リリース作業", why: "公開の手順、最終確認、公開後の見守りの時間です。", hours: c => c.base ? 2 : 0 },
-    { id: "docs", name: "説明書・引き継ぎ資料", why: "作業が3つ以上あるので、使い方や構成のメモを残す時間です。", hours: c => c.tasks.length >= 3 ? R(Math.max(1, c.base * 0.05)) : 0 },
+    { id: "docs", name: "説明書・引き継ぎ資料", why: "作業が3つ以上あるので、使い方や構成をまとめる時間です。", hours: c => c.tasks.length >= 3 ? R(Math.max(1, c.base * 0.05)) : 0 },
     { id: "design", name: "デザインの確認・修正のやり取り", why: "デザインや画面の作業があるので、見た目の調整のやり取りを見込みます。", hours: c => { const m = match(c, /デザイン|画面|UI|ＵＩ|レイアウト|ロゴ|バナー/); return m.length ? R(Math.max(1, m.reduce((a, t) => a + t.h, 0) * 0.15)) : 0; } },
     { id: "integ", name: "つなぎ込みの確認（結合テスト）", why: "APIや外部との連携があるので、つないだときの確認を見込みます。", hours: c => { const m = match(c, /API|ＡＰＩ|連携|外部|決済|ログイン|認証|メール/i); return m.length ? R(Math.max(2, m.reduce((a, t) => a + t.h, 0) * 0.2)) : 0; } },
     { id: "device", name: "スマホ・ブラウザごとの表示確認", why: "画面を作る作業があるので、端末ごとの見え方を確かめます。", hours: c => match(c, /画面|ページ|サイト|表示|レスポンシブ|スマホ|フォーム/).length ? 2 : 0 },
     { id: "migrate", name: "データ移行のリハーサル", why: "データ移行があるので、本番前の予行演習を見込みます。", hours: c => match(c, /移行|インポート|取り込み|データ移/).length ? 3 : 0 },
-    { id: "env", name: "本番環境の準備・設定", why: "公開やサーバーの作業があるので、本番環境づくりの時間です。", hours: c => match(c, /公開|サーバー|サーバ|ドメイン|本番|デプロイ|インフラ/).length ? 3 : 0 },
+    { id: "env", name: "本番環境の準備・設定", why: "公開やサーバーの作業があるので、本番環境を用意する時間です。", hours: c => match(c, /公開|サーバー|サーバ|ドメイン|本番|デプロイ|インフラ/).length ? 3 : 0 },
     { id: "store", name: "ストア審査の対応", why: "アプリの申請があるので、審査での指摘への対応を見込みます。", hours: c => match(c, /申請|ストア|審査|App Store|Google Play/i).length ? 4 : 0 }
   ];
 
@@ -100,8 +100,8 @@
       const foot = document.createElement("div"); foot.className = "task-foot";
       const out = document.createElement("span"); out.className = "hours-out"; out.dataset.i = i;
       const del = document.createElement("button"); del.type = "button"; del.className = "del"; del.textContent = "✕";
-      del.setAttribute("aria-label", `作業${i + 1}を消す`);
-      del.addEventListener("click", () => { if ((t.name || "").trim() && !confirm(`「${t.name.trim()}」を消しますか？`)) return; st.tasks.splice(i, 1); save(); renderTasks(); update(); });
+      del.setAttribute("aria-label", `作業${i + 1}を削除`);
+      del.addEventListener("click", () => { if ((t.name || "").trim() && !confirm(`「${t.name.trim()}」を削除しますか？`)) return; st.tasks.splice(i, 1); save(); renderTasks(); update(); });
       foot.append(out, del);
       li.append(name, sz, foot); ol.append(li);
     });
@@ -112,7 +112,7 @@
     const all = $("tasks").querySelectorAll(".name"); all[all.length - 1].focus();
   });
   $("sample").addEventListener("click", () => {
-    if (st.tasks.some(t => (t.name || "").trim()) && !confirm("いまの作業を消して、例に入れかえますか？")) return;
+    if (st.tasks.some(t => (t.name || "").trim()) && !confirm("今の作業を消して、例に入れ替えますか？")) return;
     st.proj = SAMPLE.proj; st.tasks = SAMPLE.tasks.map(t => Object.assign({}, t)); st.off = [];
     $("proj").value = st.proj; save(); renderTasks(); update();
   });
@@ -194,7 +194,7 @@
     row("消費税（10%）", yen(c.tax));
     $("grand").textContent = yen(c.grand);
     const days = c.total / 6;
-    $("grand-sub").textContent = c.total ? `1日6時間で、約${Math.ceil(days * 2) / 2}日分。金額は100円未満を切り上げています。` : "作業を追加すると、ここに合計が出ます。";
+    $("grand-sub").textContent = c.total ? `1日6時間なら約${Math.ceil(days * 2) / 2}日分です。金額は100円未満を切り上げています。` : "作業を追加すると、ここに合計が出ます。";
   }
   function table(c) {
     const role = roleName(st.role) || "";

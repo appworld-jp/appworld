@@ -175,15 +175,15 @@
   }
 
   const META = {
-    secret: { sev: "high", title: "秘密情報らしき文字列", why: "鍵やパスワードがコードに入ると、履歴に残り続けます。環境変数や秘密情報の管理機能に移しましょう。", check: "鍵・パスワードがコードに入っていない", comment: h => `${h.label}らしき値が直接書かれているようです。公開されると取り消せないので、環境変数などに移し、もし本物なら鍵の作り直しも検討してください。` },
-    debug: { sev: "warn", title: "デバッグ出力の消し忘れ", why: "確認用の出力は、本番でログを汚したり情報を漏らしたりします。", check: "デバッグ用の出力を消した", comment: () => "デバッグ用の出力が残っているようです。不要なら消して、必要ならロガーを使いませんか？" },
-    todo: { sev: "info", title: "TODO・FIXMEの追加", why: "あとでやることは、課題として登録しておくと忘れません。", check: "追加したTODO・FIXMEを課題に登録した", comment: h => `${h.label}が追加されています。このプルリクエストで対応しますか？ あとに回す場合は、課題を作ってリンクを書いておくと追いやすいです。` },
-    bigfn: { sev: "warn", title: `長い関数（${FN_LIMIT}行超）`, why: "長い関数は読みにくく、テストもしにくくなります。役割ごとに分けられないか見てみましょう。", check: "長い関数を分けられないか検討した", comment: h => `\`${h.name}\`が${h.len}行あります。役割ごとに小さな関数に分けると、読みやすく、テストもしやすくなりそうです。` },
-    bigfile: { sev: "info", title: `大きな変更（1ファイル${FILE_LIMIT}行以上）`, why: "変更が大きいと、レビューの見落としが増えます。", check: "大きな変更は分けられないか検討した", comment: () => "このファイルの変更が大きいので、いくつかのプルリクエストに分けられると見やすいです。" },
-    notest: { sev: "warn", title: "テストのない変更", why: "ふるまいを変えたなら、テストも足すか直すのが安全です。", check: "変更したソースにテストを足した（または不要な理由を書いた）", comment: () => "変更に対応するテストが見当たりません。テストを足すか、不要ならその理由を説明に書いてもらえると助かります。" },
-    lesstest: { sev: "info", title: "テストが減っている", why: "テストを消すときは、理由を説明に書いておきましょう。", check: "テストを減らした理由を説明に書いた", comment: () => "テストが減っています。消した理由を教えてください。" },
-    commented: { sev: "info", title: "コメントアウトされたコード", why: "使わないコードは消しても履歴に残ります。コメントで残すと読み手が迷います。", check: "コメントアウトしたコードを消した", comment: h => `コメントアウトされたコードが${h.count > 1 ? `${h.count}行` : ""}あります。不要なら消してしまいませんか？（履歴には残ります）` },
-    magic: { sev: "info", title: "名前のない数値", why: "数値に名前をつけると、意味と変える場所がはっきりします。", check: "数値に名前（定数）をつけた", comment: h => `\`${h.nums.join("`、`")}\`に名前をつけて定数にすると、何の数か伝わりやすく、変えるときも楽です。` }
+    secret: { sev: "high", title: "秘密情報らしき文字列", why: "鍵やパスワードがコードに入ると、履歴に残り続けます。環境変数や秘密情報の管理機能に移すのが安全です。", check: "鍵・パスワードがコードに入っていない", comment: h => `${h.label}らしき値が直接書かれているようです。公開されると取り消せないので、環境変数などに移し、もし本物なら鍵の作り直しも検討してください。` },
+    debug: { sev: "warn", title: "デバッグ出力の消し忘れ", why: "確認用の出力が本番に残ると、ログが読みにくくなったり、情報が漏れたりします。", check: "デバッグ用の出力を消した", comment: () => "デバッグ用の出力が残っているようです。不要なら削除し、必要ならロガーに置き換えませんか？" },
+    todo: { sev: "info", title: "TODO・FIXMEの追加", why: "後でやることは、課題として登録しておくと忘れません。", check: "追加したTODO・FIXMEを課題に登録した", comment: h => `${h.label}が追加されています。このプルリクエストで対応しますか？ 後回しにする場合は、課題を作ってリンクを書いておくと追いやすいです。` },
+    bigfn: { sev: "warn", title: `長い関数（${FN_LIMIT}行超）`, why: "長い関数は読みにくく、テストもしにくくなります。役割ごとに分けられないか確認してください。", check: "長い関数を分けられないか検討した", comment: h => `\`${h.name}\`が${h.len}行あります。役割ごとに小さな関数に分けると、読みやすく、テストもしやすくなりそうです。` },
+    bigfile: { sev: "info", title: `大きな変更（1ファイル${FILE_LIMIT}行以上）`, why: "変更が大きいと、レビューの見落としが増えます。", check: "大きな変更は分けられないか検討した", comment: () => "このファイルの変更が大きいので、いくつかのプルリクエストに分けるとレビューしやすくなります。" },
+    notest: { sev: "warn", title: "テストのない変更", why: "動作を変えたなら、テストも追加・修正するのが安全です。", check: "変更したソースにテストを追加した（または不要な理由を書いた）", comment: () => "変更に対応するテストが見当たりません。テストを追加するか、不要ならその理由を説明に書いてもらえると助かります。" },
+    lesstest: { sev: "info", title: "テストが減っている", why: "テストを消すときは、理由を説明に書いておくと親切です。", check: "テストを減らした理由を説明に書いた", comment: () => "テストが減っています。消した理由を教えてください。" },
+    commented: { sev: "info", title: "コメントアウトされたコード", why: "使わないコードは消しても履歴に残ります。コメントで残すと読み手が迷います。", check: "コメントアウトしたコードを消した", comment: h => `コメントアウトされたコードが${h.count > 1 ? `${h.count}行` : ""}あります。不要なら削除しませんか？（履歴には残ります）` },
+    magic: { sev: "info", title: "名前のない数値", why: "数値に名前を付けると、意味と変更する場所がはっきりします。", check: "数値に名前（定数）を付けた", comment: h => `\`${h.nums.join("`、`")}\`に名前を付けて定数にすると、何の数か伝わりやすく、変えるときも楽です。` }
   };
   const ORDER = ["secret", "debug", "notest", "bigfn", "bigfile", "todo", "commented", "magic", "lesstest"];
   const SEV = { high: "要対応", warn: "注意", info: "確認" };
@@ -202,7 +202,7 @@
     const bySev = { high: 0, warn: 0, info: 0 };
     ORDER.forEach(k => { bySev[META[k].sev] += F[k].length; });
     const v = $("verdict"); v.className = "verdict " + (bySev.high ? "high" : bySev.warn ? "warn" : "ok");
-    v.textContent = bySev.high ? `要対応${bySev.high}件。まず、ここから直しましょう。` : bySev.warn ? `要対応はなし。注意${bySev.warn}件を見ておきましょう。` : nFind ? `確認${bySev.info}件。軽く見ておけば大丈夫です。` : "気になる行はありませんでした。";
+    v.textContent = bySev.high ? `要対応${bySev.high}件。まずここから直してください。` : bySev.warn ? `要対応はありません。注意${bySev.warn}件を確認してください。` : nFind ? `確認${bySev.info}件。軽く見ておけば大丈夫です。` : "気になる行はありませんでした。";
 
     const st = $("stats"); st.replaceChildren();
     [["", files.length, "ファイル"], ["add", "+" + add, "追加行"], ["del", "−" + del, "削除行"], [nFind ? "warn" : "", nFind, "見つかったこと"]].forEach(([c, v, l]) => {
@@ -292,7 +292,7 @@
     if (!txt.trim() || !files.length) {
       $("welcome").hidden = false; $("report").hidden = true;
       $("stat-line").textContent = "";
-      $("err").textContent = txt.trim() ? "diffとして読めませんでした。「diff --git」や「@@」で始まる行も含めて貼ってください。" : "diffが空です。git diffの出力を貼ってから押してください。";
+      $("err").textContent = txt.trim() ? "diffとして読み込めませんでした。「diff --git」や「@@」で始まる行も含めて貼ってください。" : "git diffの出力を貼ってから「チェックする」を押してください。";
       $("diff").setAttribute("aria-invalid", "true"); $("diff").focus(); return;
     }
     $("err").textContent = ""; $("diff").removeAttribute("aria-invalid");

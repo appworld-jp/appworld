@@ -2,7 +2,7 @@
 <html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>ごみの日カレンダー</title>
-<meta name="description" content="お住まいの地域のごみの収集日を一度登録すれば、今日と明日に出すごみ、月のカレンダー、種類ごとの次の収集日がすぐにわかります。">
+<meta name="description" content="お住まいの地域のごみの収集日を一度登録すれば、今日と明日に出すごみ、月のカレンダー、種類ごとの次の収集日がすぐに分かります。">
 <meta name="theme-color" content="#1d5a3a">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="manifest" href="manifest.webmanifest">
@@ -16,7 +16,7 @@
   <div class="board-in">
     <p class="area" id="area-label" hidden></p>
     <h1>ごみの日カレンダー</h1>
-    <nav class="tabs" aria-label="画面の切りかえ" id="tabs" hidden>
+    <nav class="tabs" aria-label="画面の切り替え" id="tabs" hidden>
       <button type="button" class="tab" id="tab-cal" aria-current="page">カレンダー</button>
       <button type="button" class="tab" id="tab-rules">収集日の設定</button>
     </nav>
@@ -26,15 +26,15 @@
 <main class="wrap">
   <!-- はじめて -->
   <section class="start" id="start" aria-labelledby="h-start" hidden>
-    <h2 id="h-start">収集日を一度登録すれば、<br>今日出すごみがすぐわかります。</h2>
-    <p>よくある分け方から始めて、曜日をお住まいの地域に合わせるのがかんたんです。手元に自治体のごみカレンダーを用意してください。</p>
+    <h2 id="h-start">収集日を一度登録すれば、<br>今日出すごみがすぐ分かります。</h2>
+    <p>よくある分け方から始めて、曜日をお住まいの地域に合わせるのが簡単です。手元に自治体のごみカレンダーを用意してください。</p>
     <ol class="start-demo" aria-label="例">
       <li><span class="bdg c0">燃</span>燃えるごみ<b>毎週 月・木</b></li>
       <li><span class="bdg c3">プ</span>プラスチック<b>毎週 水</b></li>
       <li><span class="bdg c4">缶</span>びん・缶<b>第1・第3 金</b></li>
     </ol>
     <div class="start-btns">
-      <button type="button" class="btn main" id="start-preset">よくある分け方ではじめる</button>
+      <button type="button" class="btn main" id="start-preset">よくある分け方で始める</button>
       <button type="button" class="btn" id="start-blank">自分で1つずつ登録する</button>
     </div>
   </section>
@@ -73,7 +73,7 @@
   <!-- 設定 -->
   <section id="view-rules" aria-labelledby="h-rules" hidden>
     <h2 id="h-rules" class="sec">収集日の設定</h2>
-    <p class="hint" id="rules-hint">自治体のごみカレンダーを見ながら、曜日を合わせてください。変えた内容は、すぐに保存されます。</p>
+    <p class="hint" id="rules-hint">自治体のごみカレンダーを見ながら、曜日を合わせてください。変更はすぐに保存されます。</p>
     <div class="kinds" id="kinds"></div>
 
     <div class="add-kind">
@@ -108,10 +108,10 @@
 
     <section class="opt" aria-labelledby="h-move">
       <h3 id="h-move" class="sec2">機種変更のとき</h3>
-      <p class="hint">設定はこの端末の中だけにあります。新しい端末へは、ファイルに書き出して読みこんでください。</p>
+      <p class="hint">設定はこの端末の中にだけあります。新しい端末へ移すときは、ファイルに書き出してから読み込んでください。</p>
       <div class="row wrap-row">
         <button type="button" class="btn" id="export">ファイルに書き出す</button>
-        <label class="btn file">ファイルを読みこむ<input type="file" id="import" accept="application/json,.json"></label>
+        <label class="btn file">ファイルを読み込む<input type="file" id="import" accept="application/json,.json"></label>
       </div>
       <p class="ferr" id="move-err" role="alert"></p>
     </section>

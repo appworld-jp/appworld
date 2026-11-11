@@ -2,7 +2,7 @@
 <html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>立て替え精算</title>
-<meta name="description" content="旅行や飲み会で立て替えたお金を入れるだけで、だれがだれにいくら払えばいいかを、少ない回数の送金で計算します。LINEに貼れるまとめ文もコピーできます。">
+<meta name="description" content="旅行や飲み会で立て替えたお金を入れるだけで、誰が誰にいくら払えばよいかを、なるべく少ない送金回数で計算します。LINEに貼れるまとめ文もコピーできます。">
 <meta name="theme-color" content="#24324f">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="manifest" href="manifest.webmanifest">
@@ -17,24 +17,24 @@
   <section id="home" aria-labelledby="h-home" hidden>
     <header class="top">
       <h1 id="h-home">立て替え精算</h1>
-      <p class="lead">立て替えた分を入れるだけ。<br>だれがだれにいくら払うか、すぐに出ます。</p>
+      <p class="lead">立て替えた分を入れるだけ。<br>誰が誰にいくら払うか、すぐに出ます。</p>
     </header>
     <form class="new" id="new-form" novalidate>
       <label for="new-name">新しい精算</label>
-      <div class="row"><input id="new-name" maxlength="30" placeholder="箱根旅行" autocomplete="off" aria-describedby="new-err"><button type="submit" class="btn main">つくる</button></div>
+      <div class="row"><input id="new-name" maxlength="30" placeholder="箱根旅行" autocomplete="off" aria-describedby="new-err"><button type="submit" class="btn main">作成</button></div>
       <p class="ferr" id="new-err"></p>
     </form>
     <ul class="events" id="events"></ul>
     <div class="first" id="first">
-      <p>はじめての方は、例で使い方を見てみてください。</p>
+      <p>初めての方は、例で使い方を確認できます。</p>
       <button type="button" class="btn" id="sample">例を見る（3人の旅行）</button>
     </div>
     <section class="move" aria-labelledby="h-move">
       <h2 id="h-move" class="sec">機種変更のとき</h2>
-      <p class="hint">記録はこの端末の中だけにあります。新しい端末へは、ファイルに書き出して読みこんでください。</p>
+      <p class="hint">記録はこの端末の中にだけあります。新しい端末へ移すときは、ファイルに書き出してから読み込んでください。</p>
       <div class="row wrap">
         <button type="button" class="btn ghost" id="export">ファイルに書き出す</button>
-        <label class="btn ghost file">ファイルを読みこむ<input type="file" id="import" accept="application/json,.json"></label>
+        <label class="btn ghost file">ファイルを読み込む<input type="file" id="import" accept="application/json,.json"></label>
       </div>
       <p class="ferr" id="move-err" role="alert"></p>
     </section>
@@ -45,7 +45,7 @@
     <header class="ev-top">
       <button type="button" class="back" id="back">‹ 一覧</button>
       <h1 id="ev-name" class="ev-name"></h1>
-      <button type="button" class="link small" id="ev-rename">名前を変える</button>
+      <button type="button" class="link small" id="ev-rename">名前を変更</button>
     </header>
     <form class="rename" id="rename-form" hidden novalidate>
       <label class="vh" for="rename-in">精算の名前</label>
@@ -58,7 +58,7 @@
       <ul class="members" id="members"></ul>
       <form class="row" id="mem-form" novalidate>
         <label class="vh" for="mem-name">メンバーの名前</label>
-        <input id="mem-name" maxlength="12" placeholder="さとう" autocomplete="off" aria-describedby="mem-err">
+        <input id="mem-name" maxlength="12" placeholder="佐藤" autocomplete="off" aria-describedby="mem-err">
         <button type="submit" class="btn">追加</button>
       </form>
       <p class="ferr" id="mem-err"></p>
@@ -69,12 +69,12 @@
       <form class="pay" id="pay-form" novalidate>
         <div class="f2">
           <label class="fld"><span>金額</span><span class="yen"><input id="p-amount" inputmode="numeric" autocomplete="off" placeholder="12,000" aria-describedby="p-amount-err"></span></label>
-          <label class="fld"><span>内容（なくても可）</span><input id="p-what" maxlength="24" autocomplete="off" placeholder="旅館の夕食"></label>
+          <label class="fld"><span>内容（任意）</span><input id="p-what" maxlength="24" autocomplete="off" placeholder="旅館の夕食"></label>
         </div>
         <p class="ferr" id="p-amount-err"></p>
         <fieldset class="fs"><legend>払った人</legend><div class="pick" id="p-by" role="radiogroup" aria-label="払った人"></div></fieldset>
         <p class="ferr" id="p-by-err"></p>
-        <fieldset class="fs"><legend>だれの分？</legend>
+        <fieldset class="fs"><legend>誰の分？</legend>
           <div class="pick" id="p-for"></div>
           <div class="for-tools"><button type="button" class="link small" id="p-all">全員</button><label class="chk"><input type="checkbox" id="p-weight"> 割合を変える（先輩多めなど）</label></div>
           <div class="weights" id="p-weights" hidden></div>
@@ -90,12 +90,12 @@
       <h2 id="h-res" class="sec"><span class="no">3</span>精算</h2>
       <div id="res-body" aria-live="polite"></div>
       <details class="opts">
-        <summary>端数のあつかい</summary>
+        <summary>端数の扱い</summary>
         <div class="opt-grid">
           <label class="fld"><span>送金の単位</span><select id="o-unit"><option value="1">1円単位</option><option value="10">10円単位</option><option value="100">100円単位</option></select></label>
-          <label class="fld"><span>端数をもつ人</span><select id="o-absorb"></select></label>
+          <label class="fld"><span>端数を持つ人</span><select id="o-absorb"></select></label>
         </div>
-        <p class="hint">送金額を単位にそろえて、出た差は「端数をもつ人」がまとめて引き受けます。「おまかせ」は、いちばん多く受けとる人です。</p>
+        <p class="hint">送金額を単位にそろえて、出た差は「端数を持つ人」がまとめて引き受けます。「おまかせ」は、一番多く受け取る人です。</p>
       </details>
       <h3 class="sec2">LINEに貼る</h3>
       <textarea id="summary" readonly rows="8" aria-label="まとめ文"></textarea>

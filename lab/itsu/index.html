@@ -2,7 +2,7 @@
 <html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>いつやった？帳</title>
-<meta name="description" content="エアコンのフィルターやシーツの洗濯など、ときどきやる家事を「今日やった」で記録。次はいつか、どれくらい過ぎているかがひと目でわかります。">
+<meta name="description" content="エアコンのフィルターやシーツの洗濯など、時々やる家事を「今日やった」で記録。次はいつか、どれくらい過ぎているかが一目で分かります。">
 <meta name="theme-color" content="#f4eedf" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#1d1b17" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
@@ -19,7 +19,7 @@
       <h1>いつやった？<span class="cho">帳</span></h1>
       <p class="today" id="today"></p>
     </div>
-    <p class="lead"><span>やったら押すだけ。</span><span>次はいつか、すぐにわかります。</span></p>
+    <p class="lead"><span>やったら押すだけ。</span><span>次はいつか、すぐに分かります。</span></p>
     <p class="tally" id="tally" aria-live="polite" hidden></p>
   </header>
 
@@ -31,14 +31,14 @@
 
   <section class="add" id="add" aria-labelledby="h-add">
     <h2 id="h-add" class="sec">よくある項目から選ぶ</h2>
-    <p class="hint" id="add-hint">気になるものを選んで「追加する」を押してください。めやすは、あとから変えられます。</p>
+    <p class="hint" id="add-hint">気になるものを選んで「追加する」を押してください。目安は後から変えられます。</p>
     <div class="presets" id="presets" role="group" aria-labelledby="h-add"></div>
     <div class="add-row"><button type="button" class="btn ink" id="add-presets" disabled>追加する</button><span class="pcount" id="pcount" aria-live="polite"></span></div>
 
-    <h3 class="sec2">自分で入れる</h3>
+    <h3 class="sec2">自分で入力</h3>
     <form class="custom" id="custom" novalidate>
       <label class="f-name"><span>項目</span><input id="c-name" maxlength="30" placeholder="ベランダの掃除" aria-describedby="c-err" autocomplete="off"></label>
-      <div class="f-every"><span id="c-every-l">めやす</span>
+      <div class="f-every"><span id="c-every-l">目安</span>
         <div class="every" role="group" aria-labelledby="c-every-l">
           <input id="c-n" type="text" inputmode="numeric" value="1" aria-label="数" aria-describedby="c-err">
           <select id="c-unit" aria-label="単位"><option value="d">日</option><option value="w">週間</option><option value="m" selected>か月</option></select>
@@ -53,10 +53,10 @@
 
   <section class="move" aria-labelledby="h-move">
     <h2 id="h-move" class="sec">機種変更のとき</h2>
-    <p class="hint">記録はこの端末の中だけにあります。新しい端末へは、ファイルに書き出して読みこんでください。</p>
+    <p class="hint">記録はこの端末の中にだけあります。新しい端末へ移すときは、ファイルに書き出してから読み込んでください。</p>
     <div class="move-row">
       <button type="button" class="btn ghost" id="export">ファイルに書き出す</button>
-      <label class="btn ghost file">ファイルを読みこむ<input type="file" id="import" accept="application/json,.json"></label>
+      <label class="btn ghost file">ファイルを読み込む<input type="file" id="import" accept="application/json,.json"></label>
     </div>
     <p class="ferr" id="move-err" role="alert"></p>
   </section>
@@ -80,10 +80,10 @@
   <h3 class="sec2">これまでの記録</h3>
   <ul class="hist" id="d-hist"></ul>
   <details class="d-edit">
-    <summary>名前とめやすを変える</summary>
+    <summary>名前と目安を変更</summary>
     <form id="d-edit" novalidate>
       <label class="f-name"><span>項目</span><input id="e-name" maxlength="30" aria-describedby="e-err" autocomplete="off"></label>
-      <div class="every" role="group" aria-label="めやす">
+      <div class="every" role="group" aria-label="目安">
         <input id="e-n" type="text" inputmode="numeric" aria-label="数" aria-describedby="e-err">
         <select id="e-unit" aria-label="単位"><option value="d">日</option><option value="w">週間</option><option value="m">か月</option></select>
         <span>ごと</span>

@@ -2,7 +2,7 @@
 <html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>ドット絵メーカー</title>
-<meta name="description" content="写真を選ぶだけで、昔のゲーム風のドット絵になります。細かさや色づかいを変えて、画像で保存できます。">
+<meta name="description" content="写真を選ぶだけで、昔のゲーム風のドット絵になります。細かさや配色を変えて、画像で保存できます。">
 <meta name="theme-color" content="#0B0A14">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="manifest" href="manifest.webmanifest">
@@ -39,11 +39,11 @@
     <div class="win menu">
       <h2 class="mh">仕上がり</h2>
       <div class="opt"><span class="ol" id="szL">細かさ<small>（数字が大きいほど細かい）</small></span><div class="seg" id="sizeSeg" role="group" aria-labelledby="szL"></div></div>
-      <div class="opt"><span class="ol" id="palL">色づかい</span><div class="seg col" id="palSeg" role="group" aria-labelledby="palL"></div></div>
+      <div class="opt"><span class="ol" id="palL">配色</span><div class="seg col" id="palSeg" role="group" aria-labelledby="palL"></div></div>
       <div class="opt" id="cntOpt"><label class="ol" for="cnt">色の数：<output id="cntV" for="cnt">8</output>色</label><input type="range" id="cnt" min="2" max="16" value="8"></div>
       <div class="opt toggles">
         <label class="tg"><input type="checkbox" id="dither"><span>網目でグラデーションを出す</span></label>
-        <label class="tg"><input type="checkbox" id="outline"><span>ふちどりをつける</span></label>
+        <label class="tg"><input type="checkbox" id="outline"><span>縁取りを付ける</span></label>
       </div>
     </div>
 

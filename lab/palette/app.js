@@ -32,11 +32,11 @@
     if (h < 12 || h >= 345) base = "赤"; else if (h < 40) base = "橙"; else if (h < 65) base = "黄";
     else if (h < 85) base = "黄緑"; else if (h < 155) base = "緑"; else if (h < 185) base = "青緑"; else if (h < 205) base = "水色";
     else if (h < 250) base = "青"; else if (h < 280) base = "青紫"; else if (h < 320) base = "紫"; else base = "赤紫";
-    if ((base === "橙" || base === "赤" || base === "黄") && l < 0.42 && s < 0.9) return l < 0.22 ? "こげ茶" : "茶色";
+    if ((base === "橙" || base === "赤" || base === "黄") && l < 0.42 && s < 0.9) return l < 0.22 ? "焦げ茶" : "茶色";
     if (base === "水色" && l < 0.45) base = "青";
     if ((base === "赤" || base === "赤紫") && l > 0.7) return "ピンク";
     let mod = "";
-    if (l > 0.8) mod = "淡い"; else if (l < 0.25) mod = "暗い"; else if (s < 0.4) mod = "くすんだ"; else if (s > 0.7 && l > 0.38 && l < 0.62) mod = "あざやかな";
+    if (l > 0.8) mod = "淡い"; else if (l < 0.25) mod = "暗い"; else if (s < 0.4) mod = "くすんだ"; else if (s > 0.7 && l > 0.38 && l < 0.62) mod = "鮮やかな";
     return mod + base;
   }
 

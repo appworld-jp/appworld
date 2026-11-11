@@ -31,7 +31,7 @@
     <button type="button" class="primary" id="startBtn">さんぽに出かける</button>
     <button type="button" class="primary home" id="stopBtn" hidden>ただいま</button>
     <button type="button" class="ghost" id="cancelBtn" hidden>取り消す</button>
-    <button type="button" class="textbtn" id="manualBtn">歩いたあとで記録する</button>
+    <button type="button" class="textbtn" id="manualBtn">歩いた後で記録する</button>
   </section>
 
   <form class="sheet" id="sheet" hidden aria-labelledby="sheetTitle">
@@ -42,8 +42,8 @@
     </div>
     <fieldset><legend>見たもの（いくつでも）</legend><div class="tags" id="fTags"></div></fieldset>
     <fieldset><legend>気分</legend><div class="moods" id="fMood"></div></fieldset>
-    <label class="check"><input type="checkbox" id="fTheme"><span>今日のテーマもできた<span class="thm" id="fThemeTxt"></span></span></label>
-    <label>ひとこと（140字まで）<textarea id="fNote" maxlength="140" rows="3" placeholder="例：川沿いのイチョウが黄色くなりはじめていた。"></textarea></label>
+    <label class="check"><input type="checkbox" id="fTheme"><span>今日のテーマを達成した<span class="thm" id="fThemeTxt"></span></span></label>
+    <label>ひとこと（140字まで）<textarea id="fNote" maxlength="140" rows="3" placeholder="例：川沿いのイチョウが黄色くなり始めていた。"></textarea></label>
     <p class="err" id="fErr" role="alert"></p>
     <div class="row"><button type="submit" class="primary small">記録する</button><button type="button" class="ghost" id="fCancel">キャンセル</button></div>
   </form>
@@ -63,7 +63,7 @@
   <section class="card" aria-labelledby="jTitle">
     <h2 id="jTitle">さんぽ日記</h2>
     <ol class="journal" id="journal"></ol>
-    <p class="empty" id="jEmpty">歩いた日の記録が、ここに日記のように並びます。まずは家のまわりを10分だけ歩いてみませんか？</p>
+    <p class="empty" id="jEmpty">歩いた日の記録が、ここに日記のように並びます。まずは家の周りを10分だけ歩いてみませんか？</p>
   </section>
 
   <footer class="foot">

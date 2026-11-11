@@ -136,7 +136,7 @@
         if (d) {
           const n = Math.round((d - today) / 864e5);
           li.append(el("span", "nd", md(d)), el("span", "nn" + (n <= 1 ? " soon" : ""), n === 0 ? "今日" : n === 1 ? "明日" : `あと${n}日`));
-        } else li.append(el("span", "nd muted", k.rules.some(r => r.t === "d") ? "申しこんだ日を登録してください" : "予定がありません"));
+        } else li.append(el("span", "nd muted", k.rules.some(r => r.t === "d") ? "申し込んだ日を登録してください" : "予定がありません"));
         nl.append(li);
       });
 
@@ -231,7 +231,7 @@
       k.name = v; save(); renderRules();
     });
     nmL.append(nm);
-    const chL = el("label", "kch"); chL.append(el("span", null, "ひと文字"));
+    const chL = el("label", "kch"); chL.append(el("span", null, "1文字"));
     const ch = el("input"); ch.value = k.ch; ch.maxLength = 1; ch.autocomplete = "off";
     ch.addEventListener("change", () => { const v = ch.value.trim(); if (v) { k.ch = v.slice(0, 1); save(); } renderRules(); });
     chL.append(ch);
@@ -259,8 +259,8 @@
         k.rules[ri] = sel.value === "w" ? { t: "w", days } : sel.value === "n" ? { t: "n", nths: [], days } : { t: "d", dates: [] };
         save(); renderRules(); focusRule(k.id, ri);
       });
-      const rm = el("button", "rm", "×"); rm.type = "button"; rm.setAttribute("aria-label", "この決まりを消す");
-      rm.addEventListener("click", () => { const snap = snapshot(); k.rules.splice(ri, 1); save(); renderRules(); toast("決まりを消しました。", snap); });
+      const rm = el("button", "rm", "×"); rm.type = "button"; rm.setAttribute("aria-label", "この決まりを削除");
+      rm.addEventListener("click", () => { const snap = snapshot(); k.rules.splice(ri, 1); save(); renderRules(); toast("決まりを削除しました。", snap); });
       const rh = el("div", "rhead"); rh.append(sel, rm); rb.append(rh);
       if (r.t === "n") rb.append(toggleGroup(["第1", "第2", "第3", "第4", "第5"], [1, 2, 3, 4, 5], r.nths, v => { r.nths = v; save(); sum.textContent = kindText(k); }, "何週目", "nth"));
       if (r.t === "w" || r.t === "n") rb.append(toggleGroup(WD_ORDER.map(x => WD[x]), WD_ORDER, r.days, v => { r.days = v; save(); sum.textContent = kindText(k); }, "曜日", "wk"));
@@ -292,8 +292,8 @@
     const foot = el("div", "kfoot");
     const addR = el("button", "link", "＋ 決まりを追加"); addR.type = "button";
     addR.addEventListener("click", () => { k.rules.push({ t: "w", days: [] }); save(); renderRules(); focusRule(k.id, k.rules.length - 1); });
-    const del = el("button", "link danger", "この種類を消す"); del.type = "button";
-    del.addEventListener("click", () => { const snap = snapshot(); st.kinds.splice(ki, 1); save(); renderRules(); toast(`「${k.name}」を消しました。`, snap); });
+    const del = el("button", "link danger", "この種類を削除"); del.type = "button";
+    del.addEventListener("click", () => { const snap = snapshot(); st.kinds.splice(ki, 1); save(); renderRules(); toast(`「${k.name}」を削除しました。`, snap); });
     foot.append(addR, del);
     card.append(foot);
     return card;
@@ -343,7 +343,7 @@
   $("start-preset").addEventListener("click", () => {
     st = { area: "", time: "", skips: [], kinds: STARTER.map(([name, rules]) => { const p = KIND_PRESETS.find(x => x.name === name); return { id: uid(), name, ch: p.ch, color: p.color, rules: JSON.parse(JSON.stringify(rules)) }; }) };
     save(); go("rules");
-    toast("よくある分け方を入れました。曜日を、お住まいの地域に合わせてください。");
+    toast("よくある分け方を入れました。曜日をお住まいの地域に合わせてください。");
   });
   $("start-blank").addEventListener("click", () => { st = { area: "", time: "", skips: [], kinds: [] }; save(); go("rules"); });
 
@@ -362,7 +362,7 @@
     const blob = new Blob([JSON.stringify(Object.assign({ app: "gomi", version: 1, exported: new Date().toISOString() }, st), null, 1)], { type: "application/json" });
     const a = el("a"); a.href = URL.createObjectURL(blob); a.download = `gomi-${ymd(new Date())}.json`;
     document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
-    toast("ファイルに書き出しました。新しい端末で「ファイルを読みこむ」から開いてください。");
+    toast("ファイルに書き出しました。新しい端末で「ファイルを読み込む」から開いてください。");
   });
   $("import").addEventListener("change", async e => {
     const f = e.target.files[0]; e.target.value = ""; $("move-err").textContent = "";
@@ -373,8 +373,8 @@
       if (raw.app && raw.app !== "gomi") throw 0;
       const v = valid(raw); if (!v) throw 0;
       const snap = snapshot(); st = v; save(); render();
-      toast(`${v.kinds.length}種類の設定を読みこみました。`, snap);
-    } catch (x) { $("move-err").textContent = "読みこめませんでした。このアプリで書き出したファイル（.json）を選んでください。"; }
+      toast(`${v.kinds.length}種類の設定を読み込みました。`, snap);
+    } catch (x) { $("move-err").textContent = "読み込めませんでした。このアプリで書き出したファイル（.json）を選んでください。"; }
   });
 
   // ---- トースト ----

@@ -31,10 +31,10 @@
       </div>
       <label class="line-field"><span>案件名</span><input id="proj" type="text" maxlength="50" placeholder="お店の予約サイト" autocomplete="off"></label>
       <ol class="tasks" id="tasks"></ol>
-      <p class="empty" id="empty">やる作業を1つずつ追加してください。大きさはS・M・Lのざっくりで大丈夫です。</p>
+      <p class="empty" id="empty">作業を1つずつ追加してください。大きさはS・M・Lからざっくり選べば大丈夫です。</p>
       <button type="button" class="add-btn" id="add">＋ 作業を追加</button>
       <details class="sizes">
-        <summary><span id="legend">S＝2時間・M＝6時間・L＝16時間</span><span class="chg">変える</span></summary>
+        <summary><span id="legend">S＝2時間・M＝6時間・L＝16時間</span><span class="chg">変更</span></summary>
         <div class="size-set">
           <label>S<input type="number" id="hS" min="0.5" max="200" step="0.5" inputmode="decimal">時間</label>
           <label>M<input type="number" id="hM" min="0.5" max="200" step="0.5" inputmode="decimal">時間</label>
@@ -61,12 +61,12 @@
       <label class="buffer"><span>予備の時間<output id="bufv" for="buf">20%</output></span>
         <input id="buf" type="range" min="0" max="50" step="5" value="20">
       </label>
-      <p class="note">手戻りや体調不良に備える時間です。はじめての種類の仕事なら、30%以上がおすすめです。</p>
+      <p class="note">手戻りや体調不良に備える時間です。初めて受ける種類の仕事なら、30%以上がおすすめです。</p>
     </section>
 
     <section class="block" aria-labelledby="x-h">
       <h2 id="x-h"><span class="no">三</span>忘れがちな作業</h2>
-      <p class="note">作業の名前から、入れ忘れやすい作業を自動で足しています。いらないものはチェックを外してください。</p>
+      <p class="note">作業名から、入れ忘れやすい作業を自動で追加しています。不要なものはチェックを外してください。</p>
       <ul class="extras" id="extras"></ul>
     </section>
 

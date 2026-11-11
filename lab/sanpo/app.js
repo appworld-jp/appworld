@@ -3,8 +3,8 @@
   const $ = id => document.getElementById(id);
   const KEY = "sanpolog.v1";
   const THEMES = window.SANPO_THEMES || [];
-  const TAGS = ["花", "木・緑", "猫", "犬", "鳥", "虫", "空・雲", "夕焼け", "川・池", "海", "公園", "神社・お寺", "お店", "パン屋", "カフェ", "季節のもの", "おもしろい看板", "古い建物", "坂・階段", "電車"];
-  const MOODS = [["☀️", "晴れやか"], ["🍃", "のんびり"], ["💪", "すっきり"], ["😌", "ほっとした"], ["😪", "つかれた"]];
+  const TAGS = ["花", "木・緑", "猫", "犬", "鳥", "虫", "空・雲", "夕焼け", "川・池", "海", "公園", "神社・お寺", "お店", "パン屋", "カフェ", "季節のもの", "面白い看板", "古い建物", "坂・階段", "電車"];
+  const MOODS = [["☀️", "晴れやか"], ["🍃", "のんびり"], ["💪", "すっきり"], ["😌", "ほっとした"], ["😪", "疲れた"]];
   const pad = n => String(n).padStart(2, "0");
   const keyOf = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
   const parseKey = k => { const [y, m, d] = k.split("-").map(Number); return new Date(y, m - 1, d); };
@@ -18,6 +18,8 @@
     return { walks: [], running: null, shift: null };
   }
   const S = load();
+  // 表記の変更（おもしろい看板 → 面白い看板）に合わせて、保存済みのタグを読み替える
+  S.walks.forEach(w => { if (Array.isArray(w.tags)) w.tags = w.tags.map(t => t === "おもしろい看板" ? "面白い看板" : t); });
   const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* ignore */ } };
 
   // ---------- theme of the day ----------
@@ -51,7 +53,7 @@
     }
   }
   $("startBtn").addEventListener("click", () => { S.running = Date.now(); save(); renderTimer(); $("stopBtn").focus(); });
-  $("cancelBtn").addEventListener("click", () => { if (!confirm("計っている時間を取り消しますか？")) return; S.running = null; save(); renderTimer(); });
+  $("cancelBtn").addEventListener("click", () => { if (!confirm("計測中の時間を取り消しますか？")) return; S.running = null; save(); renderTimer(); });
   $("stopBtn").addEventListener("click", () => {
     const min = Math.max(1, Math.round((Date.now() - S.running) / 60000));
     openSheet(min, keyOf(new Date(S.running)));
@@ -173,7 +175,7 @@
     stampDay = null;
     const tot = $("totals"); tot.textContent = "";
     const s = streaks();
-    [["さんぽ", count, "回"], ["合計", total ? fmtMin(total) : "0分", ""], ["いちばん長い日", longest ? fmtMin(longest) : "—", ""], ["いまの連続", s.cur, "日"], ["最長の連続", s.best, "日"], ["テーマ達成", S.walks.filter(w => w.theme && w.date.startsWith(calMonth)).length, "回"]].forEach(([a, b, u]) => {
+    [["さんぽ", count, "回"], ["合計", total ? fmtMin(total) : "0分", ""], ["一番長い日", longest ? fmtMin(longest) : "—", ""], ["今の連続", s.cur, "日"], ["最長の連続", s.best, "日"], ["テーマ達成", S.walks.filter(w => w.theme && w.date.startsWith(calMonth)).length, "回"]].forEach(([a, b, u]) => {
       const d = document.createElement("div"); const dt = document.createElement("dt"); dt.textContent = a;
       const dd = document.createElement("dd"); dd.textContent = b; if (u) { const sm = document.createElement("small"); sm.textContent = u; dd.appendChild(sm); }
       d.append(dt, dd); tot.appendChild(d);
