@@ -16,7 +16,7 @@
   try {
     const raw = JSON.parse(localStorage.getItem(KEY) || "null");
     if (raw && typeof raw === "object") {
-      if ([15, 25, 50].includes(raw.len)) st.len = raw.len;
+      if (Number.isInteger(raw.len) && raw.len >= 1 && raw.len <= 180) st.len = raw.len;
       if (Array.isArray(raw.log)) st.log = raw.log.filter(e => e && typeof e.s === "number" && typeof e.m === "number").slice(-2000);
       if (raw.run && typeof raw.run === "object") st.run = raw.run;
       if (typeof raw.streak === "number") st.streak = raw.streak;
@@ -102,6 +102,7 @@
       b.setAttribute("aria-pressed", String(Number(b.dataset.min) === st.len));
       b.disabled = !!run;
     });
+    document.querySelectorAll(".lens .own-x, .lens .own-add").forEach(b => { b.disabled = !!run; });
     document.title = ticking ? `${$("clock").textContent} ${modeName(mode)}｜ポモドーロ箱` : "ポモドーロ箱";
   }
   const say = t => { $("status").textContent = t; };
@@ -157,6 +158,27 @@
     if (st.run) return;
     st.len = Number(b.dataset.min); save(); draw(); say(idleMsg());
   }));
+  // 自分で決めた長さ（1〜180分）。この端末に覚えて、次から候補に並べる
+  const pickLen = v => { if (st.run) return; st.len = Number(v); save(); draw(); say(idleMsg()); };
+  window.OwnChoices({
+    key: KEY + ".custom", name: "len", host: document.querySelector(".lens"), max: 3, inputMode: "numeric",
+    builtins: [15, 25, 50].map(n => ({ value: String(n), label: `${n}分` })),
+    addClass: "key", addLabel: "＋ 自分で", okLabel: "決定", placeholder: "40", inputLabel: "集中する長さ（分）",
+    label: v => `${v}分`, emptyMsg: "分数を入れてから「決定」を押してください。",
+    parse: t => {
+      const n = Number(t.normalize("NFKC").replace(/分$/, ""));
+      return Number.isInteger(n) && n >= 1 && n <= 180 ? { value: String(n) } : { error: "1〜180の数字で入れてください。" };
+    },
+    extra: () => [String(st.len)],
+    chip: v => {
+      const b = document.createElement("button"); b.type = "button"; b.className = "key len"; b.dataset.min = v;
+      b.setAttribute("aria-pressed", String(Number(v) === st.len)); b.disabled = !!st.run;
+      b.append(v, Object.assign(document.createElement("small"), { textContent: "分" }));
+      b.addEventListener("click", () => pickLen(v));
+      return b;
+    },
+    onPick: pickLen
+  });
 
   // note after focus
   function showRest() {

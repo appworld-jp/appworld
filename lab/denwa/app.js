@@ -22,13 +22,21 @@
   const str = (v, max) => typeof v === "string" ? v.slice(0, max) : "";
   function cleanItem(it) {
     if (!it || typeof it !== "object" || !isIso(it.at)) return null;
-    const o = { id: str(it.id, 20) || uid(), at: new Date(it.at).toISOString(), kind: it.kind === "desk" ? "desk" : "tel" };
+    const o = { id: str(it.id, 20) || uid(), at: new Date(it.at).toISOString(), kind: cleanKind(it.kind) };
     FIELDS.forEach(f => o[f] = str(it[f], MAXLEN[f]));
     o.due = isYmd(it.due) ? it.due : "";
     o.done = !!it.done;
     o.lines = Array.isArray(it.lines) ? it.lines.slice(0, 300).filter(l => l && isIso(l.t) && typeof l.s === "string" && l.s.trim()).map(l => ({ t: new Date(l.t).toISOString(), s: l.s.slice(0, 200) })) : [];
     return o;
   }
+  // 種類は「電話」「窓口」のほか、自分で入れた言葉（20文字まで）
+  function cleanKind(k) {
+    if (k === "tel" || k === "desk") return k;
+    const t = typeof k === "string" ? k.replace(/\s+/g, " ").trim().slice(0, 20) : "";
+    return t === "電話" ? "tel" : t === "窓口" ? "desk" : t || "tel";
+  }
+  const kindName = k => k === "desk" ? "窓口" : k === "tel" ? "電話" : k;
+  const kindCls = k => k === "desk" || k === "tel" ? k : "own";
   function clean(raw) {
     if (!raw || !Array.isArray(raw.items)) return null;
     return { v: 1, items: raw.items.slice(0, 2000).map(cleanItem).filter(Boolean) };
@@ -70,7 +78,7 @@
     const txt = days < 0 ? `${-days}日過ぎています` : days === 0 ? "今日まで" : days === 1 ? "明日まで" : `${dayJp(d)}まで`;
     return { days, txt };
   }
-  const who = it => [it.org, it.dept, it.person].filter(s => s.trim()).join(" ") || (it.kind === "desk" ? "窓口" : "電話");
+  const who = it => [it.org, it.dept, it.person].filter(s => s.trim()).join(" ") || kindName(it.kind);
   function renderHome() {
     // まだやること：次にやることが書かれていて、済んでいないもの
     const todos = st.items.filter(it => it.next.trim() && !it.done).sort((a, b) => (a.due || "9999") < (b.due || "9999") ? -1 : (a.due || "9999") > (b.due || "9999") ? 1 : 0);
@@ -116,7 +124,7 @@
       const b = el("button", "row-item"); b.type = "button";
       const date = el("span", "ri-date"); date.append(el("b", null, String(d.getDate())), el("small", null, WD[d.getDay()]));
       const main = el("span", "ri-main");
-      const top = el("span", "ri-top"); top.append(el("span", "ri-kind " + it.kind, it.kind === "desk" ? "窓口" : "電話"), el("span", "ri-who", who(it)));
+      const top = el("span", "ri-top"); top.append(el("span", "ri-kind " + kindCls(it.kind), kindName(it.kind)), el("span", "ri-who", who(it)));
       main.append(top, el("span", "ri-topic", it.topic || (it.lines[0] ? it.lines[0].s : "（用件なし）")));
       const meta = [];
       if (it.ref) meta.push("受付番号 " + it.ref);
@@ -141,19 +149,47 @@
   for (const f in inputs) inputs[f].addEventListener("input", () => { if (cur) { cur[f] = inputs[f].value; touched(); } });
   $("fDue").addEventListener("change", () => { if (cur) { cur.due = isYmd($("fDue").value) ? $("fDue").value : ""; touched(); } });
   $("fDone").addEventListener("change", () => { if (cur) { cur.done = $("fDone").checked; touched(); } });
-  function setKind(k) { if (!cur) return; cur.kind = k; $("kTel").setAttribute("aria-pressed", String(k === "tel")); $("kDesk").setAttribute("aria-pressed", String(k === "desk")); }
-  $("kTel").addEventListener("click", () => { setKind("tel"); touched(); });
-  $("kDesk").addEventListener("click", () => { setKind("desk"); touched(); });
+  function setKind(k) {
+    if (!cur) return; cur.kind = k;
+    document.querySelectorAll("#kindBox .kb").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.v === k)));
+  }
+  document.querySelectorAll("#kindBox .kb").forEach(b => b.addEventListener("click", () => { setKind(b.dataset.v); touched(); }));
+  const OWN = KEY + ".custom";
+  const ownKind = window.OwnChoices({
+    key: OWN, name: "kind", host: $("kindBox"), max: 20,
+    builtins: [{ value: "tel", label: "電話" }, { value: "desk", label: "窓口" }],
+    placeholder: "メール", inputLabel: "種類を自分で入力", emptyMsg: "種類を入れてから「追加」を押してください。",
+    extra: () => cur ? [cur.kind] : [],
+    chip: v => {
+      const b = el("button", "kb", v); b.type = "button"; b.dataset.v = v;
+      b.setAttribute("aria-pressed", String(!!cur && cur.kind === v));
+      b.addEventListener("click", () => { setKind(v); touched(); });
+      return b;
+    },
+    onPick: v => { setKind(v); touched(); }
+  });
+  const ownQuick = window.OwnChoices({
+    key: OWN, name: "quick", host: $("quickBox"), max: 40, addLabel: "＋ 定型文を追加", okLabel: "追加",
+    builtins: [...document.querySelectorAll("#quickBox .qb")].filter(b => b.dataset.q !== "said").map(b => ({ value: b.dataset.q, label: b.textContent })),
+    placeholder: "メールで案内が届くことになった", inputLabel: "よく使う言葉", emptyMsg: "よく使う言葉を入れてから「追加」を押してください。",
+    chip: v => {
+      const b = el("button", "qb", v); b.type = "button";
+      b.setAttribute("aria-label", `「${v}」を書く`);
+      b.addEventListener("click", () => addLine(v));
+      return b;
+    },
+    onPick: v => addLine(v)
+  });
   function updateCall() {
     const tel = (cur && cur.phone || "").normalize("NFKC").replace(/[^\d+]/g, "");
-    $("callBtn").hidden = !(cur && cur.kind === "tel" && tel.length >= 3);
+    $("callBtn").hidden = !(cur && cur.kind !== "desk" && tel.length >= 3);
     if (!$("callBtn").hidden) $("callBtn").href = "tel:" + tel;
   }
   function openMemo() {
     $("mWhen").textContent = longJp(cur.at);
     for (const f in inputs) inputs[f].value = cur[f];
     $("fDue").value = cur.due; $("fDone").checked = cur.done;
-    setKind(cur.kind); renderLines(); updateCall();
+    ownKind.render(); setKind(cur.kind); renderLines(); updateCall();
     $("copyMsg").textContent = ""; $("copyArea").hidden = true; $("savedMark").textContent = "";
   }
   function renderLines() {
@@ -175,7 +211,7 @@
     cur.lines.push({ t: new Date().toISOString(), s }); touched(); renderLines();
   }
   $("sayForm").addEventListener("submit", e => { e.preventDefault(); addLine($("sayIn").value); $("sayIn").value = ""; $("sayIn").focus(); });
-  document.querySelectorAll(".qb").forEach(b => b.addEventListener("click", () => {
+  document.querySelectorAll("#quickBox > .qb").forEach(b => b.addEventListener("click", () => {
     if (b.dataset.q === "said") {
       const v = $("sayIn").value.trim();
       if (!v) { $("sayIn").focus(); $("sayIn").placeholder = "言われたことを書いてから押してください"; return; }
@@ -185,7 +221,7 @@
   }));
 
   function asText(it) {
-    const out = [`【${it.kind === "desk" ? "窓口" : "電話"}メモ】${longJp(it.at)}`];
+    const out = [`【${kindName(it.kind)}メモ】${longJp(it.at)}`];
     const w = [it.org, it.dept, it.person].filter(s => s.trim()).join(" ");
     if (w) out.push(`相手：${w}${it.phone ? `（${it.phone}）` : ""}`);
     else if (it.phone) out.push(`電話番号：${it.phone}`);

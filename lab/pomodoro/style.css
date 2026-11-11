@@ -68,7 +68,26 @@ main{display:grid;gap:18px}
 .key:active,.key.pressed{transform:translateY(5px);box-shadow:0 1px 0 var(--cream-lo),0 2px 4px rgba(0,0,0,.25)}
 .key[aria-pressed="true"]{background:#2B211B;color:#FBF4E6;box-shadow:0 6px 0 #0F0A07,0 8px 10px rgba(0,0,0,.25);transform:translateY(3px)}
 .key:disabled{opacity:.55;cursor:default}
-.lens{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:20px}
+.lens{display:flex;flex-wrap:wrap;gap:14px 12px;margin-top:20px}
+.lens>.key,.lens>.own-chip{flex:1 1 0;min-width:84px}
+/* 自分で決めた長さ */
+.own-chip{display:flex;gap:4px}
+.own-chip>.key{flex:1;min-width:0;padding:8px 6px}
+.own-x{flex:none;width:34px;min-height:52px;border:0;border-radius:12px;background:transparent;color:var(--cream);font-size:18px;cursor:pointer;opacity:.85}
+.own-x:disabled{opacity:.35;cursor:default}
+.own-add.key{font-size:15px;background:transparent;color:var(--cream);box-shadow:none;border:2px dashed var(--cream-lo)}
+.own-add.key:active{transform:none}
+.own-form{display:flex;gap:8px;flex:1 1 100%;align-items:center}
+.own-form[hidden]{display:none}
+.own-in{flex:1;min-width:0;min-height:48px;border:0;border-radius:12px;background:var(--cream);color:#2B211B;padding:4px 14px;font:inherit;font-size:20px;font-weight:700;font-family:var(--num)}
+.own-in[aria-invalid="true"]{outline:3px solid #FFE9A8}
+.own-ok{flex:none;min-height:48px;border:0;border-radius:12px;background:#FFE9A8;color:#2B211B;font:inherit;font-weight:700;padding:0 18px;cursor:pointer;box-shadow:0 4px 0 #C9A94B}
+.own-cancel{flex:none;width:40px;min-height:48px;border:0;background:transparent;color:var(--cream);font-size:20px;cursor:pointer}
+.own-err,.own-msg{flex:1 1 100%;font-size:14px;color:var(--cream);margin:-4px 2px 0}
+.own-err{font-weight:700}
+.own-err:empty,.own-msg:empty{display:none}
+.own-msg{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center}
+.own-undo{border:0;background:transparent;color:#FFE9A8;font:inherit;font-weight:700;text-decoration:underline;min-height:36px;cursor:pointer;padding:0}
 .controls{display:grid;grid-template-columns:2fr 1fr;gap:12px;margin-top:18px}
 .key.big{min-height:64px;font-size:21px;letter-spacing:.12em}
 .key.go{background:#FFE9A8;box-shadow:0 6px 0 #C9A94B,0 8px 10px rgba(0,0,0,.25)}

@@ -40,6 +40,11 @@
   try { const r = JSON.parse(localStorage.getItem(KEY) || "null"); if (r && typeof r === "object") st = Object.assign(st, r); } catch (e) { /* ignore */ }
   if (!Array.isArray(st.tasks)) st.tasks = [];
   if (!Array.isArray(st.off)) st.off = [];
+  if (typeof st.role !== "string" || !st.role.trim()) st.role = "eng";
+  st.role = st.role.trim().slice(0, 20);
+  if (!st.ownRates || typeof st.ownRates !== "object" || Array.isArray(st.ownRates)) st.ownRates = {};
+  // 職種は4つのほか、自分で入れた名前も使える（"own" は前の版の「自分で決める」）
+  const roleName = r => Object.prototype.hasOwnProperty.call(ROLE_NAMES, r) ? ROLE_NAMES[r] : r;
   const save = () => { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) { /* ignore */ } };
 
   const yen = n => Math.round(n).toLocaleString("ja-JP") + "円";
@@ -119,17 +124,33 @@
   });
 
   // ---------- rate & buffer ----------
-  $("role").value = st.role in ROLE_NAMES ? st.role : "eng";
   $("rate").value = st.rate;
-  $("role").addEventListener("change", () => {
-    st.role = $("role").value;
-    if (RATES[st.role]) { st.rate = RATES[st.role]; $("rate").value = st.rate; }
-    else $("rate").focus();
-    save(); update();
+  function markRole() { document.querySelectorAll("#roles .rc").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.role === st.role))); }
+  function pickRole(r) {
+    st.role = r;
+    if (RATES[r]) st.rate = RATES[r];
+    else if (st.ownRates[r] > 0) st.rate = st.ownRates[r];
+    $("rate").value = st.rate;
+    markRole(); save(); update();
+  }
+  document.querySelectorAll("#roles .rc").forEach(b => b.addEventListener("click", () => pickRole(b.dataset.role)));
+  window.OwnChoices({
+    key: KEY + ".custom", name: "role", host: $("roles"), max: 20,
+    builtins: Object.keys(RATES).map(k => ({ value: k, label: ROLE_NAMES[k] })),
+    placeholder: "動画編集", inputLabel: "職種を自分で入力", emptyMsg: "職種を入れてから「追加」を押してください。",
+    extra: () => st.role === "own" ? [] : [st.role],
+    chip: v => {
+      const b = document.createElement("button"); b.type = "button"; b.className = "rc"; b.dataset.role = v; b.textContent = v;
+      b.setAttribute("aria-pressed", String(st.role === v));
+      b.addEventListener("click", () => pickRole(v));
+      return b;
+    },
+    onPick: pickRole
   });
+  markRole();
   $("rate").addEventListener("input", () => {
     st.rate = Number($("rate").value) || 0;
-    if (RATES[st.role] !== st.rate) { st.role = "own"; $("role").value = "own"; }
+    if (!RATES[st.role] && st.role !== "own") st.ownRates[st.role] = st.rate;
     save(); update();
   });
   $("buf").value = st.buf;
@@ -176,7 +197,7 @@
     $("grand-sub").textContent = c.total ? `1日6時間で、約${Math.ceil(days * 2) / 2}日分。金額は100円未満を切り上げています。` : "作業を追加すると、ここに合計が出ます。";
   }
   function table(c) {
-    const role = ROLE_NAMES[st.role] || "";
+    const role = roleName(st.role) || "";
     const title = (st.proj || "").trim() || "（案件名）";
     const d = new Date(), date = `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`;
     const rows = c.tasks.map(t => [t.name, t.h]).concat(c.on.map(x => [x.name, x.h])).concat([[`予備（${st.buf}%）`, c.buf]]);

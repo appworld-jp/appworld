@@ -267,6 +267,7 @@
     } else {
       var t = typeInfo(p.type.toLowerCase());
       if (p.type !== p.type.toLowerCase()) add("error", "種類は小文字で書きます（" + p.type + " → " + p.type.toLowerCase() + "）。", "header");
+      else if (!t && (opts.own || []).indexOf(p.type) >= 0) add("ok", "種類は「" + p.type + "」（自分で追加した種類）です。");
       else if (!t) add("warn", "「" + p.type + "」はよく使う種類ではありません。早見表の10種類から選べます。", "header");
       else add("ok", "種類は「" + t.id + "」（" + t.label + "）です。");
       if (/\s{2,}/.test(p.desc)) add("warn", "要約にスペースが2つ続いているところがあります。", "header");
@@ -352,9 +353,10 @@
       if (tv) { hint = tv; desc = desc.slice(tag[0].length); changes.push("「" + tag[0].trim() + "」を種類に置き換えました。"); }
     }
     var lm = /^([A-Za-z]+)\s*(?:\(\s*([^)]*?)\s*\))?\s*(!)?\s*[:：]\s*(.*)$/.exec(desc);
-    if (lm && ALIAS[lm[1].toLowerCase()]) {
+    var ownT = lm && (opts.own || []).indexOf(lm[1].toLowerCase()) >= 0 ? lm[1].toLowerCase() : null;
+    if (lm && (ALIAS[lm[1].toLowerCase()] || ownT)) {
       var raw = lm[1];
-      type = ALIAS[raw.toLowerCase()];
+      type = ownT || ALIAS[raw.toLowerCase()];
       scope = (lm[2] || "").trim();
       bang = !!lm[3];
       desc = lm[4];

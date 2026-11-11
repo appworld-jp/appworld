@@ -23,7 +23,7 @@
     if (!r || typeof r !== "object") return null;
     const str = (v, n) => typeof v === "string" ? v.replace(/[\u0000-\u001f\u007f]/g, " ").trim().slice(0, n) : "";
     const out = {
-      k: r.k === "swap" ? "swap" : "cover",
+      k: r.k === "swap" || r.k === "cover" ? r.k : str(r.k, 20) || "cover",
       d: typeof r.d === "string" && /^\d{4}-\d{2}-\d{2}$/.test(r.d) ? r.d : "",
       s: typeof r.s === "string" && /^\d{2}:\d{2}$/.test(r.s) ? r.s : "",
       e: typeof r.e === "string" && /^\d{2}:\d{2}$/.test(r.e) ? r.e : "",
@@ -42,11 +42,13 @@
     return `${y}${+m[2]}月${+m[3]}日（${WD[dt.getDay()]}）`;
   }
   const timeLabel = r => r.s && r.e ? `${r.s}〜${r.e}` : r.s ? `${r.s}〜` : "時間未定";
-  const kindLabel = k => k === "swap" ? "交換したい" : "代わってほしい";
+  // 種類は「代わってほしい」「交換したい」のほか、自分で入れた言葉（20文字まで）
+  const kindLabel = k => k === "swap" ? "交換したい" : k === "cover" ? "代わってほしい" : k;
+  const isOwnKind = k => k !== "swap" && k !== "cover";
   const offerLabel = k => k === "swap" ? "代わりに入れる日" : "お礼";
 
   function shareText(r, url) {
-    const lines = [r.k === "swap" ? "【シフト交換のお願い】" : "【シフトを代わってくれる方を探しています】",
+    const lines = [r.k === "swap" ? "【シフト交換のお願い】" : r.k === "cover" ? "【シフトを代わってくれる方を探しています】" : `【シフトの相談：${r.k}】`,
       `${dateLabel(r.d, true)}${timeLabel(r)}`];
     if (r.p) lines.push(`場所：${r.p}`);
     if (r.o) lines.push(`${offerLabel(r.k)}：${r.o}`);
@@ -58,7 +60,7 @@
   function replyText(r, name, msg) {
     const who = name.trim() || "（名前）";
     const lines = ["【引き受けます】",
-      `${r.n ? `${r.n}さん、` : ""}${dateLabel(r.d, true)}${timeLabel(r)}${r.p ? `（${r.p}）` : ""}のシフト、${r.k === "swap" ? "交換できます" : "私が入ります"}。`];
+      `${r.n ? `${r.n}さん、` : ""}${dateLabel(r.d, true)}${timeLabel(r)}${r.p ? `（${r.p}）` : ""}のシフト、${r.k === "swap" ? "交換できます" : r.k === "cover" ? "私が入ります" : "引き受けます"}。`];
     if (r.k === "swap" && r.o) lines.push(`代わりに「${r.o}」でお願いします。`);
     if (msg.trim()) lines.push(msg.trim());
     lines.push(`${who}より`);
@@ -67,7 +69,7 @@
 
   function card(r) {
     const el = document.createElement("article");
-    el.className = "ticket" + (r.k === "swap" ? " swap" : "");
+    el.className = "ticket" + (r.k === "swap" ? " swap" : isOwnKind(r.k) ? " own" : "");
     el.setAttribute("aria-label", "依頼のカード");
     const add = (tag, cls, text) => { const x = document.createElement(tag); x.className = cls; x.textContent = text; el.append(x); return x; };
     add("span", "t-kind", kindLabel(r.k));
@@ -109,6 +111,24 @@
     $("f-offer").placeholder = k === "swap" ? "11/22（土）の朝番" : "今度どこか1回代わります";
   }
   document.querySelectorAll("input[name=kind]").forEach(r => r.addEventListener("change", syncKind));
+  window.OwnChoices({
+    key: KEY + ".custom", name: "kind", host: document.querySelector(".kind"), max: 20,
+    builtins: [{ value: "cover", label: "代わってほしい" }, { value: "swap", label: "交換したい" }],
+    placeholder: "早めに上がりたい", inputLabel: "依頼の種類を自分で入力", emptyMsg: "依頼の種類を入れてから「追加」を押してください。",
+    chip: v => {
+      const lab = document.createElement("label");
+      const inp = document.createElement("input"); inp.type = "radio"; inp.name = "kind"; inp.value = v;
+      inp.addEventListener("change", syncKind);
+      const sp = document.createElement("span"); sp.textContent = v;
+      lab.append(inp, sp);
+      return lab;
+    },
+    onPick: v => {
+      const r = [...document.querySelectorAll("input[name=kind]")].find(x => x.value === v);
+      if (r) r.checked = true;
+      syncKind();
+    }
+  });
   (function defaults() {
     const t = new Date(); t.setDate(t.getDate() + 3);
     $("f-date").value = `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, "0")}-${String(t.getDate()).padStart(2, "0")}`;
@@ -187,7 +207,7 @@
     $("recv").hidden = !recv; $("make").hidden = !!recv;
     if (recv) {
       $("recv-card").replaceChildren(card(recv));
-      $("recv-h").textContent = recv.k === "swap" ? "シフトを交換できますか？" : "代わりに入れますか？";
+      $("recv-h").textContent = recv.k === "swap" ? "シフトを交換できますか？" : recv.k === "cover" ? "代わりに入れますか？" : "引き受けられますか？";
       $("rep-share").hidden = !canShare;
       updateReply();
       document.title = `${dateLabel(recv.d)}のシフト依頼｜シフト交換板`;

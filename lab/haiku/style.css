@@ -78,6 +78,23 @@ br.sp{display:none}
 .kg rt{font-size:10px;color:var(--dim);letter-spacing:.05em}
 .kg[aria-checked=true]{border-color:var(--gold2);box-shadow:inset 0 0 0 1px var(--gold2);color:var(--gold2)}
 .kg[aria-checked=true] rt{color:var(--gold)}
+/* 自分の季語 */
+.kigo .own-chip{display:inline-flex}
+.kigo .own-chip>.kg{border-radius:3px 0 0 3px}
+.kigo .own-chip.own-once>.kg{border-radius:3px}
+.own-x{width:36px;min-height:52px;border:1px solid var(--line);border-left:0;border-radius:0 3px 3px 0;background:var(--night2);color:var(--dim);cursor:pointer;font-size:15px}
+.own-add.kg{border-style:dashed;background:transparent;color:var(--gold2);font-size:14px}
+.own-form{display:flex;flex-wrap:wrap;gap:6px;flex:1 1 100%;align-items:center}
+.own-form[hidden]{display:none}
+.own-in{flex:1 1 120px;min-width:0;min-height:46px;border:1px solid var(--gold);border-radius:3px;background:var(--night);color:var(--text);padding:4px 10px;font:inherit;font-size:16px}
+.own-in[aria-invalid="true"]{border-color:var(--warn)}
+.own-ok{flex:none;min-height:46px;border:0;border-radius:3px;background:var(--gold);color:var(--night);font:inherit;font-weight:700;padding:0 16px;cursor:pointer}
+.own-cancel{flex:none;width:40px;min-height:46px;border:0;background:transparent;color:var(--dim);font-size:18px;cursor:pointer}
+.own-err,.own-msg{flex:1 1 100%;font-size:13px}
+.own-err{color:var(--warn)}
+.own-msg{color:var(--dim);display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center}
+.own-err:empty,.own-msg:empty{display:none}
+.own-undo{border:0;background:transparent;color:var(--gold2);font:inherit;text-decoration:underline;min-height:36px;cursor:pointer;padding:0}
 .kigo-now{margin:12px 0 0;font-size:14px;color:var(--gold2);display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 .ins{font:inherit;font-size:13px;min-height:44px;padding:2px 12px;border:1px solid var(--gold);background:none;color:var(--gold2);border-radius:999px;cursor:pointer}
 .help{font-size:12.5px;color:var(--dim);margin:0 0 12px;line-height:1.7}

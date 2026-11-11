@@ -58,14 +58,14 @@
 <main class="wrap" id="memo" hidden>
   <div class="m-bar">
     <button type="button" class="back-btn" id="backBtn">‹ 一覧</button>
-    <div class="kind" role="group" aria-label="種類">
-      <button type="button" class="kb" id="kTel" aria-pressed="true">電話</button>
-      <button type="button" class="kb" id="kDesk" aria-pressed="false">窓口</button>
-    </div>
   </div>
 
   <article class="sheet">
     <p class="when"><span id="mWhen"></span><span class="saved" id="savedMark" aria-live="polite"></span></p>
+    <div class="kind" id="kindBox" role="group" aria-label="種類">
+      <button type="button" class="kb" data-v="tel" aria-pressed="true">電話</button>
+      <button type="button" class="kb" data-v="desk" aria-pressed="false">窓口</button>
+    </div>
 
     <div class="grid2">
       <label class="fld wide"><span>相手（会社・役所）</span><input id="fOrg" type="text" maxlength="40" autocomplete="off" placeholder="〇〇市役所"></label>
@@ -84,7 +84,7 @@
         <input id="sayIn" type="text" maxlength="120" autocomplete="off" placeholder="来週中に書類を郵送します" aria-label="言われたこと">
         <button class="btn" type="submit">書く</button>
       </form>
-      <div class="quick" role="group" aria-label="ワンタップで書く">
+      <div class="quick" id="quickBox" role="group" aria-label="ワンタップで書く">
         <button type="button" class="qb" data-q="said">「〜と言われた」</button>
         <button type="button" class="qb" data-q="折り返し電話をもらうことになった">折り返し待ち</button>
         <button type="button" class="qb" data-q="保留で待った">保留</button>
@@ -116,5 +116,6 @@
 </main>
 
 <div class="toast" id="toast" role="status" hidden><span id="toastMsg"></span><button type="button" id="toastUndo">元に戻す</button></div>
+<script src="own.js"></script>
 <script src="app.js"></script>
 </body></html>

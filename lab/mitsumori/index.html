@@ -40,16 +40,16 @@
 
     <section class="block" aria-labelledby="r-h">
       <h2 id="r-h"><span class="no">二</span>単価と予備</h2>
+      <div class="role-f">
+        <span class="role-l" id="roleL">職種</span>
+        <div class="roles" id="roles" role="group" aria-labelledby="roleL">
+          <button type="button" class="rc" data-role="eng" aria-pressed="false">エンジニア</button>
+          <button type="button" class="rc" data-role="des" aria-pressed="false">デザイナー</button>
+          <button type="button" class="rc" data-role="dir" aria-pressed="false">ディレクター</button>
+          <button type="button" class="rc" data-role="wri" aria-pressed="false">ライター</button>
+        </div>
+      </div>
       <div class="rate">
-        <label class="line-field"><span>職種</span>
-          <select id="role">
-            <option value="eng">エンジニア</option>
-            <option value="des">デザイナー</option>
-            <option value="dir">ディレクター</option>
-            <option value="wri">ライター</option>
-            <option value="own">自分で決める</option>
-          </select>
-        </label>
         <label class="line-field"><span>時間単価（円）</span><input id="rate" type="number" min="0" max="1000000" step="100" inputmode="numeric"></label>
       </div>
       <p class="note">単価は目安です。自分の単価があれば書き換えてください。</p>
@@ -94,5 +94,6 @@
     <a href="../">App World Lab</a>
   </footer>
 </div>
+<script src="own.js"></script>
 <script src="app.js"></script>
 </body></html>

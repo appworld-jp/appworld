@@ -89,6 +89,32 @@
     lab.appendChild(inp); lab.appendChild(face);
     typesBox.appendChild(lab);
   });
+  /* 自分で追加した種類（英小文字）。この端末に覚えて、次から候補に並べる */
+  var ownType = window.OwnChoices({
+    key: KEY + ".custom", name: "type", host: typesBox, max: 15, addLabel: "＋ 自分で入力",
+    builtins: R.TYPES.map(function (t) { return { value: t.id, label: t.id }; }),
+    placeholder: "deps", inputLabel: "種類を英小文字で入力", emptyMsg: "種類を英小文字で入れてから「追加」を押してください。",
+    parse: function (t) {
+      var v = t.normalize("NFKC").toLowerCase().replace(/\s+/g, "");
+      return /^[a-z]{1,15}$/.test(v) ? { value: v } : { error: "英小文字だけで、15文字までにしてください（例：deps）。" };
+    },
+    extra: function () { var c = currentType() || (store.draft && store.draft.type); return c ? [c] : []; },
+    chip: function (v) {
+      var lab = el("label", "type");
+      var inp = document.createElement("input");
+      inp.type = "radio"; inp.name = "type"; inp.value = v;
+      inp.checked = currentType() === v;
+      var face = el("span", "t-face");
+      face.appendChild(el("b", "mono", v));
+      face.appendChild(el("span", "t-l", "自分で追加"));
+      lab.appendChild(inp); lab.appendChild(face);
+      return lab;
+    },
+    onPick: function (v) { setRadio("type", v); onForm(); },
+    onRemove: function () { fillFixTypes(); }
+  });
+  function ownTypes() { return ownType.list(); }
+  function isType(v) { return typeof v === "string" && (R.TYPE_IDS.indexOf(v) >= 0 || /^[a-z]{1,15}$/.test(v)); }
   var typeHint = el("p", "type-hint"); typeHint.hidden = true; typeHint.setAttribute("aria-live", "polite");
   typesBox.parentNode.appendChild(typeHint);
 
@@ -102,7 +128,7 @@
   }
   function loadDraft() {
     var d = store.draft || {};
-    if (R.TYPE_IDS.indexOf(d.type) >= 0) setRadio("type", d.type);
+    if (isType(d.type)) { ownType.render(); setRadio("type", d.type); }
     F.scope.value = str(d.scope); F.summary.value = str(d.summary); F.why.value = str(d.why); F.what.value = str(d.what);
     F.breaking.checked = d.breaking === true; F.breakNote.value = str(d.breakNote); F.issues.value = str(d.issues);
     F.issueKw.value = ["Refs", "Closes", "Fixes"].indexOf(store.prefs.issueKw) >= 0 ? store.prefs.issueKw : "Refs";
@@ -218,7 +244,7 @@
     $("oneline").hidden = !single;
     $("multi-note").hidden = single;
     if (single) $("cmd").textContent = "git commit -m " + R.shellQuote(msg);
-    var res = R.lint(msg, { lang: store.prefs.lang, jaStyle: store.prefs.jaStyle });
+    var res = R.lint(msg, { lang: store.prefs.lang, jaStyle: store.prefs.jaStyle, own: ownTypes() });
     if (f.breaking && !f.breakNote.trim()) res.checks.push({ level: "warn", text: "「何が変わるか」を書くと、BREAKING CHANGEの行が入ります。", fix: null });
     $("checks-box").hidden = false;
     var nBad = res.checks.filter(function (c) { return c.level !== "ok"; }).length;
@@ -316,7 +342,15 @@
 
   /* ---------- 直す ---------- */
   var fixTypeSel = $("fix-type");
-  R.TYPES.forEach(function (t) { var o = el("option", null, t.id + "（" + t.label + "）"); o.value = t.id; fixTypeSel.appendChild(o); });
+  function fillFixTypes() {
+    var keep = fixTypeSel.value;
+    fixTypeSel.textContent = "";
+    R.TYPES.forEach(function (t) { var o = el("option", null, t.id + "（" + t.label + "）"); o.value = t.id; fixTypeSel.appendChild(o); });
+    ownTypes().forEach(function (v) { var o = el("option", null, v + "（自分で追加）"); o.value = v; fixTypeSel.appendChild(o); });
+    if (keep && !Array.prototype.some.call(fixTypeSel.options, function (o) { return o.value === keep; })) { var o = el("option", null, keep); o.value = keep; fixTypeSel.appendChild(o); }
+    if (keep) fixTypeSel.value = keep;
+  }
+  fillFixTypes();
   var SAMPLES = [
     "ログイン画面のバグを修正しました。\nパスワードを間違えると画面が真っ白になっていたので、エラーメッセージを出すようにしました。ついでに関係ないところのインデントも直しています。\n#45",
     "Fixed the crash when the cart is empty. Also cleaned up some old code.\nfixes #123",
@@ -336,12 +370,13 @@
     }
     $("fix-err").textContent = "";
     fixFrom = src;
-    var before = R.lint(src, { jaStyle: store.prefs.jaStyle });
+    var before = R.lint(src, { jaStyle: store.prefs.jaStyle, own: ownTypes() });
     var bad = before.checks.filter(function (c) { return c.level !== "ok"; });
     renderChecks($("before-checks"), before.checks.filter(function (c) { return c.level !== "ok"; }).concat(bad.length ? [] : before.checks), null, {});
     $("before-count").textContent = bad.length ? "直すところ" + bad.length + "つ" : "問題なし";
     $("before-count").className = "badge" + (bad.length ? " bad" : " good");
-    var c = R.clean(src, { jaStyle: store.prefs.jaStyle, type: typeOverride || null });
+    fillFixTypes();
+    var c = R.clean(src, { jaStyle: store.prefs.jaStyle, type: typeOverride || null, own: ownTypes() });
     if (!c) return;
     fixTypeSel.value = c.type;
     $("fix-guess").textContent = typeOverride ? "選んだ種類です。" : c.guessedFrom ? "「" + c.guessedFrom + "」から考えました。" : "";
@@ -355,9 +390,9 @@
     lintFixDst();
   }
   function lintFixDst() {
-    var res = R.lint($("fix-dst").value, { jaStyle: store.prefs.jaStyle });
+    var res = R.lint($("fix-dst").value, { jaStyle: store.prefs.jaStyle, own: ownTypes() });
     renderChecks($("after-checks"), res.checks, function () {
-      var c = R.clean($("fix-dst").value, { jaStyle: store.prefs.jaStyle, type: fixTypeSel.value });
+      var c = R.clean($("fix-dst").value, { jaStyle: store.prefs.jaStyle, type: fixTypeSel.value, own: ownTypes() });
       if (c) $("fix-dst").value = c.text;
       lintFixDst();
     }, FIX_LABELS);

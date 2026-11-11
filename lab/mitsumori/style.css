@@ -70,6 +70,29 @@ h1{font-family:var(--mincho);font-size:32px;margin:0;letter-spacing:.12em;font-w
 .size-set input{width:64px;min-height:40px;border:1.5px solid var(--rule);border-radius:6px;background:var(--field);padding:4px 6px;text-align:right}
 
 .rate{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.role-f{margin:0 0 12px}
+.role-l{display:block;font-size:12px;color:var(--sub);margin-bottom:6px}
+.roles{display:flex;flex-wrap:wrap;gap:6px}
+.rc{min-height:44px;border:1.5px solid var(--blue);border-radius:6px;background:var(--field);color:var(--blue);padding:4px 12px;font-size:14px;font-weight:700;cursor:pointer}
+.rc[aria-pressed="true"]{background:var(--blue);color:var(--paper)}
+/* 自分で入力 */
+.own-chip{display:inline-flex;max-width:100%}
+.own-chip>.rc{border-radius:6px 0 0 6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.own-chip.own-once>.rc{border-radius:6px}
+.own-x{width:36px;min-height:44px;border:1.5px solid var(--blue);border-left:0;border-radius:0 6px 6px 0;background:var(--field);color:var(--blue);cursor:pointer;font-size:15px;flex:none}
+.own-add{min-height:44px;border:1.5px dashed var(--blue);border-radius:6px;background:transparent;color:var(--blue);padding:4px 12px;font-size:13px;font-weight:700;cursor:pointer}
+.own-form{display:flex;gap:6px;flex:1 1 100%;align-items:center}
+.own-form[hidden]{display:none}
+.own-in{flex:1;min-width:0;min-height:44px;border:0;border-bottom:2px solid var(--ink);background:var(--hi);padding:4px 6px;font-size:16px;color:var(--ink);border-radius:0}
+.own-in:focus{outline:none;border-bottom-color:var(--blue)}
+.own-in[aria-invalid="true"]{border-bottom-color:var(--red)}
+.own-ok{min-height:44px;border:0;border-radius:6px;background:var(--blue);color:var(--paper);font-weight:700;padding:0 16px;cursor:pointer;flex:none}
+.own-cancel{width:40px;min-height:44px;border:0;background:transparent;color:var(--sub);font-size:18px;cursor:pointer;flex:none}
+.own-err,.own-msg{flex:1 1 100%;font-size:13px}
+.own-err{color:var(--red)}
+.own-msg{color:var(--sub);display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center}
+.own-err:empty,.own-msg:empty{display:none}
+.own-undo{border:0;background:transparent;color:var(--blue);font-weight:700;text-decoration:underline;min-height:36px;cursor:pointer;padding:0}
 .buffer{display:grid;gap:4px;margin-top:16px;font-size:14px}
 .buffer output{font-family:var(--num);font-weight:700;color:var(--red);margin-left:8px;font-size:16px}
 .buffer input{width:100%;accent-color:var(--red);min-height:36px}

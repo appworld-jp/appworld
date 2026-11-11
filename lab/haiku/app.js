@@ -90,6 +90,7 @@
       b.addEventListener("click", () => { st.kigo = [w, r]; save(); renderKigo(); update(); });
       box.append(b);
     });
+    ownKigo(st.season).render();
     const now = $("kigoNow"); now.replaceChildren();
     if (st.kigo) {
       now.append(document.createTextNode(`季語：${st.kigo[0]}（${st.kigo[1]}）`));
@@ -98,6 +99,42 @@
         b.addEventListener("click", () => insertKigo(i)); now.append(b);
       });
     } else now.textContent = "季語をひとつ選ぶと、句に入れられます。";
+  }
+  // 自分の季語（季節ごと）。この端末に覚えて、次から候補に並べる
+  const owns = {};
+  const KANA_ONLY = /^[ぁ-ゖァ-ヺー]+$/;
+  const toHira = s => s.replace(/[ァ-ヶ]/g, c => String.fromCharCode(c.charCodeAt(0) - 0x60));
+  function pickKigo(v) { const [w, r] = v.split("\t"); st.kigo = [w, r]; save(); renderKigo(); update(); }
+  function ownKigo(season) {
+    if (owns[season]) return owns[season];
+    owns[season] = window.OwnChoices({
+      key: KEY + ".custom", name: "kigo-" + season, host: $("kigo"), max: 10,
+      builtins: (K[season] || []).map(([w, r]) => ({ value: `${w}\t${r}`, label: w })),
+      addClass: "kg", addLabel: "＋ 自分の季語", placeholder: "季語（例：初雪）", inputLabel: "季語",
+      second: { label: "よみ（ひらがな）", placeholder: "よみ（はつゆき）", max: 20 },
+      label: v => v.split("\t")[0], emptyMsg: "季語を入れてから「追加」を押してください。",
+      parse: (w, r) => {
+        if (/\t/.test(w)) return { error: "季語に使えない文字があります。" };
+        if (!r && KANA_ONLY.test(w)) r = toHira(w);
+        if (!r) return { error: "漢字のある季語は、よみも入れてください。", second: true };
+        r = toHira(r.replace(/\s+/g, ""));
+        if (!KANA_ONLY.test(r)) return { error: "よみは、ひらがなで入れてください。", second: true };
+        return { value: `${w}\t${r}` };
+      },
+      extra: () => st.kigo && st.season === season ? [st.kigo.join("\t")] : [],
+      chip: v => {
+        const [w, r] = v.split("\t");
+        const b = el("button", "kg own"); b.type = "button"; b.setAttribute("role", "radio");
+        b.setAttribute("aria-checked", String(!!st.kigo && st.kigo[0] === w && st.kigo[1] === r));
+        if (w === r) b.append(w);
+        else { const ru = el("ruby"); ru.append(document.createTextNode(w)); ru.append(el("rt", null, r)); b.append(ru); }
+        b.setAttribute("aria-label", `${w}（${r}）`);
+        b.addEventListener("click", () => pickKigo(v));
+        return b;
+      },
+      onPick: pickKigo
+    });
+    return owns[season];
   }
   function insertKigo(i) {
     const L = st.lines[i], [w, r] = st.kigo;
