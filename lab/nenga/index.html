@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>年賀状リスト</title>
+<meta name="description" content="年賀状を出した人・来た人・喪中の人を年ごとに記録して、去年のやりとりから今年出す人と枚数がわかるリストです。印刷もできます。">
+<meta name="theme-color" content="#B8322A">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="年賀状リスト">
+<link rel="stylesheet" href="style.css">
+</head><body>
+<header class="top">
+  <div class="top-in">
+    <a class="back" href="../">App World Lab</a>
+    <div class="title-row">
+      <h1>年賀状リスト</h1>
+      <span class="hanko" aria-hidden="true">賀</span>
+    </div>
+    <p class="lead">去年のやりとりから、今年出す人がわかります。</p>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="season" aria-label="年">
+    <button type="button" class="yr-btn" id="prevYr" aria-label="前の年">‹</button>
+    <div class="yr">
+      <p class="yr-main" id="yrMain" aria-live="polite"></p>
+      <p class="yr-sub" id="yrSub"></p>
+    </div>
+    <button type="button" class="yr-btn" id="nextYr" aria-label="次の年">›</button>
+  </section>
+
+  <section class="board" id="board" aria-label="枚数">
+    <div class="stat main"><span class="stat-n" id="nPlan">0</span><span class="stat-l" id="lPlan">出す人</span></div>
+    <div class="stat"><span class="stat-n" id="nSent">0</span><span class="stat-l">出した</span></div>
+    <div class="stat"><span class="stat-n" id="nRecv">0</span><span class="stat-l">来た</span></div>
+    <div class="stat"><span class="stat-n" id="nMochu">0</span><span class="stat-l">喪中</span></div>
+  </section>
+  <p class="need" id="need" aria-live="polite"></p>
+
+  <section class="self" id="selfBox">
+    <label class="sw"><input type="checkbox" id="selfMochu"><span>この年は自分が喪中（年賀状を出さない）</span></label>
+    <p class="note" id="selfNote" hidden>喪中はがきは、相手が年賀状を用意する前の11月中〜12月上旬に届くように出すのが目安です。下の「出す人」が、喪中はがきを出す相手になります。</p>
+  </section>
+
+  <div class="actions" id="actions">
+    <button type="button" class="btn primary" id="addBtn">＋ 人を追加</button>
+    <button type="button" class="btn" id="bulkBtn">まとめて追加</button>
+    <button type="button" class="btn" id="printBtn">印刷する</button>
+  </div>
+
+  <div class="filters" role="group" aria-label="しぼりこみ" id="filters">
+    <button type="button" data-f="plan" aria-pressed="true">出す人</button>
+    <button type="button" data-f="todo" aria-pressed="false">まだ出していない</button>
+    <button type="button" data-f="reply" aria-pressed="false">来たのに未返信</button>
+    <button type="button" data-f="mochu" aria-pressed="false">喪中</button>
+    <button type="button" data-f="all" aria-pressed="false">全員</button>
+  </div>
+
+  <section class="first" id="first" hidden>
+    <h2>はじめに</h2>
+    <ol>
+      <li>年賀状をやりとりする人を追加します。住所はなくても使えます。</li>
+      <li>「‹」で去年に戻り、出した人・来た人に印を付けます。</li>
+      <li>今年に戻ると、出す人と枚数が出ます。</li>
+    </ol>
+    <div class="first-btns">
+      <button type="button" class="btn primary" id="first-add">＋ 人を追加</button>
+      <button type="button" class="btn" id="sampleBtn">例を見る</button>
+    </div>
+  </section>
+
+  <p class="mochu-tip" id="mochuTip" hidden>喪中の人には年賀状を出さず、松の内が明けてから立春の前まで（1月7日〜2月4日ごろが目安）に寒中見舞いを出します。松の内は地域によって1月15日までのこともあります。</p>
+
+  <div id="list" class="list" aria-live="polite"></div>
+  <p class="empty" id="empty" hidden></p>
+
+  <details class="fold">
+    <summary>データの引っ越し</summary>
+    <p class="note">名前や住所は、この端末にだけ保存されます。機種変更のときは、ファイルに書き出して新しい端末で読み込みます。ファイルには住所も入るので、人に送らないでください。</p>
+    <div class="row-btns">
+      <button type="button" class="btn small" id="expBtn">ファイルに書き出す</button>
+      <label class="btn small file-btn">ファイルを読み込む<input type="file" id="impFile" accept="application/json,.json"></label>
+    </div>
+    <p class="msg" id="moveMsg" role="status"></p>
+  </details>
+
+  <footer class="foot">
+    <p>名前・住所・記録は、この端末にだけ保存されます。</p>
+    <p>開発：App World Lab（App World 運営）</p>
+    <p><a href="../">App World Lab</a></p>
+  </footer>
+</main>
+
+<!-- 人の追加・編集 -->
+<div class="sheet-bg" id="sheetBg" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetH">
+    <h2 id="sheetH">人を追加</h2>
+    <label class="field"><span>名前</span><input id="fName" type="text" maxlength="30" autocomplete="off" placeholder="山田 花子"></label>
+    <p class="err" id="fNameErr" role="alert"></p>
+    <div class="field" role="group" aria-labelledby="gLbl">
+      <span id="gLbl">グループ</span>
+      <div class="chips" id="groupChips"></div>
+    </div>
+    <label class="field"><span>メモ（なくてもOK）</span><input id="fMemo" type="text" maxlength="40" autocomplete="off" placeholder="大学のゼミ、子ども2人"></label>
+    <label class="field"><span>住所（なくてもOK）</span><textarea id="fAddr" rows="3" maxlength="200" placeholder="〒123-4567&#10;東京都〇〇区〇〇1-2-3"></textarea></label>
+    <p class="note">住所はこの端末にだけ保存されます。印刷のときに入れるかどうか選べます。</p>
+    <div id="editOnly" hidden>
+      <div class="field" role="group" aria-labelledby="pLbl">
+        <span id="pLbl">この年は</span>
+        <div class="seg" id="planSeg">
+          <button type="button" data-p="auto" aria-pressed="true">去年から決める</button>
+          <button type="button" data-p="yes" aria-pressed="false">出す</button>
+          <button type="button" data-p="no" aria-pressed="false">出さない</button>
+        </div>
+      </div>
+      <label class="sw"><input type="checkbox" id="fStop"><span>年賀状のやりとりをやめた（年賀状じまい）</span></label>
+      <div class="hist" id="hist"></div>
+    </div>
+    <div class="sheet-btns">
+      <button type="button" class="btn primary" id="saveBtn">保存</button>
+      <button type="button" class="btn" id="cancelBtn">やめる</button>
+      <button type="button" class="btn danger" id="delBtn" hidden>削除</button>
+    </div>
+  </div>
+</div>
+
+<!-- まとめて追加 -->
+<div class="sheet-bg" id="bulkBg" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="bulkH">
+    <h2 id="bulkH">まとめて追加</h2>
+    <label class="field"><span>名前（1行に1人）</span><textarea id="bulkText" rows="7" placeholder="山田 花子&#10;佐藤 一郎&#10;鈴木先生"></textarea></label>
+    <p class="err" id="bulkErr" role="alert"></p>
+    <div class="field" role="group" aria-labelledby="bgLbl">
+      <span id="bgLbl">グループ</span>
+      <div class="chips" id="bulkChips"></div>
+    </div>
+    <div class="sheet-btns">
+      <button type="button" class="btn primary" id="bulkSave">追加</button>
+      <button type="button" class="btn" id="bulkCancel">やめる</button>
+    </div>
+  </div>
+</div>
+
+<!-- 印刷 -->
+<div class="sheet-bg" id="printBg" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="printH">
+    <h2 id="printH">印刷する</h2>
+    <div class="field" role="group" aria-labelledby="prLbl">
+      <span id="prLbl">印刷する人</span>
+      <div class="seg" id="printSeg">
+        <button type="button" data-w="plan" aria-pressed="true">出す人</button>
+        <button type="button" data-w="all" aria-pressed="false">全員</button>
+      </div>
+    </div>
+    <label class="sw"><input type="checkbox" id="prAddr"><span>住所も印刷する</span></label>
+    <div class="sheet-btns">
+      <button type="button" class="btn primary" id="printGo">印刷する</button>
+      <button type="button" class="btn" id="printCancel">やめる</button>
+    </div>
+  </div>
+</div>
+
+<section class="print-sheet" id="printSheet" aria-hidden="true"></section>
+
+<div class="toast" id="toast" role="status" hidden><span id="toastMsg"></span><button type="button" id="toastUndo">元に戻す</button></div>
+<script src="freechips.js"></script>
+<script src="app.js"></script>
+<script src="../pwa.js"></script>
+</body></html>

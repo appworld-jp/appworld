@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>文字数ものさし</title>
+<meta name="description" content="文章を貼り付けると、文字数・原稿用紙の枚数・行数・バイト数と、X やメルカリ、履歴書の欄などにあと何字入るかがひと目でわかります。">
+<meta name="theme-color" content="#E9B949">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="文字数ものさし">
+<link rel="stylesheet" href="style.css">
+</head><body>
+<header class="top">
+  <div class="ruler" aria-hidden="true"></div>
+  <div class="top-in">
+    <a class="back" href="../">App World Lab</a>
+    <h1>文字数ものさし</h1>
+    <p class="lead">貼り付けると、文字数とあと何字入るかがわかります。</p>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="cols">
+    <section class="paper" aria-labelledby="hText">
+      <h2 id="hText" class="vh">文章</h2>
+      <label class="vh" for="text">数える文章</label>
+      <textarea id="text" rows="10" spellcheck="false" placeholder="ここに文章を貼り付けます。&#10;&#10;例：貴社の「地域の暮らしを支える」という考えに共感し、志望しました。"></textarea>
+      <div class="tools">
+        <button type="button" class="btn" id="pasteBtn">貼り付け</button>
+        <button type="button" class="btn" id="copyBtn">コピー</button>
+        <button type="button" class="btn ghost" id="clearBtn">消す</button>
+        <button type="button" class="btn ghost" id="sampleBtn">例を入れる</button>
+      </div>
+      <label class="sw"><input type="checkbox" id="keep"><span>この端末に文章を残す</span></label>
+      <p class="note" id="keepNote">オフのときは、ページを閉じると文章は消えます。どこにも送りません。</p>
+    </section>
+
+    <div class="side">
+      <section class="big" aria-labelledby="hCount">
+        <h2 id="hCount" class="vh">文字数</h2>
+        <div class="big-main" aria-live="polite" aria-atomic="true">
+          <span class="big-n" id="nAll">0</span><span class="big-u">字</span>
+        </div>
+        <p class="big-sub"><span>空白・改行をのぞくと</span> <b id="nNoSp">0</b><span>字</span></p>
+        <dl class="stats">
+          <div><dt>原稿用紙<small>400字詰め・目安</small></dt><dd id="genko">0枚</dd></div>
+          <div><dt>行数</dt><dd id="lines">0行</dd></div>
+          <div><dt>読む時間<small>1分500〜600字</small></dt><dd id="read">—</dd></div>
+          <div><dt>バイト数<small>UTF-8</small></dt><dd id="bytes">0</dd></div>
+        </dl>
+        <p class="note" id="genkoNote"></p>
+      </section>
+
+      <section class="places" aria-labelledby="hPlaces">
+        <h2 id="hPlaces">どこに書く？</h2>
+        <ul class="bars" id="bars" aria-live="polite"></ul>
+        <p class="empty" id="barsEmpty" hidden>下から書く場所を選ぶと、あと何字入るかが出ます。</p>
+        <details class="pick" id="pick">
+          <summary>書く場所を選ぶ</summary>
+          <div class="chips" id="placeChips" role="group" aria-label="書く場所"></div>
+          <p class="note">字数は2026年11月時点で確かめた目安です。サービスの上限は変わることがあるので、最後は投稿画面で確かめてください。自分で入れるときは「社内報 800」のように名前と字数を入れます。</p>
+        </details>
+      </section>
+    </div>
+  </div>
+
+  <details class="fold">
+    <summary>数え方について</summary>
+    <ul class="how">
+      <li>文字数は、見た目の1文字を1字として数えます。絵文字や「が」のような組み合わせの文字も1字です。</li>
+      <li>X は、ひらがな・漢字・絵文字などを2、英数字を1として280まで数えます（全角なら140字）。URL は長さにかかわらず23として数えます。有料プランでは長く書けます。</li>
+      <li>原稿用紙は、20字×20行で、段落ごとに行を改め、行の頭に来る「、」「。」や閉じかっこは前の行の下に入れて数えます。半角の英数字は2字で1ます。書き方によって変わるので目安です。</li>
+      <li>読む時間は、1分に500〜600字として計算しています。</li>
+    </ul>
+  </details>
+
+  <details class="fold">
+    <summary>データの引っ越し</summary>
+    <p class="note">自分で入れた書く場所と設定（残すようにした文章も）を、ファイルに書き出して新しい端末で読み込めます。</p>
+    <div class="row-btns">
+      <button type="button" class="btn" id="expBtn">ファイルに書き出す</button>
+      <label class="btn file-btn">ファイルを読み込む<input type="file" id="impFile" accept="application/json,.json"></label>
+    </div>
+    <p class="msg" id="moveMsg" role="status"></p>
+  </details>
+
+  <footer class="foot">
+    <p>選んだ書く場所は、この端末にだけ保存されます。文章は「この端末に文章を残す」をオンにしたときだけ保存されます。</p>
+    <p>開発：App World Lab（App World 運営）</p>
+    <p><a href="../">App World Lab</a></p>
+  </footer>
+</main>
+
+<div class="toast" id="toast" role="status" hidden><span id="toastMsg"></span><button type="button" id="toastUndo">元に戻す</button></div>
+<script src="freechips.js"></script>
+<script src="app.js"></script>
+<script src="../pwa.js"></script>
+</body></html>

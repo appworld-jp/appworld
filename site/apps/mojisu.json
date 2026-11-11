@@ -1,0 +1,18 @@
+{
+  "id": "mojisu",
+  "name": "文字数ものさし",
+  "tagline": "貼り付けると、文字数とあと何字入るかがわかる",
+  "description": "文章を貼り付けると、文字数（空白・改行を含む／含まない）、400字詰め原稿用紙の枚数の目安、行数、バイト数、読む時間の目安を表示します。X（全角140字）、Threads、Bluesky、Instagram、YouTube のタイトルと説明、メルカリの商品名と説明、履歴書の志望動機、エントリーシートなど、書く場所ごとの上限をバーで示し、あと何字入るか、何字多いかがひと目でわかります。字数は2026年11月時点の目安です。社内報など、自分で決めた字数も追加できます。文章は、残すを選んだときだけこの端末に保存されます。",
+  "platform": "web",
+  "category": "productivity",
+  "ai_tools": [
+    "Claude Code"
+  ],
+  "maker_name": "App World Lab（運営）",
+  "url": "https://appworld-lab.pages.dev/mojisu/",
+  "launch_date": "2026-11-11",
+  "beta": false,
+  "operator": true,
+  "color": "#E9B949",
+  "icon": true
+}

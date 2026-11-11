@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>売り場順の買い物メモ</title>
+<meta name="description" content="買うものを入れると、自分の店の売り場の順に並べかえる買い物メモです。店ごとに売り場の順番を決められ、いつも買うものもすぐ入れられます。">
+<meta name="theme-color" content="#1F7A4D">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="売り場順の買い物メモ">
+<link rel="stylesheet" href="style.css">
+</head><body>
+<header class="top">
+  <div class="top-in">
+    <a class="back" href="../">App World Lab</a>
+    <h1><span class="h-sub">売り場順の</span>買い物メモ</h1>
+    <p class="lead">入れたものが、お店を回る順に並びます。</p>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="stores" aria-labelledby="hStore">
+    <h2 id="hStore" class="vh">お店</h2>
+    <div class="store-chips" id="storeChips" role="group" aria-label="お店"></div>
+  </section>
+
+  <section class="adder" aria-labelledby="hAdd">
+    <h2 id="hAdd" class="vh">買うものを入れる</h2>
+    <div class="add-row">
+      <label class="vh" for="newItem">買うもの</label>
+      <input id="newItem" type="text" maxlength="40" autocomplete="off" enterkeyhint="done" placeholder="牛乳 2本" aria-describedby="addHint addErr">
+      <button type="button" class="btn primary" id="addBtn">入れる</button>
+    </div>
+    <p class="add-hint" id="addHint" aria-live="polite">まとめて貼り付けると、1行ずつ入ります。</p>
+    <p class="err" id="addErr" role="alert"></p>
+    <div class="quick">
+      <button type="button" class="btn" id="stapleBtn">いつものを入れる</button>
+      <button type="button" class="btn" id="shareBtn">共有</button>
+    </div>
+  </section>
+
+  <section class="list-sec" aria-labelledby="hList">
+    <div class="list-h">
+      <h2 id="hList">買うもの</h2>
+      <p class="left" id="left" aria-live="polite"></p>
+    </div>
+    <div class="first" id="first" hidden>
+      <p>「牛乳」「豚こま」「キャベツ」のように入れると、売り場ごとに分かれて、お店を回る順に並びます。</p>
+      <button type="button" class="btn" id="sampleBtn">例を入れて見てみる</button>
+    </div>
+    <div id="list" class="list"></div>
+    <div class="list-acts" id="listActs" hidden>
+      <button type="button" class="btn ghost" id="clearDone">買ったものを消す</button>
+      <button type="button" class="btn ghost" id="clearAll">すべて消す</button>
+    </div>
+  </section>
+
+  <details class="fold" id="orderBox">
+    <summary>売り場の順番<span id="orderStore"></span></summary>
+    <p class="note">入口から回る順に並べます。お店ごとに覚えます。</p>
+    <ol class="order" id="order"></ol>
+    <div class="own-sec" id="ownSec"></div>
+    <button type="button" class="btn ghost small" id="resetOrder">はじめの順番に戻す</button>
+  </details>
+
+  <details class="fold" id="stapleBox">
+    <summary>いつもの<span id="stapleN"></span></summary>
+    <p class="note">よく買うものを入れておくと、「いつものを入れる」でまとめて入ります。リストの「⋯」からも登録できます。</p>
+    <ul class="staples" id="staples"></ul>
+    <div class="add-row small">
+      <label class="vh" for="newStaple">いつもの</label>
+      <input id="newStaple" type="text" maxlength="40" autocomplete="off" placeholder="卵">
+      <button type="button" class="btn" id="addStaple">登録</button>
+    </div>
+    <p class="err" id="stapleErr" role="alert"></p>
+  </details>
+
+  <details class="fold">
+    <summary>データの引っ越し</summary>
+    <p class="note">お店・売り場の順番・リスト・いつもの・覚えた売り場を、ファイルに書き出して新しい端末で読み込めます。</p>
+    <div class="row-btns">
+      <button type="button" class="btn small" id="expBtn">ファイルに書き出す</button>
+      <label class="btn small file-btn">ファイルを読み込む<input type="file" id="impFile" accept="application/json,.json"></label>
+    </div>
+    <p class="msg" id="moveMsg" role="status"></p>
+  </details>
+
+  <footer class="foot">
+    <p>リストとお店の設定は、この端末にだけ保存されます。</p>
+    <p>開発：App World Lab（App World 運営）</p>
+    <p><a href="../">App World Lab</a></p>
+  </footer>
+</main>
+
+<!-- 品物の編集 -->
+<div class="sheet-bg" id="sheetBg" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetH">
+    <h2 id="sheetH">品物</h2>
+    <label class="field"><span>名前</span><input id="eName" type="text" maxlength="40" autocomplete="off"></label>
+    <p class="err" id="eErr" role="alert"></p>
+    <div class="field" role="group" aria-labelledby="eSecL">
+      <span id="eSecL">売り場</span>
+      <div class="sec-chips" id="eSecs"></div>
+    </div>
+    <p class="note">選んだ売り場は覚えて、次から同じ名前はこの売り場に入ります。</p>
+    <label class="sw"><input type="checkbox" id="eStaple"><span>いつものに入れる</span></label>
+    <div class="sheet-btns">
+      <button type="button" class="btn primary" id="eSave">保存</button>
+      <button type="button" class="btn" id="eCancel">やめる</button>
+      <button type="button" class="btn danger" id="eDel">リストから消す</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" hidden><span id="toastMsg"></span><button type="button" id="toastUndo">元に戻す</button></div>
+<script src="data.js"></script>
+<script src="freechips.js"></script>
+<script src="app.js"></script>
+<script src="../pwa.js"></script>
+</body></html>

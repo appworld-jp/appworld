@@ -1,0 +1,38 @@
+{
+  "name": "文字数ものさし",
+  "short_name": "文字数ものさし",
+  "description": "文章を貼り付けると、文字数・原稿用紙の枚数・行数・バイト数と、X やメルカリ、履歴書の欄などにあと何字入るかがひと目でわかります。",
+  "lang": "ja",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#E9B949",
+  "theme_color": "#E9B949",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

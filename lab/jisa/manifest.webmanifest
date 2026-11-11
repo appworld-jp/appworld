@@ -1,0 +1,38 @@
+{
+  "name": "時差の時刻合わせ",
+  "short_name": "時差の時刻合わせ",
+  "description": "東京と海外の都市を選ぶと、1時間ごとのそれぞれの時刻を並べ、全員が仕事の時間に入る時間帯を色で示します。決めた時刻は、そのまま送れる文にしてコピーできます。",
+  "lang": "ja",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#16233F",
+  "theme_color": "#16233F",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>時差の時刻合わせ</title>
+<meta name="description" content="東京と海外の都市を選ぶと、1時間ごとのそれぞれの時刻を並べ、全員が仕事の時間に入る時間帯を色で示します。決めた時刻は、そのまま送れる文にしてコピーできます。">
+<meta name="theme-color" content="#16233F">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="時差の時刻合わせ">
+<link rel="stylesheet" href="style.css">
+</head><body>
+<header class="top">
+  <div class="top-in">
+    <a class="back" href="../">App World Lab</a>
+    <h1>時差の<wbr>時刻合わせ</h1>
+    <p class="lead">全員が仕事中の時間が、ひと目でわかります。</p>
+  </div>
+  <div class="sky" aria-hidden="true"><span class="sun"></span></div>
+</header>
+
+<main class="wrap">
+  <section class="card" aria-labelledby="hCities">
+    <div class="card-h">
+      <h2 id="hCities">都市</h2>
+      <span class="hint" id="nowLine"></span>
+    </div>
+    <ul class="cities" id="cities"></ul>
+    <div class="add">
+      <label class="vh" for="q">都市を探す</label>
+      <input id="q" type="search" autocomplete="off" placeholder="ニューヨーク" enterkeyhint="search" aria-describedby="qErr" aria-controls="hits">
+      <p class="err" id="qErr" role="alert"></p>
+      <ul class="hits" id="hits" aria-label="候補"></ul>
+      <div class="own" id="own"></div>
+    </div>
+  </section>
+
+  <section class="card" aria-labelledby="hWhen">
+    <h2 id="hWhen" class="vh">日にちと時間</h2>
+    <div class="when">
+      <div class="day">
+        <button type="button" class="round" id="prevDay" aria-label="前の日">‹</button>
+        <label class="date-l"><span class="vh">日にち</span><input type="date" id="date"></label>
+        <button type="button" class="round" id="nextDay" aria-label="次の日">›</button>
+      </div>
+      <div class="opts">
+        <label class="sel"><span>仕事の時間</span>
+          <span class="sel-row"><select id="ws" aria-label="仕事の始まり"></select>〜<select id="we" aria-label="仕事の終わり"></select></span>
+        </label>
+        <label class="sel"><span>会議の長さ</span><select id="dur">
+          <option value="30">30分</option><option value="60" selected>1時間</option><option value="90">1時間半</option><option value="120">2時間</option>
+        </select></label>
+      </div>
+    </div>
+    <p class="summary" id="summary" aria-live="polite"></p>
+  </section>
+
+  <section class="grid-card" aria-labelledby="hGrid">
+    <h2 id="hGrid" class="vh">時刻の表</h2>
+    <p class="legend"><span class="lg work"></span>仕事の時間 <span class="lg awake"></span>起きている時間 <span class="lg night"></span>夜</p>
+    <div class="grid-wrap" id="gridWrap" tabindex="0" aria-label="時刻の表。行を押すと、その時刻を選べます">
+      <table class="grid" id="grid"></table>
+    </div>
+  </section>
+
+  <section class="out" id="out" aria-labelledby="hOut" hidden>
+    <h2 id="hOut">この時刻で送る</h2>
+    <p class="out-text" id="outText" aria-live="polite"></p>
+    <div class="out-btns">
+      <button type="button" class="btn primary" id="copyBtn">コピー</button>
+      <button type="button" class="btn" id="fmtBtn" aria-pressed="false">終わりの時刻も</button>
+    </div>
+    <p class="msg" id="copyMsg" role="status"></p>
+  </section>
+
+  <details class="fold">
+    <summary>データの引っ越し</summary>
+    <p class="note">選んだ都市と、自分で入れた呼び名を、ファイルに書き出して新しい端末で読み込めます。</p>
+    <div class="row-btns">
+      <button type="button" class="btn" id="expBtn">ファイルに書き出す</button>
+      <label class="btn file-btn">ファイルを読み込む<input type="file" id="impFile" accept="application/json,.json"></label>
+    </div>
+    <p class="msg" id="moveMsg" role="status"></p>
+  </details>
+
+  <p class="note center">サマータイムは、ブラウザが持っている各国の時刻の決まりで自動で計算します。</p>
+
+  <footer class="foot">
+    <p>選んだ都市と設定は、この端末にだけ保存されます。</p>
+    <p>開発：App World Lab（App World 運営）</p>
+    <p><a href="../">App World Lab</a></p>
+  </footer>
+</main>
+
+<div class="toast" id="toast" role="status" hidden><span id="toastMsg"></span><button type="button" id="toastUndo">元に戻す</button></div>
+<script src="freechips.js"></script>
+<script src="cities.js"></script>
+<script src="app.js"></script>
+<script src="../pwa.js"></script>
+</body></html>
