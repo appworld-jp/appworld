@@ -2,7 +2,7 @@
 // Network first (updates arrive as soon as you are online), cached copy when offline. Same-origin only.
 "use strict";
 const PREFIX = "lab-hosho-";
-const CACHE = PREFIX + "8f984c347fd3";
+const CACHE = PREFIX + "28d5ea7518ad";
 const FILES = ["./","icon.svg","manifest.webmanifest","icon-180.png","style.css","app.js","../pwa.js","icon-192.png","icon-512.png","icon-maskable-512.png"];
 const URLS = new Set(FILES.map((f) => new URL(f, self.location).href));
 const INDEX = new URL("./", self.location).href;

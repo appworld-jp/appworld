@@ -23,7 +23,7 @@ button,input,select,textarea{font:inherit;color:inherit}
 .back{font-size:12px;text-decoration:none;font-weight:700;letter-spacing:.06em;opacity:.75}
 .title-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:6px}
 h1{margin:0;font-size:32px;font-weight:900;letter-spacing:.08em;line-height:1.2}
-.lead{margin:6px 0 0;font-size:14px;font-weight:600;text-wrap:balance;word-break:keep-all}
+.lead{margin:6px 0 0;font-size:14px;font-weight:600;text-wrap:balance;word-break:keep-all;overflow-wrap:break-word}
 .tape{height:22px;background-color:var(--tape);border-top:2px solid var(--black);
   background-image:
     repeating-linear-gradient(90deg,var(--black) 0 2px,transparent 2px 50px),
@@ -76,7 +76,7 @@ h1{margin:0;font-size:32px;font-weight:900;letter-spacing:.08em;line-height:1.2}
 
 .empty{text-align:center;background:var(--card);border:2px dashed var(--line);border-radius:18px;padding:24px 16px}
 .empty p{margin:6px 0;color:var(--sub);font-size:14px}
-.empty .empty-h{text-wrap:balance;word-break:keep-all;font-size:17px;color:var(--ink);font-weight:800}
+.empty .empty-h{text-wrap:balance;word-break:keep-all;overflow-wrap:break-word;font-size:17px;color:var(--ink);font-weight:800}
 .row-btns{display:flex;flex-wrap:wrap;gap:10px}
 .row-btns.center{justify-content:center;margin-top:14px}
 

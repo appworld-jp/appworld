@@ -17,7 +17,7 @@ a{color:inherit}
   border-bottom:4px double var(--gold)}
 .band-in{max-width:608px;margin:0 auto}
 .back{font-size:12px;letter-spacing:.15em;color:#CDB894;text-decoration:none}
-h1{margin:10px 0 0;font-size:38px;word-break:keep-all;line-height:1.1;letter-spacing:.12em;font-weight:700}
+h1{margin:10px 0 0;font-size:38px;word-break:keep-all;overflow-wrap:break-word;line-height:1.1;letter-spacing:.12em;font-weight:700}
 .h-a{color:#F2E6CC}.h-b{color:var(--gold);margin-left:.1em}
 .tag{margin:6px 0 0;color:#CDB894;font-size:14px;letter-spacing:.1em}
 .page{max-width:640px;margin:0 auto;padding:22px max(16px,env(safe-area-inset-right,0px)) calc(32px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));display:grid;gap:30px}
@@ -49,7 +49,7 @@ h2{margin:0;font-size:18px;letter-spacing:.14em}
 .first-h{font-size:20px;font-weight:700;margin:0 0 6px}
 .first p{margin:0 auto;max-width:28em;color:var(--sub);font-size:14.5px}
 .first .sample{margin-top:14px;font-size:14px;letter-spacing:.04em}
-.first-h,.tag{text-wrap:balance;word-break:keep-all}
+.first-h,.tag{text-wrap:balance;word-break:keep-all;overflow-wrap:break-word}
 .add-form{display:grid;grid-template-columns:1fr 110px;gap:10px;margin-top:12px;align-items:end}
 .add-form label{display:grid;gap:4px;font-size:13px;color:var(--sub)}
 .add-form .btn{grid-column:1/-1}

@@ -114,7 +114,7 @@ h1 { margin: 0; font-family: var(--mincho); font-size: 28px; letter-spacing: .04
 .d-edit form { display: grid; gap: 10px; padding: 4px 0 8px; }
 .d-edit .btn { justify-self: start; }
 
-.toast { position: fixed; inset: auto auto calc(16px + env(safe-area-inset-bottom)) 50%; margin: 0; border: 0; overflow: visible; transform: translate(-50%, 0); width: min(520px, calc(100vw - 24px)); display: none; align-items: center; gap: 10px; padding: 12px 14px; background: var(--ink); color: var(--page); border-radius: 12px; font-size: 14px; z-index: 10; }
+.toast { position: fixed; inset: auto auto calc(16px + env(safe-area-inset-bottom)) 50%; margin: 0; border: 0; overflow: visible; transform: translate(-50%, 0); width: min(520px, calc(100% - 24px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px))); display: none; align-items: center; gap: 10px; padding: 12px 14px; background: var(--ink); color: var(--page); border-radius: 12px; font-size: 14px; z-index: 10; }
 .toast.on { display: flex; }
 @media (prefers-reduced-motion: no-preference) { .toast.on { animation: up .22s ease-out; } @keyframes up { from { transform: translate(-50%, 30%); opacity: 0; } } }
 .toast span { flex: 1; }

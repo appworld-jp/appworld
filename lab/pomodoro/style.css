@@ -157,3 +157,21 @@ main{display:grid;gap:18px}
 /* iPhone (WebKit) keeps a fieldset at least as wide as its content; let it shrink so nothing overflows narrow screens */
 fieldset{min-width:0;min-inline-size:0}
 input,select,textarea{max-width:100%}
+
+/* Narrow phones (320px) and larger text: let tracks shrink and give the box a little less padding */
+main{grid-template-columns:minmax(0,1fr)}
+.plate{grid-template-columns:minmax(0,1fr)}
+.lcd{display:flex;flex-wrap:wrap;justify-content:space-between;column-gap:10px}
+.lcd-time{flex:1 1 auto;font-size:clamp(26px,10.5vw,40px)}
+.controls{grid-template-columns:minmax(0,2fr) minmax(min-content,1fr)}
+.rest-keys{grid-template-columns:repeat(2,minmax(0,1fr))}
+.key{word-break:keep-all;overflow-wrap:break-word}
+.lead,.status{overflow-wrap:anywhere}
+.paper-head{flex-wrap:wrap}
+.log li>*{min-width:0}
+@media (max-width:374px){
+  .box{padding:26px 12px 20px;border-radius:32px}
+  .plate{padding:14px 10px 12px;border-radius:24px}
+  .lcd{padding:8px 10px;column-gap:6px}
+}
+.lcd-cycle{margin-left:auto}

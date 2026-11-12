@@ -195,3 +195,9 @@ a{color:inherit}
 /* iPhone (WebKit) keeps a fieldset at least as wide as its content; let it shrink so nothing overflows narrow screens */
 fieldset{min-width:0;min-inline-size:0}
 input,select,textarea{max-width:100%}
+
+/* Narrow phones (320px) and larger text: the paid-leave picker wraps instead of being cut off */
+.paid{flex-wrap:wrap;row-gap:6px}
+.seg{flex:none;max-width:100%}
+@media (max-width:359px){.seg button{min-width:40px}}
+.wrap>*{min-width:0}

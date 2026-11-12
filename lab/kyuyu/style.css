@@ -19,7 +19,7 @@ button,input,select,textarea{font:inherit;color:inherit}
 .back{font-size:12px;color:var(--sub);text-decoration:none;letter-spacing:.06em}
 h1{margin:6px 0 0;font-size:28px;font-weight:800;line-height:1.2;display:flex;align-items:center;gap:8px;letter-spacing:.06em}
 .pump{color:var(--amber);flex:none}
-.lead{margin:6px 0 0;font-size:14px;color:var(--sub);text-wrap:balance;word-break:keep-all}
+.lead{margin:6px 0 0;font-size:14px;color:var(--sub);text-wrap:balance;word-break:keep-all;overflow-wrap:break-word}
 .cars{max-width:640px;margin:0 auto;padding:12px max(16px,env(safe-area-inset-right,0px)) 14px max(16px,env(safe-area-inset-left,0px));display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}
 .cars::-webkit-scrollbar{display:none}
 .car-btn{flex:none;min-height:44px;padding:0 16px;border-radius:8px;border:1px solid var(--line);background:var(--panel);font-weight:700;font-size:15px;cursor:pointer;white-space:nowrap}
@@ -115,7 +115,7 @@ h1{margin:6px 0 0;font-size:28px;font-weight:800;line-height:1.2;display:flex;al
 
 .none{margin:0;padding:12px 14px;border-radius:12px;background:var(--panel);border:1px dashed var(--line);color:var(--sub);font-size:14px}
 .empty{text-align:center;background:var(--panel);border-radius:18px;padding:22px 16px;border:1px solid var(--line)}
-.empty-h{font-weight:800;font-size:19px;margin:8px 0 4px;text-wrap:balance;word-break:keep-all}
+.empty-h{font-weight:800;font-size:19px;margin:8px 0 4px;text-wrap:balance;word-break:keep-all;overflow-wrap:break-word}
 .empty p{margin:4px 0;font-size:14px;color:var(--sub)}
 .empty .empty-h{color:var(--ink)}
 .sample-bar{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;background:var(--panel);border:1px dashed var(--amber);border-radius:12px;padding:8px 12px;font-size:14px}
@@ -183,10 +183,14 @@ h1{margin:6px 0 0;font-size:28px;font-weight:800;line-height:1.2;display:flex;al
 .msg:empty{display:none}
 .foot{text-align:center;font-size:12px;color:var(--sub);padding:4px 0 8px}
 .foot p{margin:2px 0}
-.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));width:max-content;max-width:calc(100vw - 24px);background:var(--ink);color:var(--bg);border-radius:12px;padding:8px 8px 8px 16px;display:flex;align-items:center;gap:10px;z-index:20;font-size:14px;box-shadow:0 10px 30px -10px #000}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));width:max-content;max-width:calc(100% - 24px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px));background:var(--ink);color:var(--bg);border-radius:12px;padding:8px 8px 8px 16px;display:flex;align-items:center;gap:10px;z-index:20;font-size:14px;box-shadow:0 10px 30px -10px #000}
 .toast button{min-height:44px;border:0;background:transparent;color:inherit;font-weight:800;text-decoration:underline;cursor:pointer;padding:0 10px;flex:none}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
 /* iPhone (WebKit) keeps a fieldset at least as wide as its content; let it shrink so nothing overflows narrow screens */
 fieldset{min-width:0;min-inline-size:0}
 input,select,textarea{max-width:100%}
+
+/* Larger text: the numbers wrap instead of being cut off with an ellipsis */
+.g-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g-grid dd{white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere}

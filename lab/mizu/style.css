@@ -136,3 +136,7 @@ input[type=number] { min-width: 0; flex: 1; height: 46px; border-radius: 14px; b
 /* iPhone (WebKit) keeps a fieldset at least as wide as its content; let it shrink so nothing overflows narrow screens */
 fieldset{min-width:0;min-inline-size:0}
 input,select,textarea{max-width:100%}
+
+/* The wave paths are wider than the bottle (they slide sideways) and are already cut by the clipPath;
+   clip the SVG box too so their hidden part never widens the page on narrow phones (WebKit counts it) */
+.bottle { overflow: hidden; }

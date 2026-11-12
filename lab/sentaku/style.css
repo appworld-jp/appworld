@@ -24,7 +24,7 @@ button,input{font:inherit;color:inherit}
 .tag::before{content:"";position:absolute;inset:7px 7px 0;border:1.5px dashed #9FB0D6;border-bottom:none;border-radius:2px;pointer-events:none}
 h1{margin:0;font-size:30px;line-height:1.2;letter-spacing:.06em;color:#24408E}
 h1 span{display:inline-block;margin-left:.3em;font-size:20px;color:#2F9CC4;letter-spacing:.12em}
-.lead{margin:8px 0 0;font-size:14px;color:#4A5675;text-wrap:balance;word-break:keep-all}
+.lead{margin:8px 0 0;font-size:14px;color:#4A5675;text-wrap:balance;word-break:keep-all;overflow-wrap:break-word}
 
 .tabs{display:flex;justify-content:center;gap:0;background:var(--bg);max-width:720px;margin:0 auto;padding:12px 16px 0;position:sticky;top:0;z-index:5}
 .top .tabs{background:transparent}

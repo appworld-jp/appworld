@@ -23,7 +23,7 @@ button,input,select{font:inherit;color:inherit}
 h1{margin:6px 0 0;line-height:1;font-weight:900;display:flex;align-items:flex-end;gap:6px;transform:rotate(-2deg);transform-origin:left bottom}
 h1 .q{font-size:22px;padding-bottom:6px}
 h1 .big{font-size:52px;color:#D7262E;letter-spacing:-.02em;text-shadow:3px 3px 0 #fff}
-.lead{margin:12px 0 0;font-size:14px;font-weight:700;text-wrap:balance;word-break:keep-all}
+.lead{margin:12px 0 0;font-size:14px;font-weight:700;text-wrap:balance;word-break:keep-all;overflow-wrap:break-word}
 
 .wrap{max-width:640px;margin:0 auto;padding:14px max(16px,env(safe-area-inset-right,0px)) 24px max(16px,env(safe-area-inset-left,0px))}
 .opts{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
@@ -125,3 +125,12 @@ h1 .big{font-size:52px;color:#D7262E;letter-spacing:-.02em;text-shadow:3px 3px 0
 /* iPhone (WebKit) keeps a fieldset at least as wide as its content; let it shrink so nothing overflows narrow screens */
 fieldset{min-width:0;min-inline-size:0}
 input,select,textarea{max-width:100%}
+
+/* Narrow phones (320px) and larger text: grid tracks must be allowed to shrink below the inputs' default width */
+.cards{grid-template-columns:minmax(0,1fr)}
+.row2{grid-template-columns:minmax(0,1.6fr) minmax(0,.8fr) minmax(0,1fr)}
+@media (max-width:370px){.row2{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.row1 .price{min-width:0}
+.mi{grid-template-columns:minmax(0,1fr) auto auto}
+.mi>*{min-width:0;overflow-wrap:anywhere}
+.fl,.memo-btn{overflow-wrap:anywhere}

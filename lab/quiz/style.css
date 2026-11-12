@@ -23,7 +23,7 @@ a{color:inherit}
 .sign::before{content:"";position:absolute;inset:16px 10px;background:var(--red);border-radius:8px}
 .sign>*{position:relative}
 .sign-sub{margin:0;font-weight:800;font-size:13px;letter-spacing:.3em;color:var(--cream)}
-h1{margin:2px 0 0;font-size:clamp(40px,11vw,58px);word-break:keep-all;font-weight:900;line-height:1.1;letter-spacing:.06em;color:var(--yellow);
+h1{margin:2px 0 0;font-size:clamp(40px,11vw,58px);word-break:keep-all;overflow-wrap:break-word;font-weight:900;line-height:1.1;letter-spacing:.06em;color:var(--yellow);
   text-shadow:3px 3px 0 #7A1210,6px 6px 0 rgba(0,0,0,.35)}
 .sign-no{margin:6px 0 0;font-family:var(--mono);font-size:13px;color:var(--cream);letter-spacing:.1em}
 @media (prefers-reduced-motion:no-preference){.sign{animation:bulbs 1.2s steps(2) infinite}}

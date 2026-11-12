@@ -128,7 +128,7 @@ h2 { font-size: 13px; font-weight: 700; color: var(--sub); letter-spacing: .12em
 .fc-del { position: absolute; top: -6px; right: -6px; width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--line); background: var(--card); color: var(--sub); cursor: pointer; font-size: 15px; line-height: 1; padding: 0; }
 .fc-del::before { content: ""; position: absolute; inset: -8px; }
 .fc-del:hover { color: var(--warn); border-color: var(--warn); }
-.fc-open { word-break: keep-all; min-height: 78px; border: 1.5px dashed var(--teal); border-radius: 16px; background: transparent; color: var(--teal); cursor: pointer; font-size: 13px; font-weight: 700; padding: 6px 4px; line-height: 1.35; }
+.fc-open { word-break: keep-all;overflow-wrap:break-word; min-height: 78px; border: 1.5px dashed var(--teal); border-radius: 16px; background: transparent; color: var(--teal); cursor: pointer; font-size: 13px; font-weight: 700; padding: 6px 4px; line-height: 1.35; }
 .fc-row { grid-column: 1 / -1; display: flex; gap: 8px; flex-wrap: wrap; }
 .fc-in { flex: 1 1 9em; min-width: 0; color: var(--ink); }
 .fc-in[aria-invalid=true] { border: 2px solid var(--warn); }
