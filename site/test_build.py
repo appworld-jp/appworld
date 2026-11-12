@@ -229,7 +229,7 @@ class BuildTest(unittest.TestCase):
                 self.assertEqual(text.count('<nav class="tabs" aria-label="メイン">'), 1)
                 self.assertEqual(text.count('<nav class="top" aria-label="メイン">'), 1)
                 self.assertIn(">探す</span>", text)
-                self.assertNotIn("すべて", text)
+                self.assertNotIn("全て", text)  # app UIs write すべて in hiragana (owner, 2026-11-12)
         home = (self.out / "index.html").read_text(encoding="utf-8")
         self.assertIn('<a class="on" aria-current="page" href="index.html" data-tab="home">', home)
         self.assertIn('<a class="on" aria-current="page" href="apps.html" data-tab="find">',
