@@ -128,3 +128,7 @@ button,input{font:inherit;color:inherit}
 .fc-err{margin:0;color:var(--f0);font-size:13px}
 .fc-err:empty{display:none}
 .fc-form[hidden]{display:none}
+
+/* iPhone (WebKit) keeps a fieldset at least as wide as its content; let it shrink so nothing overflows narrow screens */
+fieldset{min-width:0;min-inline-size:0}
+input,select,textarea{max-width:100%}

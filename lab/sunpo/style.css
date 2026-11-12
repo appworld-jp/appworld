@@ -154,3 +154,7 @@ h1{margin:0;font-size:32px;font-weight:900;letter-spacing:.08em;line-height:1.2}
 .toast button{background:var(--tape);border:0;color:var(--black);border-radius:10px;min-height:40px;padding:4px 12px;cursor:pointer;flex:none;font-weight:800}
 @media (max-width:360px){.dim b{font-size:19px}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* iPhone (WebKit) keeps a fieldset at least as wide as its content; let it shrink so nothing overflows narrow screens */
+fieldset{min-width:0;min-inline-size:0}
+input,select,textarea{max-width:100%}

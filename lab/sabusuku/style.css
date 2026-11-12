@@ -185,3 +185,7 @@ body.wi .toast{bottom:calc(150px + env(safe-area-inset-bottom,0px))}
 .fc-note{flex-basis:100%;margin:0;font-size:13px;color:var(--sub);display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px}
 .fc-err:empty{display:none}
 .field input{min-width:0;max-width:100%}
+
+/* iPhone (WebKit) keeps a fieldset at least as wide as its content; let it shrink so nothing overflows narrow screens */
+fieldset{min-width:0;min-inline-size:0}
+input,select,textarea{max-width:100%}

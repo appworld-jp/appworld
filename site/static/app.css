@@ -161,3 +161,7 @@ footer a{text-decoration:none}
 .none{border-radius:20px;padding:28px;display:grid;gap:10px;justify-items:start}
 .none p{margin:0}
 .shelf .none{margin-bottom:10px}
+
+/* iPhone (WebKit) keeps a fieldset at least as wide as its content; let it shrink so nothing overflows narrow screens */
+fieldset{min-width:0;min-inline-size:0}
+input,select,textarea{max-width:100%}

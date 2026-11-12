@@ -162,3 +162,7 @@ h1 span{display:inline-block;margin-left:.3em;font-size:20px;color:#2F9CC4;lette
 .r-words li{display:block;border:0;padding:0;font-size:15px}
 .r-words b{color:var(--ink);font-size:14px;padding:0}
 .gwords{font-size:12px;color:var(--sub)}
+
+/* iPhone (WebKit) keeps a fieldset at least as wide as its content; let it shrink so nothing overflows narrow screens */
+fieldset{min-width:0;min-inline-size:0}
+input,select,textarea{max-width:100%}

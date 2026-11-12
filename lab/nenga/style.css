@@ -164,3 +164,7 @@ h1{margin:0;font-family:var(--mincho);font-size:32px;letter-spacing:.12em;line-h
   .print-sheet td.ad{white-space:pre-line}
   .print-sheet tr{break-inside:avoid}
 }
+
+/* iPhone (WebKit) keeps a fieldset at least as wide as its content; let it shrink so nothing overflows narrow screens */
+fieldset{min-width:0;min-inline-size:0}
+input,select,textarea{max-width:100%}

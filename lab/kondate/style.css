@@ -192,3 +192,7 @@ p, li { text-wrap: pretty; }
 .fc-no { min-height: 46px; border: 0; background: none; color: var(--sub); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; flex: none; font-size: 14px; font-family: inherit; }
 .fc-err { margin: 0; color: var(--miss); font-size: 13px; }
 .fc-err:empty { display: none; }
+
+/* iPhone (WebKit) keeps a fieldset at least as wide as its content; let it shrink so nothing overflows narrow screens */
+fieldset{min-width:0;min-inline-size:0}
+input,select,textarea{max-width:100%}

@@ -174,3 +174,7 @@ h1{margin:8px 0 0;font-size:28px;line-height:1.25;display:flex;align-items:cente
 .checks .fc-li{grid-column:1/-1}
 .checks .fc{display:flex;flex-wrap:wrap;gap:6px}
 @media (prefers-color-scheme:dark){.fc-add{background:var(--y);border-color:var(--y);color:#1E2A33}.fc-chip:has(.kind[aria-checked=true]) .fc-del{border-color:var(--y)}}
+
+/* iPhone (WebKit) keeps a fieldset at least as wide as its content; let it shrink so nothing overflows narrow screens */
+fieldset{min-width:0;min-inline-size:0}
+input,select,textarea{max-width:100%}

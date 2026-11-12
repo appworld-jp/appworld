@@ -133,3 +133,7 @@ textarea { width: 100%; font-family: var(--mono); font-size: 13px; resize: verti
 @media (prefers-reduced-motion: no-preference) { .toast.on { animation: up .2s ease-out; } @keyframes up { from { transform: translate(-50%, 30%); opacity: 0; } } }
 @media (max-width: 380px) { .f2 { grid-template-columns: 1fr; } }
 @media (prefers-color-scheme: dark) { input, select, textarea, .pk, .mem, .weights { background: #f6f3ea; } }
+
+/* iPhone (WebKit) keeps a fieldset at least as wide as its content; let it shrink so nothing overflows narrow screens */
+fieldset{min-width:0;min-inline-size:0}
+input,select,textarea{max-width:100%}

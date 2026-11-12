@@ -153,3 +153,7 @@ h1 { margin: 0; font-size: 24px; letter-spacing: .06em; font-weight: 800; paddin
   .toast.on { animation: up .2s ease-out; } @keyframes up { from { transform: translate(-50%, 30%); opacity: 0; } }
 }
 @media (min-width: 600px) { .start h2 { font-size: 22px; } }
+
+/* iPhone (WebKit) keeps a fieldset at least as wide as its content; let it shrink so nothing overflows narrow screens */
+fieldset{min-width:0;min-inline-size:0}
+input,select,textarea{max-width:100%}

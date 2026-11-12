@@ -191,3 +191,7 @@ a{color:inherit}
 @media (prefers-reduced-motion:no-preference){.prow,.day,.btn{transition:background-color .15s,border-color .15s}.hero{animation:pop .35s ease-out}@keyframes pop{from{transform:translateY(6px);opacity:.4}to{transform:none;opacity:1}}}
 @media print{.hd,.bar,.setup,.fold,.foot,.toast,.hero .btn{display:none}}
 .nb{display:inline-block}
+
+/* iPhone (WebKit) keeps a fieldset at least as wide as its content; let it shrink so nothing overflows narrow screens */
+fieldset{min-width:0;min-inline-size:0}
+input,select,textarea{max-width:100%}

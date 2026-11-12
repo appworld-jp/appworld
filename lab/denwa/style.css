@@ -163,3 +163,7 @@ h2{font-size:15px;margin:0;color:var(--green);letter-spacing:.06em}
 .own-err:empty,.own-msg:empty{display:none}
 .own-undo{border:0;background:transparent;color:var(--green);font-weight:700;text-decoration:underline;min-height:36px;cursor:pointer;padding:0}
 .ri-kind.own{background:var(--sub);color:var(--paper)}
+
+/* iPhone (WebKit) keeps a fieldset at least as wide as its content; let it shrink so nothing overflows narrow screens */
+fieldset{min-width:0;min-inline-size:0}
+input,select,textarea{max-width:100%}

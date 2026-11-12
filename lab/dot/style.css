@@ -77,3 +77,7 @@ input[type=range]{width:100%;accent-color:var(--yel);height:32px}
 .saves{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .saves .btn{margin:4px;min-width:0}
 .saves #saveBig{grid-column:1/-1}
+
+/* iPhone (WebKit) keeps a fieldset at least as wide as its content; let it shrink so nothing overflows narrow screens */
+fieldset{min-width:0;min-inline-size:0}
+input,select,textarea{max-width:100%}

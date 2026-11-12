@@ -180,3 +180,7 @@ main{padding-top:16px}
 #restSeg .fc-add{flex:1 1 96px;white-space:nowrap}
 .seg .fc-item>.fc-x{flex:0 0 40px;padding:0;border-radius:0 4px 4px 0;border-right:2px solid var(--line);font-family:var(--f)}
 .fc-form[hidden]{display:none}
+
+/* iPhone (WebKit) keeps a fieldset at least as wide as its content; let it shrink so nothing overflows narrow screens */
+fieldset{min-width:0;min-inline-size:0}
+input,select,textarea{max-width:100%}

@@ -174,3 +174,7 @@ h1{margin:8px 0 0;font-size:34px;line-height:1.15;font-weight:900;letter-spacing
 .fc-err{grid-column:1/-1;flex-basis:100%;margin:0;color:var(--over);font-weight:700;font-size:13px}
 .fc-err:empty{display:none}
 .fc-note{grid-column:1/-1;flex-basis:100%;margin:0;font-size:13px;color:var(--sub);display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px}
+
+/* iPhone (WebKit) keeps a fieldset at least as wide as its content; let it shrink so nothing overflows narrow screens */
+fieldset{min-width:0;min-inline-size:0}
+input,select,textarea{max-width:100%}

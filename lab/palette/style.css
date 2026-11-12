@@ -74,3 +74,7 @@ a{color:var(--ink)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 .nw{display:inline-block}
 @media (max-width:560px){.actions{display:grid;grid-template-columns:1fr 1fr}.actions .btn.ink{grid-column:1/-1}}
+
+/* iPhone (WebKit) keeps a fieldset at least as wide as its content; let it shrink so nothing overflows narrow screens */
+fieldset{min-width:0;min-inline-size:0}
+input,select,textarea{max-width:100%}

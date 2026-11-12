@@ -147,3 +147,7 @@ h1{margin:12px 0 0;display:inline-block;background:#FBF7EC;color:#2D2A22;font-si
 .fc-item{display:inline-flex;align-items:stretch}
 .fc-item>button[data-v]{border-top-right-radius:0;border-bottom-right-radius:0;border-right:0;padding-right:10px}
 .chips .fc-x{border-radius:0 999px 999px 0;border-left:1px dashed var(--olive);padding:4px 10px;min-width:36px;color:var(--ink);font-weight:400}
+
+/* iPhone (WebKit) keeps a fieldset at least as wide as its content; let it shrink so nothing overflows narrow screens */
+fieldset{min-width:0;min-inline-size:0}
+input,select,textarea{max-width:100%}

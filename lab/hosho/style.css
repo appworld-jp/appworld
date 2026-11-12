@@ -144,3 +144,7 @@ h1{margin:10px 0 0;font-family:var(--mincho);font-weight:700;font-size:40px;line
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(90px + env(safe-area-inset-bottom,0px));z-index:9;display:flex;align-items:center;gap:12px;background:var(--navy2);color:#EFE8D8;border-radius:10px;padding:10px 12px 10px 16px;max-width:calc(100% - 32px);width:max-content;font-size:14px;box-shadow:0 10px 30px rgba(0,0,0,.3)}
 .toast button{background:transparent;border:1.5px solid currentColor;color:inherit;border-radius:8px;min-height:40px;padding:4px 12px;cursor:pointer;flex:none;font-weight:700}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* iPhone (WebKit) keeps a fieldset at least as wide as its content; let it shrink so nothing overflows narrow screens */
+fieldset{min-width:0;min-inline-size:0}
+input,select,textarea{max-width:100%}

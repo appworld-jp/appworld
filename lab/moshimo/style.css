@@ -205,3 +205,7 @@ body.showing .privacy{display:none}
   .sheet-cards{gap:5mm}
   *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
+
+/* iPhone (WebKit) keeps a fieldset at least as wide as its content; let it shrink so nothing overflows narrow screens */
+fieldset{min-width:0;min-inline-size:0}
+input,select,textarea{max-width:100%}

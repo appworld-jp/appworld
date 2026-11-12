@@ -113,3 +113,7 @@ p,figcaption,dd,li{text-wrap:pretty}
 .fc-err{margin:0;font-size:13px;color:var(--margin);font-weight:700}
 .fc-err:empty{display:none}
 .fc-form[hidden]{display:none}
+
+/* iPhone (WebKit) keeps a fieldset at least as wide as its content; let it shrink so nothing overflows narrow screens */
+fieldset{min-width:0;min-inline-size:0}
+input,select,textarea{max-width:100%}

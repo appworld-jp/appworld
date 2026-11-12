@@ -153,3 +153,7 @@ main{display:grid;gap:18px}
 }
 .offscreen{position:fixed;left:-9999px;top:0;opacity:0}
 [hidden]{display:none!important}
+
+/* iPhone (WebKit) keeps a fieldset at least as wide as its content; let it shrink so nothing overflows narrow screens */
+fieldset{min-width:0;min-inline-size:0}
+input,select,textarea{max-width:100%}

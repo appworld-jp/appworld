@@ -113,3 +113,7 @@ input[type=range]{width:100%;accent-color:var(--green);border:0;background:none;
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 
 p,figcaption,dd,li{text-wrap:pretty}
+
+/* iPhone (WebKit) keeps a fieldset at least as wide as its content; let it shrink so nothing overflows narrow screens */
+fieldset{min-width:0;min-inline-size:0}
+input,select,textarea{max-width:100%}

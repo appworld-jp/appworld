@@ -152,3 +152,7 @@ h1{font-family:var(--mincho);font-size:32px;margin:0;letter-spacing:.12em;font-w
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 .primary:disabled{opacity:.45;cursor:default;box-shadow:none}
+
+/* iPhone (WebKit) keeps a fieldset at least as wide as its content; let it shrink so nothing overflows narrow screens */
+fieldset{min-width:0;min-inline-size:0}
+input,select,textarea{max-width:100%}

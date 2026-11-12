@@ -193,3 +193,7 @@ h1::before{content:"";display:block;width:24px;height:32px;margin:0 auto 6px;bac
 .fc-note{flex-basis:100%;margin:0;font-size:13px;color:var(--sub);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .fc-err:empty,.fc-list[hidden],.fc-note[hidden]{display:none}
 .n-ev.own{color:var(--sub)}
+
+/* iPhone (WebKit) keeps a fieldset at least as wide as its content; let it shrink so nothing overflows narrow screens */
+fieldset{min-width:0;min-inline-size:0}
+input,select,textarea{max-width:100%}

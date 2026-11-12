@@ -146,3 +146,7 @@ button,input,textarea{font:inherit;color:inherit;word-break:normal}
   @keyframes stampin{from{transform:scale(2) rotate(-30deg);opacity:0}to{transform:rotate(-12deg);opacity:.85}}
   @keyframes drop{from{transform:translateY(-12px) rotate(-2deg);opacity:0}to{transform:none;opacity:1}}
 }
+
+/* iPhone (WebKit) keeps a fieldset at least as wide as its content; let it shrink so nothing overflows narrow screens */
+fieldset{min-width:0;min-inline-size:0}
+input,select,textarea{max-width:100%}

@@ -170,3 +170,7 @@ input[type=text]:focus{border-color:var(--violet);outline:none}
 
 p,figcaption,dd,li{text-wrap:pretty}
 .mode-note,.grade-hint,.fb-s,.unsure-note{word-break:keep-all;overflow-wrap:anywhere;text-wrap:balance}
+
+/* iPhone (WebKit) keeps a fieldset at least as wide as its content; let it shrink so nothing overflows narrow screens */
+fieldset{min-width:0;min-inline-size:0}
+input,select,textarea{max-width:100%}

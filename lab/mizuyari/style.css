@@ -157,3 +157,7 @@ a{color:inherit}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:10;display:flex;align-items:center;gap:12px;width:max-content;max-width:calc(100% - 32px);padding:8px 8px 8px 16px;border-radius:18px;background:var(--teal2);color:#fff;box-shadow:0 6px 20px rgba(0,0,0,.25);font-size:14px}
 .toast button{min-height:40px;padding:4px 12px;border-radius:12px;border:2px solid #fff;background:transparent;color:#fff;font-weight:700;cursor:pointer;white-space:nowrap}
 @media (prefers-color-scheme:dark){.water{color:#0B2236}.water[aria-pressed="true"]{color:var(--water)}.chip[aria-pressed="true"],.fc-ok{background:#2C8F89;border-color:#2C8F89}}
+
+/* iPhone (WebKit) keeps a fieldset at least as wide as its content; let it shrink so nothing overflows narrow screens */
+fieldset{min-width:0;min-inline-size:0}
+input,select,textarea{max-width:100%}
