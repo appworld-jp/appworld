@@ -139,7 +139,7 @@ class Site:
 # (href, label in the top bar, label in the phone tab bar, icon). The top bar is for wide screens;
 # phones (<= 720px, app.css) get the tab bar at the bottom instead.
 NAV = [("index.html", "ホーム", "ホーム", "home"), ("index.html#shelf", "新着", "新着", "new"),
-       ("apps.html", "全てのアプリ", "探す", "find"), ("submit.html", "アプリを掲載する", "掲載する", "add")]
+       ("apps.html", "すべてのアプリ", "探す", "find"), ("submit.html", "アプリを掲載する", "掲載する", "add")]
 TAB_ICONS = {
     "home": '<path d="M4 10.4 12 4l8 6.4V19a1 1 0 0 1-1 1h-4.5v-5.5h-5V20H5a1 1 0 0 1-1-1z"/>',
     "new": '<path d="M12 3.5l2.1 5.4 5.4 2.1-5.4 2.1L12 18.5l-2.1-5.4L4.5 11l5.4-2.1z"/><path d="M18.5 16.5v4M16.5 18.5h4"/>',
@@ -286,7 +286,7 @@ def home(site: Site, live: list[dict]) -> str:
         shelf_body = (
             f'<div class="rail" id="rail" tabindex="0" aria-label="新着のアプリ（横にスクロールできます）">{panels}</div>'
             '<div class="g"><div class="in"><div class="progress" aria-hidden="true"><i id="prog"></i></div>'
-            f'<div class="more"><a class="link" href="apps.html">全てのアプリを見る（{len(live)}件）</a></div></div></div>'
+            f'<div class="more"><a class="link" href="apps.html">すべてのアプリを見る（{len(live)}件）</a></div></div></div>'
         )
         shelf_cap = f'<p class="cap">最新の掲載　{dotted(latest)}</p>'
         stats = (f'<span>掲載 <b>{len(live)}</b>件</span>'
@@ -362,8 +362,8 @@ def apps_page(site: Site, live: list[dict]) -> str:
         )
     else:
         listing = empty_state("まだアプリが掲載されていません。最初のアプリを掲載してみませんか。")
-    body = f'<main class="g"><div class="in list"><div class="list-head"><h1>全てのアプリ</h1></div>{listing}</div></main>'
-    return page(site, path="apps.html", title=f"全てのアプリ | {SITE_NAME}",
+    body = f'<main class="g"><div class="in list"><div class="list-head"><h1>すべてのアプリ</h1></div>{listing}</div></main>'
+    return page(site, path="apps.html", title=f"すべてのアプリ | {SITE_NAME}",
                 desc=f"{SITE_NAME}に掲載されているアプリの一覧です。キーワード、対応、ジャンル、使ったAIで探せます。",
                 body=body, css=("apps.css",), js=("apps.js",), current="apps.html")
 
@@ -402,7 +402,7 @@ def detail(site: Site, app: dict, live: list[dict]) -> str:
 
     body = f"""<main class="g">
   <div class="in detail c-{aid}">
-    <nav class="crumb cap" aria-label="現在地"><a href="apps.html">全てのアプリ</a><span aria-hidden="true">/</span><a href="{e(g_link)}">{e(g)}</a></nav>
+    <nav class="crumb cap" aria-label="現在地"><a href="apps.html">すべてのアプリ</a><span aria-hidden="true">/</span><a href="{e(g_link)}">{e(g)}</a></nav>
 
     <section class="d-hero glass" aria-labelledby="d-name">
       <div class="d-vis" aria-hidden="true"><div class="orbit"></div>{tile(site, app, "icon big", lazy=False)}</div>
@@ -588,7 +588,7 @@ def not_found_page(site: Site) -> str:
   <div class="in missing">
     <h1>ページが見つかりませんでした</h1>
     <p>掲載が終わったか、アドレスが間違っている可能性があります。</p>
-    <p class="acts"><a class="btn" href="/apps.html">全てのアプリを見る</a><a class="link" href="/index.html">ホームへ</a></p>
+    <p class="acts"><a class="btn" href="/apps.html">すべてのアプリを見る</a><a class="link" href="/index.html">ホームへ</a></p>
   </div>
 </main>"""
     return page(site, path="", title=f"ページが見つかりません | {SITE_NAME}", desc=TAGLINE, body=body,
@@ -601,7 +601,7 @@ def offline_page(site: Site) -> str:
   <div class="in missing">
     <h1>オフラインです</h1>
     <p>このページはまだ保存されていません。インターネットにつながってから、もう一度開いてください。</p>
-    <p class="acts"><a class="btn" href="/">ホームへ</a><a class="link" href="/apps.html">全てのアプリ</a></p>
+    <p class="acts"><a class="btn" href="/">ホームへ</a><a class="link" href="/apps.html">すべてのアプリ</a></p>
   </div>
 </main>"""
     return page(site, path="", title=f"オフラインです | {SITE_NAME}", desc=TAGLINE, body=body,

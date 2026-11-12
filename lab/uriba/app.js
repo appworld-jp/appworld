@@ -174,7 +174,7 @@
     const list = $("list"); list.textContent = "";
     const items = st.items;
     const left = items.filter(i => !i.done).length;
-    $("left").textContent = items.length ? (left ? `残り${left}品／${items.length}品` : `全て買いました（${items.length}品）`) : "";
+    $("left").textContent = items.length ? (left ? `残り${left}品／${items.length}品` : `すべて買いました（${items.length}品）`) : "";
     $("first").hidden = items.length > 0;
     $("listActs").hidden = !items.length;
     $("clearDone").hidden = !items.some(i => i.done);
@@ -203,7 +203,7 @@
         cb.addEventListener("click", () => {
           i.done = !i.done; save(); renderList();
           const nb = document.querySelector(`.item[data-id="${i.id}"] .check`); if (nb) nb.focus({ preventScroll: true });
-          if (st.items.length && st.items.every(x => x.done)) toast("全て買いました。お疲れさまでした。");
+          if (st.items.length && st.items.every(x => x.done)) toast("すべて買いました。お疲れさまでした。");
         });
         const more = el("button", "more", "⋯"); more.type = "button";
         more.setAttribute("aria-label", `${i.name}の売り場を変える・消す`);

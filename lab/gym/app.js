@@ -585,7 +585,7 @@
     $("wipe").hidden = used.length === 0;
   }
   $("wipe").addEventListener("click", () => {
-    if (!confirm("全ての記録を削除しますか？元に戻せません。")) return;
+    if (!confirm("すべての記録を削除しますか？元に戻せません。")) return;
     S.sets = []; save(); renderHist(); prefill(); renderLog(); renderFav();
   });
 

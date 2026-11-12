@@ -128,7 +128,7 @@
       const net = el("p", "net");
       if (p.net > 0) { net.classList.add("plus"); net.textContent = `差し引き ${yen(p.net)} 返してもらう`; }
       else if (p.net < 0) { net.classList.add("minus"); net.textContent = `差し引き ${yen(-p.net)} 返す`; }
-      else { net.classList.add("even"); net.textContent = p.lendM ? "お金の貸し借りは差し引き0円" : p.open.length ? "お金の貸し借りはありません" : "全て返し終わっています"; }
+      else { net.classList.add("even"); net.textContent = p.lendM ? "お金の貸し借りは差し引き0円" : p.open.length ? "お金の貸し借りはありません" : "すべて返し終わっています"; }
       c.append(net);
       const line = el("div", "p-line");
       const thingsL = p.open.filter(r => r.dir === "lend" && r.kind !== MONEY).length, thingsB = p.open.filter(r => r.dir === "borrow" && r.kind !== MONEY).length;

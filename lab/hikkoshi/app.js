@@ -114,7 +114,7 @@
     else if (n === 0) left.append(el("b", "word", "今日が引っ越し日"));
     else left.append(el("small", null, "引っ越しから"), el("b", null, String(-n + 1)), el("small", null, "日目"));
     $("barFill").style.width = all.length ? `${Math.round(doneN / all.length * 100)}%` : "0";
-    $("lcCount").textContent = doneN === all.length ? `${all.length}件全て済みました！` : `${all.length}件中${doneN}件済み・残り${all.length - doneN}件`;
+    $("lcCount").textContent = doneN === all.length ? `${all.length}件すべて済みました！` : `${all.length}件中${doneN}件済み・残り${all.length - doneN}件`;
     $("hideDone").checked = st.hide;
 
     // いちばん近い期限
@@ -215,7 +215,7 @@
     if (on && !reduce()) { li.classList.add("stamp"); setTimeout(() => { renderMain(); refocus(t.id); }, 380); }
     else { renderMain(); refocus(t.id); }
     const all = tasks();
-    if (on && all.every(x => st.done[x.id])) toast("全て済みました。お疲れさまでした！");
+    if (on && all.every(x => st.done[x.id])) toast("すべて済みました。お疲れさまでした！");
   }
   $("hideDone").addEventListener("change", () => { st.hide = $("hideDone").checked; save(); renderMain(); });
 

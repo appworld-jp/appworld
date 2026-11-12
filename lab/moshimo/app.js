@@ -347,13 +347,13 @@
   });
   $("wipeBtn").addEventListener("click", () => {
     if (!st.people.length && !st.contacts.length && !st.place.hinan && !st.place.shugo && !st.place.memo) { $("moveMsg").textContent = "消すメモはありません。"; return; }
-    if (!confirm("この端末から、もしものメモを全て消しますか？")) return;
+    if (!confirm("この端末から、もしものメモをすべて消しますか？")) return;
     const s = snap();
     st = { v: 1, people: [], contacts: [], place: { hinan: "", shugo: "", memo: "" }, updated: "", sel: "" };
     try { localStorage.removeItem(KEY); } catch (e) {}
     renderEdit();
     $("moveMsg").textContent = "";
-    toast("全て消しました。", () => { restore(s); renderEdit(); });
+    toast("すべて消しました。", () => { restore(s); renderEdit(); });
   });
 
   // ---------- トースト ----------

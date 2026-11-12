@@ -207,7 +207,7 @@
   let pf = "";
   function renderPf() {
     const own = [...new Set(st.items.map(i => i.place).filter(p => p && !PLACES.includes(p)))];
-    const opts = [["", "全て"], ...PLACES.filter(p => st.items.some(i => i.place === p)).map(p => [p, p]), ...own.map(p => [p, p])];
+    const opts = [["", "すべて"], ...PLACES.filter(p => st.items.some(i => i.place === p)).map(p => [p, p]), ...own.map(p => [p, p])];
     if (st.items.some(i => !i.place) && opts.length > 1) opts.push(["-", "場所なし"]);
     if (!opts.some(([v]) => v === pf)) pf = "";
     $("pf").hidden = opts.length < 2;

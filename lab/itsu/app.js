@@ -131,7 +131,7 @@
       b.addEventListener("click", () => { picked.has(name) ? picked.delete(name) : picked.add(name); renderPresets(); });
       box.append(b);
     });
-    if (!box.children.length) box.append(el("p", "hint", "よくある項目は全て追加済みです。"));
+    if (!box.children.length) box.append(el("p", "hint", "よくある項目はすべて追加済みです。"));
     $("add-presets").disabled = !picked.size;
     $("pcount").textContent = picked.size ? `${picked.size}件を選んでいます` : "";
   }

@@ -147,7 +147,7 @@
       m.append(top, bar, st2, el("p", "m-note", NOTE[k.k]()));
       box.append(m);
     }
-    $("score").textContent = ok === ks.length ? `${ks.length}項目全てそろっています！` : `${ks.length}項目中${ok}項目がそろっています`;
+    $("score").textContent = ok === ks.length ? `${ks.length}項目すべてそろっています！` : `${ks.length}項目中${ok}項目がそろっています`;
     $("score").classList.toggle("all", ok === ks.length);
   }
 

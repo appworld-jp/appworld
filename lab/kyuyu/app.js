@@ -412,7 +412,7 @@
   });
   $("cDel").addEventListener("click", () => {
     const c = st.cars.find(x => x.id === cEdit); if (!c) return;
-    if (!confirm(`${c.name}と、その給油・整備の記録を全て消しますか？`)) return;
+    if (!confirm(`${c.name}と、その給油・整備の記録をすべて消しますか？`)) return;
     const snap = snapshot();
     st.cars = st.cars.filter(x => x !== c); st.fills = st.fills.filter(f => f.car !== c.id); st.maint = st.maint.filter(m => m.car !== c.id);
     st.cur = st.cars[0] ? st.cars[0].id : ""; save(); $("carDlg").close(); render();

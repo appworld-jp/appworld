@@ -414,7 +414,7 @@
     const tabs = $("ltabs"); tabs.textContent = "";
     ["", "主菜", "副菜", "汁物", "主食"].forEach(t => {
       const n = ranked.filter(x => !t || x.r.t === t).length;
-      const b = el("button", "ltab", `${t || "全て"} ${n}`); b.type = "button";
+      const b = el("button", "ltab", `${t || "すべて"} ${n}`); b.type = "button";
       b.setAttribute("aria-pressed", String(listType === t));
       b.disabled = n === 0 && t !== "";
       b.addEventListener("click", () => { listType = t; listShown = 20; renderList(); });
@@ -498,7 +498,7 @@
   $("quick").addEventListener("click", () => { prefs.quick = !prefs.quick; savePrefs(); renderFilters(); if (shownOnce) run(false); });
   const gbox = $("genres");
   ["", ...GENRE_LIST].forEach(g => {
-    const b = el("button", "fchip", g || "全て"); b.type = "button"; b.dataset.g = g;
+    const b = el("button", "fchip", g || "すべて"); b.type = "button"; b.dataset.g = g;
     b.addEventListener("click", () => { prefs.genre = g; savePrefs(); renderFilters(); if (shownOnce) run(false); });
     gbox.append(b);
   });
@@ -520,8 +520,8 @@
   $("lmore").addEventListener("click", () => { listShown += 20; renderList(); });
   $("clear").addEventListener("click", () => {
     if (!count()) return;
-    if (!confirm("選んだ食材を全て外しますか？")) return;
-    have.clear(); free = []; save(); syncAll(false); run(false); say("全て外しました。");
+    if (!confirm("選んだ食材をすべて外しますか？")) return;
+    have.clear(); free = []; save(); syncAll(false); run(false); say("すべて外しました。");
   });
   $("sample").addEventListener("click", () => {
     ["tamanegi", "ninjin", "jagaimo", "buta", "tamago"].forEach(id => have.add(id)); save(); syncAll(false); run(true);

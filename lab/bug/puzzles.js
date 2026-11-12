@@ -32,7 +32,7 @@ fix: `  if (user.role === "admin") {`,
 why: "「=」は比較ではなく代入です。user.role に \"admin\" を入れ、その値（空でない文字列）が真とみなされるため、誰に対しても true を返します。元のロールまで書き換わります。",
 incident: "一般の利用者が管理者の操作をできてしまう「権限昇格」。データも書き換わるので、後から原因を追いにくくなります。" },
 
-{ id: "js-await", lang: "JavaScript", title: "全て保存してから完了を伝える", bug: 3,
+{ id: "js-await", lang: "JavaScript", title: "すべて保存してから完了を伝える", bug: 3,
 code: `// db.save() は Promise を返す
 async function saveAll(items) {
   for (const item of items) {
@@ -216,7 +216,7 @@ rows[0].push("A");
 console.log(rows[1].length); // 1`,
 fix: `const rows = Array.from({ length: 3 }, () => []);`,
 why: "fill([]) は1つの配列を作って、同じものを3か所に入れます。rows[0] に追加すると、rows[1] と rows[2] からも同じ要素が見えます。",
-incident: "1行目に入力した内容が、表の全ての行に表示される。" },
+incident: "1行目に入力した内容が、表のすべての行に表示される。" },
 
 { id: "js-arrow", lang: "JavaScript", title: "税込み価格の一覧を作る", bug: 2, ok: [1, 2],
 code: `const prices = [100, 200, 300];
@@ -226,7 +226,7 @@ const taxed = prices.map(p => {
 console.log(taxed);`,
 fix: `  return Math.round(p * 1.1);`,
 why: "アロー関数で { } を使うと、本体はブロックになります。return を書かないと undefined を返すので、結果は [undefined, undefined, undefined] です。",
-incident: "税込み価格の列が全て空欄になる。" },
+incident: "税込み価格の列がすべて空欄になる。" },
 
 { id: "py-default", lang: "Python", title: "カートに商品を入れる", bug: 0,
 code: `def add_item(item, cart=[]):
@@ -251,7 +251,7 @@ fix: `    for i in range(len(scores)):`,
 why: "range(1, n) は1から始まるので、先頭の scores[0] が足されません。Python の添字は0から始まります。",
 incident: "平均点がいつも少し低く出る。1件目のデータだけが集計から漏れます。" },
 
-{ id: "py-remove", lang: "Python", title: "\"b\" を全て消す", bug: 1, ok: [1, 3],
+{ id: "py-remove", lang: "Python", title: "\"b\" をすべて消す", bug: 1, ok: [1, 3],
 code: `users = ["a", "b", "b", "c"]
 for u in users:
     if u == "b":
@@ -278,7 +278,7 @@ code: `def notify(user):
         pass`,
 fix: `    except Exception:
         logger.exception("メールの送信に失敗しました")`,
-why: "何も指定しない except は全ての例外を受け止め、pass で何もしません。user.email の書き間違いのようなバグまで隠れ、失敗しても誰も気付きません。Ctrl+C（KeyboardInterrupt）まで止めてしまいます。",
+why: "何も指定しない except はすべての例外を受け止め、pass で何もしません。user.email の書き間違いのようなバグまで隠れ、失敗しても誰も気付きません。Ctrl+C（KeyboardInterrupt）まで止めてしまいます。",
 incident: "パスワード再設定のメールが何週間も送られていなかったのに、エラーが1件も記録されていない。" },
 
 { id: "py-input", lang: "Python", title: "年齢で購入できるか判定する", bug: 0, ok: [0, 1],
@@ -304,8 +304,8 @@ code: `seats = [[0] * 3] * 3
 seats[0][0] = 1  # 1列目の1番を予約
 print(seats)`,
 fix: `seats = [[0] * 3 for _ in range(3)]`,
-why: "外側の * 3 は、同じ内側のリストへの参照を3つ並べるだけです。1か所を変えると、3行全てが変わって [[1, 0, 0], [1, 0, 0], [1, 0, 0]] になります。",
-incident: "1席予約しただけで、各列の1番の席が全て埋まったように表示される。" },
+why: "外側の * 3 は、同じ内側のリストへの参照を3つ並べるだけです。1か所を変えると、3行すべてが変わって [[1, 0, 0], [1, 0, 0], [1, 0, 0]] になります。",
+incident: "1席予約しただけで、各列の1番の席がすべて埋まったように表示される。" },
 
 { id: "py-sql", lang: "Python", title: "名前でユーザーを探す", bug: 1, ok: [1, 2],
 code: `def find_user(cur, name):
@@ -399,5 +399,5 @@ fix: `def log(msg, at=None):
     if at is None:
         at = datetime.now()`,
 why: "引数の既定値は、関数を定義したときに1回だけ評価されます。datetime.now() はプログラムを起動したときの時刻で固定され、何度呼んでも同じ時刻が出ます。",
-incident: "ログの時刻が全て起動した時刻になり、障害の調査で順番を追えない。" }
+incident: "ログの時刻がすべて起動した時刻になり、障害の調査で順番を追えない。" }
 ];

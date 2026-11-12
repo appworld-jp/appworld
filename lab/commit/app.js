@@ -467,7 +467,7 @@
     });
   }
   $("hist-clear").addEventListener("click", function () {
-    if (!confirm("履歴を全て削除しますか？")) return;
+    if (!confirm("履歴をすべて削除しますか？")) return;
     store.hist = []; save(); updateHistCount(); renderHist();
     $("toast-hist").textContent = "履歴を削除しました。";
   });

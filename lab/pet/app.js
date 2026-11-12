@@ -189,7 +189,7 @@
     wt.addEventListener("click", () => { wOpen = true; renderToday(p); $("wIn").focus(); });
     $("care").replaceChildren(...tiles, wt);
     $("wForm").hidden = !wOpen; $("wUnit").textContent = p.unit; $("wIn").placeholder = p.unit === "g" ? "120" : "4.2";
-    $("doneMsg").textContent = !goal ? "" : met === goal ? `${p.name}の今日のお世話は、全て済みました。` : `今日のチェック：${goal}つのうち${met}つ済み`;
+    $("doneMsg").textContent = !goal ? "" : met === goal ? `${p.name}の今日のお世話は、すべて済みました。` : `今日のチェック：${goal}つのうち${met}つ済み`;
     $("doneMsg").classList.toggle("all", goal > 0 && met === goal);
     const tl = logs.slice().sort((a, b) => a.t < b.t ? 1 : a.t > b.t ? -1 : 0);
     $("timeline").replaceChildren(...tl.map(l => {
@@ -483,7 +483,7 @@
   });
   $("pDel").addEventListener("click", () => {
     const p = st.pets.find(x => x.id === pEdit); if (!p) return;
-    if (!confirm(`${p.name}と、${p.name}の記録を全て消しますか？`)) return;
+    if (!confirm(`${p.name}と、${p.name}の記録をすべて消しますか？`)) return;
     const snap = snapshot();
     st.pets = st.pets.filter(x => x !== p); st.logs = st.logs.filter(l => l.pet !== p.id);
     st.cur = st.pets[0] ? st.pets[0].id : ""; save(); $("petDlg").close(); render();

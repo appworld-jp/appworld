@@ -345,7 +345,7 @@
   $("edDone").addEventListener("click", () => { if (!$("edName").value.trim()) $("edName").value = person(editId).name; renderMain(); window.scrollTo(0, 0); });
   $("edDel").addEventListener("click", () => {
     const p = person(editId);
-    if (!confirm(`${p.name}の持ち物を、全て削除しますか？`)) return;
+    if (!confirm(`${p.name}の持ち物を、すべて削除しますか？`)) return;
     const snap = snapshot();
     st.people = st.people.filter(q => q.id !== p.id);
     for (const d of Object.values(st.checks)) delete d[p.id];

@@ -182,7 +182,7 @@
   function count() {
     const done = S.pack.filter(p => p.done).length;
     const all = S.pack.length > 0 && done === S.pack.length;
-    $("pack-count").textContent = all ? `${S.pack.length}点、全て準備できました。いってらっしゃい！` : `準備済み：${done}／${S.pack.length}点。カバンに入れたものに印を付けます。`;
+    $("pack-count").textContent = all ? `${S.pack.length}点、すべて準備できました。いってらっしゃい！` : `準備済み：${done}／${S.pack.length}点。カバンに入れたものに印を付けます。`;
     $("ready").classList.toggle("on", all);
   }
 
