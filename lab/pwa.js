@@ -1,4 +1,4 @@
-// App World Lab — shared helper loaded by every app (../pwa.js).
+// UBUGOE Lab — shared helper loaded by every app (../pwa.js).
 // Registers the app's own service worker (sw.js next to index.html, scope = the app folder)
 // so the app can be added to the home screen and opened offline.
 // On phones that have not added the app yet, a small bar at the bottom explains how to add it:

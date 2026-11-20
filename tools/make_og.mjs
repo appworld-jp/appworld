@@ -111,7 +111,7 @@ body{--c:${c}}
 <div class="card glass">
   <div class="vis"><div class="orbit"><i></i></div><div class="tile"><img src="/icons/${esc(a.id)}.svg" alt=""></div></div>
   <div class="main">
-    <div class="mark">${MARK}App World</div>
+    <div class="mark">${MARK}UBUGOE</div>
     <h1 class="name fit" data-lines="1" data-min="50" data-wrap-lines="2" data-wrap-min="34">${esc(a.name)}</h1>
     <p class="tag fit" data-lines="2" data-min="24">${esc(a.tagline)}</p>
     <div class="badges">${badges}${spec}</div>
@@ -158,7 +158,7 @@ h1 span{display:block;white-space:nowrap}
 <div class="ring"><i></i></div>
 ${sphere(apps)}
 <div class="copy">
-  <div class="mark">${MARK}App World</div>
+  <div class="mark">${MARK}UBUGOE</div>
   <h1>${HEADLINE.map((l) => `<span>${esc(l)}</span>`).join("")}</h1>
   <p class="sub">あなたが最初のユーザーに。<br>まだ誰も知らないアプリがここにある。</p>
 </div>

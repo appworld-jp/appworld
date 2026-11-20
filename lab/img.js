@@ -1,4 +1,4 @@
-// Shared image helpers for App World Lab. All processing happens on this device; nothing is uploaded.
+// Shared image helpers for UBUGOE Lab. All processing happens on this device; nothing is uploaded.
 window.LabImg = {
   // read a File into an <img> without uploading it anywhere
   load(file) {

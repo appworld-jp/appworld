@@ -29,7 +29,7 @@ from urllib.parse import quote, urlencode, urlsplit
 from check_listing import CATEGORIES, COLOR_RE, PLATFORMS, check_icon, load_all
 
 HERE = pathlib.Path(__file__).resolve().parent
-SITE_NAME = "App World"
+SITE_NAME = "UBUGOE"
 TAGLINE = "AIで作られたアプリが集まる場所"
 JST = timezone(timedelta(hours=9))
 RAIL_SIZE = 12        # listings in the home page's 新着 rail
@@ -41,7 +41,7 @@ DEV_CONTACT_URL = "https://github.com/appworld-jp/appworld/issues/new"
 # Tile colour for a listing without "color" (picked by its id, so it never changes).
 FALLBACK_COLORS = ["#D9775A", "#3E8C84", "#4C6FD1", "#B9567E", "#8A64C8", "#C9A13A",
                    "#4E9A6B", "#5A7FA0", "#C46B4E", "#3F8FB5", "#6C5BB0", "#8E6B9E"]
-OPERATOR_NOTE = "App Worldの運営が作ったアプリです。"
+OPERATOR_NOTE = "UBUGOEの運営が作ったアプリです。"
 # Share images (og:image), made by tools/make_og.mjs: og/<id>.png per listing, og/default.png for the rest.
 OG_SIZE = (1200, 630)
 OG_DEFAULT = "og/default.png"
@@ -241,7 +241,7 @@ def tile(site: Site, app: dict, cls: str, lazy: bool = True) -> str:
 
 
 def badges(app: dict) -> str:
-    out = '<span class="op" title="App Worldの運営が作ったアプリ">運営</span>' if app.get("operator") else ""
+    out = '<span class="op" title="UBUGOEの運営が作ったアプリ">運営</span>' if app.get("operator") else ""
     return out + ('<span class="beta">試作中</span>' if app.get("beta") else "")
 
 
@@ -524,7 +524,7 @@ def submit_page(site: Site) -> str:
   </div>
 </main>"""
     return page(site, path="submit.html", title=f"アプリを掲載する | {SITE_NAME}",
-                desc="AIを使って作ったアプリを、App Worldに無料で掲載できます。試作中のアプリも歓迎です。",
+                desc="AIを使って作ったアプリを、UBUGOEに無料で掲載できます。試作中のアプリも歓迎です。",
                 body=body, css=("apps.css", "submit.css"), current="submit.html")
 
 

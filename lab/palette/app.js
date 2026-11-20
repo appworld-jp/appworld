@@ -178,7 +178,7 @@
       g.font = `${cw > 200 ? 20 : 16}px ${SERIF}`; g.fillText(colorName(c.rgb), x + 14, y + sh + 104);
     });
     g.fillStyle = "#6E675C"; g.font = `18px ${SERIF}`;
-    g.fillText("おえかき色見本（App World Lab）で作成", P, H - 30);
+    g.fillText("おえかき色見本（UBUGOE Lab）で作成", P, H - 30);
     cv.toBlob(b => {
       if (!b) { say("画像を作れませんでした。もう一度お試しください。"); return; }
       const url = URL.createObjectURL(b), a = document.createElement("a");
