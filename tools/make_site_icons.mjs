@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// App World: home-screen icons for the site itself, rendered from site/static/favicon.svg.
+// UBUGOE: home-screen icons for the site itself, rendered from site/static/favicon.svg.
 //
 //   node tools/make_site_icons.mjs
 //

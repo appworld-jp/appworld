@@ -136,13 +136,13 @@ class BuildTest(unittest.TestCase):
     def test_app_page_is_complete_without_script(self):
         self.run_build()
         text = (self.out / "app-kondate.html").read_text(encoding="utf-8")
-        for needle in ["<title>こんだて帖 | App World</title>",
+        for needle in ["<title>こんだて帖 | UBUGOE</title>",
                        f'<meta name="description" content="{KONDATE_TAGLINE}">',
                        '<link rel="canonical" href="https://appworld-1ug.pages.dev/app-kondate">',
                        '<meta property="og:title"', '<meta property="og:description"', '<meta property="og:url"',
-                       '<meta property="og:type"', '<meta property="og:site_name" content="App World">',
+                       '<meta property="og:type"', '<meta property="og:site_name" content="UBUGOE">',
                        'href="https://appworld-lab.pages.dev/kondate/"', "アプリを開く ↗",
-                       "App Worldの運営が作ったアプリです。", ">運営<", 'class="d-more"', 'class="d-pager"',
+                       "UBUGOEの運営が作ったアプリです。", ">運営<", 'class="d-more"', 'class="d-pager"',
                        "https://x.com/intent/post?", "icons/kondate.svg?v="]:
             self.assertIn(needle, text)
 
@@ -237,7 +237,7 @@ class BuildTest(unittest.TestCase):
         self.assertIn("「ホーム画面に追加」の案内を閉じたこと", (self.out / "about.html").read_text(encoding="utf-8"))
         m = json.loads((self.out / "manifest.webmanifest").read_text(encoding="utf-8"))
         self.assertEqual((m["name"], m["short_name"], m["start_url"], m["scope"], m["display"], m["lang"]),
-                         ("App World", "App World", "/", "/", "standalone", "ja"))
+                         ("UBUGOE", "UBUGOE", "/", "/", "standalone", "ja"))
         purposes = {(i["sizes"], i["purpose"]) for i in m["icons"]}
         self.assertTrue({("192x192", "any"), ("512x512", "any"), ("512x512", "maskable")} <= purposes)
         for icon in m["icons"]:

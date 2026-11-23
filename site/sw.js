@@ -1,4 +1,4 @@
-// App World service worker. Template: site/build.py fills in VERSION and PRECACHE and writes dist/sw.js.
+// UBUGOE service worker. Template: site/build.py fills in VERSION and PRECACHE and writes dist/sw.js.
 // Network first (a new build shows as soon as you are online), cached copy when offline. Same-origin GET only.
 // Nothing is sent anywhere; the cache stays in this browser.
 "use strict";

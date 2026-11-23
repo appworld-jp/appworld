@@ -1,8 +1,8 @@
-# Listing request form for App World (GitHub issue form). Everything entered
+# Listing request form for UBUGOE (GitHub issue form). Everything entered
 # here is public on GitHub, so it asks for nothing private.
 # automation/intake.py reads the answers by their labels; keep them in sync.
 name: 作品を掲載する
-description: AIで作ったアプリやWebサービスを、App World に無料で掲載します
+description: AIで作ったアプリやWebサービスを、UBUGOE に無料で掲載します
 title: "掲載申請: "
 labels: ["listing"]
 body:

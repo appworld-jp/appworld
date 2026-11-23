@@ -2,9 +2,9 @@
 
 制定日：2026年11月11日
 
-Copyright © 2026 App World 運営. All rights reserved.
+Copyright © 2026 UBUGOE 運営. All rights reserved.
 
-本条件は、App World 運営（以下「運営者」といいます。）が本リポジトリにおいて公開する本ソフトウェアの取扱いについて定めるものです。本ソフトウェアを閲覧し、または利用しようとする者（以下「利用者」といいます。）は、本条件に従う場合に限り、本条件に定める範囲で本ソフトウェアを利用することができます。本条件に定めのない利用は、著作権法その他の法令により禁止されます。
+本条件は、UBUGOE 運営（以下「運営者」といいます。）が本リポジトリにおいて公開する本ソフトウェアの取扱いについて定めるものです。本ソフトウェアを閲覧し、または利用しようとする者（以下「利用者」といいます。）は、本条件に従う場合に限り、本条件に定める範囲で本ソフトウェアを利用することができます。本条件に定めのない利用は、著作権法その他の法令により禁止されます。
 
 ## 第1条（定義）
 
@@ -12,7 +12,7 @@ Copyright © 2026 App World 運営. All rights reserved.
 
 1. 「本リポジトリ」とは、GitHub 上のリポジトリ appworld-jp/appworld（その過去の版、分岐、複製を含みます。）をいいます。
 2. 「本ソフトウェア」とは、本リポジトリに含まれる一切のソースコード、オブジェクトコード、設定ファイル、文章、画像、アイコン、データ、デザイン、画面構成、およびこれらに付随する文書をいい、その全部または一部を問いません。ただし、第9条に定める第三者ソフトウェアを除きます。
-3. 「本サービス」とは、運営者が本ソフトウェアを用いて提供する Web サイト App World（https://appworld-1ug.pages.dev ）、App World Lab（https://appworld-lab.pages.dev ）、およびこれらの後継となる運営者の Web サイトをいいます。
+3. 「本サービス」とは、運営者が本ソフトウェアを用いて提供する Web サイト UBUGOE（https://appworld-1ug.pages.dev ）、UBUGOE Lab（https://appworld-lab.pages.dev ）、およびこれらの後継となる運営者の Web サイトをいいます。
 4. 「二次的著作物等」とは、本ソフトウェアを改変、翻案、翻訳、移植、抽出、要約し、または他のソフトウェアと結合して作成された一切のものをいい、本ソフトウェアに依拠して作成された実質的に同一または類似のものを含みます。
 5. 「有償利用許諾」とは、第5条に基づき、運営者が利用者との間で別途締結する有償の利用許諾契約をいいます。
 
@@ -108,9 +108,9 @@ Copyright © 2026 App World 運営. All rights reserved.
 
 ## Summary in English (for reference only; the Japanese text prevails)
 
-Copyright © 2026 App World operator. All rights reserved. This software is **not** open source.
+Copyright © 2026 UBUGOE operator. All rights reserved. This software is **not** open source.
 
-- **Permitted free of charge:** using the hosted services (App World and App World Lab) through a web browser; viewing this repository and forking it on GitHub only to the extent the GitHub Terms of Service allow (forks remain subject to these terms); submitting listings and reporting issues.
+- **Permitted free of charge:** using the hosted services (UBUGOE and UBUGOE Lab) through a web browser; viewing this repository and forking it on GitHub only to the extent the GitHub Terms of Service allow (forks remain subject to these terms); submitting listings and reporting issues.
 - **Prohibited without a separate paid license:** copying (other than ordinary browser caching), modifying or creating derivative works; running, hosting, publishing, distributing, selling, lending or transmitting the software or derivatives; incorporating any part into your own app, site, service or product; redistributing or sublicensing it as templates, materials or source code; using it to train or evaluate machine learning or AI systems or to build datasets, including automated collection for that purpose; removing notices; using the operator's names or logos or implying endorsement; framing the services; interfering with the services; or circumventing these terms by any equivalent means.
 - **Contributions:** content you post to this repository may be used by the operator free of charge.
 - **Third-party components** (three.js under MIT; Zen Kaku Gothic New under SIL OFL 1.1) are governed by their own licenses.

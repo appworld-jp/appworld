@@ -1,4 +1,4 @@
-# App World
+# UBUGOE（うぶごえ）
 
 AIで作られたアプリが集まるサイトです。https://appworld-1ug.pages.dev
 
@@ -29,7 +29,7 @@ AIで作られたアプリが集まるサイトです。https://appworld-1ug.pag
 | `automation/intake.py` | 申請フォームの内容を掲載ファイルにする |
 | `automation/x_daily_post.py` | 毎朝の X 投稿 |
 | `.github/` | 申請フォームと自動化のワークフロー |
-| `lab/` | App World Lab（運営が作ったアプリ。別の Pages プロジェクト） |
+| `lab/` | UBUGOE Lab（運営が作ったアプリ。別の Pages プロジェクト） |
 | `tools/make_pwa.mjs` | Lab のアプリをホーム画面に追加でき、オフラインでも使えるようにする |
 
 ## ビルド

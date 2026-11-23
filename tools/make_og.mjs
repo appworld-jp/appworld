@@ -1,4 +1,4 @@
-// Share images (og:image) for App World: site/og/default.png and site/og/<id>.png, 1200x630.
+// Share images (og:image) for UBUGOE: site/og/default.png and site/og/<id>.png, 1200x630.
 //
 //   node tools/make_og.mjs            # every listing with an icon, plus the default image
 //   node tools/make_og.mjs atta gomi  # only these listings (and the default image)

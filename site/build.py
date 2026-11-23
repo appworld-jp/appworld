@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build App World from site/apps/*.json into site/dist/.
+"""Build UBUGOE from site/apps/*.json into site/dist/.
 
 A static site: no server, no database, no login. The pages are fully
 pre-rendered; small first-party scripts add the icon sphere, the search on the

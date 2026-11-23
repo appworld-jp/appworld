@@ -1,5 +1,5 @@
 /* Every page: the service worker (offline use, add to home screen), the 新着 tab on the home page,
-   and a small dismissible hint on phones about adding App World to the home screen.
+   and a small dismissible hint on phones about adding UBUGOE to the home screen.
    Nothing is sent anywhere. localStorage only remembers that the hint was closed. Text is set with textContent. */
 (function () {
   "use strict";

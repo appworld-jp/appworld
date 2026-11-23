@@ -1,4 +1,4 @@
-# CLAUDE.md — App World（公開リポジトリ、旧称 Shipyard）
+# CLAUDE.md — UBUGOE（公開リポジトリ。旧称 App World、Shipyard）
 
 このリポジトリは公開されています。秘密の鍵、個人情報、事業の内部資料（収入の目標、設計書など）を置かないこと。設計書と意思決定ログは、オーナーの非公開リポジトリ（atron の `shipyard/`）にある。
 
