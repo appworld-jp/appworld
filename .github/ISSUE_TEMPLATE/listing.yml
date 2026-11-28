@@ -77,5 +77,5 @@ body:
           required: true
         - label: 入力した内容が公開されることに同意します
           required: true
-        - label: 掲載規約（https://appworld-1ug.pages.dev/about.html#terms）を読み、同意します
+        - label: 掲載規約（https://ubugoe.jp/about.html#terms）を読み、同意します
           required: true

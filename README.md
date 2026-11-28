@@ -1,11 +1,11 @@
 # UBUGOE（うぶごえ）
 
-AIで作られたアプリが集まるサイトです。https://appworld-1ug.pages.dev
+AIで作られたアプリが集まるサイトです。https://ubugoe.jp
 
 ## アプリを掲載したい方
 このリポジトリの [Issues](../../issues/new/choose) から「作品を掲載する」を選んで申請してください。
 自動チェックの結果がすぐにコメントで返り、運営が確認したあと公開されます。入力した内容は公開されるので、個人情報は書かないでください。
-掲載規約は https://appworld-1ug.pages.dev/about.html#terms にあります。
+掲載規約は https://ubugoe.jp/about.html#terms にあります。
 
 ## 安全のために決めていること
 - サイトは静的なページだけです。サーバ、データベース、ログインはありません
@@ -35,7 +35,7 @@ AIで作られたアプリが集まるサイトです。https://appworld-1ug.pag
 ## ビルド
 ```sh
 python3 site/build.py            # 手元で確認（site/dist/）
-python3 site/build.py --production --site-url https://appworld-1ug.pages.dev \
+python3 site/build.py --production --site-url https://ubugoe.jp \
   --submit-url "https://github.com/appworld-jp/appworld/issues/new?template=listing.yml" \
   --contact-url "https://github.com/appworld-jp/appworld/issues/new"
 ```

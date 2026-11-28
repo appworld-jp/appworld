@@ -46,7 +46,7 @@ https://example.com/kondate
 ### 確認
 
 - [x] 自分（または自分のチーム）がつくった作品です
-- [x] 掲載規約（https://appworld-1ug.pages.dev/about.html#terms）を読み、同意します
+- [x] 掲載規約（https://ubugoe.jp/about.html#terms）を読み、同意します
 """
 
 

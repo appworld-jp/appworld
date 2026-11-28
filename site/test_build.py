@@ -16,7 +16,7 @@ from urllib.parse import urlsplit
 import build
 
 HERE = pathlib.Path(__file__).resolve().parent
-URLS = dict(site_url="https://appworld-1ug.pages.dev",
+URLS = dict(site_url="https://ubugoe.jp",
             submit_url="https://github.com/appworld-jp/appworld/issues/new?template=listing.yml",
             contact_url="https://github.com/appworld-jp/appworld/issues/new")
 KONDATE_TAGLINE = json.loads((HERE / "apps" / "kondate.json").read_text(encoding="utf-8"))["tagline"]
@@ -138,10 +138,10 @@ class BuildTest(unittest.TestCase):
         text = (self.out / "app-kondate.html").read_text(encoding="utf-8")
         for needle in ["<title>こんだて帖 | UBUGOE</title>",
                        f'<meta name="description" content="{KONDATE_TAGLINE}">',
-                       '<link rel="canonical" href="https://appworld-1ug.pages.dev/app-kondate">',
+                       '<link rel="canonical" href="https://ubugoe.jp/app-kondate">',
                        '<meta property="og:title"', '<meta property="og:description"', '<meta property="og:url"',
                        '<meta property="og:type"', '<meta property="og:site_name" content="UBUGOE">',
-                       'href="https://appworld-lab.pages.dev/kondate/"', "アプリを開く ↗",
+                       'href="https://lab.ubugoe.jp/kondate/"', "アプリを開く ↗",
                        "UBUGOEの運営が作ったアプリです。", ">運営<", 'class="d-more"', 'class="d-pager"',
                        "https://x.com/intent/post?", "icons/kondate.svg?v="]:
             self.assertIn(needle, text)
@@ -156,12 +156,12 @@ class BuildTest(unittest.TestCase):
         items = channel.findall("item")
         self.assertEqual(len(items), min(30, len(LAB)))
         for it in items:
-            self.assertTrue(it.findtext("link").startswith("https://appworld-1ug.pages.dev/app-"))
+            self.assertTrue(it.findtext("link").startswith("https://ubugoe.jp/app-"))
             self.assertRegex(it.findtext("pubDate"), r"^\w{3}, \d{2} \w{3} \d{4} 00:00:00 \+0900$")
         locs = [u.findtext("{http://www.sitemaps.org/schemas/sitemap/0.9}loc") for u in ET.parse(self.out / "sitemap.xml").getroot()]
         self.assertEqual(len(locs), 4 + len(LAB))
-        self.assertTrue(all(u.startswith("https://appworld-1ug.pages.dev/") for u in locs))
-        self.assertIn("Sitemap: https://appworld-1ug.pages.dev/sitemap.xml", (self.out / "robots.txt").read_text())
+        self.assertTrue(all(u.startswith("https://ubugoe.jp/") for u in locs))
+        self.assertIn("Sitemap: https://ubugoe.jp/sitemap.xml", (self.out / "robots.txt").read_text())
 
     def test_share_images_are_large_and_absolute(self):
         self.run_build()
@@ -187,7 +187,7 @@ class BuildTest(unittest.TestCase):
         shutil.copy(HERE / "og" / "default.png", og / "later.png")  # a future listing's image waits for its launch
         self.run_build(apps, icons, og=og)
         tags = Meta((self.out / "app-test-app.html").read_text(encoding="utf-8")).tags
-        self.assertRegex(tags["og:image"], r"^https://appworld-1ug\.pages\.dev/og/default\.png\?v=[0-9a-f]{10}$")
+        self.assertRegex(tags["og:image"], r"^https://ubugoe\.jp/og/default\.png\?v=[0-9a-f]{10}$")
         self.assertEqual(tags["og:image:alt"], build.OG_DEFAULT_ALT)
         self.assertEqual(tags["twitter:card"], "summary_large_image")
         self.assertEqual(sorted(p.name for p in (self.out / "og").iterdir()), ["default.png"])
@@ -199,7 +199,7 @@ class BuildTest(unittest.TestCase):
         self.run_build(apps, icons, og=og)
         text = (self.out / "app-test-app.html").read_text(encoding="utf-8")
         self.assertIn('content="A&amp;B &quot;x&quot; — ためしの一言"', text)
-        self.assertRegex(Meta(text).tags["og:image"], r"^https://appworld-1ug\.pages\.dev/og/test-app\.png\?v=")
+        self.assertRegex(Meta(text).tags["og:image"], r"^https://ubugoe\.jp/og/test-app\.png\?v=")
         home = Meta((self.out / "index.html").read_text(encoding="utf-8")).tags  # no default image: a plain card
         self.assertNotIn("og:image", home)
         self.assertEqual(home["twitter:card"], "summary")
